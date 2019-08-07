@@ -3,7 +3,10 @@ layout: post
 title: "Apache Ant"
 date: "2015-01-22 22:15:00"
 comments: false
-categories: "Java"
+categories:
+- dev
+tags:
+- java
 ---
 
 Lately I've gleened some "real world" Apache Ant tips and tricks from some really impressive Java EE developers I've had the opportunity of working with over the last year.

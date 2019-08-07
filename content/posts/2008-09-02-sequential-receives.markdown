@@ -3,7 +3,8 @@ layout: post
 title: "Sequential Receives"
 date: "2008-09-02 23:32:40"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 Today I came across an interesting compile time error, given a scenario I had never exercised before. I had a vanilla orchestration that was receiving the same message type (same schema different message instance) using two different receive ports. I wanted to correlate the orchestration, so the first receive shape was set to activate with an "Initialising Correlation Set" and the second receive shape was set with a "Following Correlation Set". This setup produced the following compile time error:

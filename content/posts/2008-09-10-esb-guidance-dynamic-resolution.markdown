@@ -3,7 +3,8 @@ layout: post
 title: "ESB Guidance - Dynamic Resolution"
 date: "2008-09-10 21:48:23"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 

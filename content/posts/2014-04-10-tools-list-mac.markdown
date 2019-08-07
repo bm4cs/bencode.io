@@ -4,7 +4,11 @@ title: "Mac Tools List"
 date: 2014-04-10 16:39:53 +10:00
 comments: false
 description: A collection of tools and tips (with a development skew) on squeezing the most out of my Macintosh and OS X.
-categories: [General]
+categories:
+- geek
+tags:
+- mac
+- osx
 ---
 
 A cruft free collection of life changing, awesome tools, that will help you squeeze the most out of your Mac and OS X. 

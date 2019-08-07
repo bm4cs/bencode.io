@@ -3,7 +3,8 @@ layout: post
 title: "R&D Todo List"
 date: "2008-12-17 23:50:20"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 Now my post-grad studies are finalised ive got some spare time to inject into technology. I plan to inject some solid hours into running through the .NET 3.0 certification stream.

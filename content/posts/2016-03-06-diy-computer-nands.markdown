@@ -3,7 +3,10 @@ layout: post
 title: "DIY Computer Part 1 The NAND Gate"
 date: "2016-03-06 09:53:10"
 comments: false
-categories: "Geek"
+categories:
+- geek
+tags:
+- nand2tetris
 ---
 
 I love computers. When I recently discovered that the [Nand2Tetris](http://www.nand2tetris.org/) guys, Noam Nisan and Shimon Schocken, had just packaged their famous course into a neat 12 week [Coursera](https://www.coursera.org/course/nand2tetris1) package, I couldn't resist studying it any longer.

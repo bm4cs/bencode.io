@@ -3,7 +3,8 @@ layout: post
 title: "SharePoint 2010 Application Development"
 date: "2011-09-15 07:00:00"
 comments: false
-categories: "SharePoint"
+categories:
+- dev
 ---
 
 The SharePoint 2010 platform is dauntingly huge. Fortunately development certification 70-573 (Microsoft SharePoint 2010, Application Development) sticks to the bread and butter fundamentals that is applicable to all forms of custom SharePoint development. For the purposes of 70-573 you can pick up things like FAST, Excel Services, Form Services, Performance Point and toss them out the window. Concepts like lists, libraries, web parts, and delegate controls is what SharePoint development is really about.

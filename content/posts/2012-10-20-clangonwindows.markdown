@@ -3,7 +3,10 @@ layout: post
 title: "C++11 with Clang on Windows and MinGW"
 date: "2012-10-20 10:44:33"
 comments: false
-categories: "C++"
+categories:
+- dev
+tags:
+- c++
 ---
 
 Installation steps for getting a functional Clang++ build running on Windows 8 and MinGW.

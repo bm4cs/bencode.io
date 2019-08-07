@@ -3,7 +3,8 @@ layout: post
 title: "Reserved words and Distinguished Fields"
 date: "2008-02-13 23:01:56"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 The other day I built a schema that was the cause of much confusion and time wasting. Basically the tiny schema was being used by a centralised error handling process, that was designed to subscribe to and publish errors. The schema had a number of child elements, two of which were named "message" and "source". Each field in the schema was distinguished (not promoted) to allow participating orchestrations to examine and/or manipulate the error message instances.

@@ -3,7 +3,8 @@ layout: post
 title: "Tmux Quick Reference"
 date: "2017-04-17 20:17:10"
 comments: false
-categories: "linux"
+categories:
+- linux
 ---
 
 Kudos to [afair](https://gist.github.com/afair) for putting together this neat [Tmux Cheat Sheet](https://gist.github.com/afair/3489752), which I'm addicted to at the moment.

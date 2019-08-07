@@ -3,7 +3,8 @@ layout: post
 title: "Marketing Strategy and Branding"
 date: "2015-06-07 20:36:19"
 comments: false
-categories: "Business"
+categories:
+- business
 ---
 
 

@@ -3,7 +3,10 @@ layout: post
 title: "Neat and tidy Swing with JGoodies FormLayout"
 date: "2014-02-24 20:30:05"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 When its comes to laying out slightly complex forms in AWT or Swing, using the [baked-in layout managers](http://docs.oracle.com/javase/tutorial/uiswing/layout/visual.html#grid) (BoxLayout, FlowLayout, GridLayout) can feel frustrating.

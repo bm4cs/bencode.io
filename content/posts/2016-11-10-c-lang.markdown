@@ -3,7 +3,11 @@ layout: post
 title: "C"
 date: "2016-11-26 22:39:01"
 comments: false
-categories: "unix"
+categories:
+- dev
+tags:
+- gcc
+- linux
 ---
 
 If you need a compiler and build system, my post on [make]({% post_url 2016-10-09-make %}) and GCC could be handy.

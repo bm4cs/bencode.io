@@ -3,7 +3,10 @@ layout: post
 title: "soapUI freeze on Mac OS X"
 date: "2015-01-25 22:31:43"
 comments: false
-categories: "Java"
+categories:
+- dev
+tags:
+- java
 ---
 
 Well first time for everything. Messing around with some JAX-WS web services, wanted to spin up my favourite SOAP frontend, soapUI. On my Mac. Annoyingly it would just immediately hang. Completely frozen. soapUI by default will try and render a web page on startup. This doesn't seem to work out so well when running on OSX.

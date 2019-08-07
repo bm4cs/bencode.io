@@ -3,7 +3,8 @@ layout: post
 title: "MIME Decoder and 64bit"
 date: "2008-04-22 22:48:22"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 This week I got a great introduction to the subtle difficulties that are waiting to be encountered when running a 32-bit component in a 64-bit environment. In short, an orchestration that employed the standard (ships with BizTalk) MIME Decoder pipeline component was consistently failing with the following:

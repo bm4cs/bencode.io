@@ -3,7 +3,10 @@ layout: post
 title: "wsimport"
 date: "2016-03-02 21:53:10"
 comments: false
-categories: "Java"
+categories:
+- dev
+tags:
+- java
 ---
 
 Thrown into a large, legacy EE code base, I needed to create new SOAP web services, and update some existing ones. To make life interesting, there lacked a repeatable process (e.g. via Ant or Maven) for processing WSDL's and generating the associated JAXWS and JAXB source code artifacts in a consistent manner.

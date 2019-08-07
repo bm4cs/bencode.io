@@ -3,7 +3,10 @@ layout: post
 title: "JDBC blob extractor"
 date: "2015-08-21 21:59:33"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 I was dealing with an application that stores image binary data in DB2. DB2 tooling (e.g. IBM Data Studio) didn't seem to offer a convenient way of extracting images out of the box. I wasn't suprised. It turns out dragging them out via JDBC was the path of least resistance.

@@ -3,7 +3,8 @@ layout: post
 title: "WSE Adapter Woes"
 date: "2008-03-18 23:38:11"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 

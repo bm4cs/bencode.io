@@ -3,7 +3,10 @@ layout: post
 title: "Spring Dependency Injection"
 date: "2013-04-25 21:58:05"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 Spring provides dependency injection capabilities using Setter injection, or Constructor injection. Object models can then be declaratively represented in XML. Here's a Setter injection based example using the `property` element:

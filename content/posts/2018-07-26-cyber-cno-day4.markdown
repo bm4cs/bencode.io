@@ -3,7 +3,11 @@ layout: post
 title: "CNO Day 4 Metasploitable"
 date: "2018-07-26 08:54:01"
 comments: false
-categories: "cybersec"
+categories:
+- hacking
+tags:
+- offensive
+- cno
 ---
 
 

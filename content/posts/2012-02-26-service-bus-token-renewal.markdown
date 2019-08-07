@@ -3,7 +3,8 @@ layout: post
 title: "Azure Service Bus WRAP Token Renewal"
 date: "2012-02-26 08:00:00"
 comments: false
-categories: "Azure,ServiceBus,ACS"
+categories:
+- cloud
 ---
 
 Service Bus samples and documentation often cover how to request a token from Access Control Services via REST. Here we touch on caching said token, and consider its renewal upon expiry.

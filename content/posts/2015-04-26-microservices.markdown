@@ -3,7 +3,11 @@ layout: post
 title: "Microservices"
 date: "2015-04-26 22:09:01"
 comments: false
-categories: "Microservices"
+categories:
+- dev
+tags:
+- microservices
+- architecture
 ---
 
 Amped by [@yaamehn](https://twitter.com/yaamehn)'s opinionated [Microservices A Reference Architecture](https://www.youtube.com/watch?v=KHqMPRA6jVI&list=LL5wCy3trg9aNEBcarsIWUEg&index=1) recent talk at the Microservices Australia Meetup, has got me thinking about the many interesting possibilities Microservices stirs up. Many useful techniques are touched on, regardless of whether actually adopting Microservices.

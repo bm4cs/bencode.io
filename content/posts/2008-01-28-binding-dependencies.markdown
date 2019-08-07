@@ -3,7 +3,8 @@ layout: post
 title: "Binding Dependencies"
 date: "2008-01-28 01:06:36"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 When ingesting (importing) BizTalk application bindings between different environments/machines it is important that its dependencies (hosts, host instances and adapters) are setup before running the import. Otherwise you run the risk of getting the following somewhat misleading error message:

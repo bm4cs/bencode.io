@@ -3,7 +3,8 @@ layout: post
 title: "Octopress workflow"
 date: 2013-06-17 20:36
 comments: true
-categories: Blog
+categories:
+- geek
 ---
 
 Recently I migrated my hosted FunnelWeb ASP.NET MVC blog, over to [Octopress](http://octopress.org) (a Jekyll based blogging framework) running on Amazon S3. This is a little personal reminder of how sweet it is to spawn a new post.

@@ -3,7 +3,10 @@ layout: post
 title: "Spring Data JPA Fun"
 date: "2015-05-29 17:03:05"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 Maven dependencies:

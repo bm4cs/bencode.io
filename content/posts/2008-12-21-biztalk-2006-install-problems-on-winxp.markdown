@@ -3,7 +3,8 @@ layout: post
 title: "BizTalk 2006 Install Problems on Windows XP"
 date: "2008-12-21 13:09:38"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 Today while doing some vanilla BizTalk 2006 R2 installs, discovered the installer was choking with:

@@ -3,7 +3,8 @@ layout: post
 title: "WMI with System.Management"
 date: "2008-03-18 00:18:33"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 Lately i've come across the requirement to provide diagnostic/environmental information from within BizTalk itself. Integration solutions can become unwieldy as the number of participating scheduled processes, windows services, web services, databases, COM+ components, queues and so on increases.

@@ -3,7 +3,8 @@ layout: post
 title: "BizTalk Custom WCF Behaviour"
 date: "2011-06-26 07:00:00"
 comments: false
-categories: "BizTalk,WCF"
+categories:
+- biztalk
 ---
 
 The ability to easily implement custom processing within the WCF stack, is one of the main reasons why WCF (Windows Communication Foundation) is such a rich programming paradigm compared to other ways of communication.

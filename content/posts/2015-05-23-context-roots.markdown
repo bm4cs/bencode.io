@@ -3,7 +3,10 @@ layout: post
 title: "Container Context roots"
 date: "2015-05-23 16:18:19"
 comments: false
-categories: "Java"
+categories:
+- dev
+tags:
+- java
 ---
 
 Occassionally the need to do multiple side-by-side deployments of the same packaged application can arise. In a scenario recently faced, it was useful to have multiple versions of our packaged EAR deployed and configured slightly differently (for example: with and without security in QA environments). As the application is expected to run hot 24/7, the need for a simple side-by-side versioning (e.g. v1, v2) scheme was also important. Allowing us to deploy `v1`, and later breaking (incompatible) versions `v2`, `v3`, given our service consumers the freedom to upgrade when convenient.

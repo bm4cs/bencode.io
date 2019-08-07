@@ -3,7 +3,8 @@ layout: post
 title: "BizTalk WMI Scripting"
 date: "2008-01-07 23:39:19"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 A few weeks ago we had a WSE 2.0 send port fail—resulting in the suspension of hundreds of service instances. Resumption of these suspended WSE instances resulted in a consistent general BTSException, with little useful detail. Sadly, due to lack of access to the production environment, the root cause of this problem remains a mystery. It was requested that the message part content for each be extracted for further analysis, and manual rectification. While not huge numbers, this would prove to be a tedious and monotonous task for our sysops administrator.

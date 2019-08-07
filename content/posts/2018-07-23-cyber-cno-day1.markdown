@@ -3,7 +3,11 @@ layout: post
 title: "CNO Day 1 Enumeration"
 date: "2018-07-23 09:26:01"
 comments: false
-categories: "cybersec"
+categories:
+- hacking
+tags:
+- offensive
+- cno
 ---
 
 Covers basics starting with enumeration.

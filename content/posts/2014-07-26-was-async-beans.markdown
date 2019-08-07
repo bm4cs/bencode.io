@@ -3,7 +3,10 @@ layout: post
 title: "Asynchronous Workloads with WebSphere Application Server"
 date: "2014-07-26 20:16:10"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 So I've been using WebSphere for a while now, and continue to discover new functionality in this powerhouse of an application server. This post focuses on performing background work in WebSphere Application Server (WAS) 7.0, which is an EE 5 compliant container.

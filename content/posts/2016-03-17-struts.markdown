@@ -3,7 +3,10 @@ layout: post
 title: "Struts"
 date: "2016-03-17 20:25:10"
 comments: false
-categories: "Java"
+categories:
+- dev
+tags:
+- java
 ---
 
 Struts, the famous Java MVC web framework of the late 90's and early 00's that pioneered well structured server side web logic. Many Java based enterprise applications developed during this era (a metric s#!t ton) still make heavy use of Struts 1.x today.

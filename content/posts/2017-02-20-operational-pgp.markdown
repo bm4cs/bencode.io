@@ -3,7 +3,10 @@ layout: post
 title: "Operational PGP"
 date: "2017-02-20 21:50:01"
 comments: false
-categories: "unix"
+categories:
+- hacking
+tags:
+- gpg
 ---
 
 A [practical guide](https://gist.github.com/grugq/03167bed45e774551155) about doing secure email the right way with PGP.

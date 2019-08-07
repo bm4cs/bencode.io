@@ -3,7 +3,10 @@ layout: post
 title: "Prepared Statement Overflow"
 date: "2016-01-12 21:12:10"
 comments: false
-categories: "java"
+categories:
+- dev
+tags:
+- java
 ---
 
 On the hunt for an sporadic `DB2 SQL Error -805`, I took a dive into some logs. It had been rearing its ugly head for weeks now, and starting to impact our business area. The call stack pointed straight to the bad patch of code, the Java EE solution contains a programmatic `TimerService`, responsible for shuffling data from one repository to other; a rudimentary replication solution in other words. The source repository happened to be DB2 on AIX. No big deal. Except that the code has proven to be flakey under load. That is, the code was transferring ~500,000 records daily, but was choking for ~100,000 records, the lions share of the load and failures seemed to pertain to BLOB data.

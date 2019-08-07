@@ -3,7 +3,8 @@ layout: post
 title: "Managing Database Evolution"
 date: "2010-06-05 22:47:03"
 comments: false
-categories: "Software"
+categories:
+- data
 ---
 
 

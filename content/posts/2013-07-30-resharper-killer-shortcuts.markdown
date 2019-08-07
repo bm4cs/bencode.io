@@ -3,7 +3,11 @@ layout: post
 title: "ReSharper killer shortcuts"
 date: "2013-07-30 21:05:20"
 comments: false
-categories: [C#, ReSharper]
+categories:
+- dev
+tags:
+- csharp
+- resharper
 ---
 
 [ReSharper](http://www.jetbrains.com/resharper/) (R#) is a tool that I use, love and recommend for anyone who uses Visual Studio. The immediate benefits that it brings and the sheer productivity boost that you gain from using it makes Visual Studio a pleasure to use. I have been using R# for about 2 years now, and keep discovering new gems every now and then, from other R# fans. It compliments Visual Studio so well, sometimes you don't notice that you are actually using R#.

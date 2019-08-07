@@ -3,7 +3,8 @@ layout: post
 title: "BizTalk XHTML Formatted Messages"
 date: "2008-12-21 16:37:36"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 BizTalk messages are very XML centric. A while ago there was a requirement to produce a neatly formatted XHTML report, which was destined to be emailed.

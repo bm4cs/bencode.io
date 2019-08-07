@@ -3,7 +3,8 @@ layout: post
 title: "Web Service Proxies"
 date: "2008-02-04 23:31:36"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 Publishing BizTalk orchestrations (or schemas) as Web Services is a wonderful thing. A neat little code generator known as the [BizTalk Web Service Publishing Wizard](http://technet.microsoft.com/en-us/library/aa578703.aspx) accompanies the standard suite of BizTalk development tools, and basically plumbs up a classic (asmx) web service that inherits parts of the BizTalk object model. The web service must be hosted-and-execute on a BizTalk Server that holds the "exposed" orchestration. It then becomes a simple affair of defining a SOAP Receive Location that binds to the generated web service.

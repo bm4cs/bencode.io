@@ -3,7 +3,8 @@ layout: post
 title: "KB939373 Breaks IIS"
 date: "2008-01-21 20:57:59"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 I currently work in an environment where Windows XP is deployed across the organisation. Consequently, it is also the OS on which we write code. Today I booted my machine to find my IIS 5.0 web server was no longer functioning. When I attempted to fire up the service, I received a handy "The World Wide Web Publishing service terminated with the following error: The specified procedure could not be found". Interesting...my box has been nice and stable for the last few months. What gives?

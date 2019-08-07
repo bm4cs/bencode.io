@@ -3,7 +3,10 @@ layout: post
 title: "DIY Computer Part 2 The ALU"
 date: "2016-03-12 22:35:10"
 comments: false
-categories: "Geek"
+categories:
+- geek
+tags:
+- nand2tetris
 ---
 
 A continuation of my participation in the amazing [Nand2Tetris](http://www.nand2tetris.org/) course, by Noam Nisan and Shimon Schocken, now running on [Coursera](https://www.coursera.org/course/nand2tetris1).

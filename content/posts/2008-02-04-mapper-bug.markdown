@@ -3,7 +3,8 @@ layout: post
 title: "Mapper Bug"
 date: "2008-02-04 22:36:01"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 In the process of maintaining some existing maps, I interestingly came across the following error message, whenever I attempted to build the associated schemas project.

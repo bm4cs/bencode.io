@@ -3,7 +3,10 @@ layout: post
 title: "REST APIs with RESTEasy and Tomcat"
 date: "2014-04-17 21:48:10"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 Java EE application servers at times can feel big and heavy...as in behemoth. I'm "lucky" enough to work with an old version of WebSphere AS on a daily basis at the moment. To keep things fast, I've resorted to using lighter weight containers for the job at hand. [Tomcat](http://tomcat.apache.org/) is king when it comes to meeting the servlet specification, and no more.

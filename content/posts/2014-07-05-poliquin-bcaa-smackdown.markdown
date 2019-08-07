@@ -3,7 +3,10 @@ layout: post
 title: "Poliquin BCAA Smackdown"
 date: "2014-07-05 11:50:10"
 comments: false
-categories: [Health]
+categories:
+- geek
+tags:
+- gym
 ---
 
 BCAA's (Branched chain amino acids) have always had a place in my gym bag for about the last 2 years.

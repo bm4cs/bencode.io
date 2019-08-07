@@ -3,7 +3,10 @@ layout: post
 title: "bash"
 date: "2016-05-01 01:01:01"
 comments: false
-categories: "nix"
+categories:
+- linux
+tags:
+- bash
 ---
 
 Bash is a Unix shell written by Brian Fox in 1989 for the GNU Project as a free replacement for the [Bourne shell](https://en.wikipedia.org/wiki/Bourne_shell). To this day, Bash remains one of the most powerful and ubiquitous scripting tools on the planet.

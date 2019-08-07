@@ -3,7 +3,8 @@ layout: post
 title: "Spike list 2014"
 date: "2014-04-01 20:44:05"
 comments: false
-categories: [General]
+categories:
+- geek
 ---
 
 I suffer from list syndrome. A condition where you constantly feel the urge to quickly scribble down ideas, and stuff your pockets with these little yellow crumpled up post-it notes...mine seem to focus on two main topics, [1] of all the cool ideas that randomly pop into my head, and [2] technology related things I want to spend my "free" time studying.

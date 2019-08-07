@@ -3,7 +3,11 @@ layout: post
 title: "CNO Presentation"
 date: "2018-07-27 08:47:01"
 comments: false
-categories: "cybersec"
+categories:
+- hacking
+tags:
+- offensive
+- cno
 ---
 
 

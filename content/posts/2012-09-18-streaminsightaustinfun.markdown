@@ -3,7 +3,12 @@ layout: post
 title: "StreamInsight in Azure"
 date: "2012-09-18 05:21:59"
 comments: false
-categories: StreamInsight Azure
+categories:
+- dev
+tags:
+- streaminsight
+- cep
+- events
 ---
 
 Well, the dust is starting to settle after an amazing geek-out week at the gold coast with the Mexia team. Pre-TechEd Australia 2012, we kicked off with the Mexia's "Code Camp 2.0", an opportunity for the team to come together and deep dive (hack code, whiteboard, design and discuss, present) on emerging Microsoft technologies. It was epic to say the least.

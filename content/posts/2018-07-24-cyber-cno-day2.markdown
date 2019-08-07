@@ -3,7 +3,11 @@ layout: post
 title: "CNO Day 2 Exploitation"
 date: "2018-07-24 08:47:01"
 comments: false
-categories: "cybersec"
+categories:
+- hacking
+tags:
+- offensive
+- cno
 ---
 
 # Exploitation

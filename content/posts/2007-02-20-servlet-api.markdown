@@ -3,7 +3,10 @@ layout: post
 title: "The Servlet API"
 date: "2007-02-20 13:12:10"
 comments: false
-categories: "Java"
+categories:
+- dev
+tags:
+- java
 ---
 
 As you start out building Java web applications, you soon find that it sit upon several well designed building blocks. Once the penny drops, and an intuition about these building blocks is gained, creating web apps on Java becomes a delight.

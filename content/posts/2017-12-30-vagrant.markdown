@@ -3,7 +3,8 @@ layout: post
 title: "Vagrant"
 date: "2017-12-30 20:09:01"
 comments: false
-categories: "linux"
+categories:
+- linux
 ---
 
 When something becomes messy in the software industry, we have the habit of tucking the problems away behind abstractions. To me Vagrant is simply an abstraction layer for working with a range of hypervisors (libvirt, VirtualBox, VMWare, Hyper-V, Docker and more), in a reliable and consistent manner.

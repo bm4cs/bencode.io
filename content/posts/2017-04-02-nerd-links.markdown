@@ -3,7 +3,8 @@ layout: post
 title: "Nerd Links"
 date: "2017-04-02 13:38:10"
 comments: false
-categories: "Geek"
+categories:
+- geek
 ---
 
 ## Contents ##

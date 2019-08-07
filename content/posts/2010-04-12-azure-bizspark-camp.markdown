@@ -3,7 +3,8 @@ layout: post
 title: "Azure BizSpark Camp"
 date: "2010-04-12 07:00:00"
 comments: false
-categories: "Software"
+categories:
+- geek
 ---
 
 Microsoft (through the BizSpark program) at zero cost to attendees, organised exclusive "choice" Windows Azure training from Chris Auld, geek out resources for for a whole weekend of Windows Azure education, collaborated with some inspiring people, and left with a slightly inflated ego.

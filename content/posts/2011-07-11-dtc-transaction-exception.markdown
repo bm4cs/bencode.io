@@ -3,7 +3,8 @@ layout: post
 title: "The BizTalk WCF SQL Binding and MSDTC"
 date: "2011-07-11 07:00:00"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 Highlights a common misconfiguration of the BizTalk WCF Adapter Pack 2.0 SQL binding.

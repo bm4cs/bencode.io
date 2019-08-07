@@ -3,7 +3,8 @@ layout: post
 title: "Azure Essentials List"
 date: "2012-02-26 08:00:00"
 comments: false
-categories: "Azure"
+categories:
+- cloud
 ---
 
 A living post of the tools, frameworks and guidance that have made life with Azure better.

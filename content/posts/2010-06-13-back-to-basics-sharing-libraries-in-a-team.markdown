@@ -3,7 +3,8 @@ layout: post
 title: "Sharing Libraries in a Team"
 date: "2010-06-13 01:01:20"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 When developing in a team consisting of more members than yourself, you’ll quickly run into the scenario where shared libraries and/or other similar resources need to be shared in someway.

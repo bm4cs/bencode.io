@@ -3,7 +3,10 @@ layout: post
 title: "EJB Timing with Interceptors"
 date: "2015-05-13 15:36:19"
 comments: false
-categories: "Java"
+categories:
+- dev
+tags:
+- java
 ---
 
 Java EE is packed tight with useful functionality. The humble `Interceptor` provides cross cutting functionality external to the targetted code, without modifying the code itself. In other words [AOP](http://en.wikipedia.org/wiki/Aspect-oriented_programming). The API is rather simple an involves using `@AroundInvoke`.

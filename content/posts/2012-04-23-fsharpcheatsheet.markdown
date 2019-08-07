@@ -3,7 +3,10 @@ layout: post
 title: "F# Cheatsheet"
 date: "2012-04-23 07:00:00"
 comments: false
-categories: "F#"
+categories:
+- dev
+tags:
+- fsharp
 ---
 
 The VS11 beta includes a really slick cheatsheet style F# language reference. A gem for groking F# syntax.

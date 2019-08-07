@@ -3,7 +3,10 @@ layout: post
 title: "WCF Error Handling using IErrorHandler and log4net"
 date: "2012-04-11 07:00:00"
 comments: false
-categories: "WCF"
+categories:
+- dev
+tags:
+- wcf
 ---
 
 When its comes to managing and supporting WCF services, like any software, having insight into erroronous situtions is essential. There are several ways to go about this that are specific to WCF, such as enabling a trace listener for example. A more customisable option involves fleshing out an [IErrorHandler](http://msdn.microsoft.com/en-us/library/system.servicemodel.dispatcher.ierrorhandler.aspx). As put by MSDN, provides the necessary hooks to run custom error processing logic.

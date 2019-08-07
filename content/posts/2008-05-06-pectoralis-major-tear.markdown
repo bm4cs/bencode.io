@@ -3,7 +3,8 @@ layout: post
 title: "Pectoralis Major Tear"
 date: "2008-05-06 07:00:00"
 comments: false
-categories: Life BodyBuilding
+categories:
+- geek
 ---
 
 Firstly, I am not a doctor or qualified in a medical profession in any way, I am just documenting my personal experiences with this particular injury.

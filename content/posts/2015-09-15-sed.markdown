@@ -3,7 +3,10 @@ layout: post
 title: "Stream Editor (sed)"
 date: "2015-09-15 19:48:01"
 comments: false
-categories: "nix"
+categories:
+- linux
+tags:
+- sed
 ---
 
 [sed](http://www.gnu.org/software/sed/) has rocked my world.

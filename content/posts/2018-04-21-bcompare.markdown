@@ -3,7 +3,10 @@ layout: post
 title: "Beyond Compare"
 date: "2018-04-21 22:01:01"
 comments: false
-categories: "nix"
+categories:
+- dev
+tags:
+- diff
 ---
 
 Installation on Linux is well [documented](https://www.scootersoftware.com/download.php?zz=kb_linux_install).

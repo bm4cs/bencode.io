@@ -3,7 +3,10 @@ layout: post
 title: "awk"
 date: "2016-01-17 08:14:01"
 comments: false
-categories: "nix"
+categories:
+- linux
+tags:
+- awk
 ---
 
 After recently getting my hands dirty with the wonderful [sed]({% post_url 2015-09-15-sed %}), the time has come for me to step it up with awk.

@@ -3,7 +3,10 @@ layout: post
 title: "JavaServer Pages"
 date: "2007-02-28 09:15:48"
 comments: false
-categories: "java"
+categories:
+- dev
+tags:
+- java
 ---
 
 As a follow up to previous post [The Servlet API]({% post_url 2007-02-20-servlet-api %}), this post aims to sweeps over some fundamentals of JSP, a technology which thanks to its simple yet extensible design, still to this day, underpins many modern web application frameworks.

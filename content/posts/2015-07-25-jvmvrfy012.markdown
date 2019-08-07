@@ -3,7 +3,10 @@ layout: post
 title: "JVMVRFY012 Stack Shape Inconsistent"
 date: "2015-07-25 18:40:05"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 Following the routine restart of a WebSphere app server earlier this week, our application refused to start back up. This was an annoying suprise, as the environments are normally incredibly stable.

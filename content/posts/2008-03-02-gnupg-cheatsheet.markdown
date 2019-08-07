@@ -3,7 +3,8 @@ layout: post
 title: "GnuPG Cheatsheet"
 date: "2008-03-02 17:16:07"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 This semester I have enrolled in a [security unit](http://www.canberra.edu.au/courses/index.cfm?action=detail&subjectid=6697&year=2008) at my local University. Before we get into the mechanics of modern security techniques (mathematical theory, ciphers, protocols, hashing, Kerberos), the first lecture kicked off with a gentle overview of PKI and the basics of using the [GNU Privacy Guard](http://gnupg.org/), aka GnuPG or GPG for short. In short it is a complete and free implementation of the OpenPGP standard. I havent used GPG on the Windows platform before, there are win32 binaries available for download straight from the official site. Like most *NIX born software it is very portable. The binaries are happy running off a mass storage device (eg. a USB flashdrive) assuming the drive is mounted on a suitable Windows host. I hope to make PGP-based security more of apart of my day-to-day routine...im not aware of many people that use PGP compatible systems; I wonder why this is? My public key is also now available on the about page of my blog.

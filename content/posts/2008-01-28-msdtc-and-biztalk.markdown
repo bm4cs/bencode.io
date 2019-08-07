@@ -3,7 +3,8 @@ layout: post
 title: "MSDTC and BizTalk"
 date: "2008-01-28 00:43:38"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 Last week I had to rebuild a BizTalk 2006 development box, running Windows Server 2003 R2. Im not sure where or how the base image came about, but through installing BizTalk I hit a number of interesting snags, all relating to not having a functional Distributed Transaction Coordinator or MSDTC; commonly employed for managing transactions across distributed resources.

@@ -3,7 +3,10 @@ layout: post
 title: "Shay Banon on Innovation"
 date: "2016-11-22 22:05:01"
 comments: false
-categories: "business"
+categories:
+- geek
+tags:
+- leadership
 ---
 
 Some great wisdom imparted by Shay Banon (creator of Elasticsearch).

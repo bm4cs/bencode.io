@@ -3,7 +3,8 @@ layout: post
 title: "GNU/Linux Commands"
 date: "2017-02-18 21:06:01"
 comments: false
-categories: "nix"
+categories:
+- linux
 ---
 
 

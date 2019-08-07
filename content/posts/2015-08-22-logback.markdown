@@ -3,7 +3,10 @@ layout: post
 title: "Logback Boilerplate"
 date: "2015-08-22 09:16:01"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 A useful starting place logback setup.

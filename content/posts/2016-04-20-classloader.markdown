@@ -3,7 +3,10 @@ layout: post
 title: "Classloaders"
 date: "2016-04-20 20:33:10"
 comments: false
-categories: "java"
+categories:
+- dev
+tags:
+- java
 ---
 
 

@@ -3,7 +3,8 @@ layout: post
 title: "C# 3.0 Language Extensions"
 date: "2008-12-25 18:50:26"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 Put together a little snippet to remind myself of the some of the beautiful language extensions that shipped with the C# language.

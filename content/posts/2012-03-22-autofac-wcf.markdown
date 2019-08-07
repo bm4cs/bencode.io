@@ -3,7 +3,12 @@ layout: post
 title: "Autofac Your WCF"
 date: "2012-03-22 07:00:00"
 comments: false
-categories: "WCF,Autofac"
+categories:
+- dev
+tags:
+- wcf
+- di
+- ioc
 ---
 
 Autofac (a .NET IoC container) makes .NET code better. Simple. Controlling the way software interacts with it's components (dependencies) is one powerful way to the increase its "bendability". Bendability meaning how well a chunk of software is able to cope with change (this is inevitable). WCF's unique object model (bindings, endpoints, behaviors, contracts, etc) can make doing IoC more of a challenge, however Autofac's native WCF integration comes to the rescue.

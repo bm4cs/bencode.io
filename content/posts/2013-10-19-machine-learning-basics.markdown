@@ -3,7 +3,10 @@ layout: post
 title: "Machine learning basics"
 date: "2013-10-19 17:39:00"
 comments: false
-categories: [Machine Learning, Geek]
+categories:
+- dev
+tags:
+- ml
 ---
 
 Well, after wanting to do this for years, I finally bit the bullet and enroled in the infamous [Machine Learning class](https://www.coursera.org/course/ml) run by Andrew Ng through Coursera and Stanford. Professor Andrew Ng is Director of the Stanford Artificial Intelligence Lab, the main AI research organization at Stanford, with 20 professors and about 150 students/post docs. The first revision of this course ran in 2008, where Andrew started SEE (Stanford Engineering Everywhere), which was Stanford's first attempt at free, online distributed education.

@@ -3,7 +3,8 @@ layout: post
 title: "SSO Configuration Road Block"
 date: "2010-11-24 12:58:25"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 Recently I’ve had the need to setup a BizTalk Server 2006 R2 virtual machine. Quietly confident about my experience with this version of BizTalk, I jumped in head first to *quickly* get a simple single server based installation configured on a 32-bit VMWare based VM.

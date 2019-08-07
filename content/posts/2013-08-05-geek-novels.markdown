@@ -3,7 +3,10 @@ layout: post
 title: "Must read tech novels for all geeks"
 date: "2013-08-05 22:04:00"
 comments: false
-categories: [Books, Geek]
+categories:
+- geek
+tags:
+- books
 ---
 
 Here's my (growing) list of must read biographies of computing industry superheros. All of these books are based on real life stories and events, and despite my short attention span, I have found them all to be extremely captivating.

@@ -3,7 +3,8 @@ layout: post
 title: "BizTalk Servers Slow First Hit"
 date: "2010-08-02 23:10:10"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 Lately I been thinking about BizTalk Server, and a particular behavior that it consistently demonstrates without fail. It takes a dreadful amount of time to service a “cold” request, however once “warmed”, it hums.

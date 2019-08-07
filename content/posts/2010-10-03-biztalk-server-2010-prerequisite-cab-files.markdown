@@ -3,7 +3,8 @@ layout: post
 title: "BizTalk Server 2010 Prerequisite CAB Files"
 date: "2010-10-03 14:34:26"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 Exciting times! BizTalk Server 2010 is out and as per every major release of the product there are a fresh set of redistributable CAB links to hunt down. These links available from the [official installation guides](http://www.microsoft.com/downloads/en/details.aspx?FamilyID=b77d6a4f-8b41-470e-a58c-730dc5859b38&displaylang=en).

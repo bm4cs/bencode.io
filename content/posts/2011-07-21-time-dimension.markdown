@@ -3,7 +3,8 @@ layout: post
 title: "Time Dimension Populate Script"
 date: "2011-07-21 07:00:00"
 comments: false
-categories: "SQL,SSAS,Cubes"
+categories:
+- data
 ---
 
 Here is a very simple TSQL script that will flesh out a time dimension, for use with SQL Server Analysis Services (SSAS) cube, and can easily be molded to work with other vendor implementations.

@@ -3,7 +3,10 @@ layout: post
 title: "Eclipse brain damage"
 date: "2015-09-02 10:58:33"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 In my current project we use IBM's version of Eclipse. On a Windows 7 VM. The VM crashes weekly.

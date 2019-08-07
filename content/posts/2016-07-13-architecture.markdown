@@ -3,7 +3,8 @@ layout: post
 title: "Architecture"
 date: "2016-07-13 22:13:10"
 comments: false
-categories: "Geek"
+categories:
+- dev
 ---
 
 A collection of software concepts I plan to apply to some up coming projects. Some fundamental philosophies:

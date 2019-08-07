@@ -3,7 +3,11 @@ layout: post
 title: "Cherished GCC flags"
 date: "2015-08-22 15:32:44"
 comments: false
-categories: "nix"
+categories:
+- dev
+tags:
+- gcc
+- c
 ---
 
 A (work in progress) compilation of useful GCC configuration, focused on C.

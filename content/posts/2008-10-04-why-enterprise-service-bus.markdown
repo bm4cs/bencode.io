@@ -3,7 +3,8 @@ layout: post
 title: "Why Enterprise Service Bus?"
 date: "2008-10-04 09:51:03"
 comments: false
-categories: BizTalk ESB
+categories:
+- biztalk
 ---
 
 To provide a messaging infrastructure that will:

@@ -3,7 +3,8 @@ layout: post
 title: "Performance Analysis"
 date: "2008-01-28 12:46:48"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 [Log Parser](http://www.microsoft.com/downloads/details.aspx?FamilyID=890cd06b-abf8-4c25-91b2-f8d975cf8c07&displaylang=en): An elegant utility that does all the real grunt work. It is well worth spending some time with this guy as it will come in handy for other unexpected situations, like analysing your web server logs, or parsing through custom CSV files etc.

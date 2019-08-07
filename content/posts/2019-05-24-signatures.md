@@ -3,7 +3,8 @@ layout: post
 title: "Digital Signatures"
 date: "2019-05-24 21:17:01"
 comments: false
-categories: "linux"
+categories:
+- linux
 ---
 
 The sequence of tasks undertaken that make digital signatures possible. This does have a slight XML flavour to it.

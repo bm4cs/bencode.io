@@ -3,7 +3,8 @@ layout: post
 title: "BizTalk Mapper Multiple Schemas"
 date: "2008-02-12 22:38:09"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 

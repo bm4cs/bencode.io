@@ -3,7 +3,11 @@ layout: post
 title: "CNO Day 3 PrivEsc"
 date: "2018-07-25 08:54:01"
 comments: false
-categories: "cybersec"
+categories:
+- hacking
+tags:
+- offensive
+- cno
 ---
 
 Privilege Escalation.

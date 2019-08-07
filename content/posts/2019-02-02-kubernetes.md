@@ -3,8 +3,11 @@ layout: post
 title: "Kubernetes"
 date: "2019-02-02 13:34:10"
 comments: false
-categories: [dev]
-tags: [k8s, containers]
+categories:
+- k8s
+tags:
+- containers
+- docker
 ---
 
 - [Terminology](#terminology)

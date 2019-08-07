@@ -3,7 +3,8 @@ layout: post
 title: "Orchestration Deployment Error 26"
 date: "2008-04-25 21:47:41"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 There seems to be an intermittent deployment problem with BizTalk 2006, that has been the cause of much time wasting. When attempting to deploy BizTalk artefacts either explicitly using the BizTalk Administration Console or the Visual Studio deploy functionality results in the following:

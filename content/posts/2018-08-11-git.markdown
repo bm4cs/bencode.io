@@ -3,7 +3,8 @@ layout: post
 title: "Git"
 date: "2018-08-11 18:43:19"
 comments: false
-categories: "dev"
+categories:
+- git
 ---
 
 ## Aliases

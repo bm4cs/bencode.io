@@ -3,7 +3,10 @@ layout: post
 title: "Spring MVC"
 date: "2015-05-31 21:16:05"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 Some of my learning notes about using the excellent [Spring MVC](https://spring.io/guides/gs/serving-web-content/) framework to build a simple MVC based web application. Spring MVC is an action oriented framework. For a good overview on the differences between UI Component and Action oriented frameworks checkout this [link](http://www.oracle.com/technetwork/articles/java/mvc-2280472.html).

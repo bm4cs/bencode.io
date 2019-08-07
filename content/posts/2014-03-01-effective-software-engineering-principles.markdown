@@ -3,7 +3,8 @@ layout: post
 title: "Essential software development toolkit"
 date: "2014-03-01 21:46:37"
 comments: false
-categories: [General]
+categories:
+- dev
 ---
 
 Sometimes life in the world of software can seem like complete chaos, and other times a well planned cathedral. Perhaps this is due to subjective nature of software itself. Like any other engineering related discipline (e.g. building construction), beauty is in the eyes of the creator. Also a happy customer is a happy customer...even if they want a [pink color scheme and pictures of kittens](http://theoatmeal.com/comics/design_hell) on their screens. Unlike the construction industry, a customer does not happily accept a product built on unreliable foundations, that is unmaintainable mess. Problems such as software quality and longevity, and even the impediance mismatch between customers and engineers, are by no means new problems, and have been solved in a plethora of ways a long time ago.

@@ -3,7 +3,10 @@ layout: post
 title: "My Mutt"
 date: "2015-08-18 21:03:40"
 comments: false
-categories: [nix]
+categories:
+- linux
+tags:
+- mutt
 ---
 
 ![Mutt](/images/mutt.png)

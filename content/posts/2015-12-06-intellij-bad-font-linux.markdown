@@ -3,7 +3,10 @@ layout: post
 title: "IntelliJ Bad Font Rendering on Linux"
 date: "2015-12-05 16:12:00"
 comments: false
-categories: "nix,java"
+categories:
+- dev
+tags:
+- java
 ---
 
 Font rendering in IntelliJ on Linux looks horrid. Any Java based application does for that matter. I can't take it anymore. I just burnt 30 minutes looking into solutions. Fastest option, run it on the Linux optimised JVM [tuxjdk](https://code.google.com/p/tuxjdk/).

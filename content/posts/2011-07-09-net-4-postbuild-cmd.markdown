@@ -3,7 +3,10 @@ layout: post
 title: ".NET 4.0 GAC Post-build Event Command"
 date: "2011-07-09 07:00:00"
 comments: false
-categories: ".NET"
+categories:
+- dev
+tags:
+- csharp
 ---
 
 For [various design reasons](http://stackoverflow.com/questions/2660355/net-4-0-has-a-new-gac-why) .NET 4.0 has it's own GAC, located here.

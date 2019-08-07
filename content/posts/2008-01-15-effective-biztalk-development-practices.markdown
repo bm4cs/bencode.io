@@ -3,7 +3,8 @@ layout: post
 title: "Effective BizTalk Development Practices"
 date: 2008-01-15 22:50:21
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 [Alan Smith](http://geekswithblogs.net/asmith) has a fairly dated (2004), but useful post on [The Seven Habits of Highly Effective BizTalkers](http://geekswithblogs.net/asmith/articles/17333.aspx). Alan's article has inspired me to discover what else help make an "effective BizTalk developer"... a work in progress.

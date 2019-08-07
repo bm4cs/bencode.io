@@ -3,7 +3,8 @@ layout: post
 title: "TFS Get Latest = Unspecified Error"
 date: "2008-01-21 21:17:21"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 Last week, I needed branch a BizTalk codebase off so some enhancement work could take place. After re-jigging a dozen or so projects, was quiet proud of the new (and in my opinion) more logical solution structure. OK, first test... shut-down VS.NET, re-open it and do a get-latest. I get the following:

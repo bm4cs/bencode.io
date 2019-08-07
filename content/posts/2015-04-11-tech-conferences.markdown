@@ -3,7 +3,8 @@ layout: post
 title: "Nerd Conferences"
 date: "2015-04-11 18:05:01"
 comments: false
-categories: "Geek"
+categories:
+- geek
 ---
 
 One of the best ways to evolve in the software industry is to interact with other developers and those technically minded. Resources such as user groups, Twitter and conferences are useful for this. It's disturbingly easy to develop reality distortion or tunnel vision with the projects and technology stacks you spend a majority of your time with.

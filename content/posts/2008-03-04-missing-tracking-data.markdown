@@ -3,7 +3,8 @@ layout: post
 title: "Missing Tracking Data?"
 date: "2008-03-04 22:38:59"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 BizTalk's tracking capabilities are a wonderful diagnostic feature when in thick of core BizTalk development work, or when a curly situation raises its head in a production environment. Typically when involved with BizTalk development it is not uncommon to find yourself integrating with COTS (Commercial Off The Shelf) products. Participating systems can (and do) deviate from the agreed contracts, sometimes in ways never foreseen. Doing integration between business units and their systems is a political hotspot when things go wrong; being able to identify the cause of an integration problem quickly is crucial. BizTalk tracking can be easily switched on and off at runtime, at both the port and orchestration level. The actual information (message bodies and/or context properties) and the granularity (pre and/or post processing) of tracking can be easily controlled using the administration console.

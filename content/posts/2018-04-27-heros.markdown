@@ -3,7 +3,8 @@ layout: post
 title: "Computer Heros"
 date: "2017-04-27 22:12:10"
 comments: false
-categories: "geek"
+categories:
+- geek
 ---
 
 Some heros in the world of computer science.

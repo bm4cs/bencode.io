@@ -3,7 +3,8 @@ layout: post
 title: "T4 Template Custom Host and BizTalk Pipeline"
 date: "2012-04-16 07:00:00"
 comments: false
-categories: "BizTalk,T4"
+categories:
+- biztalk
 ---
 
 Frameworks like ASP.NET are well equipped with templating engines, and more so now with the extensibility that ASP.NET MVC offers (can run with the awesome Razor view engine, or swap in a view engine of your liking such as the excellent Spark view engine). Simply put, a views template is responsible for transforming a model into a representation.

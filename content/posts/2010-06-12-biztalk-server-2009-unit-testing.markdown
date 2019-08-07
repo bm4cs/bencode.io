@@ -3,7 +3,8 @@ layout: post
 title: "BizTalk Server 2009 Unit Testing"
 date: "2010-06-12 14:00:00"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 I feel like i've missed the boat with this, but the "first class" unit testing support that has been added to BizTalk Server 2009 is terrific. Unit testing with BizTalk Server up to this point, has always been very painful and custom.

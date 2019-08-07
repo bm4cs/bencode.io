@@ -3,7 +3,8 @@ layout: post
 title: "thinkfan"
 date: "2016-03-19 17:39:10"
 comments: false
-categories: "Geek"
+categories:
+- linux
 ---
 
 I run Debian on a ThinkPad T420s. ThinkPad's have a great Linux compatibility story, and the T420s is no exception. The cooling fan situation seemed in need of some attention though, with fans running at high RPM most of the time. Not only was this really noisy, hit the battery quite hard too.

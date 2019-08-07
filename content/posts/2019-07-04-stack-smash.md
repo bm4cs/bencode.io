@@ -4,9 +4,9 @@ title: "Smashing the Stack Walk-throughs"
 date: "2019-07-04 8:40:10"
 comments: false
 categories:
-- cybersec
-tags:
 - hacking
+tags:
+- exploit
 ---
 
 Here I plan to take a closer look at vulnerabilties around the use of the x86 stack, by causing a *buffer overflow*. The stack is only one type of attack in a pool of many others such as heap allocators, race conditions, root exploits, ELF, networking, viruses, etc.

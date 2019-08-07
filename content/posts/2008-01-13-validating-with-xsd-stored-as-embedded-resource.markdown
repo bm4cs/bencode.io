@@ -3,7 +3,8 @@ layout: post
 title: "Validating with XSD stored as Embedded Resource"
 date: "2008-01-13 16:16:42"
 comments: false
-categories: [BizTalk]
+categories:
+- biztalk
 ---
 
 Last week I was involved with the maintenance of a class library responsible for validating a message against its schema. This was being invoked from an orchestration. As an older utility library, was based on .NET 1.1 base classes (e.g. `XmlValidatingReader`) and took in an `XLANGMessage` parameter to extract both the message content and the associated schema (as per the BizTalk message definition).

@@ -3,8 +3,13 @@ layout: post
 title: "SSO with Active Directory"
 date: "2019-01-04 11:10:10"
 comments: false
-categories: [dev]
-tags: [ldap,ad,kerberos,sssd,nss]
+categories: 
+- dev
+tags:
+- ldap
+- kerberos
+- sssd
+- nss
 ---
 
 Providing SSO by integrating Linux (or FreeBSD) with a directory service, like Microsoft Active Directory (AD), is no where as daunting as it once was, and highlights some fascinating subsystems that enable users to be defined from a variety of data sources (such as LDAP) other than just the traditional `/etc/passwd` file.

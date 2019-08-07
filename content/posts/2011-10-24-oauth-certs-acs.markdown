@@ -3,7 +3,8 @@ layout: post
 title: "OAuth Certificate Authentication with ACS"
 date: "2011-10-24 07:00:00"
 comments: false
-categories: "Azure,AppFabric,ACS"
+categories:
+- cloud
 ---
 
 My experience authenticating clients with the Windows Azure AppFabric Access Control Service (ACS) using X.509 certificates.

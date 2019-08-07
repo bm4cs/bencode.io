@@ -3,7 +3,11 @@ layout: post
 title: "soapUI mock bug"
 date: "2016-06-01 20:57:10"
 comments: false
-categories: "Geek"
+categories:
+- dev
+tags:
+- soap
+- webservices
 ---
 
 Today I stumbled onto interesting soapUI quirk, involving a combination of mock services, SOAP 1.2 and multipart message definitions.

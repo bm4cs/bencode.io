@@ -3,7 +3,10 @@ layout: post
 title: "Native Desktop Window Skeleton with ATL"
 date: "2012-12-31 12:50:06"
 comments: false
-categories: "C++"
+categories:
+- dev
+tags:
+- c++
 ---
 
 Building native Windows application with C++ can be done using a variety of techniques, from handrolled win32 to MFC. Some uglier than others. Using some ATL macros, here is the most minimalist implementation I could find, that will get you a native Windows desktop shell up and running.

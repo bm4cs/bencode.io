@@ -3,7 +3,8 @@ layout: post
 title: "ESB Guidance Package"
 date: "2008-08-29 21:50:55"
 comments: false
-categories: BizTalk
+categories:
+- biztalk
 ---
 
 Lately I've been having heaps of fun playing with what's known as the "[ESB Guidance](http://www.codeplex.com/esb)" (ESBG). A community/open source driven initiative as an attempt to fill the gap Microsoft currently have in the SOA/ESB space. At a high level it augments its existing messaging/integration engine, BizTalk Server, by adding extended functionality. The ESB guidance aims to:

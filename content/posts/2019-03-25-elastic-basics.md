@@ -6,7 +6,9 @@ comments: false
 categories:
 - elastic
 tags:
-- elastic
+- elasticsearch
+- elk
+- logstash
 ---
 
 Some Elasticsearch wisdom I gleaned from Jason Wong and Mark Laney from Elastic.

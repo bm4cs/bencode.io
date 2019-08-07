@@ -3,7 +3,11 @@ layout: post
 title: "Boot to Root"
 date: "2018-08-10 20:24:48"
 comments: false
-categories: "cybersec"
+categories:
+- hacking
+tags:
+- offensive
+- cno
 ---
 
 Some fun I hacking on a *boot to root* challenge I did with a mate recently.

@@ -3,7 +3,10 @@ layout: post
 title: "DIY Computer Part 5 Machine Architecture"
 date: "2017-04-17 18:49:10"
 comments: false
-categories: "Geek"
+categories:
+- geek
+tags:
+- nand2tetris
 ---
 
 A continuation of my participation in the amazing [Nand2Tetris](http://www.nand2tetris.org/) course, by Noam Nisan and Shimon Schocken, now running on [Coursera](https://www.coursera.org/course/nand2tetris1).

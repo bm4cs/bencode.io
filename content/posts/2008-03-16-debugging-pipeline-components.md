@@ -3,7 +3,8 @@ layout: post
 title: "Debugging Pipeline Components"
 date: "2008-03-16 11:05:41"
 comments: false
-categories: "BizTalk"
+categories:
+- biztalk
 ---
 
 Of late I have been spending most of my free time (which isnt a great deal) with pipeline components. BizTalk pipelining is very intriguing and potentially a powerful tool in any BizTalk developers toolkit.

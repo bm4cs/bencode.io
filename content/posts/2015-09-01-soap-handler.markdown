@@ -3,7 +3,10 @@ layout: post
 title: "JAX-WS SOAP Logger"
 date: "2015-09-01 09:56:33"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 Hot tip, logging helps understand how a piece of software works, long after it has left the cosy confines of the debugger.

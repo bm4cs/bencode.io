@@ -3,7 +3,10 @@ layout: post
 title: "Spring Context Specific Configuration Files"
 date: "2015-05-31 21:22:05"
 comments: false
-categories: [Java]
+categories:
+- dev
+tags:
+- java
 ---
 
 Spring can be configured in lots of different ways and using context specific XML configuration is one of the preferred approaches. Context specific configuration in other words is simply a chunk of XML specific to a single concern (e.g. servlet config, jpa config, and whatever else you need). A classic example of this is the `servlet-config.xml` that the Dispatcher Servlet binds against:
