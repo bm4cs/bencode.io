@@ -1,0 +1,80 @@
+---
+layout: post
+title: "Beyond Compare"
+date: "2018-04-21 22:01:01"
+comments: false
+categories: "nix"
+---
+
+Installation on Linux is well [documented](https://www.scootersoftware.com/download.php?zz=kb_linux_install).
+
+    wget https://www.scootersoftware.com/bcompare-4.2.4.22795.x86_64.rpm
+    su
+    rpm --import https://www.scootersoftware.com/RPM-GPG-KEY-scootersoftware
+    yum install bcompare-4.2.4.22795.x86_64.rpm
+
+
+On my Fedora 27 box, I found the launcher bash `/usr/bin/bcompare` exits with a return code of 1, if the linker cannot resolve all dependencies.
+
+    BC_LIB=/usr/lib64/beyondcompare
+    export BC_LIB
+    EXEC=$BC_LIB/BCompare
+    
+    #check to see if we have all of the shared libraries.
+    CHECK=`ldd $EXEC | grep "not found" | wc -l`
+
+    if [ "$CHECK" -ne  "0" ]; then
+       echo Some Shared Libraries were not found
+       ldd $EXEC
+       exit 1
+    fi
+
+Dumping out the shared libs `BCompare` depends on:
+
+
+    $ ldd /usr/lib64/beyondcompare/BCompare
+        linux-vdso.so.1 (0x00007ffe9b023000)
+        librt.so.1 => /lib64/librt.so.1 (0x00007f5da4fca000)
+        libbz2.so.1.0 => not found
+        lib7z.so => not found
+        libpthread.so.0 => /lib64/libpthread.so.0 (0x00007f5da4dac000)
+        libc.so.6 => /lib64/libc.so.6 (0x00007f5da49f6000)
+        libdl.so.2 => /lib64/libdl.so.2 (0x00007f5da47f2000)
+        libQt4Pas.so.5 => not found
+        libX11.so.6 => /lib64/libX11.so.6 (0x00007f5da44b4000)
+        libz.so.1 => /lib64/libz.so.1 (0x00007f5da429d000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f5da51d2000)
+        libxcb.so.1 => /lib64/libxcb.so.1 (0x00007f5da4075000)
+        libXau.so.6 => /lib64/libXau.so.6 (0x00007f5da3e71000)
+
+Out of the tree missing libs `libbz2.so.1.0` seems to be the problem child, as `lib7z.so` and `libQt4Pas.so.5` are distributed with bcompare and added to the `LD_LIBRARY_PATH` by the start script. It turns my Fedora box comes with `libbz2.so.1.0.6`, and can be symlinked as `libbz2.so.1.0`.
+
+    sudo dnf install bzip2-libs bzip2-devel
+    sudo ln -s `find /usr/lib64/ -type f -name "libbz2.so.1*"` /usr/lib64/libbz2.so.1.0
+
+
+### Git
+
+Beyond Compare [supports](http://www.scootersoftware.com/support.php?zz=kb_vcs#gitlinux) many version control systems. For Git simply bind the `difftool` and `mergetool` configurations (`~/.gitconfig`) to bcompare:
+
+    git config --global diff.tool bcompare
+    git config --global merge.tool bcompare
+
+Now from Git, bcompare will be invoked with all the appropriate command line parameters:
+
+    git difftool myfile.ext
+    git mergetool myfile.ext
+
+
+### Extensions
+
+Not always obvious to new users, there are several optional (but powerful) [plug-ins](http://www.scootersoftware.com/support.php?c=kb_morerules.php) tucked away for download. Some favourites, that have saved my bacon on many occassions:
+
+- **XML Tidy Sorted** will normalise both source and target files by, running XML Tidy and then ensuring that all elements and attributes alphabetically sorted. This is especially wonderful, if you are comparing XML produced by differing libraries/platforms/langs.
+- **Java Formatted Class** decompiles and formats `class` files into plain text (depends on the Jalopy and Java Class rules).
+- **MS Excel Merge** supports diff (read) and merge (write) operations. So good, in a world where Excel is pandemic.
+- **PDF** converts PDF into plain text for diffing. I mostly fire this up when non-technical folk (e.g. PMs or BAs) provide multiple versions of requirements, with no change log.
+- **MS Word** converts doc and docx into plain text for diffing. Again, I mostly fire this up when non-technical folk (e.g. PMs or BAs) provide multiple versions of requirements, with no change log.
+
+
+

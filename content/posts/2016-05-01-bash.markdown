@@ -1,0 +1,831 @@
+---
+layout: post
+title: "bash"
+date: "2016-05-01 01:01:01"
+comments: false
+categories: "nix"
+---
+
+Bash is a Unix shell written by Brian Fox in 1989 for the GNU Project as a free replacement for the [Bourne shell](https://en.wikipedia.org/wiki/Bourne_shell). To this day, Bash remains one of the most powerful and ubiquitous scripting tools on the planet.
+
+![Brian Fox the creator of Bash](/images/bfox.jpg "Brian Fox the creator of Bash")
+
+
+## Contents ##
+
+<!-- vim-markdown-toc GFM -->
+
+* [Useful Shortcuts](#useful-shortcuts)
+* [Initialisation](#initialisation)
+* [Shell Grammar](#shell-grammar)
+	* [Variables](#variables)
+		* [Local variables](#local-variables)
+		* [Environment variables](#environment-variables)
+		* [Positional arguments](#positional-arguments)
+	* [Expansions](#expansions)
+		* [Brace expansion](#brace-expansion)
+		* [Command substitution](#command-substitution)
+		* [Arithmetic expansion](#arithmetic-expansion)
+		* [Double and single quotes](#double-and-single-quotes)
+	* [Stream Redirection](#stream-redirection)
+	* [Arrays](#arrays)
+	* [Conditions](#conditions)
+		* [if statements](#if-statements)
+		* [case statements](#case-statements)
+* [Loops](#loops)
+	* [For Loops](#for-loops)
+	* [Select Loops](#select-loops)
+	* [While Loops](#while-loops)
+	* [Until Loops](#until-loops)
+* [Functions](#functions)
+* [Coprocesses](#coprocesses)
+* [Builtins](#builtins)
+* [Bash Recipes](#bash-recipes)
+	* [Top 6 largest things in the current directory](#top-6-largest-things-in-the-current-directory)
+	* [Display the 23rd line of /etc/passwd](#display-the-23rd-line-of-etcpasswd)
+	* [Filter the first column from process status](#filter-the-first-column-from-process-status)
+	* [Delete Subversion scrap files](#delete-subversion-scrap-files)
+	* [Move shell scripts and mark them as executable](#move-shell-scripts-and-mark-them-as-executable)
+	* [Pattern matching](#pattern-matching)
+	* [Scan code base against list of patterns](#scan-code-base-against-list-of-patterns)
+	* [Rename Multiple Files](#rename-multiple-files)
+	* [Run a command every time a file is modified](#run-a-command-every-time-a-file-is-modified)
+	* [Keep a program running after leaving SSH session](#keep-a-program-running-after-leaving-ssh-session)
+* [Resources](#resources)
+
+<!-- vim-markdown-toc -->
+
+
+Kudos to Denys Dovhan and his awesome [Bash handbook](https://github.com/denysdovhan/Bash-handbook). The most digestable, and enjoyable method I've found to groking bash. <3
+
+
+
+# Useful Shortcuts
+
+**Movement**
+
+- **Ctrl + A**: move cursor to beginning of line
+- **Ctrl + E**: move cursor to end of line
+- **Ctrl + L**: clear screen
+- **Alt + F**: Move cursor forward one word on the current line
+- **Alt + B**: Move cursor backward one word on the current line
+
+**Editing**
+
+- **Ctrl + U**: delete from cursor to beginning of line
+- **Ctrl + K**: delete from cursor to end of line
+- **Ctrl + W**: delete whole word before the cursor
+- **Ctrl + H**: delete last character (backspace)
+- **Ctrl + T**: transfer (swap) the last two characters before the cursor
+- **Esc+T**: transfer (swap) the last two words before the cursor
+
+**Process**
+
+- **Ctrl + C**: kill whatever is interactively running
+- **Ctrl + D**: exit the current session
+- **Ctrl + Z**: puts whatever is running into a suspended background process, use `fg` to restore it.
+
+**History**
+
+- **Ctrl + R**: search through previous commands
+- **Ctrl + P**: previous command (from history)
+- **Ctrl + N**: next command (from history)
+- **!!**: the last command (handy when you forget to sudo, `sudo !!`)
+- **!1050**: run command 1050 (as journalled by `history`)
+
+
+
+# Initialisation #
+
+Bash provides several config files, that can be used when a fresh bash instance is created. Such as:
+
+- `~/.bash_profile` user login-shell config
+- `~/.profile` user login-shell config
+- `~/.bashrc` user interactive (sub) shell config
+- `/etc/bash_profile` system-side login shell config
+- `/etc/profile` system-wide login-shell config
+- `/etc/bashrc` system-wide interactive (sub) shell config
+
+A single `.bashrc` soon become bloated and convoluted. A nifty trick is to break things up into several smaller configs (`.bashrc`), and "including" them with the `source` command.
+
+First somewhere to house the individual configs:
+
+    mkdir ~/.bashrc.d
+    chmod 700 ~/.bashrc.d
+
+Then in the `.bashrc` or `.bash_profile` include all child configs:
+
+    for file in ~/.bashrc.d/*.bashrc;
+    do
+      source "$file"
+    done
+
+Then rip out chunks into `~/.bashrc.d/myfile.bashrc`. Ensure they all have execution rights:
+
+    chmod +x ~/.bashrc.d/*.bashrc
+
+
+# Shell Grammar #
+
+
+## Variables ##
+
+
+### Local variables ###
+
+A local variable can be declared using `=` sign (no spaces) and its value can be retrieved using the `$` sign.
+
+    os="linux"
+    echo $os
+    unset os
+
+We can also declare a variable local to a single function using the `local` keyword.
+
+    local local_var="NAND gate"
+
+
+### Environment variables ###
+
+Environment variables are variables accessible to anything running in current shell session. They are created just like local variables, but using the keyword `export` instead.
+
+    export GLOBAL_VAR="guten tag"
+
+Bash comes with a bunch of [reserved variables](http://tldp.org/LDP/Bash-Beginners-Guide/html/sect_03_02.html), here's some handy ones:
+
+Variable | Description
+--- | ---
+`$HOME` | The current user's home directory.
+`$PATH` | A colon-separated list of directories in which the shell looks for commands.
+`$PWD` | The current working directory.
+`$RANDOM` | Random integer between 0 and 32767.
+`$UID` | The numeric, real user ID of the current user.
+`$PS1` | The primary prompt string.
+`$PS2` | The secondary prompt string.
+`$OSTYPE` | Operating system Bash is running on.
+`$HISTFILE` | File used to store command history.
+
+Some like to make their prompt stand out from the noise (e.g. by making it bright green). Add to `~/.bash_profile`:
+
+    export PS1="\[$(tput bold)\]\[$(tput setaf 2)\][\u@\h \W]\\$ \[$(tput sgr0)\]"
+
+![Custom prompt string with PS1](/images/ps1.png "Custom prompt string with PS1")
+
+
+### Positional arguments ###
+
+Defined within the context of a function.
+
+- `$0`: Name of script.
+- `$1` to `$9`: The parameter list elements from 1 to 9.
+- `${10}` to `${N}`: The parameter list elements from 10 to N.
+- `$*` or `$@`: All positional parameters except `$0`.
+- `$#`: The number of parameters, not counting `$0`.
+- `$FUNCNAME`: The function name.
+
+
+## Expansions ##
+
+
+### Brace expansion ###
+
+Using a pair curly braces `{` and `}`, can be used to generate strings or ranges of numbers.
+
+{% highlight bash %}
+echo beg{i,a,u}n # begin began begun
+echo {e..a} # e d c b a
+{% endhighlight %}
+
+{% highlight bash %}
+echo {0..5} # 0 1 2 3 4 5
+echo {00..8..2} # 00 02 04 06 08
+{% endhighlight %}
+
+
+### Command substitution ###
+
+Stores the result of an evaluation into a variable, or passes the result along for another evaluation. Done by enclosing the expression either in backticks \`, or within `$()`.
+
+{% highlight bash %}
+kernel=$(uname -r)
+#or
+kernel=`uname -r`
+echo $kernel #4.4.6-301.fc23.x86_64
+{% endhighlight %}
+
+
+
+### Arithmetic expansion ###
+
+Bash eats arithmetic for breakfast. Syntax is similar to the command substitution capture group `$()`, but doubles up on the braces `$(())`.
+
+{% highlight bash %}
+bug=$(( ((10 + 5*3) - 7) / 2 ))
+echo $bug # 9
+echo $(( bug * 1000 )) #9000
+{% endhighlight %}
+
+
+### Double and single quotes ###
+
+Unlike single quotes, with double quotes, variables and command substitutions are expanded automatically.
+
+{% highlight bash %}
+echo "Your home: $HOME" # Your home: /home/vimjock
+echo 'Your home: $HOME' # Your home: $HOME
+{% endhighlight %}
+
+If a variable contains whitespace, take care to expand it in double quotes, which will preserve the literal value of all characters.
+
+{% highlight bash %}
+WEIRD="A string  that   is    just     trouble"
+echo $WEIRD   # A string that is just trouble
+echo "$WEIRD" # A string  that   is    just     trouble
+{% endhighlight %}
+
+Words of the form `$'string'` expands, with backslash-escaped characters replaced as specified by the ANSI C standard (such as `\n` for newline, `\t` for horizontal tab, `\u3b2` for unicode character `3b2`, and so on).`
+
+
+
+## Stream Redirection ##
+
+Bash views the outside world (input and output) as streams of data. The brilliant thing about streams, like water streams, is that their flow can be channeled in and out of many upstream and/or downstream programs, creating complex results.
+
+0 | stdin | The standard input.
+1 | stdout | The standard output.
+2 | stderr | The errors output.
+
+Redirection operators for controlling the flow of streams:
+
+Operator | Description
+--- | ---
+`>` | Redirecting output
+`>>` | Append redirecting output
+`&>` | Redirecting output and error output, `&>pepsi` same as `>pepsi 2>&1`
+`&>>` | Appending redirected output and error output
+`<` | Redirecting input
+`<<[-]word` | *Here documents* read input until `word` is found
+`<<<word` | *Here strings*, like here documents, but `word` undergoes expansion (brace, arithmetic, etc).
+
+
+The order of redirections is important.
+
+    ls > dirlist 2>&1
+
+Directs both `stdout` and `stderr` to file `dirlist`. While:
+
+    ls 2>&1 > dirlist
+
+Directs only `stdout` to the file `dirlist`.
+
+
+Another example:
+
+    join <(sort file1.txt) <(sort file2.txt)
+
+This will bind the outputs of two sort commands, as input arguments one and two of the join command:
+
+Bash redirection can integrate with logical devices:
+
+`/dev/fd/fd` | File descriptor `fd` is duplicated.
+`/dev/stdin` | File descriptor `0` is duplicated.
+`/dev/stdout` | File descriptor `1` is duplicated.
+`/dev/stderr` | File descriptor `2` is duplicated.
+`/dev/tcp/host/port` | Open the corresponding TCP socket.
+`/dev/udp/host/port` | Open the corresponding UDP socket.
+
+Often when running text searches as a low privileged user, you will encounter permission and other errors, like this:
+
+    $ grep ben /etc/*
+    grep: abrt: Is a directory
+    grep: audisp: Permission denied
+    grep: audit: Permission denied
+    ...
+
+Lets redirect them to `/dev/null`:
+
+    $ grep ben /etc/* 2> /dev/null
+    /etc/group:wheel:x:10:ben
+    /etc/group:users:x:100:ben
+    /etc/group:ben:x:1000:ben
+    /etc/group:postgres:x:26:root,ben
+    ...
+
+Nice and clean.
+
+
+*here documents* are a bit rad:
+
+    $ python - <<"XXXX"
+    > foo=15
+    > print "Magical number of foo is %i.\n" %(foo,)
+    > XXXX
+    Magical number of foo is 15.
+
+
+## Arrays ##
+
+{% highlight bash %}
+langs[0]=c
+langs[1]=java
+langs[2]=go
+{% endhighlight %}
+
+Or as a single compound assignment:
+
+{% highlight bash %}
+langs=(c java go)
+{% endhighlight %}
+
+
+To refer individual elements:
+
+{% highlight bash %}
+echo ${langs[1]} # java
+echo ${langs[*]} # c java go
+echo ${langs[@]} # c java go
+{% endhighlight %}
+
+The `@` operator (unlike `*`) can honor whitespace.
+
+{% highlight bash %}
+langs=(c java go "visual basic")
+printf "+ %s\n" "${langs[@]}"
+# c
+# java
+# go
+# visual basic
+{% endhighlight %}
+
+
+Slicing:
+
+{% highlight bash %}
+langs=(c java go "visual basic")
+echo ${langs[@]:1:2}
+# java go
+{% endhighlight %}
+
+
+Adding:
+
+{% highlight bash %}
+langs=(c awk)
+echo ${langs[@]}
+# c awk
+langs=(java "${langs[@]}" sql bash)
+echo ${langs[@]}
+# java c awk sql bash
+{% endhighlight %}
+
+
+Removing:
+
+{% highlight bash %}
+langs=(ruby python "visual basic" perl)
+unset langs[2]
+echo ${langs[@]}
+# ruby python perl
+{% endhighlight %}
+
+
+Looping:
+
+{% highlight bash %}
+for lang in ${langs[@]}; do echo "$lang is nifty"; done
+# ruby is nifty
+# python is nifty
+# perl is nifty
+{% endhighlight %}
+
+
+
+
+
+## Conditions #
+
+Expression is enclosed in double squares `[[ ]]`. Expressions can be daisy chained using the `&&` and/or `||` operators.
+
+File system expressions:
+
+Test | Description
+--- | ---
+`-e or -a file` | Exists.
+`-f file` | Exists and is a regular file.
+`-g file` | Exists and is set-group-id.
+`-h or -L file` | Exists and is a symbolic link.
+`-k file` | Exists and its ``sticky'' bit is set.
+`-p file` | Exists and is a named pipe (FIFO).
+`-r file` | Exists and is readable.
+`-s file` | Exists and has a size greater than zero.
+`-t fd` | descriptor fd is open and refers to a terminal.
+`-w file` | Exists and is writable.
+`-x file` | Exists and is executable.
+`-G file` | Exists and is owned by the effective group id.
+`-N file` | Exists and has been modified since it was last read.
+`-O file` | Exists and is owned by the effective user id.
+`-S file` | Exists and is a socket.
+`file1 -ef file2` | True if file1 and file2 refer to the same device and inode numbers.
+`file1 -nt file2` | True if file1 is newer (according to modification date) than file2, or if file1 exists and file2 does not.
+`file1 -ot file2` | True if file1 is older than file2, or if file2 exists and file1 does not.
+
+
+Shell variables:
+
+Test | Description
+--- | ---
+`-o optname` | True if the shell option `optname` is enabled.
+`-v varname` | True if the shell variable varname is set.
+`-R varname` | True if the shell variable varname is set and is a name reference.
+
+
+Strings:
+
+Test | Description
+--- | ---
+`-z string` | True if the length of string is zero.
+`-n string` | True if the length of string is non-zero.
+`string1 == string2` or `string1 = string2` | True if the strings are equal.
+`string1 != string2` | True if the strings are not equal.
+`string1 < string2` | True if string1 sorts before string2 lexicographically.
+`string1 > string2` | True if string1 sorts after string2 lexicographically.
+`string =~ regex` | True if the extended regular expression matches.
+
+Arithmetic:
+
+Test | Description
+--- | ---
+`arg1 -eq arg2` | arg1 is equal to arg2
+`arg1 -ne arg2` | not equal to arg2
+`arg1 -lt arg2` | less than arg2
+`arg1 -le arg2` | less than or equal to arg2
+`arg1 -gt arg2` | greater than arg2
+`arg1 -ge arg2` | greater than or equal to arg2
+
+
+### if statements ###
+
+With single and multi line variants:
+
+{% highlight bash %}
+# single line
+if [[ 100 -eq 100 ]]; then echo "one hungey"; else echo "no hungey"; fi
+
+# multi line
+if [[ "drpepper" == "drpepper" ]]; then
+  echo "one hungey"
+else
+  echo "no hungey"
+fi
+
+# if else
+if [[ -e main.c ]]; then
+  echo "found main"
+elif [[ $(date +%A) == "Sunday" ]]; then
+  echo "day of rest"
+else
+  echo "no dice"
+fi
+{% endhighlight %}
+
+
+In some instances, such as pattern matching, omit double quotes:
+
+{% highlight bash %}
+if [[ $file == *.o ]]; then echo "its an ELF"; fi
+{% endhighlight %}
+
+
+
+### case statements ###
+
+`|` to delimit multiple patterns,`)` to terminate the pattern list, `*` as default catch all pattern, and `;;` to divide each block.
+
+
+{% highlight bash %}
+file=h
+
+if [[ -n $file ]]; then
+
+  case $file in
+    "c"|"h")
+      echo "my precious source code"
+    ;;
+    "o")
+      echo "silly object file, nuke it"
+    ;;
+    *)
+      echo "something else"
+    ;;
+  esac
+else
+  echo "not found bra";
+fi
+{% endhighlight %}
+
+
+
+# Loops #
+
+Bash comes with C-like looping; `for`, `for in`, `select`, `while` and `until` loops. In addition bash also provides builtin `break` and `continue` commands, for manipulating the flow of loops.
+
+## For Loops ##
+
+The super handy `for`.
+
+{% highlight bash %}
+for hero in linus stallman ritchie kernighan pike fox
+  echo $hero
+done
+
+#linus
+#stallman
+#ritchie
+#kernighan
+#pike
+#fox
+{% endhighlight %}
+
+Single line syntax:
+
+{% highlight bash %}
+for i in {1..5}; do echo $i; done
+
+#1
+#2
+#3
+#4
+#5
+{% endhighlight %}
+
+And lastly, the classical for:
+
+{% highlight bash %}
+for (( i = 0; i < 5; i++ )); do
+  echo $i;
+done
+
+#0
+#1
+#2
+#3
+#4
+{% endhighlight %}
+
+Move shell scripts from one location, to another and change their permissions along the way.
+
+{% highlight bash %}
+for FN in $HOME/*.sh; do
+  mv "$FN" "$HOME/scripts"
+  chmod +x "$HOME/scripts/${FN}"
+done
+{% endhighlight %}
+
+
+## Select Loops ##
+
+Useful for creating menus. The list of expanded words from a list is printed out, each preceded by a number. The `PS3` prompt is then displayed and a line is read from standard input.
+
+{% highlight bash %}
+#!/bin/bash
+PS3="Please choose an environment: "
+select ENV in dev tst ppd prd
+do
+  echo -n "Enter build version to deploy: " && read BUILD
+  case $ENV in
+    dev) echo "./doinst.bash $BUILD noddy" ;;
+    tst) echo "./doinst.bash $BUILD tulip" ;;
+    ppd) echo "./doinst.bash $BUILD woody" ;;
+    prd) echo "./doinst.bash $BUILD chipper" ;;
+  esac
+  break;
+done
+{% endhighlight %}
+
+Here's what this does:
+
+    $ ./select.bash 
+    1) dev
+    2) tst
+    3) ppd
+    4) prd
+    Please choose an environment: 2
+    Enter build version to deploy: 1.6
+    ./doinst.bash 1.6 tulip
+
+
+## While Loops ##
+
+The awesome keeps on coming.
+
+{% highlight bash %}
+x=0
+while [[ $x -lt 5 ]]; do
+  echo $(( x * x ))
+  x=$(( x + 1 ))
+done
+
+#0
+#1
+#4
+#9
+#16
+{% endhighlight %}
+
+
+
+## Until Loops ##
+
+Opposite of `while`; keeping looping if the condition is *false*.
+
+
+
+
+# Functions #
+
+A shell function stores a series of commands for later execution.
+
+{% highlight bash %}
+cool_func() {
+  echo "be cool"
+}
+
+cool_func
+{% endhighlight %}
+
+When a function is executed, the arguments to the function be the positional parameters during its execution. When the function is complete, these values are restored to the values they had prior to the functions execution. The function can return a result using an exit code.
+
+{% highlight bash %}
+get_day() {
+  day=$(date +%A)
+
+  if [[ -n $1 ]]; then
+    echo "g'day $1, its $day"
+  else
+    echo "g'day cobber"
+  fi
+
+  return 0
+}
+
+get_day Benjamin # g'day Benjamin, its Wednesday
+get_day          # g'day cobber
+{% endhighlight %}
+
+
+# Coprocesses #
+
+
+# Builtins #
+
+bash,  :,  .,  [, alias, bg, bind, break, builtin, caller, cd, command, compgen, complete, compopt, continue, declare, dirs, disown, echo, enable, eval, exec, exit, export, false, fc, fg, getopts, hash, help, history, jobs, kill, let, local, logout, mapfile, popd, printf, pushd, pwd, read, readonly, return, set, shift, shopt, source, suspend, test, times, trap, true, type, typeset, ulimit, umask, unalias,  unset,  wait
+
+
+
+# Bash Recipes #
+
+## Top 6 largest things in the current directory
+
+    $ du -hxs * | sort -hr | head -6
+    234M    code
+    30M     cygwin
+    6.8M    datatsudio
+    5.0M    c-projects
+    4.9M    scripts
+
+
+## Display the 23rd line of /etc/passwd
+
+    head -n 23 /etc/passwd | tail -n 1
+    sed -n ' 23 p ' /etc/passwd
+    awk ' NR == 23 { print $0 } ' < /etc/passwd
+
+
+## Filter the first column from process status
+
+    awk ' { print $1 } ' <(ps -aux)
+
+
+## Delete Subversion scrap files
+
+Delete files that report a status of `?`
+
+    $ svn status bnc
+    M    bnc/amin.c
+    ?    bnc/dmin.c
+    ?    bnc/mdiv.tmp
+    A    bnc/optrn.c
+    M    bnc/optson.c
+    ?    bnc/prtbout.4161
+    ?    bnc/rideaslist.odt
+
+A possible solution using a `while` loop and a combination of `grep`, `cut` and `rm`:
+
+{% highlight bash %}
+svn status bnc | grep '^?' | cut -c8- | while read FILE; do echo "$FN"; rm -rf "$FN"; done
+{% endhighlight %}
+
+
+Alternatively the `read` statement can be used to do the parsing:
+
+{% highlight bash %}
+svn status bnc | \
+while read TAG FN
+do
+  if [[ $TAG == \? ]]
+  then
+    echo $FN
+    rm -rf "$FN"
+  fi
+done
+{% endhighlight %}
+
+
+## Move shell scripts and mark them as executable
+
+{% highlight bash %}
+for FN in $HOME/*.sh; do
+  mv "$FN" "$HOME/scripts"
+  chmod +x "$HOME/scripts/${FN}"
+done
+{% endhighlight %}
+
+
+## Pattern matching
+
+{% highlight bash %}
+text=DOOM89761234rocks
+
+if [[ $text =~ ([[:alpha:]]*)[[:digit:]]+([[:alpha:]]*) ]]; then
+  echo "${BASH_REMATCH[1]} ${BASH_REMATCH[2]}";
+else
+  echo "wat";
+fi
+{% endhighlight %}
+
+**Output**
+
+    DOOM rocks
+
+## Scan code base against list of patterns
+
+Given a list of patterns, scan a code base for them, and report a total of how many hits there were for each.
+
+{% highlight bash %}
+cut -d $'\t' -f 2 keywords.txt | while read KEYWORD; do COUNT=$(grep -rnwo ~/code/git/das/src --include *.java --include *.jsp -e \""$KEYWORD"\" | wc -l); if [[ $COUNT -gt 0 ]]; then echo "$KEYWORD $COUNT"; fi; done
+
+#AUTHOR 8
+#ENV 19
+#
+{% endhighlight %}
+
+
+
+## Rename Multiple Files
+
+Given a bunch of files named in the form `game.of.thrones.s04e10.hdtv.x264.mp4`, each contained within their own subdirectory. First I wanted to remove the all subdirs, flattening out the tree, and then finish up by renaming each file to the simplier form `GOT.S04E10.mp4`.
+
+Using `find`, locate all subdirectories, moving any contents they may have back into the parent directory. The `-exec` switch has its limitations, such as with logical `&&` operators, which requires a real shell (`sh`).
+
+    find . -name "Game*" -type d -exec sh -c 'cd "{}" && mv * ../' \;
+
+The subdirectories can be disposed of:
+
+    find . -name "Game*" -type d -exec rm -rf "{}" \;
+
+Now the renaming with `sed`. By leveraging capture groups (donuts) in `sed` (eg `\1`), can pick out match results of interest and jam them into the substitution result. While here takes advantage of the casing functionality by decorating the capture group with either a `\U` for uppercasing or `\L` for lower.
+
+
+    for f in *.*; do mv "$f" "GOT.`echo $f | sed -rn ' s/.*([sS][0-9]{2}[eE][0-9]{2}).*(\..{3})/\U\1\L\2/p '`"; done
+
+
+## Run a command every time a file is modified
+
+    while inotifywait -e close_write report.tex
+    do
+      make
+    done
+
+## Keep a program running after leaving SSH session
+
+If no input is required:
+
+    nohup ./script.sh &
+
+Otherwise:
+
+    ./script.sh
+    <provide input as needed>
+    <Ctrl-Z>            # sleep the process
+    jobs -l             # figure out the job id
+    disown -h <jobid>   # disown the job
+    bg -h <jobid>       # continue running 
+
+
+
+
+# Resources #
+
+- [Awesome Bash](https://github.com/awesome-lists/awesome-Bash) - A curated list of delightful Bash resources
+- Denys Dovhans [Bash handbook](https://github.com/denysdovhan/Bash-handbook)
+- [Bashful](https://github.com/jmcantrell/Bashful) - A collection of libraries to simplify writing Bash scripts
+

@@ -1,0 +1,706 @@
+---
+layout: post
+title: "Stream Editor (sed)"
+date: "2015-09-15 19:48:01"
+comments: false
+categories: "nix"
+---
+
+[sed](http://www.gnu.org/software/sed/) has rocked my world.
+
+> sed (stream editor) isn't an interactive text editor. Instead, it is used to filter text, i.e., it takes text input, performs some operation (or set of operations) on it, and outputs the modified text. sed is typically used for extracting part of a file using pattern matching or substituting multiple occurrences of a string within a file.
+
+# Contents #
+
+- [Basic Syntax](#BasicSyntax)
+- [How sed works](#Howsedworks)
+- [Substitution](#Substitution)
+- [Append, Insert and Delete](#AppendInsertandDelete)
+- [Multiple expressions](#Multipleexpressions)
+- [Remote with ssh](#Remotewithssh)
+- [Substitution grouping](#Substitutiongrouping)
+- [Numerical grouping](#Numericalgrouping)
+- [Executing Commands](#ExecutingCommands)
+- [sed with Vim](#sedwithVim)
+- [Commands](#Commands)
+
+
+<a name="BasicSyntax" />
+
+# Basic syntax #
+
+    sed ' [RANGE] COMMANDS ' [INPUTFILE]
+
+If no `INPUTFILE` is specified, `sed` filters the contents of standard input.
+
+Important commands:
+
+- `s` substitute.
+- `q` command, exit without processing any more commands or input.
+- `d` delete command, delete the pattern space, and start the next cycle. 
+- `a` append command.
+- `i` insert command.
+- `e` execute command, run the resulting pattern space against the shell (GNU specifc).
+- `-n` command line switch, is auto-print is not disabled, print the pattern space, then replace the pattern space with the next line of input.
+- `-i` command line switch. sed will never destructively overwrite a files contents, unless the `-i` option is used. It also supports auto-creating a backup file like so `-i.bak`.
+
+Simple unit testing:
+
+    echo "getFoo_Bar" | sed 's@^\(.\{7\}\)\(.\)\(.*\)$@\L\1\L\2\3@'
+
+I found the offical [GNU documentation](http://www.gnu.org/software/sed/manual/sed.html#sed-Programs) to be the most useful resource.
+
+
+
+<a name="Howsedworks" />
+
+# How sed works #
+
+sed maintains two data buffers: the active *pattern space*, and the auxiliary *hold space*. Both are initially empty.
+
+sed operates by performing the following cycle on each line of input: first, sed reads one line from the input stream, removes any trailing newline, and places it in the pattern space. Then commands are executed; each command can have an address associated to it: addresses are a kind of condition code, and a command is only executed if the condition is verified before the command is to be executed.
+
+When the end of the script is reached, unless the `-n` option is in use, the contents of pattern space are printed out to the output stream, adding back the trailing newline if it was removed. Then the next cycle starts for the next input line.
+
+Unless special commands (like `D`) are used, the pattern space is deleted between two cycles. The hold space, on the other hand, keeps its data between cycles (see commands `h`, `H`, `x`, `g`, `G` to move data between both buffers).
+
+
+
+<a name="Substitution" />
+
+# Substitution #
+
+Sample file *ntp.conf*:
+
+    driftfile  /var/lib/ntp/ntp.draft
+    statistics loopstats peerstats clockstats
+    filegen loopstats file loopstats type day enable
+    server 0.fedora.pool.ntp.org
+    server 1.fedora.pool.ntp.org
+    server 2.fedora.pool.ntp.org
+    server 3.fedora.pool.ntp.org
+    server ntp.fedora.org
+
+First cool tip, [nl](http://www.gnu.org/software/coreutils/manual/html_node/nl-invocation.html#nl-invocation) is the boss for quickly line numbering a file:
+
+`nl ntp.conf`
+
+     1  driftfile  /var/lib/ntp/ntp.draft
+     2  statistics loopstats peerstats clockstats
+     3  filegen loopstats file loopstats type day enable
+     4  server 0.fedora.pool.ntp.org
+     5  server 1.fedora.pool.ntp.org
+     6  server 2.fedora.pool.ntp.org
+     7  server 3.fedora.pool.ntp.org
+     8  server ntp.fedora.org
+
+So I want to indent all lines beginning with `server`:
+
+    sed ' 4,8 s/^/    /g' ntp.conf
+
+Results in:
+
+    driftfile  /var/lib/ntp/ntp.draft
+    statistics loopstats peerstats clockstats
+    filegen loopstats file loopstats type day enable
+        server 0.fedora.pool.ntp.org
+        server 1.fedora.pool.ntp.org
+        server 2.fedora.pool.ntp.org
+        server 3.fedora.pool.ntp.org
+        server ntp.fedora.org
+
+If I just want to see the affected pattern space (note the -n command line switch to restrict to sout to pattern space only, and the presence of the `p` command):
+
+    sed -n ' 4,8 s/^/    / p' ntp.conf
+
+Results in:
+
+        server 0.fedora.pool.ntp.org
+        server 1.fedora.pool.ntp.org
+        server 2.fedora.pool.ntp.org
+        server 3.fedora.pool.ntp.org
+        server ntp.fedora.org
+
+Here's another nice substitution example:
+
+    sed -n ' /^ben/ s@/bin/bash@/bin/sh@ p ' /etc/passwd
+
+This beautiful little command, finds all entries starting with `ben` in `/etc/passwd` and replaces `/bin/bash` with `/bin/sh`, and the `p` command spits it out to `sout`. Notice how delimiters can be changed, in this case to `@`. Handy if you need to make use of forward slashes, which is the default delimiter.
+
+
+<a name="AppendInsertandDelete" />
+
+# Append, Insert and Delete #
+
+Delete all lines that start with `server 3` (`\s` to represent an escaped space):
+
+    sed ' /^server\s3.fedora/ d' ntp.conf
+
+Results in:
+
+    driftfile  /var/lib/ntp/ntp.draft
+    statistics loopstats peerstats clockstats
+    filegen loopstats file loopstats type day enable
+    server 0.fedora.pool.ntp.org
+    server 1.fedora.pool.ntp.org
+    server 2.fedora.pool.ntp.org
+    server ntp.fedora.org
+
+Append `server ntp.kernel.org` to the line after any lines that start with `server 0`:
+
+    sed ' /^server\s0/ a server ntp.kernel.org' ntp.conf
+
+Results in:
+
+    driftfile  /var/lib/ntp/ntp.draft
+    statistics loopstats peerstats clockstats
+    filegen loopstats file loopstats type day enable
+    server 0.fedora.pool.ntp.org
+    server ntp.kernel.org
+    server 1.fedora.pool.ntp.org
+    server 2.fedora.pool.ntp.org
+    server 3.fedora.pool.ntp.org
+    server ntp.fedora.org
+
+And insert, basically same semantics as append, except line before, not after:
+
+    sed ' /^server\s0/ i server ntp.kernel.org' ntp.conf
+
+Results in:
+
+    driftfile  /var/lib/ntp/ntp.draft
+    statistics loopstats peerstats clockstats
+    filegen loopstats file loopstats type day enable
+    server ntp.kernel.org
+    server 0.fedora.pool.ntp.org
+    server 1.fedora.pool.ntp.org
+    server 2.fedora.pool.ntp.org
+    server 3.fedora.pool.ntp.org
+    server ntp.fedora.org
+
+
+<a name="Multipleexpressions" />
+
+# Multiple expressions #
+
+sed supports blocks:
+
+    sed ' {
+      /^server 0/ i ntp.kernel.org
+      /^server\s[0-9]\.fedora/ d
+    } ' ntp.conf
+
+Or if you are dealing with a large script **sed files** for includes and reuse:
+
+**ntp.sed**
+
+    /^server 0/ i ntp.kernel.org
+    /^server\s[0-9]\.fedora/ d
+
+To include it use the `-f` switch like so:
+
+    sed -f ntp.sed /etc/ntp.conf
+
+Once you're ready to roll, plug in the `-i` switch to update the target file:
+
+    sudo sed -i.bak -f ntp.sed /etc/ntp.conf
+
+
+<a name="Remotewithssh" />
+
+# Remote with ssh #
+
+Scripting sed to run on remote servers is a piece of cake, thanks to the ssh `-t` switch, which assigns TTY allowing for a sudo password to be provided. This is a neat way of spraying out updates consistently across a farm of servers. Check this out (note the include `/tmp/ntp.sed` must be placed on the remote file system before running):
+
+{% highlight bash %}
+scp ntp.sed ben@10.3.1.200:/tmp/
+ssh -t ben@10.3.1.200 sudo sed -i.bak -f /tmp/ntp.sed /etc/ntp.conf
+{% endhighlight %}
+
+
+
+<a name="Substitutiongrouping" />
+
+# Substitution grouping #
+
+Substitution groups allow for more advanced targeting and transformation of text.
+
+Lets break down an example.
+
+    gsed 's/\([^,]*\),\([^,]*\)/\U\1,\L\2/' heros.txt
+
+**heros.txt**:
+
+    Ritchie,Dennis,410909
+    Thompson,Kenneth,430204
+    Carmack,John,700820
+    Torvalds,Linux,610114
+    Stallman,Richard,550921
+    Pike,Rob,560212
+
+Using the substitution command `s`, the selection criteria specified is `\([^,]*\),\([^,]*\)` with the parenthesis escaped, or `([^,]*),([^,]*)`. That is, the first capture group is everything until a comma, an actual comma, then a second capture group of everything until a comma. 
+Then the modification is applied, `\U\1\L\2`, `\U` signals that upper-case conversion should be applied to `\1` (pattern space that matches the first capturing group). `\L` is the lower-casing conversion applied to `\2` (the second capture group). See [the S command](http://www.gnu.org/software/sed/manual/sed.html#The-_0022s_0022-Command) documentation for more. In a nutshell, uppercase everything before the first comma only.
+
+Result:
+
+    RITCHIE,dennis,410909
+    THOMPSON,kenneth,430204
+    CARMACK,john,700820
+    TORVALDS,linux,610114
+    STALLMAN,richard,550921
+    PIKE,rob,560212
+
+
+
+<a name="Numericalgrouping" />
+
+# Numerical grouping #
+
+The following **prettify_big_numbers.sed** will first convert all commas (,) to colons (:), and then second jam a comma in between the second and third capture groups, delimitering the last 3 digits.
+
+{% highlight bash %}
+s/,/:/g
+s/\(^\|[^0-9.]\)\([0-9]\+\)\([0-9]\{3\}\)/\1\2,\3/g
+{% endhighlight %}
+
+Using it becomes super simple.
+
+{% highlight bash %}
+$ echo "0.01 0.08 0.07 2/338 584288" | gsed -f prettify_big_numbers.sed 
+0.01 0.08 0.07 2/338 584,288
+{% endhighlight %}
+
+
+
+<a name="ExecutingCommands" />
+
+# Executing Commands #
+
+The GNU version of sed sports the nifty [`e`](http://www.gnu.org/software/sed/manual/sed.html#The-_0022s_0022-Command) command.
+
+> This command allows one to pipe input from a shell command into pattern space. If a substitution was made, the command that is found in pattern space is executed and pattern space is replaced with its output.
+
+**files.txt**
+
+    /etc/hosts
+    /etc/services
+
+Some simple examples. First lets tack `ls -l ` to the front of each of the above files listed in `files.txt`, execute the resulting commandwith `e`, replacing the pattern space with whatever output it produces.
+
+{% highlight bash %}
+$ gsed ' s/^/ls -l /e ' files.txt
+-rw-r--r--  1 root  wheel  4858 22 Apr  2013 /etc/hosts
+-rw-r--r--  1 root  wheel  677972 10 Sep  2014 /etc/services
+{% endhighlight %}
+
+Changing the command to something else (e.g. `stat`) is easy:
+
+{% highlight bash %}
+$ gsed ' s/^/stat /e ' files.txt
+16777220 2003065 -rw-r--r-- 1 root wheel 0 4858 "Sep 13 19:50:40 2015" "Apr 22 22:30:52 2013" "Apr 22 22:30:52 2013" "Apr 22 22:30:52 2013" 4096 16 0 /etc/hosts
+16777220 10405184 -rw-r--r-- 1 root wheel 0 677972 "Sep 13 19:50:15 2015" "Sep 10 06:47:34 2014" "Oct 18 15:57:39 2014" "Sep 10 06:47:34 2014" 4096 480 0x20 /etc/services
+{% endhighlight %}
+
+
+<a name="sedwithVim" />
+
+# sed with Vim #
+
+vim supports very similar syntax to sed. For example, indenting lines 5 to 30:
+
+    :5,30s/^/    /
+
+Or target lines 30 to the end of document:
+
+    :30,$ s/^/  /
+
+To apply to all lines within a document `%`:
+
+    :%s/^/    /
+
+To apply to lines that match a criteria:
+
+    :/^windows/s/^windows/linux/g
+
+
+
+<a name="Commands" />
+
+# Commands #
+
+This is only the tip of the sed iceburg.
+
+Source the offical [GNU sed Manual](https://www.gnu.org/software/sed/manual/sed.html)
+
+**Zero address commands**
+
+- `:label`: Label for b and t commands.
+- `#comment`: The comment extends until the next newline (or the end of a -e script fragment).
+- `}`: The closing bracket of a { } block.
+
+**Zero or One address commands**
+
+- `=`: Print the current line number.
+- `a \ text`: Append text, which has each embedded newline preceded by a backslash.
+- `i \ text`: Insert text, which has each embedded newline preceded by a backslash.
+- `q [exit-code]`: Immediately quit the sed script without processing any more input, except that if auto-print is not disabled the current pattern space will be printed.  The exit code argument is a GNU extension.
+- `Q [exit-code]`: Immediately quit the sed script without processing any more input.  This is a GNU extension.
+- `r filename`: Append text read from filename.
+- `R filename`: Append a line read from filename.  Each invocation of the command reads a line from the file.  This is a GNU extension.
+
+**Commands which accept address ranges**
+
+- `{`: Begin a block of commands (end with a }).
+- `b label`: Branch to label; if label is omitted, branch to end of script.
+- `c \ text`: Replace the selected lines with text, which has each embedded newline preceded by a backslash.
+- `d`: Delete pattern space.  Start next cycle.
+- `D`: If pattern space contains no newline, start a normal new cycle as if the d command was issued.  Otherwise, delete  text  in  the pattern space up to the first newline, and restart cycle with the resultant pattern space, without reading a new line of input.
+- `h H`: Copy/append pattern space to hold space.
+- `g G`: Copy/append hold space to pattern space.
+- `l`: List out the current line in a ``visually unambiguous'' form.
+- `l width`: List out the current line in a ``visually unambiguous'' form, breaking it at width characters.  This is a GNU extension.
+- `n N`: Read/append the next line of input into the pattern space.
+- `p`: Print the current pattern space.
+- `P`: Print up to the first embedded newline of the current pattern space.
+- `s/regexp/replacement/`: Attempt to match regexp against the pattern space.  If successful, replace that portion matched with replacement. The replacement may contain the special character & to refer to that portion of the pattern space which matched, and the special escapes \1 through \9 to refer to the corresponding matching sub-expressions in the regexp.
+- `t label`: If  a  s/// has done a successful substitution since the last input line was read and since the last t or T command, then branch to label; if label is omitted, branch to end of script.
+- `T label`: If no s/// has done a successful substitution since the last input line was read and since the last t or T command, then  branch to label; if label is omitted, branch to end of script. This is a GNU extension.
+- `w filename`: Write the current pattern space to filename.
+- `W filename`: Write the first line of the current pattern space to filename.  This is a GNU extension.
+- `x`: Exchange the contents of the hold and pattern spaces.
+- `y/source/dest/`: Transliterate the characters in the pattern space which appear in source to the corresponding character in dest.
+
+
+<a name="OneLiners" />
+
+# One Liners #
+
+Kudos to [Eric Pement] for this excellent collection of one liners.
+
+
+## File Spacing ##
+
+    # double space a file
+    sed G
+    
+    # double space a file which already has blank lines in it. Output file
+    # should contain no more than one blank line between lines of text.
+    sed '/^$/d;G'
+    
+    # triple space a file
+    sed 'G;G'
+    
+    # undo double-spacing (assumes even-numbered lines are always blank)
+    sed 'n;d'
+    
+    # insert a blank line above every line which matches "regex"
+    sed '/regex/{x;p;x;}'
+    
+    # insert a blank line below every line which matches "regex"
+    sed '/regex/G'
+    
+    # insert a blank line above and below every line which matches "regex"
+    sed '/regex/{x;p;x;G;}'
+
+
+## Numbering ##
+
+    # number each line of a file (simple left alignment). Using a tab (see
+    # note on '\t' at end of file) instead of space will preserve margins.
+    sed = filename | sed 'N;s/\n/\t/'
+    
+    # number each line of a file (number on left, right-aligned)
+    sed = filename | sed 'N; s/^/     /; s/ *\(.\{6,\}\)\n/\1  /'
+    
+    # number each line of file, but only print numbers if line is not blank
+    sed '/./=' filename | sed '/./N; s/\n/ /'
+    
+    # count lines (emulates "wc -l")
+    sed -n '$='
+
+
+## Text Conversion and Substitution ##
+
+    # IN UNIX ENVIRONMENT: convert DOS newlines (CR/LF) to Unix format.
+    sed 's/^M$//'              # in bash/tcsh, press Ctrl-V then Ctrl-M
+    sed 's/\x0D$//'            # works on ssed, gsed 3.02.80 or higher
+    
+    # IN UNIX ENVIRONMENT: convert Unix newlines (LF) to DOS format.
+    sed 's/$'"/`echo \\\r`/"             # command line under bash
+    sed 's/$/\r/'                        # gsed 3.02.80 or higher
+    
+    # delete leading whitespace (spaces, tabs) from front of each line
+    # aligns all text flush left
+    sed 's/^[ \t]*//'                    # see note on '\t' at end of file
+    
+    # delete trailing whitespace (spaces, tabs) from end of each line
+    sed 's/[ \t]*$//'                    # see note on '\t' at end of file
+    
+    # delete BOTH leading and trailing whitespace from each line
+    sed 's/^[ \t]*//;s/[ \t]*$//'
+    
+    # insert 5 blank spaces at beginning of each line (make page offset)
+    sed 's/^/     /'
+    
+    # align all text flush right on a 79-column width
+    sed -e :a -e 's/^.\{1,78\}$/ &/;ta'  # set at 78 plus 1 space
+    
+    # center all text in the middle of 79-column width. In method 1,
+    # spaces at the beginning of the line are significant, and trailing
+    # spaces are appended at the end of the line. In method 2, spaces at
+    # the beginning of the line are discarded in centering the line, and
+    # no trailing spaces appear at the end of lines.
+    sed  -e :a -e 's/^.\{1,77\}$/ & /;ta'                     # method 1
+    sed  -e :a -e 's/^.\{1,77\}$/ &/;ta' -e 's/\( *\)\1/\1/'  # method 2
+    
+    # substitute (find and replace) "foo" with "bar" on each line
+    sed 's/foo/bar/'             # replaces only 1st instance in a line
+    sed 's/foo/bar/4'            # replaces only 4th instance in a line
+    sed 's/foo/bar/g'            # replaces ALL instances in a line
+    sed 's/\(.*\)foo\(.*foo\)/\1bar\2/' # replace the next-to-last case
+    sed 's/\(.*\)foo/\1bar/'            # replace only the last case
+    
+    # substitute "foo" with "bar" ONLY for lines which contain "baz"
+    sed '/baz/s/foo/bar/g'
+    
+    # substitute "foo" with "bar" EXCEPT for lines which contain "baz"
+    sed '/baz/!s/foo/bar/g'
+    
+    # change "scarlet" or "ruby" or "puce" to "red"
+    sed 's/scarlet/red/g;s/ruby/red/g;s/puce/red/g'   # most seds
+    gsed 's/scarlet\|ruby\|puce/red/g'                # GNU sed only
+    
+    # reverse order of lines (emulates "tac")
+    # bug/feature in HHsed v1.5 causes blank lines to be deleted
+    sed '1!G;h;$!d'               # method 1
+    sed -n '1!G;h;$p'             # method 2
+    
+    # reverse each character on the line (emulates "rev")
+    sed '/\n/!G;s/\(.\)\(.*\n\)/&\2\1/;//D;s/.//'
+    
+    # join pairs of lines side-by-side (like "paste")
+    sed '$!N;s/\n/ /'
+    
+    # if a line ends with a backslash, append the next line to it
+    sed -e :a -e '/\\$/N; s/\\\n//; ta'
+    
+    # if a line begins with an equal sign, append it to the previous line
+    # and replace the "=" with a single space
+    sed -e :a -e '$!N;s/\n=/ /;ta' -e 'P;D'
+    
+    # add commas to numeric strings, changing "1234567" to "1,234,567"
+    gsed ':a;s/\B[0-9]\{3\}\>/,&/;ta'                     # GNU sed
+    sed -e :a -e 's/\(.*[0-9]\)\([0-9]\{3\}\)/\1,\2/;ta'  # other seds
+    
+    # add commas to numbers with decimal points and minus signs (GNU sed)
+    gsed -r ':a;s/(^|[^0-9.])([0-9]+)([0-9]{3})/\1\2,\3/g;ta'
+    
+    # add a blank line every 5 lines (after lines 5, 10, 15, 20, etc.)
+    gsed '0~5G'                  # GNU sed only
+    sed 'n;n;n;n;G;'             # other seds
+
+
+## Selective Printing of Specific Lines ##
+
+    # print first 10 lines of file (emulates behavior of "head")
+    sed 10q
+    
+    # print first line of file (emulates "head -1")
+    sed q
+    
+    # print the last 10 lines of a file (emulates "tail")
+    sed -e :a -e '$q;N;11,$D;ba'
+    
+    # print the last 2 lines of a file (emulates "tail -2")
+    sed '$!N;$!D'
+    
+    # print the last line of a file (emulates "tail -1")
+    sed '$!d'                    # method 1
+    sed -n '$p'                  # method 2
+    
+    # print the next-to-the-last line of a file
+    sed -e '$!{h;d;}' -e x              # for 1-line files, print blank line
+    sed -e '1{$q;}' -e '$!{h;d;}' -e x  # for 1-line files, print the line
+    sed -e '1{$d;}' -e '$!{h;d;}' -e x  # for 1-line files, print nothing
+    
+    # print only lines which match regular expression (emulates "grep")
+    sed -n '/regexp/p'           # method 1
+    sed '/regexp/!d'             # method 2
+    
+    # print only lines which do NOT match regexp (emulates "grep -v")
+    sed -n '/regexp/!p'          # method 1, corresponds to above
+    sed '/regexp/d'              # method 2, simpler syntax
+    
+    # print the line immediately before a regexp, but not the line
+    # containing the regexp
+    sed -n '/regexp/{g;1!p;};h'
+    
+    # print the line immediately after a regexp, but not the line
+    # containing the regexp
+    sed -n '/regexp/{n;p;}'
+    
+    # print 1 line of context before and after regexp, with line number
+    # indicating where the regexp occurred (similar to "grep -A1 -B1")
+    sed -n -e '/regexp/{=;x;1!p;g;$!N;p;D;}' -e h
+    
+    # grep for AAA and BBB and CCC (in any order)
+    sed '/AAA/!d; /BBB/!d; /CCC/!d'
+    
+    # grep for AAA and BBB and CCC (in that order)
+    sed '/AAA.*BBB.*CCC/!d'
+    
+    # grep for AAA or BBB or CCC (emulates "egrep")
+    sed -e '/AAA/b' -e '/BBB/b' -e '/CCC/b' -e d    # most seds
+    gsed '/AAA\|BBB\|CCC/!d'                        # GNU sed only
+    
+    # print paragraph if it contains AAA (blank lines separate paragraphs)
+    # HHsed v1.5 must insert a 'G;' after 'x;' in the next 3 scripts below
+    sed -e '/./{H;$!d;}' -e 'x;/AAA/!d;'
+    
+    # print paragraph if it contains AAA and BBB and CCC (in any order)
+    sed -e '/./{H;$!d;}' -e 'x;/AAA/!d;/BBB/!d;/CCC/!d'
+    
+    # print paragraph if it contains AAA or BBB or CCC
+    sed -e '/./{H;$!d;}' -e 'x;/AAA/b' -e '/BBB/b' -e '/CCC/b' -e d
+    gsed '/./{H;$!d;};x;/AAA\|BBB\|CCC/b;d'         # GNU sed only
+    
+    # print only lines of 65 characters or longer
+    sed -n '/^.\{65\}/p'
+    
+    # print only lines of less than 65 characters
+    sed -n '/^.\{65\}/!p'        # method 1, corresponds to above
+    sed '/^.\{65\}/d'            # method 2, simpler syntax
+    
+    # print section of file from regular expression to end of file
+    sed -n '/regexp/,$p'
+    
+    # print section of file based on line numbers (lines 8-12, inclusive)
+    sed -n '8,12p'               # method 1
+    sed '8,12!d'                 # method 2
+    
+    # print line number 52
+    sed -n '52p'                 # method 1
+    sed '52!d'                   # method 2
+    sed '52q;d'                  # method 3, efficient on large files
+    
+    # beginning at line 3, print every 7th line
+    gsed -n '3~7p'               # GNU sed only
+    sed -n '3,${p;n;n;n;n;n;n;}' # other seds
+    
+    # print section of file between two regular expressions (inclusive)
+    sed -n '/Iowa/,/Montana/p'             # case sensitive
+
+
+## Selective Deletion of Specific Lines ##
+
+    # print all of file EXCEPT section between 2 regular expressions
+    sed '/Iowa/,/Montana/d'
+    
+    # delete duplicate, consecutive lines from a file (emulates "uniq").
+    # First line in a set of duplicate lines is kept, rest are deleted.
+    sed '$!N; /^\(.*\)\n\1$/!P; D'
+    
+    # delete duplicate, nonconsecutive lines from a file. Beware not to
+    # overflow the buffer size of the hold space, or else use GNU sed.
+    sed -n 'G; s/\n/&&/; /^\([ -~]*\n\).*\n\1/d; s/\n//; h; P'
+    
+    # delete all lines except duplicate lines (emulates "uniq -d").
+    sed '$!N; s/^\(.*\)\n\1$/\1/; t; D'
+    
+    # delete the first 10 lines of a file
+    sed '1,10d'
+    
+    # delete the last line of a file
+    sed '$d'
+    
+    # delete the last 2 lines of a file
+    sed 'N;$!P;$!D;$d'
+    
+    # delete the last 10 lines of a file
+    sed -e :a -e '$d;N;2,10ba' -e 'P;D'   # method 1
+    sed -n -e :a -e '1,10!{P;N;D;};N;ba'  # method 2
+    
+    # delete every 8th line
+    gsed '0~8d'                           # GNU sed only
+    sed 'n;n;n;n;n;n;n;d;'                # other seds
+    
+    # delete lines matching pattern
+    sed '/pattern/d'
+    
+    # delete ALL blank lines from a file (same as "grep '.' ")
+    sed '/^$/d'                           # method 1
+    sed '/./!d'                           # method 2
+    
+    # delete all CONSECUTIVE blank lines from file except the first; also
+    # deletes all blank lines from top and end of file (emulates "cat -s")
+    sed '/./,/^$/!d'          # method 1, allows 0 blanks at top, 1 at EOF
+    sed '/^$/N;/\n$/D'        # method 2, allows 1 blank at top, 0 at EOF
+    
+    # delete all CONSECUTIVE blank lines from file except the first 2:
+    sed '/^$/N;/\n$/N;//D'
+    
+    # delete all leading blank lines at top of file
+    sed '/./,$!d'
+    
+    # delete all trailing blank lines at end of file
+    sed -e :a -e '/^\n*$/{$d;N;ba' -e '}'  # works on all seds
+    sed -e :a -e '/^\n*$/N;/\n$/ba'        # ditto, except for gsed 3.02.*
+    
+    # delete the last line of each paragraph
+    sed -n '/^$/{p;h;};/./{x;/./p;}'
+
+
+## Special Applications ##
+
+    # remove nroff overstrikes (char, backspace) from man pages. The 'echo'
+    # command may need an -e switch if you use Unix System V or bash shell.
+    sed "s/.`echo \\\b`//g"    # double quotes required for Unix environment
+    sed 's/.^H//g'             # in bash/tcsh, press Ctrl-V and then Ctrl-H
+    sed 's/.\x08//g'           # hex expression for sed 1.5, GNU sed, ssed
+    
+    # get Usenet/e-mail message header
+    sed '/^$/q'                # deletes everything after first blank line
+    
+    # get Usenet/e-mail message body
+    sed '1,/^$/d'              # deletes everything up to first blank line
+    
+    # get Subject header, but remove initial "Subject: " portion
+    sed '/^Subject: */!d; s///;q'
+    
+    # get return address header
+    sed '/^Reply-To:/q; /^From:/h; /./d;g;q'
+    
+    # parse out the address proper. Pulls out the e-mail address by itself
+    # from the 1-line return address header (see preceding script)
+    sed 's/ *(.*)//; s/>.*//; s/.*[:<] *//'
+    
+    # add a leading angle bracket and space to each line (quote a message)
+    sed 's/^/> /'
+    
+    # delete leading angle bracket & space from each line (unquote a message)
+    sed 's/^> //'
+    
+    # remove most HTML tags (accommodates multiple-line tags)
+    sed -e :a -e 's/<[^>]*>//g;/</N;//ba'
+    
+    # extract multi-part uuencoded binaries, removing extraneous header
+    # info, so that only the uuencoded portion remains. Files passed to
+    # sed must be passed in the proper order. Version 1 can be entered
+    # from the command line; version 2 can be made into an executable
+    # Unix shell script. (Modified from a script by Rahul Dhesi.)
+    sed '/^end/,/^begin/d' file1 file2 ... fileX | uudecode   # vers. 1
+    sed '/^end/,/^begin/d' "$@" | uudecode                    # vers. 2
+    
+    # sort paragraphs of file alphabetically. Paragraphs are separated by blank
+    # lines. GNU sed uses \v for vertical tab, or any unique char will do.
+    sed '/./{H;d;};x;s/\n/={NL}=/g' file | sort | sed '1s/={NL}=//;s/={NL}=/\n/g'
+    gsed '/./{H;d};x;y/\n/\v/' file | sort | sed '1s/\v//;y/\v/\n/'
+    
+    # zip up each .TXT file individually, deleting the source file and
+    # setting the name of each .ZIP file to the basename of the .TXT file
+    # (under DOS: the "dir /b" switch returns bare filenames in all caps).
+    echo @echo off >zipup.bat
+    dir /b *.txt | sed "s/^\(.*\)\.TXT/pkzip -mo \1 \1.TXT/" >>zipup.bat
+
+
+

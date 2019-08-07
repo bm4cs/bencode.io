@@ -1,0 +1,33 @@
+---
+layout: post
+title: "70-235 Certified"
+date: "2008-12-21 23:42:59"
+comments: false
+categories: BizTalk
+---
+
+A few weeks ago I sat the [70-235](http://www.microsoft.com/learning/en/us/exams/70-235.mspx) exam. Coming from a real-world perspective I wasnt overly impressed with the exam. To me it felt mind numbingly robotic and very 2006 R1 feature set focused (e.g. BAM and BRE). However the exam successfully probed some interesting areas within BizTalk, encouraging me to learn things about BizTalk that I would not otherwise get exposure to.
+
+Patrick Wellink's post [How to prepare for the BizTalk 2006 Exam](http://bloggingabout.net/blogs/wellink/archive/2007/10/25/how-to-prepare-for-the-biztalk-2006-exam-70-235.aspx) concisely summarised how to prepare for this exam. At first I sensed some sarcasm in Patrick's post, but now having successfully passed the exam found his post to be scaringly accurate.
+
+
+- Create a nice BizTalk solution
+- Use party resolution
+- Use correlation
+- Send a message to a web-service that requires authentication
+- Use a business rule with a database fact
+- Use business rules that assert and retract
+- Make sure you deploy the solution
+- Run messaages through it
+- See what happens if the orchestrations are not started
+- See what happens if the rules are not deployed
+- Remeber the name of each tool you use (e.g. orchestration view in VS.NET) 
+- Know the stages of the pipelines 
+- Finally create a BAM View in excel 
+- Deploy the BAM View 
+- Deploy the tracking profile
+- See if it works through the BAM Portal
+- Now modify the BAM view
+- Update the BAM view
+- Do some BAM with continuations
+- Know (memorise) your persistence points

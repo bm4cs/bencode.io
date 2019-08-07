@@ -1,0 +1,173 @@
+---
+layout: post
+title: "My Mutt"
+date: "2015-08-18 21:03:40"
+comments: false
+categories: [nix]
+---
+
+![Mutt](/images/mutt.png)
+
+If you haven't heard of [mutt](http://www.mutt.org/) you're missing out. 
+
+> Mutt is a small but very powerful text-based mail client for Unix operating systems.
+
+
+I started using the excellent terminal based mail client **mutt** recently, and its simplicity is totally refreshing. Using mutt, it quickly becomes apparent how much useless baggage many modern (i.e. lazy) mail clients (e.g. Microsoft Outlook) actually bog you down with, not to mention the harrowing way they actually encode mail. Its taken me years to understand this:
+
+> All mail clients suck. This one just sucks less.
+
+Mutt is suprising feature packed. Supporting things like IMAP and threading out of the box.
+
+As for most well designed software, its UNIX design philosophy becomes apparent, where it does its one thing well, and allows other complimentary programs to bolster it. In mutt's case to do tricks like offline polling, so you can still effectively email while on a flight perhaps or without 3G reception.
+
+Like all good things, there is a little initial pain involved. You're going to need to understand how to craft a `.muttrc` to make mutt, your mutt.
+
+The [official manual](http://www.mutt.org/doc/manual/) is very good, but I learn fastest just trying things out. You can't go past [Dave Pearson's fully documented muttrc](http://www.davep.org/mutt/muttrc/). Or you can check [mine](https://github.com/vimjock/scripts/tree/master/linux/mutt) out for a connected GMail setup. I also bound GMail's web UI keyboard shortcuts as mutt bindings, and got it doing a solarized dark colorscheme.
+
+
+### .muttrc
+
+TODO: Refresh this.
+
+    account-hook imap://gmail/ "set
+
+    set realname = "Ben Simmonds"
+    set from = "ben@bencode.net"
+    set imap_user = "ben@bencode.net"
+    set imap_pass = ""
+
+    set sort_browser="date"
+    set sort_aux=date-received #sort threads by date received.
+    set delete=ask-yes #ask before doing a delete.
+    set include #include message in replies.
+    set postpone=ask-no #ask about postponing.
+    set postponed="+[Gmail]/Drafts" #where postponed messages live.
+
+    set nomark_old #dont mark unread new messages as old.
+    set nobeep #dont make annoying beeping sounds.
+    set pager_context=3 #display 3 lines of context in the pager.
+    set pager_index_lines=5 #
+    set pager_stop #dont skip msgs on the next page.
+    set sort=threads
+    set nostrict_threads #fuzzy threading.
+    set quote_regexp="^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
+
+
+    #remote gmail folders
+    set folder = "imaps://imap.gmail.com:993"
+    set mbox = "imaps://imap.gmail.com:993/[Gmail]/All Mail"
+    set spoolfile = "+INBOX"
+    set record=""
+    #set record="+[Gmail]/Sent Mail"
+
+    #mutt dirs
+    set header_cache="~/.mutt/cache/headers"
+    set message_cachedir="~/.mutt/cache/bodies"
+    set certificate_file="~/.mutt/certificates"
+
+    #smtp
+    set smtp_url = "smtp://ben@bencode.net@smtp.gmail.com:587/"
+    set smtp_pass = ""
+
+    set move = no
+    set timeout=15
+    #set imap_keepalive = 900
+    #auto_view text/html
+
+    source ~/.mutt/macros.muttrc
+    source ~/.mutt/colors-solarized-dark-16.muttrc
+    source ~/.mutt/bindings.muttrc
+    source ~/.mutt/header.muttrc
+
+
+# Key Bindings
+
+Orginal source: [http://files.zeth.net/mutt.txt](http://files.zeth.net/mutt.txt)
+
+
+    ==========================================================================       
+                                 MUTT COMMANDS                                       
+    ==========================================================================       
+                                                                                     
+    q      (x)      exit the current menu (abort without saving)                     
+    ^g              cancel current action                                            
+    ?               list all keybindings for the current menu                        
+                                                                                     
+    ==========================================================================       
+                                 INDEX (browsing mailbox)                            
+    ==========================================================================       
+                                                                                     
+    ^n     ^p       next/prev thread
+    m               compose a new message                                            
+    d      (D)      delete the current message (matching a pattern)                  
+    u      (U)      undelete-message (matching a pattern)                            
+    C      (ALT C)  copy the current message to another mailbox (decode first)       
+    s      (ALT s)  save-message (decode first)                                      
+    r      (g)  (L) reply to sender (all recipients) (reply to mailing list)         
+    f      (b)      forward message (bounce)                                         
+    /      (ALT /)  search  (search-reverse)                                         
+    c               change to a different mailbox/folder                             
+    F      (N)      mark as important (new)                                          
+    l               show messages matching a pattern                                 
+    o      (O)      change the current sort method (reverse sort)                    
+    t      (ALT t)  toggle the tag on a message (entire message thread)              
+    T      (^t)     tag messages matching a pattern (untag)                          
+    v               view-attachments                                                 
+    <Return>        display-message                                                  
+    <Tab>           jump to the next new message                                     
+    @               show the author's full e-mail address                            
+    $               save changes to mailbox                                          
+    ^l              clear and redraw the screen                                      
+    ALT k           mail a PGP public key to someone                                 
+                                                                                     
+                                                                                     
+    ==========================================================================       
+                                 PAGER (reading an email)                            
+    ==========================================================================       
+                                                                                     
+    <Return>        go down one line                                                 
+    <Space>  (-)    display the next page/message (previous)                         
+    ^        ($)    jump to the top (bottom) of the message                          
+    /   (ALT /) (n) search for a regular expression (search backwards) (next match)  
+    \               toggle search pattern coloring                                   
+    S        (T)    skip beyond quoted text (toggle display of quoted text)          
+                                                                                     
+                                                                                     
+    ==========================================================================       
+                                 COMPOSER (new email send options)                   
+    ==========================================================================       
+                                                                                     
+    y    (P)   (w)  send the message  (postpone)  (write to folder)                  
+    i               check spelling, if available                                     
+    a    (A)   (D)  attach a file  (attach message)  (detach)                        
+    d               edit description on attachment                                   
+    t      (ALT f)  edit the To field (From field)                                   
+    c      (b)      edit the Cc field (Bcc field)                                    
+    s               edit the Subject                                                 
+    r               edit the Reply-To field                                          
+    p               select PGP options                                               
+    ALT k           attach a PGP public key                                          
+    ^k              import a PGP public key (from attachment)
+    ^f              wipe PGP passphrase from memory                                  
+    f               specify an 'Fcc' mailbox i.e. sent folder                        
+
+
+
+# PGP support
+
+Coming soon.
+
+
+# Google Contacts Integration
+
+Install [goobook](https://pypi.org/project/goobook/). Run `goobook authenticate` and follow the bouncing ball. If successful, will create `~/.goobook_auth.json` (keep this secret!).
+
+Once running, add the following to your `.muttrc`, for really slick tab completion on address fields.
+
+
+    set query_command="goobook query %s"
+    macro index,pager a "<pipe-message>goobook add<return>" "add sender to google contacts"
+    bind editor <Tab> complete-query
+
+

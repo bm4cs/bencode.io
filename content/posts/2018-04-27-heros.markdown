@@ -1,0 +1,126 @@
+---
+layout: post
+title: "Computer Heros"
+date: "2017-04-27 22:12:10"
+comments: false
+categories: "geek"
+---
+
+Some heros in the world of computer science.
+
+
+
+# Founding Fathers (pre 1960)
+
+### George Boole (1815 - 1864)
+
+Boolean algegra. Papers *The Mathematical Analysis of Logic* (1847), and *An Investigation of the Laws of Thought* (1854).
+
+
+### Friedrich Ludwig Gottlob Frege (1848 - 1925)
+
+Analytic philosophy. Developed modern logic in the Begriffsschrift and work in the foundations of mathematics. Books *The Foundations of Arithmetic*, *On Sense and Reference*  and *The Thought*. 
+
+
+### Alan Turing (1912 - 1954)
+
+The father of theoretical computer science. Formalised the concepts of algorithm and computation through the notion of a *Universal Machine* (i.e Turing Machine) in his seminal paper *On Computable Numbers, with an Application to the Entscheidungsproblem*.
+
+### John von Neumann  (1903 - 1957)
+
+Implementer of the "Turing Machine".
+
+### Mauris Wilks
+
+EDSAC, the first practical implementation of von-neumann architecture.
+
+
+
+
+
+# Golden Age (1960-90)
+
+### Tony Hoare (1934)
+
+Hoare logic (for verifying correctness), formalised the interaction of concurrent processes with [communicating sequential processes](https://en.wikipedia.org/wiki/Communicating_sequential_processes) (CSP), and invented the quicksort algorithm.
+
+
+### John McCarthy
+
+Creator of LISP. First dynamic language.
+
+
+### Ken Thompson
+
+Unix. The B programming language. The Go programming language. Co-creator of the Plan 9 operating system. Regular expressions, UTF-8 encoding, and text editors QED and `ed`.
+
+
+### Dennis Ritchie (1941-2011)
+
+The C programming language and Unix. Commonly known by his username `dmr`.
+
+
+### Douglas McIlroy (1932)
+
+Unix pipes, and software componentization.
+
+
+
+### Bill Joy
+
+BSD and vi. Paper *Why The Future Doesn't Need Us*.
+
+
+### Joe Armstrong
+
+Erlang. Fault tolerant distributed systems.
+
+
+### Alan Kay
+
+OO. SmallTalk. Squeak.
+
+
+### Larry Wall
+
+Perl.
+
+
+### Richard Stallman
+
+GNU (GNU Not UNIX).
+
+### Linus Torvalds
+
+The Linux kernel and Git.
+
+### David Cutler
+
+VMS and Windows NT kernel.
+
+
+### Rob Pike
+
+golang, SysV, X Windows.
+
+
+### Rich Hickey
+
+Clojure.
+
+
+
+# Internet Age (1990 - 2000)
+
+
+
+### Robert Griesemer
+
+Golang.
+
+
+### Bryan Cantrill
+
+DTrace.
+
+

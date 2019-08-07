@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Shay Banon on Innovation"
+date: "2016-11-22 22:05:01"
+comments: false
+categories: "business"
+---
+
+Some great wisdom imparted by Shay Banon (creator of Elasticsearch).
+
+* Be bored. To promote innovation.
+* Open source and building a critical mass. Be committed. You need to care for it now; IRC, forums, negative feedback, bugs.
+* The benevolent dicator model (BDM) versus the democracy with a leader model.
+* Be distributed.
+* Choose a useful (and normally hard) problem to solve.
+* Best way to learn is to actually build something.
+* Double down on passion. Recruit passionate people (e.g. story about the guy who paid for Elastic training off his own back).
+* Videos are for collaboration.
+* Simple things, should be simple. Not easy though.
+* Hierarchy matters. Humans can't make decisions in groups.
+* IT is obsessed with whats next. You only need to look backwards for answers.
+

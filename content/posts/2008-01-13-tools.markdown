@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Tools"
+date: "2008-01-13 22:30:16"
+comments: false
+categories: "BizTalk"
+---
+
+[DebugView](http://www.microsoft.com/technet/sysinternals/Miscellaneous/DebugView.mspx): An indispensable utility from SysInternals. I use it as a UI for BizTalk, by printing debug information using `System.Diagnostics.Debug` with its default trace listener, messages end up getting fed into the Win32 OutputDebugString function. DebugView monitors and displays this debug output in realtime.
+
+[TCPTrace](http://www.pocketsoap.com/tcptrace/): Tunnels packets between a client and server, and displays the payload. Unreal for tracing HTTP traffic between web services, WCF endpoints, and so on.
+
+[XPathMania](http://www.codeplex.com/Wiki/View.aspx?ProjectName=MVPXML): Extends the VS.NET 2005 XML Editor, by providing a "scratch pad" to enter and execute XPath queries against the active document.
+
+[LoadGen](http://www.microsoft.com/downloads/details.aspx?FamilyID=C2EE632B-41C2-42B4-B865-34077F483C9E&displaylang=en): Microsoft's free load generation tool, supports a variety of protocols out of the box. It is built on an extensible (configuration based) design (presentation, framework + component), and is open to customisation.
+
+[adminpak.msi](http://www.microsoft.com/downloads/details.aspx?FamilyID=c16ae515-c8f4-47ef-a1e4-a8dcbacff8e3&displaylang=en): The windows server administration tools pack provides a bundle of useful tools for working within a distrubuted Micirosoft environment. I use the MMC remote desktop snap-in and active directory administrative tools daily.
+
+[WinMerge](http://winmerge.org/): An incredible open source diff/merge tool. New version of an old schema, and want to see the differences? Branched an orchestration (odx) and need to merge the changes back into the trunk?
+
+[SQL Server Profiler](http://msdn2.microsoft.com/en-us/library/ms173757.aspx): This handy tool gives visibility to the TSQL statements that are submitted to a SQL Server. It can be run remotely from the SQL Server itself. Its an install option that is included with the standard SQL Server Client Tools. Last time I used it was to diagnose a heavy map that had way too many custom scripting functoids—many of which were doing data access lookups.
+
+[Foxit Reader](http://www.foxitsoftware.com/pdf/rd_intro.php): This one has nothing really to do with BizTalk or development... it is however the fastest, lightest PDF viewer I have ever come across. Its speed is just incredible.
+
+[Scott Hanselman's 2007 Ultimate Developer and Power Users Tool List for Windows](http://www.hanselman.com/blog/ScottHanselmans2007UltimateDeveloperAndPowerUsersToolListForWindows.aspx) is the best tool list I have come across. Many life changing, productivity tools for the developer.

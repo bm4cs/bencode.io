@@ -1,0 +1,120 @@
+---
+layout: post
+title: "Vagrant"
+date: "2017-12-30 20:09:01"
+comments: false
+categories: "linux"
+---
+
+When something becomes messy in the software industry, we have the habit of tucking the problems away behind abstractions. To me Vagrant is simply an abstraction layer for working with a range of hypervisors (libvirt, VirtualBox, VMWare, Hyper-V, Docker and more), in a reliable and consistent manner.
+
+By articulating VM's as a simple text based (Ruby) configuration file, a `Vagrantfile`, achieve greater simplicity, portability across systems, and consistency which could theoretically be used with any virtual environment running on top of any other system.
+
+With Vagrant an environment can now be reliably defined in a text based format, making it easy to back up, modify, share, and manage with revision control. It also means that rather than sharing a whole virtual machine image, which could be many gigabytes, a simple text file can be shared instead.
+
+
+# Workflow
+
+1. `dnf install vagrant`
+2. Checkout available boxes on the [HashiCorp Vagrant Cloud](https://app.vagrantup.com/boxes/search). I wanted a CentOS box, which is published as `centos/7`. Make sure the box you go for actually supports the underlying hypervisor technology you plan on running, `libvirt` in my case. A box is used as an initial image to clone from, the base image itself is never modified.
+3. `vagrant box add centos/7` to download the box locally (global to the user).
+4. `vagrant init centos/7` to boilerplate a [`Vagrantfile`](https://www.vagrantup.com/docs/vagrantfile/) to get started with. Below is a basic `Vagrantfile`. Of course can be heavily [customised](https://www.vagrantup.com/docs/vagrantfile/) to make the VM's behave just how you need.
+5. Create the `bootstrap.sh` script in the same working directory as the `Vagrantfile`. Vagrant takes care of automatically synchronising this directory on the host, with the guest.
+6. `vagrant up`
+7. Share the `Vagrantfile` with the dev team, by commiting it into the git repo.
+
+
+
+**Vagrantfile**
+
+{% highlight ruby %}
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+  config.vm.box_check_update = false
+  config.vm.network "forwarded_port", guest: 80, host: 4567
+
+  config.vm.provider "libvirt" do |libvirt|
+    libvirt.memory = 1024
+    libvirt.cpus = 2
+  end
+
+  config.vm.provision :shell, path: "bootstrap.sh"
+end
+{% endhighlight %}
+
+A couple of highlights with this little `Vagrantfile`. First, how provider specific customisations can be made, in this case with the [libvirt Vagrant provider](https://github.com/vagrant-libvirt/vagrant-libvirt). Second, the use of a bash script provisioner, which will invoke `bootstrap.sh` which will install, configure and start the `httpd` package (the Apache web server).
+
+
+**bootstrap.sh**
+
+{% highlight bash %}
+#!/usr/bin/env bash
+
+yum install -y httpd
+if ! [ -L /var/www ]; then
+  rm -rf /var/www
+  ln -fs /vagrant /var/www
+fi
+
+systemctl enable httpd
+systemctl start httpd
+{% endhighlight %}
+
+
+
+
+# libvirt Password Prompts
+
+Non-root users need to be given access to the libvirt socket, via Policy Kit.
+
+    vim /etc/polkit-1/localauthority/50-local.d/vagrant.pkla
+
+With this content (for my account ben):
+
+    [Allow ben libvirt management permissions]
+    Identity=unix-user:ben
+    Action=org.libvirt.unix.manage
+    ResultAny=yes
+    ResultInactive=yes
+    ResultActive=yes
+
+
+# Tips
+
+Never symlink the `/var/lib/libvirt/images`. Vagrant will spit its dummy.
+
+
+By default `/vagrant` in the guest will be synced with the host, using rsync. To force a sync can use this command `vagrant rsync`
+
+Provisioning (the custom bootstrapping activities such as shell scripts) can be retriggered on running machines with `vagrant reload --provision`
+
+Vagrant boxes are cached locally under `~/vagrant.d` like this:
+
+    $ tree ~/.vagrant.d/
+    /home/ben/.vagrant.d/
+    ├── boxes
+    │   └── centos-VAGRANTSLASH-7
+    │       ├── 1710.01
+    │       │   └── libvirt
+    │       │       ├── box.img
+    │       │       ├── metadata.json
+    │       │       └── Vagrantfile
+    │       └── metadata_url
+    ├── data
+    │   ├── checkpoint_cache
+    │   ├── checkpoint_signature
+    │   ├── lock.dotlock.lock
+    │   └── machine-index
+    │       ├── index
+    │       └── index.lock
+    ├── gems
+    ├── insecure_private_key
+    ├── plugins.json
+    ├── rgloader
+    │   └── loader.rb
+    ├── setup_version
+    └── tmp
+        └── box0c443504b9553b794ce156940721489e599630ab
+
+
+

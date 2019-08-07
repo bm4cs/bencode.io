@@ -1,0 +1,77 @@
+---
+layout: post
+title: "Cherished GCC flags"
+date: "2015-08-22 15:32:44"
+comments: false
+categories: "nix"
+---
+
+A (work in progress) compilation of useful GCC configuration, focused on C.
+
+**-W** warnings. 
+
+- `-Wall` is a must.
+- `-Werror` to treat warnings as errors.
+
+**-l** instructs the linker it has some work to do (i.e. link a library please). `-lm` is shorthand for `-libm` and in turn `-libm.a` is a static library is selected.
+
+**-L** hint to the linker where to locate libraries. `-L/opt/gdbm-1.10/src` in combination with -lgdbm tells the linker exactly where to find the gdbm libraries. Multiple `-L` can be specified. Alternatively use the `LIBRARY_PATH` environment variable like so:
+
+{% highlight bash %}
+$ LIBRARY_PATH=.:/opt/gdbm-1.8.3/lib:/net/lib
+$ export LIBRARY_PATH
+{% endhighlight %}
+
+
+**-I** hint to compiler where to locate headers. `-I/opt/gdbm-1.10/src`. Multiple `-I` include may be specified. Alternatively use the `C_INCLUDE_PATH` environment variable like so:
+
+{% highlight bash %}
+$ C_INCLUDE_PATH=.:/opt/gdbm-1.8.3/include:/net/include
+$ export C_INCLUDE_PATH
+{% endhighlight %}
+
+**-g** debug symbols. Now you'll get variable and function names, yummy.
+
+**-std=gnu11** by default GCC uses the C89 standard. C11 FTW.
+
+**-O3** optimisation level 3. This is heavy duty. If you find debugging tough (e.g. variables have been optimised out etc), try dropping it back to level zero `-O0`.
+
+
+## Examples:
+
+Link with explicit static library:
+
+`$ gcc -Wall -I/opt/gdbm-1.8.3/include dbmain.c /opt/gdbm-1.8.3/lib/libgdbm.a`
+
+Link with explicit shared library:
+
+`$ gcc -Wall -I/opt/gdbm-1.8.3/include dbmain.c /opt/gdbm-1.8.3/lib/libgdbm.so`
+
+Provide header and library hint paths:
+
+`$ gcc -Wall -I/tmp/gdbm-1.10/src -L/tmp/gdbm-1.10/src dbmain.c -lgdbm`
+
+
+A simple makefile:
+
+{% highlight makefile %}
+P=program_name
+OBJECTS=
+CC=gcc
+CFLAGS= -Wall -g -std=gnu11 -O3
+LDLIBS=
+
+$(P): $(OBJECTS)
+
+clean:
+  rm -f main main.o hello_fn.o
+{% endhighlight %}
+
+POSIX standard `make` uses the following recipe:
+
+`$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $*.c`
+
+When GNU `make` decides you have an executable to build from object files:
+
+`$(CC) $(LDFLAGS) first.o second.o $(LDLIBS)`
+

@@ -1,0 +1,243 @@
+---
+layout: post
+title: "Apache Ant"
+date: "2015-01-22 22:15:00"
+comments: false
+categories: "Java"
+---
+
+Lately I've gleened some "real world" Apache Ant tips and tricks from some really impressive Java EE developers I've had the opportunity of working with over the last year.
+
+> Apache Ant is a Java library and command-line tool whose mission is to drive processes described in build files as targets and extension points dependent upon each other. Ant supplies a number of built-in tasks allowing to compile, assemble, test and run Java applications. 
+
+Makefiles on steroids. Its XML based, and rather verbose. None the less, its powerful, and mature.
+
+To get a birds-eye feel on what's possible, checkout the [Overview of Apache Ant Tasks](https://ant.apache.org/manual/tasksoverview.html).
+
+## Getting setup
+
+- **Java home**. The "go-to" JDK in other words. Add a system variable `JAVA_HOME` if not exists, and point it to the desired JDK.
+- **Ant home**. Make sure the Ant is installed, and then point to your Ant installation by defining the `ANT_HOME` environment variable, for example `/usr/local/apache-ant-1.9.4`.
+- **Path**. Update the path to make sure both `%JAVA_HOME%\bin` and `%ANT_HOME%\bin` are included.
+
+Here's my `~/.bash_profile`:
+
+    export JAVA_HOME=/usr/libexec/java_home
+    export MYSQL_HOME=/usr/local/mysql
+    export GROOVY_HOME=/usr/local/groovy-2.1.4
+    export M2_HOME=/usr/local/apache-maven-3.0.4
+    export ANT_HOME=/usr/local/apache-ant-1.9.4
+    export PATH=$PATH:$M2_HOME/bin:$MYSQL_HOME/bin:$GROOVY_HOME/bin:$ANT_HOME/bin
+
+OK, you should be up and running. Check Java is happy.
+
+    MacBook:/ ben$ java -version
+    java version "1.7.0_13"
+    Java(TM) SE Runtime Environment (build 1.7.0_13-b20)
+    Java HotSpot(TM) 64-Bit Server VM (build 23.7-b01, mixed mode)
+
+And then Ant:
+
+    MacBook:/ ben$ ant -version
+    Apache Ant(TM) version 1.9.4 compiled on April 29 2014
+
+## Getting started
+
+We have adopted a divide-and-conquer style pattern, which helps provide structure and to modularise concerns; basically the following targets are created for each module:
+
+- **clean** - destroy all generated artifacts for the module.
+- **init** - setup file system and other needed dependencies to support the build of the module.
+- **compile** - you guessed it, all work needed to compile module, taking care of things like dependencies.
+- **assemble** - package bytecode into JAR's, WAR's, EAR's, whatever.
+
+For example, `module1-clean`, `module1-init`, `module1-compile`, `module1-assemble`. This makes life debugging much simplier, as you can work through the script chunk by chunk.
+
+
+### build.properties
+
+Next, its nice to extract public facing properties into a dedidcated `build.properties`. It's a nicer way of controlling the build process, without going under the hood into the (overwhelming) `build.xml`.
+
+    # General application infomation
+    application.name=ant-spike
+    application.version=1.0
+    application.vendor=bEncode
+    
+    # Server settings
+    jboss.home=/usr/local/wildfly-8.2.0.Final
+    
+    # Core Java compiler settings
+    javac.debug=true
+    javac.failonerror=true
+    javac.source=1.7
+    javac.target=1.7
+
+Properties can injected into the `build.xml` like so:
+
+    <property file="build.properties" />
+
+
+### Build number management
+
+The out of the box `buildnumber` will create a tiny file to hold an integer which gets incremented from build to build, helping to uniquely identify each build.
+
+    <buildnumber file="build.number" />
+
+This will create a file called `build.number`, if one doesn't already exist.
+
+    #Build Number for ANT. Do not edit!
+    #Fri Jan 30 22:34:30 EST 2015
+    build.number=24
+
+Obviously you can create and manage this manually if desired.
+
+You can then "stamp" this number into the MANIFEST.MF in your target package format (e.g. EAR):
+
+    <property name="build.version" value="${application.version}.${build.number}" />
+
+    <target name="ear-assemble" depends="ear-init" description="Assemble the EAR">
+        <!-- Ommitted for clarity -->
+
+        <manifest file="${dist.dir}/META-INF/MANIFEST.MF">
+            <attribute name="Built-By" value="${user.name}" />
+            <section name="${application.name}">
+                <attribute name="Specification-Title" value="${ant.project.name}" />
+                <attribute name="Specification-Version" value="${application.version}" />
+                <attribute name="Specification-Vendor" value="${application.vendor}" />
+                <attribute name="Implementation-Title" value="${application.name}" />
+                <attribute name="Implementation-Version" value="${build.version} ${TODAY}, ${TSTAMP}" />
+                <attribute name="Implementation-Vendor" value="${application.vendor} " />
+            </section>
+        </manifest>
+
+        <zip destfile="${dist.dir}/${versioned.ear.file}" basedir="${dist.dir}" />
+    </target>
+
+### Classpath management
+
+Using Ant's `path` and `pathelement` tasks, you can define all the file system cludge needed to get your code building. For example, I've bundled all the EE libraries into `jboss.classpath`, for quick and easy referencing throughout the rest of the build definition.
+
+    <!-- Class path entries -->
+    <path id="jboss.classpath">
+      <pathelement location="${jboss.home}/modules/system/layers/base/javax/annotation/api/main/jboss-annotations-api_1.2_spec-1.0.0.Final.jar" />
+      <pathelement location="${jboss.home}/modules/system/layers/base/javax/ejb/api/main/jboss-ejb-api_3.2_spec-1.0.0.Final.jar" />
+      <pathelement location="${jboss.home}/modules/system/layers/base/javax/enterprise/api/main/cdi-api-1.1.jar" />
+      <pathelement location="${jboss.home}/modules/system/layers/base/javax/inject/api/main/javax.inject-1.jar" />
+      <pathelement location="${jboss.home}/modules/system/layers/base/javax/interceptor/api/main/jboss-interceptors-api_1.2_spec-1.0.0.Final.jar" />
+      <pathelement location="${jboss.home}/modules/system/layers/base/javax/servlet/api/main/jboss-servlet-api_3.1_spec-1.0.0.Final.jar" />
+      <pathelement location="${jboss.home}/modules/system/layers/base/javax/servlet/jsp/api/main/jboss-jsp-api_2.3_spec-1.0.1.Final.jar" />
+    </path>
+
+    <!-- Required library class path entries -->
+    <path id="common.libs">
+        <pathelement location="${lib.dir}/logging/logback-classic-1.1.2.jar" />
+        <pathelement location="${lib.dir}/logging/logback-core-1.1.2.jar" />
+    </path>
+
+    <path id="common.classpath">
+        <path refid="common.libs" />
+        <path refid="jboss.classpath" />
+    </path>
+
+    <path id="ejb.classpath">
+        <path refid="jboss.classpath" />
+        <path refid="common.classpath" />
+    </path>
+
+    <path id="web.classpath">
+        <pathelement path="${ejb.build.dir}" />
+        <path refid="jboss.classpath" />
+        <path refid="common.classpath" />
+    </path>
+
+    <path id="findbugs.classpath">
+        <fileset dir="${findbugs.home}/lib">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+
+### Custom task definition
+
+Ant is also very extensible. Third party providers can be easily plugged in via the `taskdef` directive, like so:
+
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.classpath" />
+
+The above for example, plugs in the excellent [FindBugs](http://findbugs.sourceforge.net/) Java static analyser, which will produce an HTML report of "dodgy code" as part of the build. More on this later.
+
+
+### Example end-to-end module
+
+This particular module is an EJB. First a clean target is made. You can see lots of file system related cleanup happen here via the [delete](https://ant.apache.org/manual/Tasks/delete.html) task. Of course, it supports things like recursive deletion and more.
+
+    <target name="ejb-clean" depends="" description="Clean up the classes folder and any generated jars">
+      <delete dir="${ejb.build.dir}" failonerror="false" quiet="true" />
+      <delete dir="${common.build.dir}" failonerror="false" quiet="true" />
+      <delete failonerror="false" quiet="true">
+        <fileset file="${build.dir}/${ejb.name}.jar" />
+      </delete>
+    </target>
+
+OK, clean up is taken care of. Next what setup activity is need to facilitate the build work. Here just one directory need to be created:
+
+    <target name="ejb-init" depends="ejb-clean" description="Setup required repositories for the ejb build">
+      <mkdir dir="${ejb.build.dir}" />
+    </target>
+
+Next, the real grunt work. The [javac](https://ant.apache.org/manual/Tasks/javac.html) task is the heavy lifter here. Everything is quite self documenting. One thing to note is the exclude filter `<exclude name="**/*Test.java" />`, using a GLOB filter this will strip all unit tests (classes ending in '*Test.java") out of the build.
+
+    <target name="ejb-compile" depends="ejb-init" description="Compile main source java files for jars">
+      <javac destdir="${ejb.build.dir}" source="${javac.source}" target="${javac.target}" debug="${javac.debug}" failonerror="${javac.failonerror}">
+        <src path="${ejb.src.dir}" />
+        <exclude name="**/*Test.java"/>
+        <classpath refid="ejb.classpath" />
+      </javac>
+      <copy todir="${ejb.build.dir}/META-INF">
+        <fileset dir="${ejb.src.dir}/META-INF">
+          <include name="**/*.*" />
+        </fileset>
+      </copy>
+    </target>
+
+Finally we package the bytecode (class files) into a JAR.
+
+    <target name="ejb-assemble" depends="ejb-compile" description="Assemble the classes into jars">
+      <jar destfile="${build.dir}/${ejb.name}.jar" basedir="${ejb.build.dir}" />
+    </target>
+
+Done, we have our EJB project neatly packed up in a tidy little JAR.
+
+
+### Bonus bits
+
+The next target shows off the built-in [javadoc](https://ant.apache.org/manual/Tasks/javadoc.html) task, which will generate detailed HTML based code documentation about the solution, by simply running "`ant javadoc`":
+
+    <target name="ant-spike-javadoc" depends="build">
+      <delete dir="${dist.javadoc.dir}" failonerror="false" quiet="true" />
+      <mkdir dir="${dist.javadoc.dir}" />
+      <javadoc destdir="${dist.javadoc.dir}" author="true" version="true" use="true" windowtitle="Ben's Ant Spike" package="true" useexternalfile="yes">
+        <fileset dir="${ejb.src.dir}" />
+        <fileset dir="${web.src.dir}" />
+        <tag description="To Do:" name="TODO" scope="all" />
+      </javadoc>
+    </target>
+
+And finally my personal favourite, this shows off the custom FindBugs Ant task that was registered via the `taskdef` directive. This will point FindBugs at the necessary code and classpaths, to perform a static analysis of the solution. It will convert findings into a stand-alone HTML report using the `fancy.xslt` transform.
+
+    <target name="findbugs">
+      <delete dir="${dist.findbugs.dir}" failonerror="false" quiet="true" />
+      <mkdir dir="${dist.findbugs.dir}" />
+      <findbugs home="${findbugs.home}"
+          output="html"
+          effort="max"
+          reportLevel="low"
+          stylesheet="fancy.xsl"
+          outputFile="${dist.findbugs.dir}/ant-spike-findbugs.html" >
+        <auxClasspath refid="common.classpath" />
+        <sourcePath path="${ejb.src.dir}" />
+        <sourcePath path="${web.src.dir}" />
+        <class location="${build.dir}/${ejb.dir}.jar" />
+        <class location="${build.dir}/${web.dir}.war" />
+      </findbugs>
+    </target>
+
+

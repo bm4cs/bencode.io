@@ -1,0 +1,39 @@
+---
+layout: post
+title: "systemd"
+date: "2017-05-20 20:52:20"
+comments: false
+categories: nix
+---
+
+
+## Cheatsheet
+
+    ==========================================          ==========================================
+                 INFORMATION                                         LOGS                         
+    ==========================================          ==========================================
+                                                                                                  
+    systemctl                                           journalctl                                
+        list-dependencies                                   -u <name>  by service                 
+        list-sockets                                        -f         follow live log            
+        list-jobs                                           -k         kernel messages            
+        list-unit-files                                     -k         kernel messages            
+        list-units                                          -r         reverse (newest first)     
+        get-default                                         -o json    format output              
+        --type=service --all                                -b -1      from previous boot         
+                                                            -n 10      limit output lines (tail)  
+    ==========================================              -S,--since e.g "2012-10-30 18:17:16"  
+                 SERVICES                                   -U,--until e.g. "10 min ago"          
+    ==========================================                                                    
+                                                                                                  
+    systemctl                                           ==========================================
+        stop <name>                                                  SYSTEM STATES                
+        start <name>                                    ==========================================
+        restart <name>                                                                            
+        reload <name>                                   systemctl                                 
+        status <name>                                       reboot       reboot.target            
+        enable <name>                                       poweroff     poweroff.target          
+        disable <name>                                      emergency    emergency.target         
+        show <name>                                         default      default.target           
+        -H <host> status network                                                                  
+

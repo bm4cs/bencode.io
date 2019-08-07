@@ -1,0 +1,92 @@
+---
+layout: post
+title: "thinkfan"
+date: "2016-03-19 17:39:10"
+comments: false
+categories: "Geek"
+---
+
+I run Debian on a ThinkPad T420s. ThinkPad's have a great Linux compatibility story, and the T420s is no exception. The cooling fan situation seemed in need of some attention though, with fans running at high RPM most of the time. Not only was this really noisy, hit the battery quite hard too.
+
+Enter [thinkfan](http://thinkfan.sourceforge.net/), a simple fan control program.
+
+> Works with any linux hwmon driver, especially with thinkpad_acpi. It is designed to eat as little CPU power as possible.
+
+Added bonus, its available in the Debian package repositories.
+
+    $ sudo apt-get install thinkfan
+
+Take it for a test drive:
+
+    $ sudo thinkfan -n
+
+Two issues. Could not detect the default sensors usually available on a ThinkPad. No ability to actually control the fans (i.e. the `thinkpad_acpi` kernel modules' `fan_control=1` mode needs to be set).
+
+Kudos to a guy called Jonas on the [Ubuntu Forums](http://ubuntuforums.org/showthread.php?t=1749186&s=cc0dfc7f87b4c4d2737f4d0958c85270&p=10866947#post10866947) for sharing his experience getting thinkfan going on his T420, which was aparently sourced from a [German post](http://thinkwiki.de/Thinkfan#Keine_Funktion_auf_X220.2C_T420.2C_L420_mit_Ubuntu_11.04_.2F_Kernel_2.6.38) in the ThinkPad wiki. I needed to change a couple of minor things to get it playing nicely with my T420s.
+
+
+
+**Step 1**: Install the `thinkfan` package.
+
+**Step 2**: Add kernel module `coretemp` to `/etc/modules`
+
+**Step 3**: Load kernel module `coretemp`
+
+**Step 4**: Add the following `sensor` entries to `/etc/thinkfan.conf` just before the temperature levels:
+
+<pre>
+sensor /sys/devices/platform/coretemp.0/temp1_input
+sensor /sys/devices/platform/coretemp.0/temp2_input
+sensor /sys/devices/platform/coretemp.0/temp3_input
+sensor /sys/devices/virtual/hwmon/hwmon0/temp1_input
+</pre>
+
+
+**Step 5**: Create new file `/etc/modprobe.d/thinkfan.conf`, with the following contents:
+
+    options thinkpad_acpi fan_control=1
+
+
+**Step 6**: Reload kernel module `thinkpad_acpi` (i.e. `modprobe -r thinkpad_acpi && modprobe thinkpad_acpi`)
+
+**Step 7**: Set `START="yes"` in `/etc/default/thinkfan`
+
+**Step 8**: Start thinkfan `/etc/init.d/thinkfan start`
+
+**Step 9**: Verify it works: `cat /proc/acpi/ibm/fan`. If level has a value between 0 and 7, and changes by times, your thinkfan daemon works.
+
+
+
+**/etc/thinkfan.conf**:
+
+    sensor /sys/devices/platform/coretemp.0/temp1_input
+    sensor /sys/devices/platform/coretemp.0/temp2_input
+    sensor /sys/devices/platform/coretemp.0/temp3_input
+    sensor /sys/devices/virtual/hwmon/hwmon0/temp1_input
+    
+    (0,     0,      55)
+    (1,     48,     60)
+    (2,     50,     61)
+    (3,     52,     63)
+    (4,     56,     65)
+    (5,     59,     66)
+    (7,     63,     32767)
+
+
+**loopsensors.sh**:
+
+Useful for getting a feel for what sort of temperature your ThinkPad likes to operate at, and possibly tuning the `/etc/thinkfan.conf` configuration matrix.
+
+{% highlight bash %}
+#!/bin/bash
+
+while [ 1 ]
+do
+  ct1=$(cat /sys/devices/platform/coretemp.0/temp1_input);
+  ct2=$(cat /sys/devices/platform/coretemp.0/temp2_input);
+  ct3=$(cat /sys/devices/platform/coretemp.0/temp3_input);
+  hwmont1=$(cat /sys/devices/virtual/hwmon/hwmon0/temp1_input);
+  echo $ct1 $ct2 $ct3 $hwmont1;
+  sleep 5;
+done
+{% endhighlight %}

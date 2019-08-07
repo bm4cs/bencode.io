@@ -1,0 +1,125 @@
+---
+layout: post
+title: "Logback Boilerplate"
+date: "2015-08-22 09:16:01"
+comments: false
+categories: [Java]
+---
+
+A useful starting place logback setup.
+
+I needed a way to roll logs not only by date, but also by size, to prevent behemoth log files from being generated. The marvellous`SizeAndTimeBasedFNATP` triggering policy (which comes out of the box) will gzip roll logs based on date, and then size too. So your logs directory ends up looking something like this:
+
+    fooapp.log
+    fooapp_2015-08-22.0.log.zip
+    fooapp_2015-08-22.1.log.zip
+    fooapp_2015-08-22.2.log.zip
+    fooapp_2015-08-23.0.log.zip
+    fooapp_2015-08-24.0.log.zip
+    ...
+
+Here's a sample `logback.xml` configuration that:
+
+- Determines the target file system destination from a JNDI property lookup from the container. Basically an environment variable.
+- Enables the polling of configuration changes using the `scanPeriod` property.
+- Will roll logs by size and time.
+- Shows off a named logger called `performance` that makes use of a custom encoder pattern that injects contextual properties defined at runtime.
+- Will email ERRORS or higher via the `SMTPAppender`. The hostname of the server the JVM is running on will be injected into the subject line using `$HOSTNAME`.
+
+
+### logback.xml
+
+{% highlight xml %}
+<configuration scan="true" scanPeriod="60 seconds" debug="true">
+  <insertFromJNDI env-entry-name="cell/persistent/var/logdir" as="LOG_DIRECTORY" />
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_DIRECTORY}/fooapp.log</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+    </encoder>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIRECTORY}/fooapp_%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>100MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+  </appender>
+
+  <appender name="PERFORMANCE-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_DIRECTORY}/performance.log</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d{YYYYMMDD:HHMMSS},%X{customerId},%X{customerSurname}%-5level,%msg%n</Pattern>
+    </encoder>
+  </appender>
+
+  <appender name="SMTP" class="ch.qos.logback.classic.net.SMTPAppender">
+    <SMTPHost>127.0.0.1</SMTPHost>
+    <To>support@kernel.org</To>
+    <From>foo@kernel.org</From>
+    <Subject>Production [${HOSTNAME}] Application Problem</Subject>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%d{HH:mm:ss.SSS} %-55(%X{user} %level [%thread] %logger{20}) - %msg%n</pattern>
+    </layout>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>ERROR</level>
+    </filter>
+  </appender> 
+
+  <!-- OFF, ERROR, WARN, INFO, DEBUG, TRACE, ALL -->
+
+  <logger name="performance" level="INFO" additivity="false">
+      <appender-ref ref="PERFORMANCE-FILE"/>
+  </logger>
+
+  <root level="DEBUG">
+    <appender-ref ref="FILE" />
+    <appender-ref ref="SMTP" />
+  </root>
+ </configuration>
+{% endhighlight %}
+
+
+
+#### FooService.java
+
+{% highlight java %}
+public class FooService {
+  private static final Logger logger = LoggerFactory.getLogger(FooService.class);
+  private static final Logger performanceLogger = LoggerFactory.getLogger("performance");
+
+  public void shipOrder(CustomerDTO customerDto) {
+    // log context properties
+    MDC.put("customerId", customerDto.getTravellerId());
+    MDC.put("customerSurname", customerDto.getApplianceId());
+    MDC.put("processStage", "shippment");
+    
+    performanceLogger.info("shipOrder startTime " + System.currentMillis());
+    ...
+    performanceLogger.info(shipOrder endTime " + System.currentMillis());
+  }
+}
+{% endhighlight %}
+
+Last thing. If you need to externalise the logging configuration from the core `logback.xml`, its super easy. This can be useful for EE application that are bundled into a fat EAR.
+
+The core `logback.xml` that gets bundled into the EAR would look something like this. This is really where the `scanPeriod` shines, periodically polling the externalised configuration file for changes:
+
+{% highlight xml %}
+<configuration scan="true" scanPeriod="60 seconds" debug="true">
+  <include file="/var/logs/fooapp/cfg/logback-fooapp.xml"/> 
+</configuration>
+{% endhighlight %}
+
+Then in a file named `logback-fooapp.xml` go nuts, the only difference is you need to enclose everything in an `included` tag:
+
+{% highlight xml %}
+<included>
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  ...
+  ...
+</included>
+{% endhighlight %}
+

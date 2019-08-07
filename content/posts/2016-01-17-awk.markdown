@@ -1,0 +1,462 @@
+---
+layout: post
+title: "awk"
+date: "2016-01-17 08:14:01"
+comments: false
+categories: "nix"
+---
+
+After recently getting my hands dirty with the wonderful [sed]({% post_url 2015-09-15-sed %}), the time has come for me to step it up with awk.
+
+Incepted in 1977 at Bell Labs, **AWK** is an interpreted programming language designed for text processing, and is a defacto part of most nix based distributions.
+
+> The original version of UNIX awk was designed and implemented by Alfred Aho, Peter Weinberger, and Brian Kernighan (notice the first letter of their surnames together) of Bell Laboratories. Brian Kernighan continues to maintain and enhance it. Paul Rubin and Jay Fenlason, of the Free Software Foundation, wrote gawk, to be compatible with the original version of awk distributed in Seventh Edition UNIX.
+
+awk is a full blown (i.e. turing complete) scripting language consisting of a set of actions to be taken against streams of textual data, for the purposes of extracting or transforming text, such as producing formatted reports. awk makes extensive use of strings, associative arrays, and regular expressions.
+
+As usual the man page rocks. Consise, well written, and by far more useful than any of the resources offered by Google.
+
+An AWK program consists of a sequence of pattern-action statements and optional function definitions.
+
+    @include "filename"
+    @load "filename"
+    pattern { action statements }
+    function name(parameter list) { statements }
+
+Some sample input I can torment with my n00b awk skills, `heros.txt`:
+
+    Ritchie,Dennis,410909
+    Thompson,Kenneth,430204
+    Carmack,John,700820
+    Torvalds,Linus,610114
+    Stallman,Richard,550921
+    Pike,Rob,560212
+
+First up field seperators. Two options:
+
+- Command line argument `-F` e.g. `awk -F":" ...`
+- Define the `FS` variable directly e.g. `BEGIN { FS=":"; ... }`
+
+### Example 1 - simple ###
+
+*simple.awk*:
+
+{% highlight awk %}
+BEGIN { FS = ","; print "Surname" }
+{ print $1 }
+# useless comment
+{ nlines++ }
+END { print nlines }
+{% endhighlight %}
+
+Running `awk -f simple.awk heros.txt` produces:
+
+    Surname
+    Ritchie
+    Thompson
+    Carmack
+    Torvalds
+    Stallman
+    Pike
+    6
+
+
+As you can see, AWK is a line oriented language. The pattern comes first, and then the action. Action statements are enclosed in `{` and `}`. Either the pattern may be missing, or the action may be missing, but, of course, not both. If the pattern is missing, the action is executed for every single record of input. A missing action is equivalent to `{ print }`, which is executed for every record. Each field in the input record may be referenced by its position: `$1`, `$2`, and so on. `$0` is the whole record.
+
+The `BEGIN` rule is executed before any record level processing occurs, and is the perfect place to do initialisation related activity. In a similar vein an `END` rule is executed once all input is exhausted.
+
+### Built-in variables
+
+The very simple example touched on the `FS` variable, which tells awk how to bust a record up (default is `[space]`). There are many more:
+
+- `ARGC` The number of command line arguments.
+- `ARGIND` The index in ARGV of the current file being processed.
+- `ARGV` Array of command line arguments.
+- `BINMODE` Numeric values of 1, 2, or 3, specify that input files, output files, or all files, respectively, should use binary I/O.
+- `CONVFMT` The conversion format for numbers, `%.6g`, by default.
+- `ENVIRON` An array containing the values of the current environment (e.g. `ENVIRON["HOME"]` could be `/home/ben`).
+- `ERRNO` If a system error occurs, a string describing the error.
+- `FIELDWIDTHS` A whitespace separated list of field widths. When set, gawk parses the input into fields of fixed width, instead of using the value of the FS variable as the field separator.
+- `FILENAME` The name of the current input file (`-` if unspecified).
+- `FNR` The input record number in the current input file.
+- `FPAT` A regular expression describing the contents of the fields in a record. When set, gawk parses the input into fields, where the fields match the regular expression, instead of using the value of the FS variable as the field separator.
+- `FS` The input field separator, a space by default.
+- `FUNCTAB` An array of all the user-defined functions.
+- `IGNORECASE` Controls the case-sensitivity of all regular expression and string operations.
+- `NF` The number of fields in the current input record.
+- `NR` The total number of input records seen so far.
+- `OFMT` The output format for numbers, `%.6g`, by default.
+- `OFS` The output field separator, a space by default.
+- `ORS` The output record separator, by default a newline.
+- `PREC` The working precision of arbitrary precision floating-point numbers, 53 by default.
+- `PROCINFO` Information about the running AWK program, e.g. `PROCINFO["version"]` the version of awk running, `PROCINFO["pid"]` for the process ID of the current process and many more.
+- `ROUNDMODE` The rounding mode to use for arbitrary precision arithmetic on numbers, by default `N` (IEEE-754 roundTiesToEven mode).
+- `RS` The input record separator, by default a newline.
+- `RT` The record terminator.
+- `RSTART` The index of the first character matched by `match()`; 0 if no match.
+- `RLENGTH` The length of the string matched by `match()`; -1 if no match.
+- `SUBSEP` The character used to separate multiple subscripts in array elements, by default `\034`.
+- `TEXTDOMAIN` Used to find the localised translations for the program's strings.
+
+
+### Patterns
+
+AWK patterns may be one of the following:
+
+- `BEGIN` executed before any input is read.
+- `END` executed when all the input is exhausted.
+- `BEGINFILE` like `BEGIN` but included from a file.
+- `ENDFILE` like `END` but included from a file.
+- `/regular expression/` executed for each input record that matches the regular expression.
+- `relational expression` may use any of the operators defined below. As per C, do short-circuit evaluation.
+- `pattern && pattern` logical AND.
+- `pattern || pattern` logical OR.
+- `pattern ? pattern : pattern` if the first pattern is true, then second pattern is used for testing, otherwise the third pattern is used.
+- `(pattern)` pathentisis.
+- `! pattern` logical NOT.
+- `pattern1, pattern2` a range pattern, all input records starting with a record that matches `pattern1`, and continuing until a record that matches `pattern2`, inclusive.
+
+
+### Example 2 - string functions ###
+
+Using the `heros.txt` as input, filter out those born prior to 1950, and UPPERCASE output only their surname.
+
+*simple2.awk:*
+
+{% highlight awk %}
+BEGIN {
+  FS = ",";
+  print "SURNAME" 
+}
+
+{
+  surname = $1;
+  firstname = $2;
+  dob_year = substr($3, 0, 2); #'690822'
+}
+
+dob_year < 50 {
+  nlines++;
+  print toupper(surname);
+}
+
+END {
+  print nlines
+}
+{% endhighlight %}
+
+
+*Result:*
+
+    $ gawk -f simple2.awk heros.txt 
+    SURNAME
+    RITCHIE
+    THOMPSON
+    2
+
+### Example 3 - patterns ###
+
+Lets flex some pattern matching. Given a properties file full of key/value pairs, I needed to substitute in values from the running environment (i.e. environment variables), for deployment out to Docker containers. Awk supports a built-in array variable called `ENVIRON`, making it easy to query the environment.
+
+*config.properties*
+
+    # java properties sample
+    home_path=${HOME}
+    replication=true
+    health_enabled=${HEALTH_ENABLED}
+    log_level=${LOG_LEVEL}
+    support_email=billjoy@sun.com
+    whatevs=10.3.1.255
+
+
+*setenv.awk*
+
+{%highlight awk %}
+# Scan a java .properties file, which is full of key/value pairs.
+# Look for entries that follow the form `key=${PROP1}`.
+# Substitute ${PROP1} with the value of the environment variable PROP1.
+{
+  foundyou = match($0, /\$\{.*\}/); #set RSTART and RLENGTH
+  current_record = $0;
+
+  if (foundyou > 0) {
+    token_name = substr($0, RSTART+2, RLENGTH-3);
+    environment_value = ENVIRON[token_name];
+    sub(/\$\{.*\}/, environment_value, current_record);
+  }
+
+  print current_record;
+}
+{% endhighlight %}
+
+
+*Result:*
+
+    $ export HEALTH_ENABLED=false; export LOG_LEVEL=severe
+    $ awk -f setenv.awk config.properties
+    # java properties sample
+    home_path=/home/ben
+    replication=true
+    health_enabled=false
+    log_level=severe
+    support_email=billjoy@sun.com
+    whatevs=10.3.1.255
+
+
+
+### Example 4 - log parsing basic filtering ###
+
+Detailed report of errors, followed by warnings. Show cases associative arrays.
+
+All the below log parsing examples, including this one, are targeting a tab delimited log format that looks like this:
+
+    2016-03-21 08:28:22,579	INFO	 MessageListenerThreadPool	net.bencode.MessageLogger	idType = QAM
+    2016-03-21 08:32:22,579	WARN	 SomethingElseImportant	net.bencode.DataStructures	My sample warning message
+    2016-03-21 08:34:22,234	ERROR	 SomethingElseImportant	net.bencode.DataStructures	My sample error message
+
+
+{% highlight awk %}
+BEGIN {
+  FS = "\t";
+}
+
+{
+  log_level = $2;
+}
+
+(log_level == "ERROR") && !($1 in error_list) {
+  error_list[$1] = $0;
+}
+
+(log_level == "WARN") && !($1 in warning_list) {
+  warning_list[$1] = $0;
+}
+
+END {
+  printf("### Error Report ###\n\n");
+  n = asort(error_list);
+  for (i = 1; i < n; i++) {
+    print error_list[i];
+  }
+
+  printf("\n\n### Warning Report ###\n\n");
+  n = asort(warning_list);
+  for (i = 1; i < n; i++) {
+    print warning_list[i];
+  }
+}
+{% endhighlight %}
+
+
+### Example 5 - log parsing filters and colors ###
+
+Filter out everything bar warnings and errors, and color code them, errors red, and warnings yellow.
+
+{% highlight awk %}
+BEGIN {
+  FS = "\t";
+}
+
+{
+  log_level = $2;
+}
+
+(log_level == "ERROR") {
+  print red($0);
+}
+
+(log_level == "WARN") {
+  print yellow($0);
+}
+
+END {
+}
+
+function red(s) {
+  printf "\033[1;31m" s "\033[0m "
+}
+
+function yellow(s) {
+  printf "\033[1;33m" s "\033[0m "
+}
+{% endhighlight %}
+
+
+
+### Example 6 - log parsing summary errors/hour ###
+
+A summary report, of the number of errors (i.e. count) grouped by hour.
+
+{% highlight awk %}
+BEGIN {
+  FS = "\t";
+}
+
+{
+  log_level = $2;
+}
+
+(log_level == "ERROR") {
+  #2015-03-21 08:28:24,061
+  year = substr($1, 0, 4);
+  month = substr($1, 6, 2);
+  day = substr($1, 9, 2);
+  hour = substr($1, 12, 2);
+  log_count_by_hour_array[year "-" month "-" day "T" hour]++;
+}
+
+END {
+  for (var in log_count_by_hour_array) {
+    print var,"\t",log_count_by_hour_array[var]
+  }
+}
+{% endhighlight %}
+
+
+Sample output:
+
+    $ awk -f scanlogs.awk foo.log
+    2016-03-21T10    31
+    2016-03-21T11    119
+    2016-03-21T12    82
+    2016-03-21T13    25
+
+
+### Example 7 - log parsing errors histogram ###
+
+The above counts could easily be graphed in something like Google Sheets, but if you love your terminal here's a text based histogram of errors by hour.
+
+{% highlight awk %}
+BEGIN {
+  FS = "\t";
+}
+
+{
+  log_level = $2;
+}
+
+(log_level == "ERROR") {
+  #2015-03-21 08:28:24,061
+  year = substr($1, 0, 4);
+  month = substr($1, 6, 2);
+  day = substr($1, 9, 2);
+  hour = substr($1, 12, 2);
+  log_count_by_hour_array[year "-" month "-" day "T" hour]++;
+}
+
+END {
+  # find the largest count
+  biggest_count = 0;
+  for (var in log_count_by_hour_array) {
+    if (log_count_by_hour_array[var] > biggest_count) {
+      biggest_count = log_count_by_hour_array[var];
+    }
+  }
+
+  # scale based on the largest value
+  max_histogram_size = 40;
+  histogram_scaling_factor = max_histogram_size / biggest_count;
+
+  # this is ugly, sorts by array key
+  j = 1;
+  for (key in log_count_by_hour_array) {
+    indices[j++] = key;
+  }
+  n = asort(indices);
+
+  # draw the histogram
+  for (i = 1; i <= n; i++) {
+    key = indices[i];
+    histogram = sprintf("%-*s", log_count_by_hour_array[key] * histogram_scaling_factor, "");
+    gsub(" ", "=", histogram);
+    printf("%s\t%s (%s)\n", key, histogram, log_count_by_hour_array[key]);
+  }
+}
+{% endhighlight %}
+
+
+Sample output:
+
+    $ awk -f scanlogs.awk foo.log
+    2016-03-21T10   ========== (31)
+    2016-03-21T11   ======================================== (119)
+    2016-03-21T12   =========================== (82)
+    2016-03-21T13   ======== (25)
+    2016-03-21T14   ============= (41)
+    2016-03-21T15   ============ (38)
+    2016-03-21T16   =========== (33)
+    2016-03-21T17   == (8)
+    2016-03-21T18   ===================== (63)
+
+
+
+### Example 8 - log parsing correlate events ###
+
+This report correlates two events together (a begin and an end event), calculating the time difference in milliseconds between them. Timestamps in the log are formatted as follows `2016-03-21 08:28:22,579`.
+
+Interestingly awk doesn't appear to support a native way of doing millisecond level precision date comparisons. It does however feature the excellent [mktime](https://www.gnu.org/software/gawk/manual/html_node/Time-Functions.html), if second level precision meets your needs. You need to feed it a *datespec* text parameter formatted as `YYYY MM DD HH MM SS`, which it will use to assemble a native date/time representation.
+
+Another option, is to call out to external programs such as `date` to some of the heavy lifting. Awk provides two methods for this. (1) the [system](https://www.gnu.org/software/gawk/manual/html_node/I_002fO-Functions.html) call, or (2) the built-in pipeline `|` operator, which you'll see in the script below.
+
+
+Sample start and end events:
+
+    2016-03-21 08:28:22,579	INFO	 MessageListenerThreadPool : 2	net.bencode.MessageLogger	=== Start processing 123123123123 ===
+    2016-03-21 10:32:17,278	INFO	 MessageListenerThreadPool : 0	net.bencode.MessageLogger	=== End processing 123123123123 ===
+
+
+Overall approach:
+
+- Use two regular expression pattern rules, one to detect to start events, and the other end events.
+- Use the AND `&&` logical pattern expression to daisy chain a second regular expression onto those defined above, this time adding a capture group, to extract the correlation identifier (in this case a purely numeric identifier i.e. `[0-9]+`).
+- If either a start or end event pattern match is successful, run its log time field (e.g. `2016-03-21 08:28:22,579`) through the external `date` program, like this `date -d "2016-03-21 08:28:22,579" +%s%3N`. `+%s` will calculate the number seconds since 1970-01-01 00:00:00 UTC for the provided date. `+%3N` will give 3 digits of nanosecond precision, or milliseconds in other words. Store the result in an associative array (`start_times` and/or `end_times`), using the correlation id as the key, and the number of milliseconds as the value.
+
+
+{% highlight awk %}
+BEGIN {
+  FS = "\t";
+  print "customer_id","\t","duration_ms";
+}
+
+{
+  log_time = $1;
+  log_level = $2;
+  log_message = $5;
+}
+
+match(log_message, /=== Start processing/) && match(log_message, /[0-9]+/, capture) {
+  "date -d \"" log_time "\" +%s%3N" | getline date_in_ms_from_1970;
+  start_times[capture[0]] = date_in_ms_from_1970;
+}
+
+match(log_message, /=== End processing/) && match(log_message, /[0-9]+/, capture) {
+  "date -d \"" log_time "\" +%s%3N" | getline date_in_ms_from_1970;
+  end_times[capture[0]] = date_in_ms_from_1970;
+}
+
+END {
+  for (key in end_times) {
+    customer_id = key;
+    duration_ms = end_times[customer_id] - start_times[customer_id];
+    print customer_id,"\t",duration_ms;
+  }
+}
+{% endhighlight %}
+
+
+Sample output:
+
+    $ awk -f scanlogs.awk foo.log
+    customer_id      duration_ms
+    123456782        18753
+    123123123123     7434699
+    123456783        6099
+    123456784        5397
+    123456785        12312
+    123456786        2080
+    123456789        1265
+    123456780        3510
+    123456781        2080
+
+
+

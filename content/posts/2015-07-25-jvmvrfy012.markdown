@@ -1,0 +1,77 @@
+---
+layout: post
+title: "JVMVRFY012 Stack Shape Inconsistent"
+date: "2015-07-25 18:40:05"
+comments: false
+categories: [Java]
+---
+
+Following the routine restart of a WebSphere app server earlier this week, our application refused to start back up. This was an annoying suprise, as the environments are normally incredibly stable.
+
+The logs highlighted that a darker force was at play:
+
+
+    [15/07/15 13:38:00:581 EST] 000000a9 StandaloneEJB I StandaloneEJBLifeCycle startApplication OpenWebBeans Container is starting...
+    [15/07/15 13:38:00:589 EST] 000000a9 ObserverMetho I ObserverMethodImpl notify Cannot send event to bean in non-active context :
+    [-43735604,Name:null,WebBeans Type:EXTENSION,APITypes:[java.lang.Object,org.apache.webbeans.jsf.scopes.Jsf2ScopesExtension,javax.enterprise.inject.spi.Extension],Qualifiers:[javax.enterprise.inject.Default]] 
+    [15/07/15 13:38:00:958 EST] 000000a9 ApplicationMg E WSVR0101W: An error occurred starting, ZizzledApp
+    [15/07/15 13:38:00:959 EST] 000000a9 ApplicationMg A WSVR0217I: Stopping application: ZizzledApp
+    [15/07/15 13:38:00:972 EST] 000000a9 WSEJBIntercep E CWOWB0102E: A JCDI error has occurred: <null>
+    [15/07/15 13:38:00:977 EST] 000000a9 WSEJBIntercep E CWOWB0102E: A JCDI error has occurred: <null>
+    [15/07/15 13:38:01:003 EST] 000000a9 ServletWrappe I com.ibm.ws.webcontainer.servlet.ServletWrapper doDestroy SRVE0253I: [ZizzledApp] [/ZizzledAppService/v1] [ZizzledAppServiceImpl]: Destroy successful.
+    [15/07/15 13:38:01:039 EST] 000000a9 SharedEJBRunt I WSVR0041I: Stopping EJB jar: ZizzledAppEJB.jar 
+    [15/07/15 13:38:01:099 EST] 000000a9 SharedEJBRunt I WSVR0059I: EJB jar stopped: ZizzledAppEJB.jar
+    [15/07/15 13:38:01:137 EST] 000000a9 ApplicationMg A WSVR0220I: Application stopped: ZizzledApp 
+    [15/07/15 13:38:01:208 EST] 000000a9 CompositionUn E WSVR0194E: Composition unit WebSphere:cuname=ZizzledApp in BLA WebSphere:blaname=ZizzledApp failed to start. 
+    [15/07/15 13:38:01:234 EST] 000000a9 FfdcProviderW com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC Incident emitted on /var/logs/WebSphere8/ffdc/bencode02_9315bb77_15.07.15_13.38.01.2112090578995796253353.txt com.ibm.ws.runtime.component.CompositionUnitMgrImpl 679 
+    [15/07/15 13:38:01:269 EST] 000000a9 DMAdapter I com.ibm.ws.ffdc.impl.DMAdapter getAnalysisEngine FFDC1009I: Analysis Engine using data base: /usr/WebSphere8/AppServer/properties/logbr/ffdc/adv/ffdcdb.xml 
+    [15/07/15 13:38:01:338 EST] 000000a9 FfdcProviderW com.ibm.ws.ffdc.impl.FfdcProvider logIncident FFDC1003I: FFDC Incident emitted on /var/logs/WebSphere8/ffdc/bencode02_9315bb77_15.07.15_13.38.01.235306456357083187192.txt com.ibm.ws.management.AdminServiceImpl.invoke 679
+
+
+Wanting more details than **an error occurred starting**, tried my luck with the FFDC logs listed toward the end of the log:
+
+    [15/07/15 13:38:01:212 EST] FFDC Exception:com.ibm.ws.exception.RuntimeError
+    SourceId:com.ibm.ws.runtime.component.CompositionUnitMgrImpl ProbeId:679 Reporter:com.ibm.ws.runtime.component.CompositionUnitMgrImpl@f5a8513e
+    com.ibm.ws.exception.RuntimeError: java.lang.RuntimeException: java.lang.VerifyError: JVMVRFY012 stack shape inconsistent;
+    class=ZizzledApp/dao/FooDAOImpl, method=recordOutcome 
+    (Ljava/lang/String;LZizzledApp/dto/rules/FooResultDTO;)V, pc=1 
+      at com.ibm.ws.runtime.component.ApplicationMgrImpl.startApplication(ApplicationMgrImpl.java:799)
+      at com.ibm.ws.runtime.component.ApplicationMgrImpl.startApplicationDynamically(ApplicationMgrImpl.java:1379)
+      at com.ibm.ws.runtime.component.ApplicationMgrImpl.start(ApplicationMgrImpl.java:2189)
+      at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.start(CompositionUnitMgrImpl.java:435) 
+      at com.ibm.ws.runtime.component.CompositionUnitImpl.start(CompositionUnitImpl.java:123) 
+      at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.start(CompositionUnitMgrImpl.java:378) 
+      at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.access$500(CompositionUnitMgrImpl.java:126)
+      at com.ibm.ws.runtime.component.CompositionUnitMgrImpl$1.run(CompositionUnitMgrImpl.java:653) 
+      at com.ibm.ws.security.auth.ContextManagerImpl.runAs(ContextManagerImpl.java:5477)
+      at com.ibm.ws.security.auth.ContextManagerImpl.runAsSystem(ContextManagerImpl.java:5603)
+      at com.ibm.ws.security.core.SecurityContext.runAsSystem(SecurityContext.java:255) 
+      at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.startCompositionUnit(CompositionUnitMgrImpl.java:667)
+      at com.ibm.ws.runtime.component.CompositionUnitMgrImpl.startCompositionUnit(CompositionUnitMgrImpl.java:611)
+      at com.ibm.ws.runtime.component.ApplicationMgrImpl.startApplication(ApplicationMgrImpl.java:1269) 
+      at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+      at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:95)
+      at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:56)
+      at java.lang.reflect.Method.invoke(Method.java:620) 
+      at sun.reflect.misc.Trampoline.invoke(MethodUtil.java:88) 
+      at sun.reflect.GeneratedMethodAccessor73.invoke(Unknown Source) 
+      at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:56)
+      at java.lang.reflect.Method.invoke(Method.java:620) 
+      at sun.reflect.misc.MethodUtil.invoke(MethodUtil.java:292)
+
+Wow **stack shape inconsistent** indicates the bytecode is incompatible with the underlying JVM in some way. Many folks seem to experience this when building their bytecode using an Oracle JDK as opposed to something that aligns closely to the targeted runtime environment, in WebSphere's case an IBM JDK. Unfortunately this advise didn't apply here; all JDKs and JVMs are all IBM based.
+
+Resorting to first principles, dumped the environment variables of the server out:
+
+    WebSphere [IBMJAVA7 7.0.8.0 cf041446.01]Platform 8.5.5.4 [ND 8.5.5.4 cf041446.03] running with process name bencodeCell\foobar1234V8Node01\bencode01 and process id 3604774 Host Operating System is AIX, version 7.1 Java version = 1.7.0, Java Runtime Version = pap6470sr8ifx-20141118_01 (SR8+IV66608+IV66375+IX90155+IV66944+IV66991 SR8+IV66608+IV66375+IX90155+IV66944+IV66991), Java Compiler = j9jit26, Java VM name = IBM J9 VM was.install.root = /usr/WebSphere8/AppServer user.install.root = /usr/WebSphere8/AppServer/profiles/AppSrv01
+    
+    Java Home = /usr/WebSphere8/AppServer/java/jre
+    
+    ws.ext.dirs = /usr/WebSphere8/AppServer/java/lib:/usr/WebSphere8/AppServer/profiles/AppSrv01/classes:/usr/WebSphere8/AppServer/classes:/usr/WebSphere8/AppServer/lib:/usr/WebSphere8/AppServer/installedChannels:/usr/WebSphere8/AppServer/lib/ext:/usr/WebSphere8/AppServer/web/help:/usr/WebSphere8/AppServer/deploytool/itp/plugins/com.ibm.etools.ejbdeploy/runtime
+    
+    Classpath = /usr/WebSphere8/AppServer/profiles/AppSrv01/properties:/usr/WebSphere8/AppServer/properties:/usr/WebSphere8/AppServer/lib/startup.jar:/usr/WebSphere8/AppServer/lib/bootstrap.jar:/usr/WebSphere8/AppServer/lib/jsf-nls.jar:/usr/WebSphere8/AppServer/lib/lmproxy.jar:/usr/WebSphere8/AppServer/lib/urlprotocols.jar:/usr/WebSphere8/AppServer/deploytool/itp/batchboot.jar:/usr/WebSphere8/AppServer/deploytool/itp/batch2.jar:/usr/WebSphere8/AppServer/java/lib/tools.jar
+    
+    Java Library path = /usr/WebSphere8/AppServer/lib/native/aix/ppc_64/:/usr/WebSphere8/AppServer/java/jre/lib/ppc64/compressedrefs:/usr/WebSphere8/AppServer/java/jre/lib/ppc64:/usr/WebSphere8/AppServer/java/jre/lib/ppc64:/usr/WebSphere8/AppServer/java/jre/lib/ppc64/compressedrefs:/usr/WebSphere8/AppServer/java/jre/lib/ppc64/j9vm:/usr/WebSphere8/AppServer/java/jre/lib/ppc64:/usr/WebSphere8/AppServer/java/jre/../lib/ppc64:/usr/WebSphere8/AppServer/bin:/usr/lib:/usr/lib:
+
+
+Comparing with some other working environments it soon become clear that JRE 7 `/usr/WebSphere8/AppServer/java_1.7_64/jre` was not being used on this troublesome server. WebSphere 8.5 defaults to IBM JRE 1.6 which generally lives here `/usr/WebSphere8/AppServer/java/jre`. Aparently earlier in the week the operations team just tried installing a Tivoli WebSphere monitoring agent, which runs on JRE 1.6. For some reason this installer poisoned the environment variables of the WAS server. Scary. In summary, ensure that your bytecode is running on a version of the JVM you think it is.

@@ -1,0 +1,65 @@
+---
+layout: post
+title: "SharePoint 2010 Application Development"
+date: "2011-09-15 07:00:00"
+comments: false
+categories: "SharePoint"
+---
+
+The SharePoint 2010 platform is dauntingly huge. Fortunately development certification 70-573 (Microsoft SharePoint 2010, Application Development) sticks to the bread and butter fundamentals that is applicable to all forms of custom SharePoint development. For the purposes of 70-573 you can pick up things like FAST, Excel Services, Form Services, Performance Point and toss them out the window. Concepts like lists, libraries, web parts, and delegate controls is what SharePoint development is really about.
+
+While I found this exam to be robotic, and largely focused on the new feature set that was introduced as part of the 2010 release, it forced me to probe some interesting areas (such as creating timer jobs, or customising the ribbon).
+
+1. If you construct an `SPSite`, dispose of it. Disposing is obviously a sensitive area for SharePoint developers, and the exam definitely makes a point of it. Use `SPDisposeCheck.exe` to validate object disposal throughout your code.
+1. Know the difference between a farm (`SPFarm`), web application (`SPWebApplication`), site collection (`SPSite`) and site (`SPWeb`).
+1. Elevate code with `RunWithElevatedPrivileges`.
+1. Create a custom content type and site column using CAML.
+1. Use `SPQuery` to query a specific list instance.
+1. Then use `SPSiteDataQuery` query across multiple sub-sites.
+1. Memorise the limitations of sandboxed solutions.
+1. Create two web parts (a provider and a consumer) and connect them.
+1. Create a delegate control, and use its `AllowMultipleVersions` property.
+1. Create two features and a dependency between them.
+1. Create an "upgradable" action.
+1. Create a list event receiver, and examine and change the AfterProperties property.
+1. Know SharePoint's process model (`owstimer.exe`, `w3wp.exe`, `spucworkerprocess.exe`)
+1. Create a LINQ to SharePoint data model using `SPMetal.exe`.
+1. Create a custom timer job using an SPMinuteSchedule schedule.
+1. Manipulate the term store using code.
+1. Create a BCS data model (`IDEnumerator` and `SpecificFinder`)
+1. Create a modal dialogue (`SP.js`).
+1. Create a workflow with multiple activities and correlate across them.
+1. Profile custom code using `SPMonitoredScope` and the developer dashboard
+1. Play around with `ListData.svc` using LINQPad, particularly the extends operation.
+1. Customise the ribbon using CAML (`CommandUIDefinition`). Create  a group, and make it contextual.
+1. Book your exam.
+
+	
+## Learning Resources
+
+[SharePoint 2010 Hands-on Labs](http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=17215)
+
+[The SharePoint 2010 SDK](http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=12323)
+
+[Get Started Developing on SharePoint 2010 (covers 10 Modules)](http://msdn.microsoft.com/en-us/sharepoint/ee513147.aspx)
+
+[Inside Microsoft SharePoint 2010](http://msdn.microsoft.com/en-us/library/ff742318.aspx)
+
+
+
+## SharePoint Development Toolkit
+
+[SharePoint Manager 2010](http://spm.codeplex.com/)
+
+[U2U CAML Builder](http://www.u2u.net/res/Tools/CamlQueryBuilder.aspx)
+
+[Fiddler2](http://www.fiddler2.com/fiddler2/)
+
+[UlsViewer](http://archive.msdn.microsoft.com/ULSViewer)
+
+[jQuery](http://jquery.com/)
+
+[Start.js](http://www.asp.net/ajaxlibrary/HOW%20TO%20Choose%20Local%20or%20Remote%20Scripts.ashx)
+
+[LINQPad](http://www.linqpad.net/)
+
