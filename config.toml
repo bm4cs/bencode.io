@@ -36,6 +36,7 @@ pygmentsStyle = "native"
 	themeColor = "green"
 	fullWidthTheme = false
 	centerTheme = true
+	favicon = "images/doomguy-32x32.png"
     [params.logo]
     url = "logo.png"
     width = 50
@@ -44,8 +45,8 @@ pygmentsStyle = "native"
 
 [languages]
   [languages.en]
-    title = "Benjamin Simmonds"
-    subtitle = "Yet another blog about code."
+    title = "Ben Simmonds"
+    subtitle = "Yet another blog about code and computers."
     keywords = ""
     copyright = ""
     menuMore = "Show more"
@@ -53,7 +54,7 @@ pygmentsStyle = "native"
     readOtherPosts = "Read other posts"
 
     [languages.en.params.logo]
-      logoText = "Benjamin Simmonds"
+      logoText = "Ben Simmonds"
       logoHomeLink = "/"
 
     [languages.en.menu]
