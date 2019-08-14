@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Resume Revamp"
+date: "2018-07-15 21:45:10"
+comments: false
+categories: "geek,life"
+---
+
+I used to have a LaTeX resume about 12 years ago. When it comes to typesetting a nice looking document, its still hard to beat. The fact its text based is even better. I 
+
+Lets get a base TeX Live distribution installed, including XeTeX and LuaTeX extensions. Also we need the extra fonts packages for fontawesome and more.
+
+    $ apt install texlive textlive-xetex texlive-luatex texlive-fonts-extra texlive-extra-utils latexmk
+
+I personally have found VSCode and the wonderful [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=james-yu.latex-workshop) extension provides me with the most productive LaTeX development experience.
+
+To get the full power of the LaTeX Workshop extension, make sure that `latexindent` is installed and working, for nice formatting, which just shells out to the `latexindent` perl script. This is installed as part of the `texlive-extra-utils` package, but unforunately doesn't take care of all its dependencies. cpan them (sudo needed for certain make tasks):
+
+    sudo cpan Log::Log4perl Log::LogDispatch Log::Dispatch::File YAML::Tiny File::HomeDir
+
+Also make sure that the [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=james-yu.latex-workshop) VSCode extension is configured to preview the PDF automatically. I use the built-in GNOME PDF Viewer `evince`, which can be set in `settings.json` (File | Preferences | Settings) like so:
+
+    "latex-workshop.view.pdf.external.command": {
+            "command": "evince",
+            "args": [
+              "%PDF%"
+            ]
+          }
+
+
+Fork the Git repo of a nice base template. Kudos to Christophe Roger [@darwiin](https://github.com/darwiin) for sharing his nice work on the [YAAC](https://github.com/darwiin/yaac-another-awesome-cv) template
+
+

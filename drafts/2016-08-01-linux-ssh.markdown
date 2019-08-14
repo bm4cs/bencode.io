@@ -1,0 +1,245 @@
+---
+layout: post
+title: "Secure SHell (SSH)"
+date: "2016-08-01 20:09:01"
+comments: false
+categories: "linux"
+---
+
+The OpenSSH secure shell, `ssh`, provides the necessary client/server security plumbing, to allow shell execution on a remote machine. `ssh` can be used interactively, as per a normal shell, or to run one off commands, for example:
+
+    [ben@think ~]$ ssh ben@wookie.local uname -a
+    ben@wookie.local's password: 
+    Linux wookie.local 3.14-1-686-pae #1 SMP Debian 3.14.7-1 (2014-06-16) i686 GNU/Linux
+
+Hot tip: the `w` command is gem for showing users currently logged in
+
+    [ben@think ~]$ w -f
+    USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+    ben      tty2     :0               17:05   10:36m 16:53  50.97s /usr/bin/evince /home/ben/podcasts/redhat/Docs/RH124-RHEL7.pdf
+
+
+User `ben` logged into virtual console 2 (tty2) via a graphical login (:0) at about 5PM. OK, lets access a couple of the virtual terminals:
+
+`Ctrl` + `Alt` + `F2`
+`Ctrl` + `Alt` + `F3`
+
+Return to the desktop environment (GNOME) with this combination: `Ctrl` + `Alt` + `F1`
+
+
+    [root@think ~]# w -f
+     20:38:31 up 10:40,  3 users,  load average: 0.26, 0.20, 0.25
+    USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+    ben      tty2     :0               17:05   10:40m 17:00  54.07s -bash
+    ben      tty3                      20:37   30.00s  0.34s  0.30s vim /home/ben/git/scripts/linux/bash/.bashrc
+    ben      tty4                      20:38   15.00s  0.02s  0.02s -bash
+
+Virtual terminals 3 (tty3) and 4 (tty4) are now active, by account `ben`, editing something with Vim in one session, and a Bash shell in the other session.
+
+Lets fire up some psedudo terminals, by making a local SSH connection. First, ensure your local openssh server is running, using your process manager (e.g. `systemd`):
+
+    [root@think ~]# systemctl start sshd.service
+    [root@think ~]# systemctl status sshd.service
+    ● sshd.service - OpenSSH server daemon
+       Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: disabled)
+       Active: active (running) since Sun 2016-07-17 20:41:12 AEST; 39s ago
+         Docs: man:sshd(8)
+               man:sshd_config(5)
+     Main PID: 9880 (sshd)
+       CGroup: /system.slice/sshd.service
+               └─9880 /usr/sbin/sshd
+    
+    Jul 17 20:41:12 think.local systemd[1]: Starting OpenSSH server daemon...
+    Jul 17 20:41:12 think.local systemd[1]: sshd.service: PID file /var/run/sshd.pid not readable (yet?) after start: No such f...rectory
+    Jul 17 20:41:12 think.local sshd[9880]: Server listening on 0.0.0.0 port 22.
+    Jul 17 20:41:12 think.local sshd[9880]: Server listening on :: port 22.
+    Jul 17 20:41:12 think.local systemd[1]: Started OpenSSH server daemon.
+
+
+The ssh server is running, hook up a client to it:
+
+    [root@think ~]# ssh george@localhost
+    The authenticity of host 'localhost (127.0.0.1)' can't be established.
+    ECDSA key fingerprint is SHA256:BAhnNz1IRWcdfNjp6WwqmDnQP9Z4oCwT01Sb0BPsuv8.
+    ECDSA key fingerprint is MD5:39:f7:ec:09:90:87:70:86:02:9b:71:7d:74:34:8e:aa.
+    Are you sure you want to continue connecting (yes/no)? yes
+    Warning: Permanently added 'localhost' (ECDSA) to the list of known hosts.
+    george@localhost's password: 
+    Last login: Sun Jul 17 20:38:13 2016
+
+
+And, voila, psueduo terminal 5 is occupied by the george's new ssh session, he's been idle for 22 seconds:
+
+    [ben@think ~]$ w -f
+     20:42:29 up 10:44,  4 users,  load average: 0.25, 0.24, 0.25
+    USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+    ben      tty2     :0               17:05   10:44m 17:27   1.11s /opt/google/chrome/chrome --type=renderer --enable-features=Incident
+    ben      tty3                      20:37    4:28   0.34s  0.30s vim /home/ben/git/scripts/linux/bash/.bashrc
+    ben      tty4                      20:38    4:13   0.02s  0.02s -bash
+    george   pts/5    127.0.0.1        20:42   22.00s  0.02s  0.00s -bash
+
+
+
+
+
+# SSH key based authentication
+
+Don't like passwords? Enter public key authentication, which `ssh` supports. The private key is treated as the authentication credential, and like a password should be kept secure. The public key is copied to the target host, intended to be logged into, and is used to verify the private key. The SSH server now has everything it needs in order to craft a challenge, only (feasibly) answerable with the private key.
+
+`ssh-keygen` will create you a both a private key `~/.ssh/id_rsa` and a public key `~/.ssh/id_rsa.pub`
+
+
+    [ben@think ~]$ ssh-keygen
+    Generating public/private rsa key pair.
+    Enter file in which to save the key (/home/ben/.ssh/id_rsa): 
+    /home/ben/.ssh/id_rsa already exists.
+    Overwrite (y/n)? y
+    Enter passphrase (empty for no passphrase): 
+    Enter same passphrase again: 
+    Your identification has been saved in /home/ben/.ssh/id_rsa.
+    Your public key has been saved in /home/ben/.ssh/id_rsa.pub.
+    The key fingerprint is:
+    SHA256:AneBy9it1334Kx2VO0t3C1334i525pjFit/OR9Jf5V0 ben@think.local
+    The key's randomart image is:
+    +---[RSA 2048]----+
+    |                 |
+    |               . |
+    |             .o  |
+    |     o     . .ooE|
+    |    o +.S . o.*.=|
+    |   . *.X.o.o.= =o|
+    |    ooB =.+.= .  |
+    |   o.=o+ o =     |
+    |  . *++o. .      |
+    +----[SHA256]-----+
+
+
+By default keys are stored in `~/.ssh`, with permissions 600 on the private key, and 644 on the public, e.g:
+
+    [ben@think .ssh]$ ls -l
+    total 12
+    -rw-------. 1 ben ben 1679 Jul 17 21:05 id_rsa
+    -rw-r--r--. 1 ben ben  397 Jul 17 21:05 id_rsa.pub
+    -rw-r--r--. 1 ben ben  711 Jul 17 20:53 known_hosts
+
+
+`ssh-copy-id` conveniently takes care of tranferring the public key to the remote location. The `-i` switch defines the file to be used to locate the identity.
+
+    [ben@think .ssh]$ ssh-copy-id -i ~/.ssh/id_rsa.pub ben@wookie.local
+    /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+    /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+    sign_and_send_pubkey: signing failed: agent refused operation
+    ben@wookie.local's password: 
+
+
+Without the `-i` switch, `ssh-copy-id` will scan for identities using `ssh-add`
+
+    [ben@think ~]$ ssh-copy-id wookie.local
+    /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+    /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+    sign_and_send_pubkey: signing failed: agent refused operation
+    ben@wookie.local's password: 
+    
+    Number of key(s) added: 1
+    
+    Now try logging into the machine, with:   "ssh 'wookie.local'"
+    and check to make sure that only the key(s) you wanted were added.
+
+
+Which, unless you've registered the identity with `ssh-add` will likely fail, like so:
+
+    [ben@think ~]$ ssh ben@wookie.local date
+    sign_and_send_pubkey: signing failed: agent refused operation
+    ben@wookie.local's password: 
+
+If you want to go down the `ssh-add` path, simply refresh its cache by running it:
+
+    [ben@think ~]$ ssh-add -l
+    2048 SHA256:ZqbEy9it9SXRKx2VO0t3CasIOi525msFjt/OR9Jf5V0 ben@think.local (RSA)
+    [ben@think ~]$ ssh-add
+    Identity added: /home/ben/.ssh/id_rsa (/home/ben/.ssh/id_rsa)
+    [ben@think .ssh]$ ssh-copy-id -f wookie.local
+    Number of key(s) added: 2
+    Now try logging into the machine, with:   "ssh 'wookie.local'"
+    and check to make sure that only the key(s) you wanted were added.
+
+And you should be cooking with gas:
+
+    [ben@think ~]$ ssh ben@wookie.local date +%A
+    Sunday
+
+
+
+# SSH service configuration
+
+Configuration for sshd lives in `/etc/ssh/sshd_config`. After modifying `sshd_config` ensure you bounce the sshd daemon using your friendly service manager (e.g `systemd`):
+
+    [root@wookie ~]# systemctl restart sshd
+
+
+Some useful options for hardening a default installation include:
+
+### Preventing root login
+
+The `root` account is powerful, making it a good choice for a remote adversary.
+
+    PermitRootLogin no
+
+If this is not feasible consider enforcing key-based authentication for the `root` user:
+
+    PermitRootLogin without-password
+
+
+
+### Disabling password (i.e. not PKI) authentication
+
+Not only is key based authentication a great convenience, RSA keys are much longer and complex than an average password.
+
+    PasswordAuthentication no
+
+
+### Whitelist users and/or groups
+
+    AllowUsers ben tom alice bob
+    AllowGroups sysadmin dbadmin webadmin
+
+
+### Blacklist users and/or groups
+
+Conversely, users and/or groups can be explicitly denied.
+
+    DenyUsers apache postgres jenkins
+    DenyGroups developers testers managers
+
+You may be thinking in what order are the white and black lists applied: *DenyUsers* => *AllowUsers* => *DenyGroups* => *AllowGroups*
+
+
+### Changing the default port (22)
+
+Change the default port binding to something other than 22:
+
+    Port 1337
+
+
+### Reducing the login grace period of 2 minutes
+
+The time window a new session has to successfully authenticate, before being disconnected. Default is 2 minutes (2m), here we set it to 30 seconds.
+
+    LoginGraceTime 30
+
+
+### Reviewing the authentication log for failed authentication attempts
+
+By default logs will route through the syslog facility of the distribution (for me Redhat based), and into `/var/log/secure`.
+
+    [root@wookie ~]# tail -n 3 /var/log/secure
+    Jul 30 07:34:36 centosbox sshd[30066]: Invalid user monkey from ::1
+    Jul 30 07:34:36 centosbox sshd[30066]: input_userauth_request: invalid user monkey [preauth]
+    Jul 30 07:34:36 centosbox sshd[30066]: Connection closed by ::1 [preauth]
+
+An interesting project called [DenyHosts](http://denyhosts.sourceforge.net/) parses this log periodicly, and based on failed attempts and frequency patterns, will automatically populate the `/etc/hosts.deny`.
+
+
+
+
+

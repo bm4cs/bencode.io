@@ -1,0 +1,36 @@
+---
+layout: post
+title: "CNO Essay"
+date: "2018-08-08 21:10:10"
+comments: false
+categories: "cyber"
+---
+
+
+
+# Network Attacks and Exploitation
+
+
+## The Attacker
+
+To most effective, need to understand the first principles of CNE.
+
+### Humanity
+
+> the true objective of any CNE operation is ultimately human in nature.
+
+Objectives range from political and military, to Internet vandals.
+
+* For the attacker, if a re-focus on human objectives, frees the attacker from narrowly focusing on trying to create perfect technical solutions. Good enough is sufficient if objectives are met.
+
+* Technology is created by humans, and is infused with flaws and assumptions.
+
+
+### Operation Lifecycle
+
+1. Targeting: two stages; id target network (which bank to rob), and the attack strategies and tactics necessary to exploit the network (hwo to rob it)
+2. Initial Access: gaining the ability to run shells on the targets computers or networks. Exploiting vunerabilities, misconfigurations, social engineering. Cool NIST stat quote on the number of vulns remaining at about 5000 per year. Preventing initial access is the focus of much of the security industry for about the last 2 decades; e.g. IDP, network designs. The results speak for themselves.
+3. Persistence: the art of turning initial access into reoccuring access, and makes sustaining an operation possible. Vulnerabilities are unreliable, nad may not last long (i.e. patching). Attackers must install their own form of persistence, a *backdoor*. The goal is to maintain access through normal system usage, including system restarts, establishing a reliable command and control channel. The persistence stage remains a key battleground area between offence and defence.
+4. Access Expansion: increasing access to the target network. The attacker must expand to persist. Expansion time is intensive; requiring enumeration, colecting, analyzing informatoin to identify the next step of the operation (taking months/years). **sample corporate network diagram** with DMZ etc. Lacks in defensive technology such as anomaly detection.
+5. Exfiltration: the retrieval of wnated data from the target network. The attacker must contend with tradeoffs between amount of data, speed of retreival, operational security.
+6. Detection

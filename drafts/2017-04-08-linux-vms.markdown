@@ -1,0 +1,54 @@
+---
+layout: post
+title: "Linux Virtual Machines"
+date: "2017-04-08 16:59:01"
+comments: false
+categories: "linux"
+---
+
+In practice a sysadmin might replace 20 physical machines on an older network, with 2 physical machines, and 20 virtual machines (VMs). The 20 VMs would be installed on a shared storage volume, formatted with a clustered file system such as [GFS2](https://en.wikipedia.org/wiki/GFS2), for mounting by the 2 physical machines.
+
+# Installing KVM
+
+| Package | Description |
+| --- | --- |
+| qemu-kvm | Main KVM package |
+| libvirt | The `libvirtd` service to manage hypervisors |
+| libvirt-client | The virsh command and clients API to manage VMs |
+| virt-install | CLIs for creating VMs |
+| virt-manager | GUI VM admin tool |
+| virt-top | CLI for VM stats |
+| virt-viewer | GUI console to connect to VMs |
+
+As an alternative to installing the packages individually, can just install the *Virtualization Host* and *Virtualization Client* package groups.
+
+    yum group install "Virtualization Host" "Virtualization Client"
+
+Verify the appropriate kernel modules have been loaded.
+
+    # lsmod | grep kvm
+    kvm_intel             200704  0
+    kvm                   593920  1 kvm_intel
+
+## Virtual Storage
+
+VM storage images are generally huge files. It wise to dedicate a partition or logical volume to the `/var/lib/libvirt/images` directory. Another option is to symlink this somehwere that has ample capacity (note the SELinux contexts must be setup).
+
+    $ mkdir ~/kvm
+    $ su - root
+    # semanage fcontext -a -t virt_image_t '/home/ben/kvm(/.*)?'
+    # restorecon /home/ben/kvm
+    # rmdir /var/lib/libvirt/images
+    # ln -s /home/ben/kvm /var/lib/libvirt/images
+
+## Virtual Network Interfaces
+
+Virtual NICs can connect to Virtual Networks (not to be confused with each other). Each virtual network is associated to a virtual switch, such as `virbr0`. Cool! These virtual switches operate in NAT mode (default) when traffic is forwarded on to the physical host. Four types of Virtual NICs:
+
+- Bridge: bridges physical and virtual interface.
+- Bond: Combines multiple interfaces into a single logical for redundancy.
+- Ethernet: New inteface.
+- VLAN: An interface with IEEE 802.1Q VLAN tagging.
+
+
+Kickstart is the Red Hat system for automated installations, that works from an answers file.

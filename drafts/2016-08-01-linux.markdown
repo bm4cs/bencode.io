@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Linux"
+date: "2016-08-01 20:09:01"
+comments: false
+categories: "linux"
+---
+
+
+RHCSA journey, work though Sanders videos.
+
+- The basics. Getting a feel for my Linux box; hostname, logs, logged in users, disks, IO, network traffic, processes, daemons, kernel verison, memory, profiling processes. 
+- Networking. Interfaces. Firewalls. DNS. IP tracing. Remote mounts. TCP Wrapper. Intrusion detection. 
+- SSH. Running jobs in background with GNU screen (http://unix.stackexchange.com/questions/4034/how-can-i-disown-a-running-process-and-associate-it-to-a-new-screen-shell). Credential management. General tips and tricks. Checking failed login attempts.
+- User and group management; /etc/passwd, /etc/shadow, /etc/group, bulk user management, LDAP, mail, messaging users on the same box/network, 
+- Process management
+- Scheduled tasks; crontab; DB backups, log syncing
+- Logging
+- Disk management; ACLs and permissions, file types, partitioning, LVM, RAID, capacity, block sizes, secure formatting with dd, encryption, file systems (ext4, btrfs, zfs)
+- Kernel management
+- Boot process and systemd
+- SELinux
+- Remote mounts, FTP, Samba
+- Time services
+- Package management
+
+
+
+
+Running jobs in background with GNU screen (http://unix.stackexchange.com/questions/4034/how-can-i-disown-a-running-process-and-associate-it-to-a-new-screen-shell). Credential management. General tips and tricks. Checking failed login attempts.
+
+

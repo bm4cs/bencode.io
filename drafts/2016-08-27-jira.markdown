@@ -1,0 +1,56 @@
+---
+layout: post
+title: "JIRA on Linux"
+date: "2016-08-27 18:51:01"
+comments: false
+categories: "linux"
+---
+
+Let's plop JIRA on my Debian.
+
+Make sure postgresql is installed and running.
+
+    ben@iris:~$ dpkg --get-selections | grep postgres
+    postgresql          install
+    postgresql-9.5          install
+    postgresql-client-9.5       install
+    postgresql-client-common      install
+    postgresql-common       install
+    postgresql-contrib-9.5        install
+
+If not `apt-get install postgres`, and make sure its running (wat? this thing isn't running `systemd`?):
+
+    ben@iris:~$ /etc/init.d/postgresql status
+    9.5/main (port 5432): online
+
+Create a database user called 'jira':
+
+    ben@iris:/etc/init.d$ sudo su - postgres
+    postgres@iris:~$ createuser -P jira
+    Enter password for new role: 
+    Enter it again: 
+
+Allow it to create databases:
+
+    ben@iris:~$ sudo su - postgres
+    postgres@iris:~$ psql
+    psql (9.5.3)
+    Type "help" for help.
+
+    postgres=# ALTER USER jira CREATEDB;
+    ALTER ROLE
+    postgres=# 
+
+Create a new database called `jiradb`:
+
+    ben@iris:/etc/init.d$ sudo su - jira
+    $ createdb jiradb
+
+Unpack and install the JIRA distribution. Once installed will run a setup wizard on port 8080, which will configure the database. Tell the setup wizard to setup PostgreSQL on localhost, port 5423, database name jiradb, it will take a few minutes to fill the database with tables and data, and other junk.
+
+    postgres=# \c jiradb
+    You are now connected to database "jiradb" as user "postgres".
+    jiradb=# \dt
+
+
+

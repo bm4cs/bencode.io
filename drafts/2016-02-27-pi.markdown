@@ -1,0 +1,68 @@
+---
+layout: post
+title: "Raspberry Pi Notes"
+date: "2016-02-27 16:47:10"
+comments: false
+categories: "Geek"
+---
+
+The Raspberry PI II Model B is fricken amazing. An open, hackable Linux machine that fits in my pocket. The NOOBS setup does a fantastic job getting most things going. Here's some rough setup notes to get up and going.
+
+
+
+### Wireless / wifi
+
+Skip this if using the Ethernet interface. I wanted wifi via USB.
+
+    sudo vi /etc/network/interfaces
+
+This works for my network, which uses a hidden (non-broadcast) SSID:
+
+    
+
+Bounce the wireless interface to test it out:
+
+    sudo ifdown wlan0
+    sudo ifup wlan0
+
+Works on my machine.
+
+
+### Keyboard mapping
+
+By default is configured to support a GB (Great Britain) keyboard layout, which is annoying if you are running on a US keyboard.
+
+    $ sudo vi /etc/default/keyboard
+
+Update `XKBLAYOUT` to this:
+
+    XKBLAYOUT="us"
+
+
+### Package upgrade
+
+sudo apt-get update
+sudo apt-get upgrade
+
+
+### Remote access packages
+
+sudo apt-get install ssh
+sudo apt-get install tightvncserver
+sudo apt-get install avahi-daemon
+
+> Avahi is a system which facilitates service discovery on a local network via the mDNS/DNS-SD (multicast DNS service discovery) protocol suite. It provides an object based interface to announce and browse services on the local network.
+
+So very cool. Basically this removes the need to configure a static IP address to find the PI on your network. By default, will be discoverable as `raspberrypi.local`. Update the hostname (`/etc/hosts`) to your liking. To make this work, I had to make sure my other Linux machines on the network used the same `.local` suffix.
+
+
+### TightVNC server
+
+I don't really need this, but the PI II Model B is more than capable of driving an X Windows system.
+
+The [documentation](https://www.raspberrypi.org/documentation/remote-access/vnc/README.md) is great to get things going.
+
+Other bits:
+
+- With a default NOOBS setup, there will now be two X sessions running, which would normally be a waste of resources. Stop the displaymanager running on `:0` by `service lightdm stop`.
+- Connect with any VNC client. I use Vinagre on GNOME. Make sure you specify the port as `590X` where X corresponds to the remote desktop instance id (e.g. `:1`). Also I had trouble using mDNS discovery via `raspberrypi.local` and instead had to go with IP. `192.168.1.113::5901` worked for me (yes double `::`).

@@ -1,0 +1,73 @@
+
+= Ten million reasons why Linux is superior
+Benjamin Macdonald Simmonds <ben@bencode.net>
+
+An introduction to http://asciidoc.org[AsciiDoc].
+
+== First Section
+
+* item 1
+* item 2
+
+{doctitle} begins on a bleary Monday morning.
+
+Let's get started by digging into asciidoctor extensions, and generating images using the excellent asciidoctor-diagram extension. You'll need to install the gem, and underlying dependencies such as plantuml and graphviz. Run asciidoctor with the extension enabled like so `asciidoctor -r asciidoctor-diagram sample.adoc`
+
+["plantuml", "asciidoctor-diagram-classes", "png"]
+---------------------------------------------------------------------
+class BlockProcessor
+class DiagramBlock
+class DitaaBlock
+class PlantUmlBlock
+
+BlockProcessor <|-- DiagramBlock
+DiagramBlock <|-- DitaaBlock
+DiagramBlock <|-- PlantUmlBlock
+---------------------------------------------------------------------
+
+Wow! I like this, no more lining up visual objects in tools like visio. How about a sequence diagram?
+
+
+["plantuml", "important-sequence", "png"]
+....
+actor Alice #blue
+actor Bob
+database DB1
+
+Alice -> Bob: authentication request
+Bob --> Alice: authentication response
+note right: Alice is odd
+Alice -> Bob: you suck
+Bob --> Alice: access denied
+Bob -> DB1: log transaction
+....
+
+
+Let's give ditaa markup a crack.
+
+["ditaa", "ditaa-diagram"]
+....
+                   +-------------+
+                   | Asciidoctor |-------+
+                   |   diagram   |       |
+                   +-------------+       | PNG out
+                       ^                 |
+                       | ditaa in        |
+                       |                 v
+ +--------+   +--------+----+    /---------------\
+ |        | --+ Asciidoctor +--> |               |
+ |  Text  |   +-------------+    |   Beautiful   |
+ |Document|   |   !magic!   |    |    Output     |
+ |     {d}|   |             |    |               |
+ +---+----+   +-------------+    \---------------/
+     :                                   ^
+     |          Lots of work             |
+     +-----------------------------------+
+....
+
+== About the author
+
+You can contact {author} at {email}. My middlename really is {middlename}.
+
+{authorinitials}
+

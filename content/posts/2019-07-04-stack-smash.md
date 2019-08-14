@@ -116,7 +116,7 @@ The `RET` instruction pops the last value off the stack, which supposed to be th
 As documented on [exploit-db](https://www.exploit-db.com/exploits/11256) this old version of winamp had a buffer overflow vulnerability in part of its help menu, which loads its release notes from a plain text file called `whatsnew.txt` in its install path.
 
 
-## Setup
+**Setup**
 
 Setup requirements for VM:
 
@@ -126,7 +126,7 @@ Setup requirements for VM:
 * Python
 
 
-## Step 1: Find the overflow tipping point
+**Step 1: Find the overflow tipping point**
 
 The key to leveraging a buffer overflow is to locate the offset in bytes needed in order to gain control of the `EIP` (instruction pointer). One brute force way of doing this is to simply flood the buffer with a huge amount of the same bytes, observing the register state when the program crashes.
 
@@ -183,7 +183,7 @@ Nice, 4 unique bytes, just need to find the index within the pattern text and we
 The offset to `EIP` heaven is 540.
 
 
-## Step 2: Find a trampoline (JMP ESP gadget)
+**Step 2: Find a trampoline (JMP ESP gadget)**
 
 Now that the specific number of bytes needed to gain control of `EIP` has been identified, need to somehow get the address of our shellcode into the `EIP`. A clever way to accomplish this, with needing to know the specific address to the shellcode in address space (which is always on the move with *ASLR*), is to use a `JMP ESP` trampoline. The idea is, if we can point the `EIP` to an existing `JMP ESP; RET` instruction in the program, control flow will transfer back to the overflowed stack buffer, immediately after the return address value that was crafted.
 
@@ -229,7 +229,7 @@ Awesome, lots of `JMP ESP` gadgets were discovered, I'll just go with the first 
 
 
 
-## Step 3: Shellcode
+**Step 3: Shellcode**
 
 We nearly have all the ingredient for a classical executable stack based overflow attack. We just some shellcode, a reverse shell that will dial home to our remote host, giving us control over the computer. Using metasploit:
 
@@ -237,13 +237,15 @@ We nearly have all the ingredient for a classical executable stack based overflo
 
 
 
-## Step 4: Craft the payload
+**Step 4: Craft the payload**
 
 Python is very good for crafting payloads, especially useful is the `struct` package which will pack bytes according to the specified endianess.
 
-We want to pack the payload as per the following layout:
+Given all the ingredients have been obtained, simply need to pack the payload for poor old winamp according to the following layout:
 
     [ PADDING UNTIL EIP ][ JMP ESP GADGET ][ SHELLCODE ]
+
+A little bit of python to pack the payload, noting the shellcode was already conveniently in python that to the `-f` switch using `msfvenon`. Checkout the `struct.pack` call - how dope is that!?
 
 ```python
 import struct
@@ -299,11 +301,15 @@ with open('whatsnew.txt', 'w') as file:
 ```
 
 
-## Step 5: Remote listener and run exploit
+**Step 5: Remote listener and run exploit**
 
-To catch the reverse shell triggered by the shellcode, ensure that the remote host is ready and listening, for example with netcat:
+To catch the TCP reverse shell triggered by the shellcode, ensure that the remote host is listening, e.g. on a remote kali box:
 
     nc -l -p 443
 
-Now trigger the exploit by viewing the help menu in winamp. You shall see the netcat listener now has a remote shell to the windows XP host.
+Now trigger the exploit by viewing the help menu in winamp, using the payload prepared by the python script above. You will see the netcat listener now has a DOS prompt remotely running on the windows XP host.
 
+
+
+
+# 

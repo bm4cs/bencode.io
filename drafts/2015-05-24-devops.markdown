@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Devops"
+date: "2015-05-24 19:13:19"
+comments: false
+categories: "Geek"
+---
+
+Credits:
+https://lalitkale.wordpress.com/2014/08/04/book-notes-the-phoenix-project-a-novel-about-it-devops-and-helping-your-business-win/
+
+
+- When there is chaos, start prioritising and estimating work. While doing so, you cannot stay away from fighting fires.
+- Knowing is better than not knowing things.
+- Always remain cognisant of the big picture.
+- Work in progress (WIP) is a silent killer. Therefore, one of the most critical mechanisms in the management of any plant is job and materials release. Without it, you can’t control WIP.
+- Apparently event undisciplined mobs can get lucky too.
+- Read Air Traffic Control Books, Highlight on ubiquitous terminology used between air traffic controller and pilots of aircrafts. Signify accidents of plane crashes that happens. – Useful for DDD.
+- Whiteboards, paper, physical movements and physical presence *engages* people and increases their *involvement* in their projects thus increasing success rate of projects.
+- Project is getting delayed, all tasks by Dev team are marked as completed and QAs are still finding twice as many broken features/defects as are getting fixed. – Classic situation of badly run project.
+Processes are supposed to protect people from Distractions and help them deliver their core objectives.
+“I think” this might have happened or the I think the bugs are because of such and such thing. Such statements are sure signs of the problems that goes un noticed. It shows that we are flying without compass (data) and map (direction).
+Interesting term J ! FUBAR = Fucked up beyond all recognition.
+Management gut check from my team.
+There are four types of work in IT Operations: 1. Business Projects 2. Internal IT projects 3. Changes and maintenance work 4. Unplanned work
+Prioritization will help till one point but we need to identify what our constraint (real bottleneck in entire flow of operations) is and guard it from unscheduled work as well as keep it busy on top priority work.
+Focus on Work centers. A work center is made up of a man, machine, methods and measures.
+After chaos and constraints are figured out, work on single most important item/project which is required for survival.
+Once you get some success around, plan for all projects which does not involve constraints/ constrained work centers.
+Improving daily work is even more important than doing daily work.
+Ensure that we’re continually putting tension into the system, so that we’re continually reinforcing habits and improving something. Resilience engineering tells us that we should routinely inject faults into the system, doing them frequently, to make them less painful. This is called as improvement kata.
+Repetition creates habits and habits enable mastery.
+Our goal is to maximize flow.
+You win when you protect the organization from putting the meaningless work into the IT system. You win even more when you can take meaningless work out of the IT system.
+Avoid scoping errors.
+Create work centers and lanes of work.
+Understand Upstream and Downstream processes?
+Color coding of cards:
+Purple cards for changes supporting one of the top five business projects; otherwise, they are yellow.
+The Green cards are for internal IT improvement projects. [Give 20% of cycle time to these]
+Pink cards are blocked tasks that are needs to be reviewed twice a day.
+
+
+

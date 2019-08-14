@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Bio"
+date: "2018-02-25 14:03:01"
+comments: false
+categories: "me"
+---
+
+# Bio - Benjamin Simmonds
+
+Ben is a proud Canberran and long-time computer enthusiast, and still clearly remembers the day his dad got their first PC back in 1992, a "386SX" which featured a 12MHz 16-bit processor, 8MB of memory and a 100MB hard disk. I love learning, especially from the smart peeps I get to work with.
+
+To avoid him rambling, beware mentioning Linux, programming, weight lifting or greyhounds in close proximity.
+
+Since starting his software dev career in 2003, has worked for a few organisations (20+) all over Australia, private/public, body shops, lots of different industries and roles. Even in this relatively short space of time, has seen the industry go through many fads.
+
+Across the 00's the IT industry was obsessed with objects; Java, .NET and over baked OO architectures (more design patterns, layers and abstractions FTW!). Ben has worked on things like VB, C++, Java, C#, .NET, Java EE, Spring, C, WebSphere, general web dev, ASP.NET, middleware with BizTalk Server and WebMethods, SQL Server, DB2, web services and SOA, OLAP cubes, PowerBuilder - ohh god, please stop. After a decade or so of this, observed some reoccuring patterns in the industry; the constant stream of (ooh shiny) new frameworks and languages every year, the promise of silver bullets, and an addiction to wheel reinvention. Ben is very fond of the UNIX philosophy and GNU/Linux, his favourite distros being Debian and Fedora. His favourite conferences to checkout are LCA and B-Sides.
+
+Ben's educational background includes Bachelor and Master Degrees in IT and Software Engineering, and a pile of industry certifications. Ben is a strong believer in learning first principles; understanding how things work from the bottom up. If there were more hours in the day he would do heaps more reading, programming, weight lifting and hiking.
+

@@ -1,0 +1,942 @@
+---
+layout: post
+title: "Ruby language basics"
+date: "2013-07-30 21:05:20"
+comments: false
+categories: [Ruby]
+---
+
+# Basics
+
+## Unless
+
+Shorthand for negative conditional.
+
+Swap this:
+    if ! protein_bag.empty?
+      puts "smash protein shake"
+    end
+    
+For this:
+    unless protein_bag.empty?
+      puts "smash protein shake"
+    end
+
+## Inline if/unless
+
+Swap this:
+    if password.length < 8
+      fail "Password too short"
+    end
+
+For this:
+    fail "Password too short" if password.length < 8
+
+## Short circuit assignment operator
+
+Swap this:
+    supps = gymbag.supps
+    supps = [] unless supps
+
+For this:
+    supps = gymbag.supps || []
+
+
+## Conditional assignment
+
+Handy for initialising variables.
+
+    foo = 1 #foo 1
+    foo ||= 2 #foo 1
+    bar ||= 2 #bar 2
+
+
+## Conditional return values
+
+Without:
+
+    if foo
+      options[:bar] = "foo"
+    else
+      options[:bar] = "pop"
+    end
+
+With:
+
+    options[:bar] = if foo
+      "foo"
+    else
+      "pop"
+    end
+
+
+## Case statements
+
+    algo = case source
+      when "pop"
+        "bubble"
+      when "buzz"
+        "quick"
+      else
+        nil
+    end
+
+
+    rating = case source.count
+      when 0..19
+        nil
+      when 20..99
+        "massive"
+      else
+        "humungous"
+    end
+
+# Methods
+
+## Optional Arguments
+
+    def pow(message, foo = nil, bar = nil)
+      #...
+    end
+    pow("ruby shine")
+
+## Hash Arguments
+
+A neat and self documenting way to handle lots of optional parameters, is to use a hash.
+
+    def hack(message, options = {})
+      env = Envelop.new
+      env.headers = options[:headers]
+      env.body = message
+      env.to = options[:to]
+    end
+
+    hack("ruby shiny",
+      :headers = { action: "hack", sender: "yukihiro" },
+      :to = "127.0.0.1"
+    )
+
+## Exceptions
+
+    def purchare_computer(computer)
+      unless computer.authorised?(@user)
+        raise AuthorizedException.new
+      end
+      computer.purchase
+    end
+
+    begin
+      computer = purchase_new_computer(macpro)
+    rescue AuthorizationException
+      warn "You already have 10 computers"
+    end
+
+## Splat operator
+
+Represents all overflowed parameters into an array.
+
+    def do_exercises(gym, *exercises)
+      workout("#exercises.join(' ') #{gym}")
+    end
+
+    do_exercises('Golds California', 'DB curls', 'Benchpress', 'Squats', 'Shoulder press')
+
+# Classes
+
+    class Name
+      def initialize(first, last = nil)
+        @first = first
+        @last = last
+      end
+      def format
+        [@last, @first].compact.join(', ')
+      end
+    end
+
+    cat_names = []
+    cat_names << Name.new("harry")
+    cat_names << Name.new("missy", "daisy")
+    cat_names << Name.new("george", "smith")
+    cat_names.each { |n| puts n.format }
+
+
+## attr_accessor
+    class Ticket
+      attr_accessor :created_on #attr_reader for read only
+      attr_reader :name
+      def initialize(name)
+        @created_on = Time.new
+        @name = name
+      end
+    end
+
+    foo_ticket = Ticket.new
+    foo_ticket.created_on = Time.new(2020, 1, 1, 0, 0, 0, "-05:00")
+
+## Re-opening classes
+
+Class definitions can just be re-opened and redefined. Not unlike partial classes.
+
+    ticket = Ticket.new("pearl jam")
+    puts ticket.to_s #<Ticket:0x00002009c89e4>
+
+    class Ticket
+      def to_s
+        "#{@name} #{@created_on}"
+      end
+    end
+
+## self
+
+To prevent ruby from creating locally scoped variabled, use `self`.
+
+    class Energy
+      attr_accessor :name
+      def initalize(name)
+        self.name = name
+      end
+    end
+
+# Classes
+
+## Encapsulation
+
+    class Game
+      attr_accessor :name, :year, :system
+      attr_reader :created_at
+
+      def initialize(name, options = {})
+        self.name = name
+        self.year = options[:year]
+        self.system = options[:system]
+        @created_at = Time.now
+      end
+
+      def ==(game)
+        name == game.name &&
+        year == game.year &&
+        system == system.year
+      end
+    end
+
+## Inheritance
+
+    class ArcadeGame < Game
+    end
+
+    class PokerMachineGame < Game
+    end
+
+## super
+
+Traverses the inheritance chain until it hits a method with the matching signature. Also implicitly passes arguments, so simply using the keyword `super` takes care of the rest. 
+
+    
+
+## to_s
+
+Like all OOP models, a standard way of extracting a string representation from an object.
+
+    class ArcadeGame < Game
+      def to_s
+        "{@name} on system {@system}"
+      end
+    end
+
+## Visibility
+
+    class Hacker
+      attr_accessor :skills
+
+      def hack
+        #...
+      end
+
+
+      protected
+      def do_code_school
+        #...
+      end
+
+      private
+      def drink_coke
+      end
+    end
+
+
+# Active Support
+
+A toolkit of support libraries and Ruby core extensions, from the Rails framework. Documentation at [guides.rubyonrails.org](http://guides.rubyonrails.org/active_support_core_extensions.html)
+
+Installation `gem install activesupport` and `gem install i18n`
+
+    require 'active_support/all'
+
+## Arrays
+
+    array = [0, 1, 2, 3, 4, 5, 6]
+    array.from(4) #--> [4, 5, 6]
+    array.to(2) #--> [0, 1, 2]
+    array.in_groups_of(3) #--> [[0, 1, 2], [3, 4, 5], [6, nil, nil]]
+    array.split(2) #--> [[0, 1], [3, 4, 5, 6]]
+
+## Date
+
+    rubyconf = DateTime.new(2014, 02, 20, 9, 15, 30)
+    rubyconf.at_beginning_of_day #--> 20/02/2014 00:00:00
+    rubyconf.at_end_of_month #--> 28/02/2014 23:59:59
+    rubyconf.at_beginning_of_year #--> 01/01/2014 00:00:00
+
+    rubyconf.advance(years: 4, months: 3, weeks: 2, days: 1) #each is optional
+    rubyconf.tomorrow
+    rubyconf.yesterday
+
+## Hash
+
+    options = {user: 'benjaminify', lang: 'en'}
+    new_options = {user: 'benjaminify', lang: 'en', weight: 220}
+    options.diff(new_options) #--> {:weight => 220}
+    options.stringify_keys #--> {"user"=>"benjaminify", "lang"=>"en"}
+
+
+    options.reverse_merge(defaults) #will merge the default hash into the options hash
+
+    options.except(:weight) #--> {:user->"benjaminify", :lang->"en"}
+
+    options.assert_valid_keys(:user, :lang) #--> throws exception is hash contains any keys other than those specified.
+
+## Integer
+
+    def background_class(index)
+      return 'white' if index.odd?
+      return 'grey' if index.even?
+    end
+    tweets.each_with_index do |tweet, index|
+      puts "<div class='#{background_class(index)}'>#{tweet}</div>"
+    end
+
+## Inflector
+
+    "#{1.ordinalize} place" #--> "1st place"
+    "#{2.ordinalize} place" #--> "2nd place"
+    "#{23.ordinalize} place" #--> "23rd place"
+
+    "user".pluralize #-->"users"
+    "women".singularize #-->"woman"
+    "octopus".pluralize #-->"octopi"
+    "protein snack".titleize #-->"Protein Snack"
+    "account_options".humanize #-->"Account options"
+
+
+# Modules
+
+## Namespace
+
+    #image_utils.rb
+    module ImageUtils
+      def self.preview(image)
+      end
+
+      def self.transfer(image, destination)
+      end
+    end
+
+Consuming a module is simple. Just qualify method calls, with the module name, like so.
+
+    #run.rb
+    require 'image_utils'
+    image = user.image
+    ImageUtils.preview(image)
+
+## Mixin
+
+Ruby supports embedding a module within a class, known as a mixin. Interestingly, methods in the module have complete access to properties on objects from host classes. Using `include`, module methods are included as instance methods. Using `extend` module methods are included as class (static) methods.
+
+Example using `include`:
+    
+    #image_utils.rb
+    module ImageUtils
+      def self.preview(image)
+      end
+
+      def self.transfer(image, destination)
+      end
+    end
+
+    #avatar.rb
+    require 'image_utils'
+    class Image
+      include ImageUtils
+    end
+
+    #run.rb
+    image = user.image
+    image.preview
+
+Example using `extend`:
+
+    module Searchable
+      def find_all_from(user)
+      end
+    end
+
+    class Tweet
+      extend Searchable
+    end
+
+    Tweet.find_all_from('@benjaminify')
+
+Also note the `extend` keyword serves another purpose. When called on an object instance, it will mix the module only into that specific object instance.
+
+
+## Module Hooks
+
+These bad boys are like triggers that Ruby fires when certain events of interest happen on a module (such as when a module is included into something).
+
+    module ImageUtils
+      def self.included(base)
+        base.extend(ClassMethods)
+      end
+
+      def preview
+      end
+
+      def transfer(destination)
+      end
+
+      module ClassMethods
+        def fetch_from_twitter(user)
+        end
+      end
+    end
+
+    class Image
+      include ImageUtils #this will fire the self.included hook on the module
+    end
+
+## ActiveSupport::Concern
+
+A cleaner way of dealing with hooks, using blocks that run in the context of the host class. ActiveSupport:Concern will also take care of transitive module dependencies (where modules depend on other modules).
+
+    require 'active_support/concern'
+
+    module ImageUtils
+      extend ActiveSupport::Concern
+
+      included do
+        clean_up
+      end
+
+      module ClassMethods
+        def fetch_from_twitter(user)
+        end
+
+        def clean_up
+        end
+      end
+    end
+
+    class Image
+      include ImageUtils
+    end
+
+
+
+# Blocks
+
+There are two ways (relgions) to declare blocks; single line and multi line approaches.
+
+**Single line**
+    words.each { |word| puts word }
+
+**Multi line**
+    words.each do |word|
+      backward_word = word.reverse
+      puts backward_word
+    end
+
+
+## Basics
+
+    words = ['hadoop', 'neo4j', 'ruby', 'java']
+    for index in 0..(words.length - 1)
+      puts words[index]
+    end
+
+A block can be passed to the `each` method on the array.
+
+    words = ['hadoop', 'neo4j', 'ruby', 'java']
+    words.each { |word| puts word }
+
+
+## Yield
+
+Yield wires up an input argument to a block. Similar to invoking a function pointer.
+
+    def call_block_twice
+      yield
+      yield
+    end
+
+    call_block_twice { puts "twitter" } #twitter/twitter
+    call_block_twice { puts "tweet" } #tweet/tweet
+
+## Yield with arguments
+
+You can feed arguments into the `yield`'ed block from the method.
+
+    def call_foo_block
+      yield "tweet"
+    end
+
+    call_foo_block { |da_arg| puts da_arg } #tweet
+
+    call_foo_block { |da_arg| puts da_arg.upcase } #TWEET
+
+Here's a cheeky `yield` example:
+
+    def call_this_block
+      block_result = yield "foo"
+      puts block_result
+    end
+
+    call_this_block { |arg| arg.reverse }
+
+## Using blocks
+
+    class Timeline
+      def list_tweets
+        @user.friends.each do |friend|
+          friend.tweets.each { |tweet| puts tweet }
+        end
+      end
+
+      def store_tweets
+        @user.friends.each do |friend|
+          friend.tweets.each { |tweet| tweet.cache }
+        end
+      end
+    end
+
+Notice all the repetition, bar the each action. Why not parameterise this with a block using yield, like so:
+
+    class Timeline
+      def each
+        @user.friends.each do |friend|
+          friend.tweets.each { |tweet| yield tweet }
+        end
+      end
+    end
+
+    t_line = Timeline.new(user)
+    t_line.each { |tweet| puts tweet }
+    t_line.each { |tweet| tweet.cache }
+
+Nice++
+
+## Enumerable
+
+Mix in Enumerable to define stand behavours for enumerating things, such as `sort_by`, `map` and `find_all`
+
+    class ShoppingList
+      def each
+        self.items.each { |item| yield item }
+      end
+      include Enumerable
+    end
+
+    bens_list = ShoppingList.new
+    bens_list.sort_by { |item| item.created_on }
+    bens_list.map { |item| item.name }
+    bens_list.find_all { |item| item.author =~ /\@benjaminify/ }
+
+
+
+
+
+
+
+# Advanced Ruby Tips
+
+# Blocks, Procs and Lambdas
+
+Blocks represent callable instructions, which are evaluated using the `yield` keyword.
+
+A proc represents a block, for later execution. `Proc.new` supports inline style blocks, like so:
+
+    my_proc = Proc.new { puts "bang!" }
+    my_proc.call # => bang!
+
+or, with the do/end style block:
+
+    my_proc2 = Proc.new do
+      puts "bang!"
+    end
+    my_procs2.call # => bang!
+
+or, using the lambda keyword (lambdas are different to procs, but implement the same `call` interface):
+
+    my_proc3 = lambda { puts "bang!" }
+    my_proc3.call # => bang!
+
+or, with 1.9's stabby lambda syntax:
+
+    my_proc4 = -> { puts "bang!" }
+    my_proc4.call # => bang!
+
+
+## Using the ampersand
+
+Useful for doing proc/bloc conversions.
+
+First type is calling a method with a `&` in front of a parameter.
+
+`tweets.each(&printer)` turns a proc into a block
+
+
+The second style is used when defining methods, with a `&` in front of the parameter.
+
+`def each(&block)` turn a block into a proc, so it can be assigned to a parameter.
+
+It is often useful to pair the two methods (proc to block, and block to proc) together. Take for example:
+
+    class Programmer
+      attr_accessor :alias
+      attr_accessor :certs
+
+      def each
+        certs.each { |cert| yield cert }
+      end
+    end
+
+Another way of passing the block through the each method, is to do first a block to proc, then a proc to block conversion, like so:
+
+    class Programmer
+      attr_accessor :alias
+      attr_accessor :certs
+
+      def each(&block)
+        certs.each(&block)
+      end
+    end
+
+## Symbol to proc
+
+Syntactic sugar. Evaluates a property on the object in context. The following two lines are equivalent.
+
+    certs.map { |cert| cert.code }
+    certs.map(&:code)
+
+## Optional blocks
+
+Sometimes you may want methods that optionally leverage a passed in block, but still offer useful functionality without one.
+
+    programmer.print_certs
+    programmer.print_certs { |cert| "cert: #{cert}" }
+
+    class Programmer
+      attr_accessor :certs
+
+      def print_certs
+        if block_given?
+          certs.each { |cert| puts yield cert }
+        else
+          puts certs.join(", ")
+        end
+      end
+    end
+
+This technique is super handy when applied with constructors, supporting convenient object initialisation.
+
+    class Node
+      def initialize
+        yield self if block_given?
+      end
+    end
+
+    Node.new do |node|
+      node.name = 'wintermute'
+      node.id = '1-1AH345'
+    end
+
+## Closures
+
+The characteristic when the current state of local variables is preserved when a lambda is created. The state "is closed" within.
+
+    def tweet_as(user)
+      lambda { |tweet| puts "#{user}: #{tweet}" }   
+    end
+
+    ben_tweet = tweet_as("benjaminify")
+
+    ben_tweet.call("brain pop!") # => benjaminify: brain pop!
+
+
+# Dynamic classes
+
+## Struct
+
+Provides a convenient way to bundle attributes together, using accessor methods, without having to write a class. Great for represent data heavy definition. When too much behaviour is needed, better off using a `class`.
+
+So this class definition:
+
+    class Drop
+      attr_accessor :qty
+      attr_accessor :color
+
+      def initialize(qty, color)
+        @qty, @color = qty, color
+      end
+    end
+
+can be reduced to:
+
+    Drop = Struct.new(:qty, :color)
+
+Behaviour can be added to a struct by passing in a `block` containing all the definitions, like so:
+
+    Drop = Struct.new(:qty, :color) do
+      def to_s
+        "#{user}: #{status}"
+      end
+    end
+
+## alias_method
+
+Avoids the need for identical behavior defintions. For example, these two methods are doing the same thing:
+
+    class Plant
+      def initialize(specs = [])
+        @specs = specs
+      end
+
+      def name
+        @name
+      end
+
+      def scientific_name
+        @name
+      end
+    end
+
+Could be made more succinct using the `alias_method` keyword like so:
+
+    class Plant
+      def initialize(specs = [])
+        @specs = specs
+      end
+
+      attr_reader :name
+
+      alias_method :scientific_name, :name
+    end
+
+As this jsut clones an existing method, has other uses, such as redefining an existing method by reopening a class, cloning the method, and decorating it with additional functionality.
+
+For example, so you wanted to add auditing to the existing print method on Car.
+
+    class Car
+      attr_accessor :id
+
+      def print
+        puts id.join("\n")
+      end
+    end
+
+Reopen the class, and redefine print like so:
+
+    class Car
+      alias_method :old_print, :print
+
+      def print
+        audit!
+        old_print
+      end
+
+      def audit!
+        #logic goes here
+      end
+    end
+
+## Dynamic methods with `define_method`
+
+    class Tweet
+      def draft
+        @status = :draft
+      end
+
+      def posted
+        @status = :posted
+      end
+
+      def deleted
+        @status = :deleted
+      end
+    end
+
+The definition of the method identical, without using templates, ruby can dynamically create methods using `define_method`, like so:
+
+    class Tweet
+      states = [:draft, :posted, :deleted]
+      states.each do |status|
+        define_method status do
+          @status = status
+        end
+      end
+    end
+
+## The method method
+
+Everything in ruby is an object. This goes for methods too! Methods are captured using the `method` method.
+
+    class Timeline
+      def initialize(tweets)
+        @tweets = tweets
+      end
+
+      def contents
+        @tweets
+      end
+
+      def show_tweet(index)
+        puts @tweets[index]
+      end
+    end
+
+    tweets = ['linking', 'optimising']
+    timeline = Timeline.new(tweets)
+
+    # method with no args
+    content_method = timeline.method(:contents)
+    content_method.call
+
+    # method with args
+    show_method = timeline.method(:show_tweet)
+    show_method.call(0)
+
+Mind blowing warning. Method objects can be converted into `Proc` objects using the ampersand.
+
+    (0..1).each(&show_method)
+
+
+
+# Understanding self
+
+Ruby uses self to resolve where to call something, when no explicit object instance is defined.
+
+    class Tweet
+      attr_accessor :status # called on Tweet class object
+
+      def initialize(status)
+        @status = status #instance variable added to Tweet instance
+        set_up_some_things #call on Tweet instance
+      end
+
+      def set_up_some_things
+        #do stuff here
+      end
+    end
+
+## Class (static) methods
+
+    class Tweet
+      def self.find(keyword)
+        puts "Inside a class method: #{self}"
+      end
+    end
+
+    Tweet.find("ruby") # -> Inside a class method: Tweet
+
+Because `self` resolves to the `Tweet` class, it is equivalent to using the explicit class name to define the method, as below. While this syntax works, it is more common to use self. 
+
+    def Tweet.find(keyword)
+      puts "Inside a class method: #{self}"
+    end
+
+
+
+## class_eval
+
+Is a method available on all classes, which takes a block, and sets the value of `self` to the given class. That is, the context of the block is under the specified class.
+
+This is handy for extending classes, without needing to reopen them. For example:
+
+    class Tweet
+      attr_accessor :status, :created_at
+
+      def initialize(status)
+        @status = status
+        @created_at = Time.now
+      end
+    end
+
+And here we extend the Tweet class, by adding a new user property:
+
+    Tweet.class_eval do
+      attr_accessor :user
+    end
+
+Given the ability to execute in the context of another class, provides lots of cool extensibility options. When combined with `alias_method`, `define_method` and `send`, Ruby gives us the tools to easily redefine and decorate existing functionality.
+
+Here's a method logger implementaiton, that will log activity around any given class' method invocation.
+
+    class MethodLogger
+      def log_method(klass, method_name)
+        klass.class_eval do
+          alias_method "#{method_name}_original" method_name
+          define_method method_name do |*args, &block|
+            puts "#{Time.now}: Called #{method_name}"
+            send "#{method_name}_original", *args, &block
+          end
+        end
+      end
+    end
+
+    logger = Logger.new
+    logger.log_method(Tweet, :say_hi)
+    Tweet.new.say_hi # -> 2013-09-20 23:27:03 +1000: Called say_hi -> Hi
+
+
+
+## instance_eval
+
+Ruby also gives us instance based context evaluation, with `instance_eval`. It works just like `class_eval`, but with instances.
+
+    class Tweet
+      attr_accessor :user, :status
+    end
+
+    tweet = Tweet.new
+    tweet.instance_eval do
+      self.status = "Changing the tweets status"
+    end
+
+Provides a slicker way of contructing an instance from a block, than using `yield`.
+
+    class Tweet
+      attr_accessor :user, :status
+
+      def initialize
+        yield self if block_given?
+      end
+    end
+
+    Tweet.new do |tweet|
+      tweet.status = "Ruby is uber useful"
+      tweet.user = "benjaminify"
+    end
+
+Could be refactored to this using `instance_eval`:
+
+    class Tweet
+      attr_accessor :user, :status
+
+      def initialize(&block)
+        instance_eval(&block) if block_given?
+      end
+    end
+
+    Tweet.new do
+      self.status = "Ruby is uber useful"
+      self.user = "benjaminify"
+    end
