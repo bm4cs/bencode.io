@@ -1,9 +1,8 @@
 ---
 layout: post
 title: "Stack Canaries"
-date: "2019-08-20 20:12:10"
+date: 2019-08-20T20:12:11+10:00
 comments: false
-draft: false
 categories:
 - hacking
 tags:
