@@ -10,8 +10,6 @@ tags:
 - freenode
 ---
 
-*Last updated: Sun 04 Aug 2019 02:40:29 PM AEST*
-
 Hey there, these are some of my notes about IRC in general, and the CLI client [irssi](https://irssi.org/).
 
 ## IRC Primer
@@ -21,10 +19,11 @@ Internet Relay Chat (IRC) is an open protocol that uses TCP and optionally TLS. 
 Each client session is assigned a unique identifier called a **hostmask**, which takes the form `nick!user@host`. Some networks (such as freenode) offer **cloaks** to show affiliation with a project, by altering the hostmask. For example `alex@123.45.67.89` could become `alex@gnu.org/AlexZ`. They're basically a badge of pride and legimaticy of who you say you are.
 
 1. Install a client (e.g. `irssi`).
-1. Register networks our your pleasing e.g. `/network add -sasl_username bm4cs -sasl_password <password> -sasl_mechanism PLAIN freenode`
-1. Register a server (e.g. freenode) `/server add freenode chat.freenode.net/6697 -ssl -sslverify -autoconnect` or `/server add oftc irc.oftc.net/6697 -ssl -autoconnect`
-1. Set your nick `/nick snazzybeard` or use a pre-registered nick (see below) with the `IDENTIFY` command `/msg NickServ IDENTIFY snazzybeard <password>`
-1. Join a channel `/join ##C` or `/join #cjeopardy`
+1. Register networks our your pleasing e.g. `/NETWORK ADD -sasl_username bm4cs -sasl_password <password> -sasl_mechanism PLAIN freenode`
+1. Register a server (e.g. freenode) `/SERVER ADD freenode chat.freenode.net/6697 -ssl -sslverify -autoconnect` or `/SERVER ADD oftc irc.oftc.net/6697 -ssl -autoconnect`
+1. Connect `/CONNECT oftc` or alternatvely not with SASL but with a general server `PASS`, `/SERVER ADD bm4csarchbox 6697 MYPASSWORD` (useful for first logging into own ircd, to start setting things up).
+1. Set your nick `/NICK snazzybeard` or use a pre-registered nick (see below) with the `IDENTIFY` command `/msg NickServ IDENTIFY snazzybeard <password>`
+1. Join a channel `/JOIN ##C` or `/JOIN #cjeopardy`
 
 
 ### Register nick
@@ -45,7 +44,7 @@ The means of communicating with a group of users. Basic channel operations inclu
 * `+` modeless
 * `!` timestamped channel
 
-The most effective way to find a channel is by asking [alis](https://freenode.net/kb/answer/findingchannels). Alis supports these options:
+List registered channels with `/LIST`. Another effective way to find a channel is by asking the [alis](https://freenode.net/kb/answer/findingchannels) bot. Alis supports these options:
 
 * `min <n>`: show only channels with at least <n> users
 * `max <n>`: show only channels with at most <n> users
@@ -68,20 +67,6 @@ Examples:
 
 ChanServ is the bot responsible for channel management, and doesn't mind when you ask for help `/msg ChanServ help`:
 
-    ***** ChanServ Help *****
-    ChanServ gives normal users the ability to maintain control
-    of a channel, without the need of a bot. Channel takeovers are
-    virtually impossible when a channel is registered with ChanServ.
-    Registration is a quick and painless process. Once registered,
-    the founder can maintain complete and total control over the channel.
-    Please note that channels will expire if there are no eligible channel successors.
-   
-    For more information on a command, type:
-    /msg ChanServ help <command>
-    For a verbose listing of all commands, type:
-    /msg ChanServ help commands
-    
-    The following commands are available:
     FLAGS           Manipulates specific permissions on a channel.
     INVITE          Invites you to a channel.
     OP              Gives channel ops to a user.
@@ -95,6 +80,14 @@ ChanServ is the bot responsible for channel management, and doesn't mind when yo
                     SYNC, TAXONOMY, TEMPLATE, TOPIC, TOPICAPPEND,
                     TOPICPREPEND, TOPICSWAP, UNQUIET, VOICE,
                     WHY
+
+Be aware not all ChanServs are equal, with some offering more (or less) functionality. For exapmle, the ChanServ that ships with the [oragono](https://github.com/oragono/oragono) ircd:
+
+    AMODE modifies persistent mode settings for channel members.
+    HELP shows in-depth information about commands.
+    OP makes the given user (or yourself) a channel admin.
+    REGISTER lets you own a given channel.
+    UNREGISTER deletes a channel registration.
 
 
 ### Channel Modes
@@ -129,8 +122,7 @@ ChanServ is the bot responsible for channel management, and doesn't mind when yo
 
 ### Channel Flags
 
-FLAGS are how channel privileges are granted and removed, `/msg ChanServ help flags`:
-
+Flags are how channel privileges are granted and removed, `/msg ChanServ help flags`:
 
     ***** ChanServ Help *****
     Help for FLAGS:
@@ -182,79 +174,26 @@ FLAGS are how channel privileges are granted and removed, `/msg ChanServ help fl
         /msg ChanServ FLAGS #foo !baz +*
 
 
-## Buffer Management
+## Window management
 
 On the client is how a channel, private message, or service notification, is presented. As you will typically have multple of these at once, some useful commands to juggle them:
 
-`/win #`
-`/buf #`
-`alt + #`
-`/b name` will match a buffer by partial name
-`/join #channel`
-`/window move`
-
-WeeChat [key bindings](https://weechat.org/files/doc/devel/weechat_quickstart.en.html#key_bindings):
-
-`F5`/`F6` switch to previous/next buffer
-`F7`/`F8` swtich to previous/next window
-`F9`/`F10` scroll title bar
-`F11`/`F12` scroll nicklist
+* `/win list` listing of all windows
+* `/win num` to move to window (ex. `/win 3`)
+* `alt + #`
+* `/join #channel`
+* `ctrl + n` same as `/window next`
+* `ctrl + p` same as `/window previous`
+* `/wc` same as `/window close`
 
 
-## Windows
-
-`/window splith` split horizontal
-`/window splitv` split vertical
-`/window zoom` zoom current window
-`/window merge`
 
 Buffers can be merged. For example you might want particular messages to go to a specific buffer.
 
 
 ## Logging
 
-WeeChat ships with the [logger](https://weechat.org/blog/post/2008/10/30/New-logger-features) plugin. By default buffers are logged to `~/.weechat/logs`, very handy for scanning for historic conversations and topics.
-
-The `/logger` command will dump out current logs, example output:
-
-    Logging on buffers:
-      [1] (core) weechat: logging (level: 9) (/home/ben/.weechat/logs/core.weechat.weechatlog)
-      [1] (irc) server.freenode: logging (level: 9) (/home/ben/.weechat/logs/irc.server.freenode.weechatlog)
-      [2] (irc) freenode.##C: logging (level: 9) (/home/ben/.weechat/logs/irc.freenode.##c.weechatlog)
-      [3] (irc) freenode.#cjeopardy: logging (level: 9) (/home/ben/.weechat/logs/irc.freenode.#cjeopardy.weechatlog)
-
-
-**Set one directory by IRC server and a file by channel inside**
-
-    /set logger.mask.irc irc/$server/$channel.weechatlog
-
-Will make the following tree:
-
-    ~/.weechat/
-        |- logs/
-            |- irc/
-                |--- freenode/
-                |       freenode.weechatlog
-                |       #weechat.weechatlog
-                |       #mychan.weechatlog
-                |--- oftc/
-                |       oftc.weechatlog
-                |       #chan1.weechatlog
-                |       #chan2.weechatlog
-
-**Log all messages on IRC buffers but not join/part/quit messages**
-
-For all IRC buffers:
-
-    /set logger.level.irc 3
-
-For a server and its channels:
-
-    /set logger.level.irc.freenode 3
-
-For a specific channel:
-
-    /set logger.level.irc.freenode.#weechat 3
+TODO
 
 
 ## Useful Features
@@ -314,8 +253,9 @@ For more help `/help filter and /help irc.look.smart_filter`
 
 ## Resources 
 
-- Emily Dunham's LCA presentation [Intermediate IRC](http://lanyrd.com/2015/seagl/sdfgfc/) [YouTube](https://www.youtube.com/watch?v=9IcEH41UCck)
-- [IRC Quickstart Guide](https://opensource.com/article/16/6/irc-quickstart-guide?src=irc_resource_menu3&intcmp=701f2000000h2ZFAAY)
-- [IRC Gist Cheatsheet](https://gist.github.com/xero/2d6e4b061b4ecbeb9f99)
-- [The freenode knowledge base](https://freenode.net/kb/all)
+* Emily Dunham's LCA presentation [Intermediate IRC](http://lanyrd.com/2015/seagl/sdfgfc/) [YouTube](https://www.youtube.com/watch?v=9IcEH41UCck)
+* [IRC Quickstart Guide](https://opensource.com/article/16/6/irc-quickstart-guide?src=irc_resource_menu3&intcmp=701f2000000h2ZFAAY)
+* [IRC Gist Cheatsheet](https://gist.github.com/xero/2d6e4b061b4ecbeb9f99)
+* [The freenode knowledge base](https://freenode.net/kb/all)
+* [Advanced Irssi Usage](https://www.linode.com/docs/applications/messaging/advanced-irssi-usage/)
 
