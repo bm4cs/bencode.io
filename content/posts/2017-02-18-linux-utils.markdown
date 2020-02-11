@@ -248,7 +248,7 @@ A survey of the standard and high quality programs that feature in most Unix bas
 `wodim dev=/dev/cdrom blank=fast` | Clear a CDRW
 `gzip -dc cdrom.iso.gz | wodim -tao dev=/dev/cdrom -v -data -` | Burn cdrom image
 `cdparanoia -B` | Rip audio tracks from CD to wav files in current dir
-`wodim -v dev=/dev/cdrom -audio -pad *.wav` | Make audio CD from all wavs in current dir
+`wodim -v dev=/dev/sr0 -audio -pad *.wav` | Make audio CD from all wavs in current dir
 `oggenc --tracknum=$track track.cdda.wav -o track.ogg` | Make ogg file from wav file
 `for i in *.mp3; do mpg123 --rate 44100 --stereo --buffer 3072 --resync -w "$(basename $i .mp3).wav" $i; done` | Decode mp3 files to 16-bit, stereo, 44.1 kHz waves
 `for i in *.mp3; do lame --decode $i ``basename $i .mp3``.wav; done` | Decode mp3 files to 16-bit, stereo, 44.1 kHz waves
