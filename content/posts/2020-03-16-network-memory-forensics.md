@@ -230,7 +230,12 @@ The `E01` or *expert witness* format, is a preferred format by many forensic exp
 ## Tools
 
 * `dd` a general purpose block based duplication tool.
-* `ddflcc` computes hashes on the fly
+* `dcfldd` a patched version of `dd` with forensics focused enhancements (hashing on the fly, status output, secure wipes, piped output and logs).
+
+Examples:
+
+    dcfldd if=/dev/source hash=md5,sha512 hashwindow=1G md5log=md5.txt sha512log=sha512.txt \
+    hashconv=after bs=512 conv=noerror,sync split=1G splitformat=aa of=image.dd
 
 
 ## Verification failures
