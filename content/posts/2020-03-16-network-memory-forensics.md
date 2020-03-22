@@ -43,20 +43,20 @@ TODO: Download ISO standards, through library database.
 
 
 
-### Standards of proof
+## Standards of proof
 
 In a criminal case, can have a penalty that includes imprisonment or penal servitude. Prosecution beyond reasonable doubt. Defendant is the person who has been accused, on the balance of probabilities (a lower standard, and allowed to cast doubt).
 
 In civil cases, both sides work on the balance of probability.
 
 
-### Types of evidence
+## Types of evidence
 
 * Testimony, evidence given by a witness (e.g. verbally or formally in a witness box, a report).
 * Documentary, part 4.3 of evidence act, such as evidence from processes or machines.
 * Physical, a real thing that can be presented in court, such as a picture or video.
 
-### Type of witness
+## Type of witness
 
 * Lay witness
 * Investigator, courts expect that as much *incriminating* and *exculpatory* evidence has been attempted to be collected.
@@ -107,12 +107,12 @@ Asking the question backwards. What are some questions you'd ask if trying to re
 
 
 
-## Presenting evidence
+# Presenting evidence
 
 Four primary stages.
 
 
-### Relevant
+## Relevant
 
 Is this piece for the right puzzle?
 
@@ -123,7 +123,7 @@ Factors:
 * credibility of witness
 * TODO
 
-### Reliable
+## Reliable
 
 Are they the right pieces or a cheap knock off?
 
@@ -136,7 +136,7 @@ The processes, such as the scientific process. Such as tools used. Standards tha
 Consider the terms & conditions of cloud providers (such as facebook) carefully. For example, it is not acceptable to have multiple accounts or to provide inaccurate personal details.
 
 
-### Sufficient
+## Sufficient
 
 Are there enough pieces to make an argument or opinion?
 
@@ -149,7 +149,7 @@ If relying on an ordinarily produced outcome, are you able to demonstrate the ma
 Sometimes your hand is forced, due to time/budget constraints, and a best effort conclusion must be delivered based on snippets.
 
 
-### Persuasive
+## Persuasive
 
 Can you persuade a decision maker using your thesis.
 
@@ -238,7 +238,7 @@ Examples:
     hashconv=after bs=512 conv=noerror,sync split=1G splitformat=aa of=image.dd
 
 
-## Verification failure
+## Verification failures
 
 Copies can fail:
 
@@ -263,6 +263,67 @@ Particular tool choices should be justified, e.g. peers use the tools, and a bui
 * `foremost`
 * `recoveryjpg`
 * `photorec`
+
+
+
+# Critical thinking
+
+TODO: refer to socrates slide, about deduction and observation.
+
+
+
+
+
+
+# Tools needed for home setup (COVID-19)
+
+* Graphviz
+* QGIS, with Open Street Map (OSM), and NSW Gov Spatial Images
+
+
+
+# Network forensics
+
+Relates to the collection of IP packets, email, non-IP protocols (e.g. zigbee, H.323), old protocols (SNA, X.25).
+
+## Challenges
+
+* Time. Resequencing events. In Australia, the official time source should be the synchronisation service provided by the National Measurement Institute (NMI). Asking for at least one months worth of data, helps shed some light around date format confusion.
+* Complexity, correlation, tools across multiple environments.
+* Collection,
+* Paradigms
+* Collaboration
+
+
+## Time
+
+Important to follow standards.
+
+ISO 8601, data elements and interchange.
+
+IETF RFC 3339 *Date and Time on the Internet* (2002)
+
+GMT stands for Greenwich Mean Time, the mean solar time at the Royal Observatory in Greenwich on the south bank in Eastern London, UK. When the sun is at its highest point exactly above Greenwich, it is 12 noon GMT. Except: The Earth spins slightly unevenly, so 12 noon is defined as the annual average, mean of when the sun is at its highest, its culmination. In GMT there can never be any leap seconds because Earth’s rotation doesn’t leap.
+
+UTC, which stands for Coordinated Universal Time in English, is defined by atomic clocks, but is otherwise the same. In UTC a second always has the same length. Leap seconds are inserted in UTC to keep UTC and GMT from drifting apart. By contrast, in GMT the seconds are stretched as necessary, so in principle they don’t always have the same length.
+
+
+## Mapping an IP to a person or geolocation
+
+Starting point is explaining in simple terms to lawyers, the workings of DNS and Internet registries, which is governed by the IANA (Internet Assigned Numbers Authority), in turn delegates to RIR (Regional Internet Registries), which in turn delegates to Local Internet Registries.
+
+*auDA* is the local registry for Australia and has delegated registra2on to accredited registrars.
+
+The auDA provided whois is considered an authoritative data source.
+
+
+## Tools
+
+* Call charge record (CCR) dumps.
+* `log2timeline` tagged data, such as emails, browing history.
+* Graphviz, useful for visualising large sets of data, especially data From -> To -> No, such as IP, telephony dumps.
+
+
 
 
 
