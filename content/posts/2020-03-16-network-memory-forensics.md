@@ -9,7 +9,21 @@ tags:
 - forensics
 ---
 
-Run by Ajosh Ghosh on 16 March 2020.
+Wisdom imparted from Ajosh Ghosh during the week 16 - 20 March 2020.
+
+
+
+# In a nutshell
+
+* Expert reports are finicky (e.g. even down to details such as specifying your address)
+* Open source dominate this space (e.g. volatility, elasticsearch, graphviz, qgis, wireshark, `nfsen`, `flow-export` ,`dcfldd`)
+* There are several standards and formal methods when it comes to forensics, be familiar with them.
+* There are several legal acts that dictate this field (such as the evidence act). Be familar with them.
+* As a technical expert, always go above and beyond to justify the who/what/when/where (never the why).
+
+
+
+# Computer forensics
 
 Falls into two main families:
 
@@ -30,7 +44,7 @@ ISO 27037 defines forensics:
 * 
 
 
-TODO: Download ISO standards, through library database.
+TODO: Download ISO standards, through uni library database.
 
 * RFC 3227 are the guidelines for evidence collection, states an order of volatility, which prioritises an order of capture. For example, CPU registers and cache should be captured before archival files on disk.
 * HB171 are the guidelines for management of IT evidence (2003), sponsored by the AFP and AGD.
