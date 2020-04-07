@@ -8,7 +8,7 @@ categories:
 ---
 
 
-A survey of the standard and high quality programs that feature in most Unix based distributions, with the GNU variants being my favourite. The [bash]({% post_url 2016-05-01-bash %}) shell is a great way of interfacing and orchestrating these beautifully crafted programs. As a starting point, I've listed out each utility offered by the amazing [GNU Core Utilities](https://www.gnu.org/software/coreutils/coreutils.html) and [util-linux](https://en.wikipedia.org/wiki/Util-linux) umbrella projects; considered defacto standard on most distributions.
+A survey of the standard and high quality programs that feature in most Unix based distributions, with the GNU variants being my favourite. The [bash]({% post_url 2016-05-01-bash %}) shell is a great way of interfacing and orchestrating these beautifully crafted programs. As a starting point, I've listed each program offered by the [GNU Core Utilities](https://www.gnu.org/software/coreutils/coreutils.html) and [util-linux](https://en.wikipedia.org/wiki/Util-linux) umbrella projects; considered the de facto standard on most distributions.
 
 
 ## Contents
@@ -30,6 +30,7 @@ A survey of the standard and high quality programs that feature in most Unix bas
 	* [CDs](#cds)
 	* [Locales](#locales)
 	* [Dates and Times](#dates-and-times)
+	* [Images](#images)
 * [Finding Documentation](#finding-documentation)
 	* [Manual Pages](#manual-pages)
 	* [Appropriate Commands](#appropriate-commands)
@@ -275,6 +276,11 @@ A survey of the standard and high quality programs that feature in most Unix bas
 `date --date='TZ="America/Los_Angeles" 09:00 next Fri'` | What's the local time for 9AM next Friday on west coast US
 
 
+## Images
+ 
+ Most of these rely on the imagemagick cli programs.
+
+`identify foo.jpg` | Show meta including resolution
 
 
 # Finding Documentation
