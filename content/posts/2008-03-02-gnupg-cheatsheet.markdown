@@ -1,25 +1,36 @@
 ---
 layout: post
-title: "GnuPG Cheatsheet"
+title: "GnuPG"
+slug: "gpg"
 date: "2008-03-02 17:16:07"
+lastmod: "2020-04-11 13:19:50"
 comments: false
 categories:
-- biztalk
+- nix
+- security
 ---
 
-This semester I have enrolled in a [security unit](http://www.canberra.edu.au/courses/index.cfm?action=detail&subjectid=6697&year=2008) at my local University. Before we get into the mechanics of modern security techniques (mathematical theory, ciphers, protocols, hashing, Kerberos), the first lecture kicked off with a gentle overview of PKI and the basics of using the [GNU Privacy Guard](http://gnupg.org/), aka GnuPG or GPG for short. In short it is a complete and free implementation of the OpenPGP standard. I havent used GPG on the Windows platform before, there are win32 binaries available for download straight from the official site. Like most *NIX born software it is very portable. The binaries are happy running off a mass storage device (eg. a USB flashdrive) assuming the drive is mounted on a suitable Windows host. I hope to make PGP-based security more of apart of my day-to-day routine...im not aware of many people that use PGP compatible systems; I wonder why this is? My public key is also now available on the about page of my blog.
+This semester I have enrolled in a [security unit](http://www.canberra.edu.au/courses/index.cfm?action=detail&subjectid=6697&year=2008) at my local University. Before we get into the mechanics of modern security techniques (mathematical theory, ciphers, protocols, hashing, Kerberos), the first lecture kicked off with a gentle overview of PKI and the basics of using the [GNU Privacy Guard](http://gnupg.org/), aka GnuPG or GPG for short. In short it is a complete and free implementation of the OpenPGP standard.
 
 Generate a key pair:
 
     gpg --gen-key
 
+List public keys in long format, for a particular recipient:
+
+    $ gpg --keyid-format long --list-keys ben@bencode.net
+    pub   rsa4096/B89B4DED12CAC26E 2019-05-17 [SC]
+          Key fingerprint = C8E1 7FE7 C3B4 96C8 B6E1  A47E B89B 4DED 12CA C26E
+
 Encrypt file:
 
-    gpg --armor --output Example.txt.gpg --recipient "Charlie Brown" --encrypt Example.txt<br>gpg -a -r "Charlie Brown" -e Example.txt
+    gpg --armor --output Example.txt.gpg --recipient "Charlie Brown" --encrypt Example.txt
+    gpg -a -r "Charlie Brown" -e Example.txt
 
 Decrypt file:
 
-    gpg --output ExampleDecrypted.txt --decrypt Example.txt.gpg<br>gpg -d Example.txt.gpg
+    gpg --output ExampleDecrypted.txt --decrypt Example.txt.gpg
+    gpg -d Example.txt.gpg
 
 To export a public key:
 
@@ -63,7 +74,7 @@ Decrypt and verify the encrypted and signed message:
 
 Create a detached signature:
 
-    gpg --armor --output Exa mpleDetachedSignature.txt --detach-sig Example.txt
+    gpg --armor --output ExampleDetachedSignature.txt --detach-sig Example.txt
 
 Verify the detached signature for a given file:
 
@@ -72,4 +83,53 @@ Verify the detached signature for a given file:
 Generate a list of numbers that can be used to verify public keys:
 
     gpg --fingerprint > Fingerprints.txt
+
+
+
+
+## Publishing keys
+
+
+It possible to register your key with a public PGP key server, so that others can retrieve your key without having to contact you directly.
+
+To share a public key, you'll need the longid for it:
+
+    gpg --list-keys --keyid-format=LONG ben@bencode.net
+    pub   rsa4096/B89B4DED12CAC26E 2019-05-17
+
+Now to publish it:
+
+    gpg --send-keys B89B4DED12CAC26E
+
+To query the key server:
+
+    gpg --search-keys ben@bencode.net
+
+To import a key from the key server:
+
+    gpg --recv-keys B89B4DED12CAC26E
+
+
+### Web Key Directory (WKD)
+
+The Web Key Service (WKS) protocol is a new standard for key distribution, where the email domain provides its own key server called Web Key Directory (WKD). When encrypting to an email address (e.g. user@example.com), GnuPG (>=2.1.16) will query the domain (example.com) via HTTPS for the public OpenPGP key if it’s not already in the local keyring. Note that the option `auto-key-locate` must contain wkd.
+
+GnuPG comes with the `gpg-wks-client` program, which can given a list of public keys from a kering, can generate a local file structure that conforms to this standard.
+
+    gpg --list-options show-only-fpr-mbox -k "@bencode.net" | gpg-wks-client -v --install-key
+
+Running this in the `static` directory of my hugo site:
+
+    openpgpkey
+    └── bencode.net
+        ├── hu
+        │   └── qpui546ptjbsz3rqaetbdz8wj9op6nur
+        └── policy
+
+
+Get gpg to use wkd as a means of obtaining a public key, like so:
+
+    gpg --recipient ben@bencode.net --auto-key-locate local,wkd --encrypt wifi
+
+
 
