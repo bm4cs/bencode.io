@@ -3,7 +3,7 @@ layout: post
 title: "Nerd Links"
 slug: "links"
 date: "2017-04-02 13:38:10"
-lastmod: "2020-04-29 10:43:10"
+lastmod: "2020-04-29 11:29:08"
 comments: false
 categories:
 - geek
@@ -107,6 +107,7 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 - [linker∙d](https://linkerd.io/) dynamic linker for microservices, taking care of the communication work needed to interact with distributed services, including routing, load balancing, and retrying.  
 - [Manually Throttle the Bandwidth of a Linux Network Interface](http://mark.koli.ch/slowdown-throttle-bandwidth-linux-network-interface) introduction to the `tc` tool for bandwidth shaping.
 - [connbeat](https://github.com/raboof/connbeat) agent that monitors TCP connection metadata and ships the data to Kafka or Elasticsearch, or an HTTP endpoint
+- [The Ultimate PCAP](https://weberblog.net/the-ultimate-pcap/) all protocols in a single PCAP
 
 
 
@@ -127,6 +128,7 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 
 # Serialization
 
+- [Illustrated jq tutorial](https://mosermichael.github.io/jq-illustrated/dir/content.html) jq is a lightweight and flexible command-line JSON processor
 - [Cap'n Proto](https://capnproto.org/)
 - [Google Protocol Buffers](https://github.com/google/protobuf)
 
