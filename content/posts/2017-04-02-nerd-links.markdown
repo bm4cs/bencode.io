@@ -159,4 +159,5 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 # Web
 
 - [webpack](https://webpack.github.io/) webpack is a module bundler; it takes modules with dependencies and emits flat static assets.
+- [Certbot](https://certbot.eff.org/) automatically use Let’s Encrypt certificates
 
