@@ -22,6 +22,7 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 * [Databases](#databases)
 * [Development](#development)
 * [Git](#git)
+* [Golang](#golang)
 * [Hardware](#hardware)
 * [Linux](#linux)
 * [Monitoring](#monitoring)
@@ -29,6 +30,7 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 * [Open source](#open-source)
 * [Security](#security)
 * [Serialization](#serialization)
+* [Shell](#shell)
 * [systemd](#systemd)
 * [Text wrangling](#text-wrangling)
 * [Vim](#vim)
@@ -68,12 +70,15 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 -   [10 Most Common Mistakes When Using Kubernetes](https://blog.pipetail.io/posts/2020-05-04-most-common-mistakes-k8s/)
 -   [lens](https://github.com/lensapp/lens/) kube IDE
 -   [kubeseal](https://crypt.codemancers.com/posts/2020-04-27-encrypting-and-storing-kubernetes-secrets-in-git/) how to safely store secrets in `git` if you want to use them in k8s
+-   [Container Technologies at Coinbase](https://blog.coinbase.com/container-technologies-at-coinbase-d4ae118dcb6c) great history on how the industry got to containers, an why kubernetes isn't used
+-   [10 most common mistakes using kubernetes](https://blog.pipetail.io/posts/2020-05-04-most-common-mistakes-k8s/)
 
 # Culture
 
 -   [You Are Not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) if you’re using a technology that originated at a large company, but your use case is very different, it’s unlikely that you arrived there deliberately; no, it’s more likely you got there through a ritualistic belief that imitating the giants would bring the same riches.
 -   [GitLab's Guide to All-Remote](https://about.gitlab.com/company/culture/all-remote/guide/) the remote manifesto, tips and tricks and remote resources
 -   [Why we at $FAMOUS_COMPANY Switched to $HYPED_TECHNOLOGY](https://saagarjha.com/blog/2020/05/10/why-we-at-famous-company-switched-to-hyped-technology/)
+-   [Habbits of High-Functioning Software Teams](https://deniseyu.io/2020/05/23/habits-of-high-performing-teams.html) characteristics and habits of the highest-performing dev teams
 
 # Databases
 
@@ -83,11 +88,28 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 # Development
 
 -   [What To Code](https://what-to-code.com) inspiration and ideas
+-   [Why the developers who use Rust love it so much](https://stackoverflow.blog/2020/06/05/why-the-developers-who-use-rust-love-it-so-much/)
+-   [Smocker](https://smocker.dev/) simple HTTP mock server, uses YAML to define mocks and responses
 
 # Git
 
 -   [Better Git configuration](https://blog.scottnonnenberg.com/better-git-configuration) links and resources on configuring & using git
 -   [Automate Repetitive Tasks with Custom git Commands](https://gitbetter.substack.com/p/automate-repetitive-tasks-with-custom) how to write custom git commands
+
+# Golang
+
+-   [Containerize Your Go Developer Environment – Part 1](https://www.docker.com/blog/containerize-your-go-developer-environment-part-1/)
+-   [Communicating Between Python and Go with gRPC](https://www.ardanlabs.com/blog/2020/06/python-go-grpc.html)
+-   [GoFakeIt: A Random Fake Data Generator](https://github.com/brianvoe/gofakeit) over 120 functions for generating things like names, emails, locations, user agents, ...
+-   [Exploring the Container Packages (list, ring, and heap)](https://therebelsource.com/blog/exploring-container-package-in-go-list-ring-and-heap/9zTBiMaaYg)
+-   [LearnGo: A Large Collection of Go Examples, Exercises, and Quizzes](https://github.com/inancgumus/learngo)
+-   [Writing Go CLIs With Just Enough Architecture](https://blog.carlmjohnson.net/post/2020/go-cli-how-to-and-advice/)
+-   [A Go RabbitMQ Beginners' Tutorial](https://www.youtube.com/watch?v=pAXp6o-zWS4)
+-   [Getting Hands-On with io_uring from Go](https://developers.mattermost.com/blog/hands-on-iouring-go/)
+-   [RobotGo: Native Cross-Platform GUI Automation](https://github.com/go-vgo/robotgo) control the pointer, keyboard, read the screen, to automate many computer-based jobs
+-   [Diving Into Go by Building a CLI Application](https://eryb.space/2020/05/27/diving-into-go-by-building-a-cli-application.html)
+-   [Immutability Patterns in Go](https://rauljordan.com/2020/05/25/immutability-patterns-in-go.html)
+-   [Writing An Interpreter In Go](https://interpreterbook.com/)
 
 # Hardware
 
@@ -109,6 +131,8 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 # Monitoring
 
 -   [Zabbix](https://www.zabbix.com)
+-   [whatfiles](https://github.com/spieglt/whatfiles) logs the files programs CRUD, also traces new processes
+-   [logtop](https://www.cyberciti.biz/faq/linux-unix-logtop-realtime-log-line-rate-analyser/) reads stdin, can sort on any field and is updated in realtime
 
 # Networking
 
@@ -122,6 +146,7 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 -   [The Ultimate PCAP](https://weberblog.net/the-ultimate-pcap/) all protocols in a single PCAP
 -   [What Every Developer Should Know About TCP](https://robertovitillo.com/what-every-developer-should-know-about-tcp/)
 -   [SSH Tips & Tricks](https://smallstep.com/blog/ssh-tricks-and-tips/) 2FA, securely forwarding agents, quitting from stuck sessions and using `mosh` or `tmux`
+-   [High Availability Load Balancers with Maglev](https://blog.cloudflare.com/high-availability-load-balancers-with-maglev/) CloudFlare on their load balancing stack, BGP, Maglev connection scheduling, IPVS, UDP encapsulation for faster delivery
 
 # Open source
 
@@ -141,6 +166,10 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 -   [Cap'n Proto](https://capnproto.org/)
 -   [Google Protocol Buffers](https://github.com/google/protobuf)
 
+# Shell
+
+-   [5 Types Of ZSH Aliases You Should Know](https://thorsten-hans.com/5-types-of-zsh-aliases) alias suffixes & global aliases, plus other neat tricks
+
 # systemd
 
 -   [Why I Prefer systemd Timers Over Cron](https://trstringer.com/systemd-timer-vs-cronjob/)
@@ -159,6 +188,6 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 
 # Web
 
--   [webpack](https://webpack.github.io/) webpack is a module bundler; it takes modules with dependencies and emits flat static assets.
 -   [Certbot](https://certbot.eff.org/) automatically use Let’s Encrypt certificates
 -   [Ask HN: Is There Still a Place for Native Desktop Apps?](https://news.ycombinator.com/item?id=23211851)
+-   [topngx](https://github.com/gsquire/topngx) parse and aggregrate statistics from NGINX access logs
