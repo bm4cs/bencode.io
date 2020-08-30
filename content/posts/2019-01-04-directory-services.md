@@ -2,19 +2,19 @@
 layout: post
 title: "SSO with Active Directory"
 date: "2019-01-04 11:10:10"
+lastmod: "2019-01-04 11:10:10"
 comments: false
-categories: 
-- dev
+categories:
+  - nix
 tags:
-- ldap
-- kerberos
-- sssd
-- nss
+  - security
+  - ldap
+  - kerberos
+  - sssd
+  - nss
 ---
 
 Providing SSO by integrating Linux (or FreeBSD) with a directory service, like Microsoft Active Directory (AD), is no where as daunting as it once was, and highlights some fascinating subsystems that enable users to be defined from a variety of data sources (such as LDAP) other than just the traditional `/etc/passwd` file.
-
-
 
 - [Initial setup](#initial-setup)
 - [Kerberos](#kerberos)
@@ -32,15 +32,13 @@ Providing SSO by integrating Linux (or FreeBSD) with a directory service, like M
   - [Clearing SSSD Cache](#clearing-sssd-cache)
 - [End to end script (for Ansible)](#end-to-end-script-for-ansible)
 
-
-
 # Initial setup
 
 Update `/etc/resolv.conf` to bind to the AD DNS server. This will enable `realmd` to discover and join the active directory domain (i.e. kerberos realm).
 
     nameserver 192.168.56.101
 
-Update `/etc/hostname`, ensuring the host has a meaningful name suffixed with the domain that it will be joining (e.g. `host1.bencode.net`). Tip if `realm join` gives the error message *realm: Couldn’t join realm: This computer’s host name is not set correctly* then you know you forgot to do this:
+Update `/etc/hostname`, ensuring the host has a meaningful name suffixed with the domain that it will be joining (e.g. `host1.bencode.net`). Tip if `realm join` gives the error message _realm: Couldn’t join realm: This computer’s host name is not set correctly_ then you know you forgot to do this:
 
     heaphy.bencode.net
 
@@ -48,13 +46,9 @@ Install `realm` dependency packages, `pytalloc`, `samba-common-tools` and `samba
 
     yum install pytalloc samba-common-tools samba-libs
 
-
-
-
-
 # Kerberos
 
-Designed at MIT, is an authentication system that guarantees that users and services are who they claim to be. Using crypto to make nested sets of credentials called *tickets*, they are passed around the network for certify identity and provide access to network services.
+Designed at MIT, is an authentication system that guarantees that users and services are who they claim to be. Using crypto to make nested sets of credentials called _tickets_, they are passed around the network for certify identity and provide access to network services.
 
 To gain a deeper conceptualisation, its hard to beat Bill Bryant's brilliant [Designing an Authentication System: A Dialogue in Four Scenes](https://web.mit.edu/kerberos/dialogue.html).
 
@@ -64,27 +58,26 @@ While there are a few ways to create the Kerberos keytab, I struggled with all o
 
 > Failed to initialize credentials using keytab \[MEMORY:/etc/krb5.keytab\]: KDC reply did not match expectations. Unable to create GSSAPI-encrypted LDAP connection.
 
-As per the [doco](https://docs.pagure.org/SSSD.sssd/users/ldap_with_ad.html), to connect my RHEL box (called `HEAPHY`) to the *bencode.net* AD domain.
+As per the [doco](https://docs.pagure.org/SSSD.sssd/users/ldap_with_ad.html), to connect my RHEL box (called `HEAPHY`) to the _bencode.net_ AD domain.
 
-* If needed, on the DC, using the *users and computers* MMC snap-in, create computer object for the Linux host attempting to join the domain.
-* On a command prompt run:
-  * `setspn -A host/heaphy.bencode.net@BENCODE.NET HEAPHY`
-  * `setspn -L HEAPHY`
-  * `ktpass /princ host/heaphy.bencode.net@BENCODE.NET /out krb5.keytab /crypto all /ptype KRB5_NT_PRINCIPAL -desonly /mapuser BENCODE\HEAPHY$ /pass \*`
-* This sets the machine account password, and UPN for the principal.
-* Transfer the keytab file to the Linux host, placing it at `/etc/krb5.keytab`
-* Ensure `root:root` ownership, and `0600` permissions.
+- If needed, on the DC, using the _users and computers_ MMC snap-in, create computer object for the Linux host attempting to join the domain.
+- On a command prompt run:
+  - `setspn -A host/heaphy.bencode.net@BENCODE.NET HEAPHY`
+  - `setspn -L HEAPHY`
+  - `ktpass /princ host/heaphy.bencode.net@BENCODE.NET /out krb5.keytab /crypto all /ptype KRB5_NT_PRINCIPAL -desonly /mapuser BENCODE\HEAPHY$ /pass \*`
+- This sets the machine account password, and UPN for the principal.
+- Transfer the keytab file to the Linux host, placing it at `/etc/krb5.keytab`
+- Ensure `root:root` ownership, and `0600` permissions.
 
 Next up, setup `/etc/krb5.conf`:
 
-
     includedir /etc/krb5.conf.d/
-    
+
     [logging]
      default = FILE:/var/log/krb5libs.log
      kdc = FILE:/var/log/krb5kdc.log
      admin_server = FILE:/var/log/kadmind.log
-    
+
     [libdefaults]
      dns_lookup_realm = true
      dns_lookup_kdc = true
@@ -95,17 +88,16 @@ Next up, setup `/etc/krb5.conf`:
      default_realm = BENCODE.NET
      default_tkt_enctypes = arcfour-hmac
      #default_keytab_name = FILE:/etc/krb5.keytab
-    
+
     [realms]
      #BENCODE.NET = {
       #kdc = dodgy-dc.bencode.net
       #admin_server = dodgy-dc.bencode.net
      #}
-    
+
     [domain_realm]
      #.bencode.net = BENCODE.NET
      #bencode.net = BENCODE.NET
-
 
 Verify a Kerberos ticket and session can be obtained:
 
@@ -115,9 +107,6 @@ Then list ticket grants:
 
     klist -ke
 
-
-
-
 # System Security Services Daemon (sssd)
 
 `sssd` is a one stop shop for identity wrangling, authentication, caching and account mapping. It supports authentication through LDAP and Kerberos. `sssd` only supports authentication over encrypted connections (i.e. LDAPS or TLS). The offical [documentation](https://docs.pagure.org/SSSD.sssd/users/ldap_with_ad.html) was a god send. A sample RHEL 7 `/etc/sssd/sssd.conf` for integration with a Windows 2016 AD configuration:
@@ -126,7 +115,7 @@ Then list ticket grants:
     domains = bencode.net
     config_file_version = 2
     services = nss, pam
-    
+
     [domain/bencode.net]
     enumerate = true
     id_provider = ad
@@ -134,7 +123,7 @@ Then list ticket grants:
     access_provider = ad
     chpass_provider = ad
     ad_domain = bencode.net
-    realmd_tags = manages-system joined-with-samba 
+    realmd_tags = manages-system joined-with-samba
     cache_credentials = True
     krb5_realm = BENCODE.NET
     krb5_server = dodgy-dc.bencode.net
@@ -152,8 +141,6 @@ After updating `sssd.conf`, bounce the service `systemctl restart sssd`, and tai
 
 Once `sssd` is setup to interface with an LDAP or Kerberos domain, the system needs to be configured to use it as the source for identity and authentication information. Two elegantly designed security systems, known as the name service switch and PAM, provide this.
 
-
-
 # Name Service Switch (nss)
 
 Created to ease the selection between various configuration databases (e.g. for user identity) and name resolution mechanisms. Configured by `/etc/nsswitch.conf`, the syntax is simple, specify the type of lookup (e.g. passwd for users) and the list of sources in the order they should be queried. For example:
@@ -164,23 +151,23 @@ Created to ease the selection between various configuration databases (e.g. for 
 
 Instructs `nss` to consult the local `passwd`, `group` and `shadow` files first, but then defer to Active Directory (or any LDAP store) by consulting `sssd`.
 
-
 # PAM (Pluggable Authentication Module)
 
-PAM is great.
+The infamous pluggable authentication system, that breaks the task of authentication into 4 categories; account, authentication, password and session management.
 
     # authconfig --enablesssd --enablesssdauth --enablemkhomedir --update
 
+`pam_faillock.so` keeps a list of failed authentication attempts per user during a specified interval and locks the account if a threshold is hit. It stores the failure records into per-user files in the tally directory. This can be reset using `faillock`:
 
+    faillock --user bill --reset
 
 # Testing
 
-Now everything just works, you can list out users and groups with `getent`. 
+Now everything just works, you can list out users and groups with `getent`.
 
 First ensure there are some custom user objects exist in the AD domain.
 
 ![Active Directory Users](/images/adusers.png "Active Directory Users")
-
 
 ## Listing Users
 
@@ -213,13 +200,12 @@ These users can be used like a vanilla (local) users, example:
 
     # su - tridge
     Creating home directory for tridge.
-    
+
     $ date +%A
     Sunday
-    
+
     $ pwd
     /home/tridge@bencode.net
-
 
 ## Listing Groups
 
@@ -249,13 +235,10 @@ Again done with `getent`:
 
 Groups with high GID (200000+) are AD domain groups.
 
-
 ## id
 
     $ id piker
     uid=201105(piker) gid=200513(domain users) groups=200513(domain users),201107(kerneldevs)
-
-
 
 # Troubleshooting
 
@@ -263,7 +246,7 @@ Groups with high GID (200000+) are AD domain groups.
 
 I noticed when running through the setup that `smbd` unlinked from the domain somehow, in syslog you'll get a:
 
-> kerberos_kinit_password SERVER$@COMPANY.COM failed: Preauthentication failed
+> kerberos_kinit_password SERVER\$@COMPANY.COM failed: Preauthentication failed
 
 To reproduce try:
 
@@ -274,13 +257,11 @@ Joining the domain again made this go away (root cause remains unknown):
     net ads join -U Administrator
     net ads info
 
-
 ## Clock Synchronisation Issues
 
 Make sure that clocks of all hosts participating in the Kerberos realm are syncrhonised. In my fake enterprise network, I just set the NTP server up on the DC, and have the NTP client on the Unix boxes point to it. Kerberos is very sensative about accurate time. If clock discrepencies are detected `sssd` log:
 
 > TSIG error with server: clocks are unsynchronized
-
 
 To setup an NTP server on the Windows DC, in PowerShell run:
 
@@ -296,7 +277,6 @@ Then force a sync (the IP of the DC):
 
     ntpdate -u 192.168.56.101
 
-
 ## Clearing SSSD Cache
 
 To invalidate all cached entries:
@@ -309,32 +289,29 @@ Or brute force:
     $ sudo rm -rf /var/lib/sss/db/*
     $ sudo systemctl start sssd
 
-
-
 # End to end script (for Ansible)
 
 [Found](https://docs.pagure.org/SSSD.sssd/users/ldap_with_ad.html) this gem when banging my head against the Kerberos Active Directory wall. This will be very handy for scripting this procedure with Ansible. Note this configures things slightly differently to my working config outlined above, but gives a good gist for taking a scripting approach to things.
-
 
     export SETUP_ADDOMAIN=SITE.LOCAL
     export SETUP_FQDOMAIN=site.local
     export SETUP_ADMIN_USER=joiner
     export SETUP_ADMIN_PASSWORD="nacho libre is king"
     export SETUP_ADMIN_GROUP="domain admins"
-    
+
     alias install="yum install -y"
-    
-    
+
+
     export SETUP_DC=$( adcli info ${SETUP_ADDOMAIN} | grep '^domain-controllers = ' | awk '{print $3}' )
-    
+
     # configure kerberos
     cat > /etc/krb5.conf << EOM
-    
+
     [logging]
      default = FILE:/var/log/krb5libs.log
      kdc = FILE:/var/log/krb5kdc.log
      admin_server = FILE:/var/log/kadmind.log
-    
+
     [libdefaults]
      default_realm = ${SETUP_ADDOMAIN}
      dns_lookup_realm = true
@@ -343,30 +320,30 @@ Or brute force:
      renew_lifetime = 7d
      forwardable = true
      default_keytab_name = FILE:/etc/krb5.keytab
-    
+
     [realms]
      ${SETUP_ADDOMAIN} = {
       kdc = ${SETUP_DC}
       admin_server = ${SETUP_DC}
      }
-    
+
     [domain_realm]
      .${SETUP_FQDOMAIN} = ${SETUP_ADDOMAIN}
      ${SETUP_FQDOMAIN} = ${SETUP_ADDOMAIN}
-    
+
     EOM
-    
+
     # configure sssd
-    
+
     install sssd
-    
+
     cat >  /etc/sssd/sssd.conf << EOM
-    
+
     [sssd]
     services = nss, pam, ssh, pac
     config_file_version = 2
     domains = ${SETUP_ADDOMAIN}
-    
+
     [domain/${SETUP_ADDOMAIN}]
     ad_domain = ${SETUP_ADDOMAIN}
     krb5_realm = ${SETUP_ADDOMAIN}
@@ -386,17 +363,17 @@ Or brute force:
     ldap_idmap_range_size = 2000000000
     access_provider = ad
     chpass_provider = ad
-    
+
     # enable dynamic dns updates
     dyndns_update = true
     dyndns_refresh_interval = 43200
     dyndns_update_ptr = true
     dyndns_ttl = 3600
-    
+
     EOM
-    
+
     chmod 600 /etc/sssd/sssd.conf
-    
+
     # install keytab with ktutil
     ktutil << EOM
     addent -password -p ${SETUP_ADMIN_USER}@${SETUP_ADDOMAIN} -k 1 -e rc4-hmac
@@ -404,20 +381,20 @@ Or brute force:
     wkt /etc/krb5.keytab
     quit
     EOM
-    
+
     # enable sssd
     authconfig --enablesssd --enablesssdauth --enablemkhomedir --update
-    
+
     systemctl enable sssd
     systemctl start sssd
-    
+
     # join domain from the sssd side
     echo -n ${SETUP_ADMIN_PASSWORD} | adcli join --stdin-password -U ${SETUP_ADMIN_USER} ${SETUP_ADDOMAIN}
-    
+
     # configure samba (member server is default configuration)
-    
+
     install samba
-    
+
     cat > /etc/samba/smb.conf << EOM
     [global]
       workgroup = $( echo $SETUP_ADDOMAIN | cut -d. -f1 )
@@ -439,7 +416,7 @@ Or brute force:
       dns proxy = yes
       name resolve order = wins bcast host lmhosts
       obey pam restrictions = yes
-      
+
     [homes]
       comment = Home Directories
       browseable = no
@@ -447,22 +424,20 @@ Or brute force:
       valid users = @"domain users${SETUP_FQDOMAIN}"
       path = /home/%U
     EOM
-    
-    
+
+
     # join domain from the samba side
     echo -n ${SETUP_ADMIN_PASSWORD} | net ads join -U ${SETUP_ADMIN_USER}
-    
+
     systemctl enable smb
     systemctl start smb
-    
+
     # sss takes over /etc/nsswitch for sudoers. remove that (avoids frequent "SECURITY information" emails in debian)
     sudo sed -i /^sudoers:/s/sss// /etc/nsswitch.conf
-    
+
     # configure selinux
     setsebool -P samba_create_home_dirs on
     setsebool -P samba_enable_home_dirs on
     setsebool -P use_samba_home_dirs on
-    
+
     # NOTE: Read samba_selinux(8) man page for configuring shares
-
-
