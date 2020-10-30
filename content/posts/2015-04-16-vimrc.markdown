@@ -1,112 +1,120 @@
 ---
 layout: post
 title: "Vim"
+slug: "vim"
 date: "2015-04-16 21:50:01"
+lastmod: "2020-10-31 10:20:17"
 comments: false
 categories:
-- dev
+    - dev
 tags:
-- vim
+    - vim
 ---
 
-*Updated 2019-05-04*
+_Updated: 2020-10-31_
 
 About a year ago I finally bit the bullet and commited to learning a real text editor. I went with Vim. Once you break through its initial steep learning curve, its truly life changing. Level up to text surgeon today.
 
-I usually clone my `dotfiles` git repo straight into my home directory i.e. `~/dotfiles`. A couple of symlinks later, I'm away:
+I usually clone my `dotfiles` git repo straight into my home directory i.e. `~/dotsfiles`. A couple of symlinks later, I'm away:
 
     ln -nfs ~/dotfiles/vim/vimrc ~/.vimrc
     ln -nfs ~/dotfiles/vim ~/.vim
 
-Vim is incredibly customisable. Its important to take the time to craft your own [.vimrc](https://github.com/benjaminify/scripts/tree/master/linux/vim). Type `:options` to understand the various levers you can pull to make Vim your editor.
+Vim is incredibly customisable. Its important to take the time to craft your own [`vimrc`](https://github.com/bm4cs/dots/blob/master/stow-home/neovim/.config/nvim/init.vim). Type `:options` to understand the various levers you can pull to make Vim your editor.
 
+<!-- vim-markdown-toc GFM -->
 
+* [Help](#help)
+* [Operators](#operators)
+* [Object Selection](#object-selection)
+* [Windows](#windows)
+* [The Edit (e) Command](#the-edit-e-command)
+* [Cool Things](#cool-things)
+    * [relativenumber](#relativenumber)
+    * [Escalated Save](#escalated-save)
+* [Plugins](#plugins)
+    * [NERDTree (file browsing)](#nerdtree-file-browsing)
+    * [](#)
+    * [coc (Conquer of Completion)](#coc-conquer-of-completion)
+        * [Go support](#go-support)
+        * [Web dev (JS, ES6 and CSS)](#web-dev-js-es6-and-css)
+    * [Denite (and ripgrep)](#denite-and-ripgrep)
+    * [vim-go](#vim-go)
+* [Resources](#resources)
+
+<!-- vim-markdown-toc -->
 
 # Help
 
 Vim has brilliant built-in help. Its only one `:help` away, `:h operator` or `:h motion`.
 
-- `:h cmd` normal mode *cmd* help
-- `:h i_cmd` insert mode *cmd* help
-- `:h v_cmd` visual mode *cmd* help
-- `:h c_cmd` command line *cmd* help
-
-
-
-
-
+-   `:h cmd` normal mode _cmd_ help
+-   `:h i_cmd` insert mode _cmd_ help
+-   `:h v_cmd` visual mode _cmd_ help
+-   `:h c_cmd` command line _cmd_ help
 
 # Operators
 
-| Trigger | Effect |
-| --- | --- |
-| `c` | change |
-| `d` | delete |
-| `y` | yank |
-| `g~` | swap case |
-| `gu` | lower case |
-| `gU` | upper case |
-| `g?` | [ROT13](https://en.wikipedia.org/wiki/ROT13) encode |
-| `>` | shift right |
-| `<` | shift left |
-| `=` | autoindent |
-| `!` | filter through a program |
+| Trigger | Effect                                              |
+| ------- | --------------------------------------------------- |
+| `c`     | change                                              |
+| `d`     | delete                                              |
+| `y`     | yank                                                |
+| `g~`    | swap case                                           |
+| `gu`    | lower case                                          |
+| `gU`    | upper case                                          |
+| `g?`    | [ROT13](https://en.wikipedia.org/wiki/ROT13) encode |
+| `>`     | shift right                                         |
+| `<`     | shift left                                          |
+| `=`     | autoindent                                          |
+| `!`     | filter through a program                            |
 
 See `:h operator` for more. All of these support being combined with a motion (or a visual mode selection). Some examples:
 
-- gUaw - make a word shout case
-- dap - delete entire paragraph
-- g?ap - ROT13 encode paragraph
-- gUgU - shout case entire line (factoid: when two operators are invoked in duplicate, applies to current line)
-
-
-
+-   gUaw - make a word shout case
+-   dap - delete entire paragraph
+-   g?ap - ROT13 encode paragraph
+-   gUgU - shout case entire line (factoid: when two operators are invoked in duplicate, applies to current line)
 
 # Object Selection
 
-Learning object selectors is one of the best ways of becoming more efficient with Vim. Commands that start with `i` select inner objects without white space, and thus always select less text than their `a` equivalents. When you discover these can be paired with *operators* (discussed above), *life changing*, e.g. `daw` delete a word, `gUis` uppercase inner sentence, and so on.
+Learning object selectors is one of the best ways of becoming more efficient with Vim. Commands that start with `i` select inner objects without white space, and thus always select less text than their `a` equivalents. When you discover these can be paired with _operators_ (discussed above), _life changing_, e.g. `daw` delete a word, `gUis` uppercase inner sentence, and so on.
 
-| Selector | Effect |
-| --- | --- |
-| `aw` | a word |
-| `iw` | inner word |
-| `as` | a sentence |
-| `is` | inner sentence |
-| `ap` | a paragraph |
-| `ip` | inner paragraph |
-| `a]` `a[` | a `[]` block |
-| `i]` `i[` | inner `[]` block |
-| `a)` `a(` | a block |
-| `i)` `i(` | inner block |
-| `a>` `a<` | a `<>` block |
-| `i>` `i<` | inner `<>` block |
-| `at` | tag block, as in XML tags `<a>` to `</a>` |
-| `it` | inner tag block |
-| `a}` `a{` | a `{}` block |
-| `i}` `i{` | inner `{}` block |
-| `a"` `a'` | quoted string including back ticks |
-| `i"` `i'` | quoted string including back ticks |
-
-
-
+| Selector  | Effect                                    |
+| --------- | ----------------------------------------- |
+| `aw`      | a word                                    |
+| `iw`      | inner word                                |
+| `as`      | a sentence                                |
+| `is`      | inner sentence                            |
+| `ap`      | a paragraph                               |
+| `ip`      | inner paragraph                           |
+| `a]` `a[` | a `[]` block                              |
+| `i]` `i[` | inner `[]` block                          |
+| `a)` `a(` | a block                                   |
+| `i)` `i(` | inner block                               |
+| `a>` `a<` | a `<>` block                              |
+| `i>` `i<` | inner `<>` block                          |
+| `at`      | tag block, as in XML tags `<a>` to `</a>` |
+| `it`      | inner tag block                           |
+| `a}` `a{` | a `{}` block                              |
+| `i}` `i{` | inner `{}` block                          |
+| `a"` `a'` | quoted string including back ticks        |
+| `i"` `i'` | quoted string including back ticks        |
 
 # Windows
 
 Leverage the built-in windows manager, which can do splits to view multiple files at the same time.
 
-- `:sp` horizontal split
-- `:vs` vertical split
-- `ctrl+w o` - close all windows other than the active one.
-- `ctrl+w x` - exchange active window with the next one.
-- `ctrl+w c` - close the current window.
-- `ctrl+w r` - rotate windows clockwise (or counter clockwise).
-
+-   `:sp` horizontal split
+-   `:vs` vertical split
+-   `ctrl+w o` - close all windows other than the active one.
+-   `ctrl+w x` - exchange active window with the next one.
+-   `ctrl+w c` - close the current window.
+-   `ctrl+w r` - rotate windows clockwise (or counter clockwise).
 
 # The Edit (e) Command
 
 Vim's built-in edit command, will present you with a nice file system explorer, for example `:e .` to present the current working directory.
-
-
 
 # Cool Things
 
@@ -115,12 +123,11 @@ Vim's built-in edit command, will present you with a nice file system explorer, 
 Makes line numbering relative. So good! Makes it fast to figure out how many lines up or down you need to move, to get to the line you want. Example, `14j` to jump 14 lines down.
 
       2 I usually clone my `scripts` git repo straight into my home
-      1 ¬                                                          
-    13      ln -nfs ~/git/scripts/linux/vim/vimrc ~/.vimrc¬        
-      1     ln -nfs ~/git/scripts/linux/vim ~/.vim¬                
-      2 ¬                                                          
+      1 ¬
+    13      ln -nfs ~/git/scripts/linux/vim/vimrc ~/.vimrc¬
+      1     ln -nfs ~/git/scripts/linux/vim ~/.vim¬
+      2 ¬
       3 Vim has brilliant built-in help. Its only one `:help` away.
-
 
 ## Escalated Save
 
@@ -132,36 +139,31 @@ Editing a file, but don't have privileges to save.
 
     cmap w!! w !sudo tee %
 
-
-
 # Plugins
 
 While core Vim functionality is like a rock, changing rarely, the plugin eco-system is where you can make Vim level up to doing tasks you commonly do with it. Consequently plugin selection can be quite personal based on specific langs one works with.
 
-The Vim community seems obsessed with writing new plug-in managers, there's quite a bit of choice and tradeoffs, I have used a few in the past (Pathogen, Vundle) and have settled with [vim-plug](https://github.com/junegunn/vim-plug) for the time being.
+The Vim community seems obsessed with writing new plug-in managers, there's quite a bit of choice and tradeoffs, I have used a few in the past (Pathogen, Vundle) and as of 2020 have settled with [vim-plug](https://github.com/junegunn/vim-plug), which balances minimalism and functionality nicely.
 
-Coming from bloated power tool IDE's like IntelliJ or Resharper, in order to be remotely productive, I need to be able to efficiency locate and jump between files within a large code base.
+Coming from bloated power tool IDE's like awesome JetBrains tools, in order to be remotely productive, I need to be able to efficiency locate and jump between files within a large code base.
 
+## NERDTree (file browsing)
 
-
-## NERDTree
-
-[NERDTree](https://github.com/scrooloose/nerdtree) add's a file system tree pane to Vim (like *Open Folder* in VSCode). Personally I find fuzzy finding with [denite](https://github.com/Shougo/denite.nvim) and [ripgrep](https://github.com/BurntSushi/ripgrep) to be vastly more efficient at jumping between files, but NERDTree is handy when it comes to browsing a code base.
+[NERDTree](https://github.com/scrooloose/nerdtree) add's a file system tree pane to Vim (like _Open Folder_ in VSCode). Personally I find fuzzy finding with [denite](https://github.com/Shougo/denite.nvim) and [ripgrep](https://github.com/BurntSushi/ripgrep) to be more efficient at jumping between files, but NERDTree is handy when it comes to browsing a code base.
 
 NERDTree keyboard customisations:
 
     " Toggle NERDTree on/off
     nmap <leader>n :NERDTreeToggle<CR>
-    
+
     " Opens current file location in NERDTree
     nmap <leader>f :NERDTreeFind<CR>
-    
+
     " PageDown
     noremap <Space> <PageDown>
-    
+
     " PageUp
     noremap - <PageUp>
-
 
 NERDTree general customisations:
 
@@ -171,6 +173,7 @@ NERDTree general customisations:
     let g:NERDTreeDirArrowCollapsible = '⬎' "custom icons for expandable
     let g:NERDTreeIgnore = ['^\.DS_Store$', '^tags$', '\.git$[[dir]]', '\.idea$[[dir]]', '\.sass-cache$'] "ignore list
 
+## 
 
 
 ## coc (Conquer of Completion)
@@ -181,11 +184,9 @@ Like VSCode, Emacs and many others, can sit upon the [Langserver.org](https://la
 
 To install a coc extension that supports a language, have a look on [npm](https://www.npmjs.com/search?q=keywords%3Acoc.nvim) for one, and install with `CocInstall` for example to install Go language completion `CocInstall coc-gocode`. Make sure to also install [gocode](https://github.com/nsf/gocode) for this particular plugin, with a quick `go get -u github.com/nsf/gocode`.
 
-
 ### Go support
 
 You can manually register LSP servers in jsonc format in the `~/.config/nvim/coc-settings.json` (use `:CocConfig` to auto jump you to this file). For example, the below registers `gopls`, Google's offical LSP for golang:
-
 
     {
       "languageserver": {
@@ -202,8 +203,6 @@ You can manually register LSP servers in jsonc format in the `~/.config/nvim/coc
 
     :CocInstall coc-tsserver coc-eslint coc-json coc-prettier coc-css
 
-
-
 ## Denite (and ripgrep)
 
 Fuzzy finder. Very customisable, for example, mine is configured to use [ripgrep](https://github.com/BurntSushi/ripgrep). What is ripgrep?
@@ -214,33 +213,27 @@ In my `.vimrc`:
 
     " Use ripgrep in place of "grep"
     call denite#custom#var('grep', 'command', ['rg'])
-    
+
     " Custom options for ripgrep
     "   --vimgrep:  Show results with every match on it's own line
     "   --hidden:   Search hidden directories and files
     "   --heading:  Show the file name above clusters of matches from each file
     "   --S:        Search case insensitively if the pattern is all lowercase
     call denite#custom#var('grep', 'default_opts', ['--hidden', '--vimgrep', '--heading', '-S'])
-    
+
     " Recommended defaults for ripgrep via Denite docs
     call denite#custom#var('grep', 'recursive_opts', [])
     call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
     call denite#custom#var('grep', 'separator', ['--'])
     call denite#custom#var('grep', 'final_opts', [])
 
-
 ## vim-go
 
 TODO
 
-
-
 # Resources
 
-* [Smash into Vim](https://airbladesoftware.com/peepcode-vim/) the awesome PeepCode screencast that help me break through the learning curve back in 2010.
-* [Vim Cheat Sheet](https://vim.rtorr.com/) good quick reference.
-* [A guide to modern Web Development with (Neo)vim](https://medium.freecodecamp.org/a-guide-to-modern-web-development-with-neo-vim-333f7efbf8e2) convinced me that coc and denite are really the two power plugins needed, integration with ripgrep and LSP (lang server protocol) for autocompletion is unreal.
-* [How I'm still not using GUIs in 2019: A guide to the terminal](https://lucasfcosta.com/2019/02/10/terminal-guide-2019.html) excitement around (neo)Vim, some good basic tips, I recommend using `coc` over `ycm` for autocompletion, which integrates with the VSCode autocomplete engine.
-
-
-
+-   [Smash into Vim](https://airbladesoftware.com/peepcode-vim/) the awesome PeepCode screencast that help me break through the learning curve back in 2010.
+-   [Vim Cheat Sheet](https://vim.rtorr.com/) good quick reference.
+-   [A guide to modern Web Development with (Neo)vim](https://medium.freecodecamp.org/a-guide-to-modern-web-development-with-neo-vim-333f7efbf8e2) convinced me that coc and denite are really the two power plugins needed, integration with ripgrep and LSP (lang server protocol) for autocompletion is unreal.
+-   [How I'm still not using GUIs in 2019: A guide to the terminal](https://lucasfcosta.com/2019/02/10/terminal-guide-2019.html) excitement around (neo)Vim, some good basic tips, I recommend using `coc` over `ycm` for autocompletion, which integrates with the VSCode autocomplete engine.
