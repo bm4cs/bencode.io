@@ -2,7 +2,7 @@
 
 
 # build the static content to the `public` folder
-hugo -D
+hugo
 
 # Requires awscli
 # sudo apt install awscli

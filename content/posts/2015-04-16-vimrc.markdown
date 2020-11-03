@@ -2,7 +2,7 @@
 layout: post
 title: "Vim"
 slug: "vim"
-date: "2015-04-16 21:50:01"
+date: "2007-04-16 21:50:01"
 lastmod: "2020-10-31 10:20:17"
 comments: false
 categories:
@@ -13,14 +13,14 @@ tags:
 
 _Updated: 2020-10-31_
 
-About a year ago I finally bit the bullet and commited to learning a real text editor. I went with Vim. Once you break through its initial steep learning curve, its truly life changing. Level up to text surgeon today.
+I finally (2007) bit the bullet and commited to learning a real text editor. Having dabbled with `vi` since the late 90s, decided on Vim. Once you break through its initial, steep, learning curve, its truly life changing. Level up, and become a text surgeon today.
 
-I usually clone my `dotfiles` git repo straight into my home directory i.e. `~/dotsfiles`. A couple of symlinks later, I'm away:
+I usually clone my `dotfiles` git repo straight into my home directory i.e. `~/dots`. A couple of symlinks later, I'm away:
 
-    ln -nfs ~/dotfiles/vim/vimrc ~/.vimrc
-    ln -nfs ~/dotfiles/vim ~/.vim
+    ln -nfs ~/dots/vim/vimrc ~/.vimrc
+    ln -nfs ~/dots/vim ~/.vim
 
-Vim is incredibly customisable. Its important to take the time to craft your own [`vimrc`](https://github.com/bm4cs/dots/blob/master/stow-home/neovim/.config/nvim/init.vim). Type `:options` to understand the various levers you can pull to make Vim your editor.
+Vim is incredibly customisable. Its important to take the time to craft your own [`vimrc`](https://github.com/bm4cs/dots/blob/master/stow-home/neovim/.config/nvim/init.vim). Type `:options` to understand the various levers you can pull to make Vim your editor. 10+ years later, I still fine tune the editor to my needs and workflows.
 
 <!-- vim-markdown-toc GFM -->
 
@@ -31,15 +31,21 @@ Vim is incredibly customisable. Its important to take the time to craft your own
 * [The Edit (e) Command](#the-edit-e-command)
 * [Cool Things](#cool-things)
     * [relativenumber](#relativenumber)
-    * [Escalated Save](#escalated-save)
+    * [Calculator](#calculator)
+    * [Spell checking](#spell-checking)
+    * [Sudo Save](#sudo-save)
 * [Plugins](#plugins)
-    * [NERDTree (file browsing)](#nerdtree-file-browsing)
-    * [](#)
-    * [coc (Conquer of Completion)](#coc-conquer-of-completion)
-        * [Go support](#go-support)
-        * [Web dev (JS, ES6 and CSS)](#web-dev-js-es6-and-css)
-    * [Denite (and ripgrep)](#denite-and-ripgrep)
-    * [vim-go](#vim-go)
+    * [nnn.vim](#nnnvim)
+    * [denite](#denite)
+    * [surround](#surround)
+    * [vim-markdown-toc](#vim-markdown-toc)
+    * [vim-easy-align](#vim-easy-align)
+    * [vim-commentary](#vim-commentary)
+    * [vim-easy-motion](#vim-easy-motion)
+    * [vim-better-whitespace](#vim-better-whitespace)
+    * [vim-prettier](#vim-prettier)
+    * [vim-css-color](#vim-css-color)
+    * [coc.nvim](#cocnvim)
 * [Resources](#resources)
 
 <!-- vim-markdown-toc -->
@@ -129,7 +135,24 @@ Makes line numbering relative. So good! Makes it fast to figure out how many lin
       2 ¬
       3 Vim has brilliant built-in help. Its only one `:help` away.
 
-## Escalated Save
+## Calculator
+
+By typing `<C>r=` in insert mode, can do quick calculations are spit the out into the buffer.
+
+For example, `<C>r=16*4<CR>` will output 128 where the cursor is currently located.
+
+## Spell checking
+
+Built in spell checker, enable with `:set spell`.
+
+-   `]s` jump to next error
+-   `[s` jump to previous error
+-   `z=` suggest corrections for current word
+-   `zg` add word to dictionary
+-   `zw` remove word from dictionary
+-   `zug` undo `zg` or `zw` for current word
+
+## Sudo Save
 
 Editing a file, but don't have privileges to save.
 
@@ -147,44 +170,100 @@ The Vim community seems obsessed with writing new plug-in managers, there's quit
 
 Coming from bloated power tool IDE's like awesome JetBrains tools, in order to be remotely productive, I need to be able to efficiency locate and jump between files within a large code base.
 
-## NERDTree (file browsing)
+## nnn.vim
 
-[NERDTree](https://github.com/scrooloose/nerdtree) add's a file system tree pane to Vim (like _Open Folder_ in VSCode). Personally I find fuzzy finding with [denite](https://github.com/Shougo/denite.nvim) and [ripgrep](https://github.com/BurntSushi/ripgrep) to be more efficient at jumping between files, but NERDTree is handy when it comes to browsing a code base.
+Ditch NERDTree, and instead surface the [nnn](https://github.com/jarun/nnn) terminal file manager within Vim, genius.
 
-NERDTree keyboard customisations:
+-   `<leader>n` start nnn in window
+-   `^G` discard selection
 
-    " Toggle NERDTree on/off
-    nmap <leader>n :NERDTreeToggle<CR>
+## denite
 
-    " Opens current file location in NERDTree
-    nmap <leader>f :NERDTreeFind<CR>
+Buffer management and fuzzy finder. Quickly fuzzy find files recursively in a source tree e.g. `Person.java` or all shell scripts `.sh`. I've configured it to use [ripgrep](https://github.com/BurntSushi/ripgrep) under the hood.
 
-    " PageDown
-    noremap <Space> <PageDown>
+Launch shortcuts:
 
-    " PageUp
-    noremap - <PageUp>
+-   `;` browse currently open buffers
+-   `<leader>f` browse list of files in current directory
+-   `<leader>g` recursive grep from current directory for occurences of given term and close window if no results
+-   `<leader>j` recursive grep from current directory for occurences of word under cursor
 
-NERDTree general customisations:
+Once launched shortcuts:
 
-    let g:NERDTreeShowHidden = 1 "show hidden files
-    let g:NERDTreeMinimalUI = 1 " remove bookmarks and help text
-    let g:NERDTreeDirArrowExpandable = '⬏' "custom icons for expandable
-    let g:NERDTreeDirArrowCollapsible = '⬎' "custom icons for expandable
-    let g:NERDTreeIgnore = ['^\.DS_Store$', '^tags$', '\.git$[[dir]]', '\.idea$[[dir]]', '\.sass-cache$'] "ignore list
+-   `q or <Esc>` quit denite window
+-   `d` delete currenly selected file
+-   `p` preview currently selected file
+-   `<C-o> or i` switch to insert mode inside of filter prompt
+-   `<C-t>` open currently selected file in a new tab
+-   `<C-v>` open currently selected file a vertical split
+-   `<C-h>` open currently selected file in a horizontal split
 
-## 
+## surround
 
+Surround chunks of text with quotes or tags.
 
-## coc (Conquer of Completion)
+-   `ysiw"` surround word with double quotes
+-   `v$S"` surround visual selection with double quotes
+-   `vipS<p>` surround paragraph with `<p></p>`
+-   `cs"'` change double quotes to single quotes
 
-> It's a completion framework and language server client which supports extension features of VSCode.
+## vim-markdown-toc
+
+Make a table of contents inferred from markdown heading tags.
+
+-   `:GenTocGFM`
+-   `:GenTocGitLab`
+-   `:UpdateToc`
+
+## vim-easy-align
+
+OCD much? This helps to line up code based on a particular symbol.
+
+-   `vipga=` visual select code block, align all `=` symbols by padding out
+
+## vim-commentary
+
+Smart commenting based on the file type.
+
+-   `gcc` comment current line
+-   `gc<motion>` comment motion based selection e.g. `gcap` for paragraph selection
+
+## vim-easy-motion
+
+Vim motioning on steroids! Creates micro jumps based on a search pattern you provide, and dims down the buffer with each highlight getting a unique id you can hit.
+
+-   `<leader><leader>w` beginning of all words
+-   `<leader><leader>fo` motion all `o` characters going forward
+-   `<leader><leader>to` motion before (till) `o` characters
+-   `<leader><leader>n` jump to latest `/` or `?`
+-   `<leader><leader>s` search
+
+## vim-better-whitespace
+
+Utilities to highlight and remove redundant use of whitespace.
+
+-   `:EnableWhitespace`
+-   `:DisableWhitespace`
+-   `ToggleWhitespace`
+-   `:StripWhitespace`
+
+## vim-prettier
+
+-   `<leader>p` run the current buffer through prettier
+
+## vim-css-color
+
+Colorise hex codes in the buffer based on CSS standards.
+
+## coc.nvim
+
+> An LSP based completion framework and language server client which supports extension features of VSCode.
 
 Like VSCode, Emacs and many others, can sit upon the [Langserver.org](https://langserver.org/) Protocol (LSP) originally created by Microsoft, to provide language aware intelligence such as auto complete, go to definition and find all references.
 
 To install a coc extension that supports a language, have a look on [npm](https://www.npmjs.com/search?q=keywords%3Acoc.nvim) for one, and install with `CocInstall` for example to install Go language completion `CocInstall coc-gocode`. Make sure to also install [gocode](https://github.com/nsf/gocode) for this particular plugin, with a quick `go get -u github.com/nsf/gocode`.
 
-### Go support
+CoC Go support:
 
 You can manually register LSP servers in jsonc format in the `~/.config/nvim/coc-settings.json` (use `:CocConfig` to auto jump you to this file). For example, the below registers `gopls`, Google's offical LSP for golang:
 
@@ -199,37 +278,9 @@ You can manually register LSP servers in jsonc format in the `~/.config/nvim/coc
       }
     }
 
-### Web dev (JS, ES6 and CSS)
+CoC web dev support (JS, ES6 and CSS):
 
     :CocInstall coc-tsserver coc-eslint coc-json coc-prettier coc-css
-
-## Denite (and ripgrep)
-
-Fuzzy finder. Very customisable, for example, mine is configured to use [ripgrep](https://github.com/BurntSushi/ripgrep). What is ripgrep?
-
-> ripgrep is a line-oriented search tool that recursively searches your current directory for a regex pattern. By default, ripgrep will respect your .gitignore and automatically skip hidden files/directories and binary files.
-
-In my `.vimrc`:
-
-    " Use ripgrep in place of "grep"
-    call denite#custom#var('grep', 'command', ['rg'])
-
-    " Custom options for ripgrep
-    "   --vimgrep:  Show results with every match on it's own line
-    "   --hidden:   Search hidden directories and files
-    "   --heading:  Show the file name above clusters of matches from each file
-    "   --S:        Search case insensitively if the pattern is all lowercase
-    call denite#custom#var('grep', 'default_opts', ['--hidden', '--vimgrep', '--heading', '-S'])
-
-    " Recommended defaults for ripgrep via Denite docs
-    call denite#custom#var('grep', 'recursive_opts', [])
-    call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
-    call denite#custom#var('grep', 'separator', ['--'])
-    call denite#custom#var('grep', 'final_opts', [])
-
-## vim-go
-
-TODO
 
 # Resources
 
