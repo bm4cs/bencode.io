@@ -1,5 +1,46 @@
+---
+layout: post
+title: "RHCSA quickly"
+slug: "rhcsa"
+draft: true
+date: "2017-05-03 20:51:43"
+lastmod: "2020-11-09 20:51:45"
+comments: false
+categories:
+    - linux
+tags:
+    - certification
+    - rhel
+    - redhat
+---
 
+<!-- vim-markdown-toc GFM -->
 
+* [Essential Tools](#essential-tools)
+    * [Documentation](#documentation)
+        * [man](#man)
+        * [GNU info](#gnu-info)
+        * [/usr/share/doc](#usrsharedoc)
+        * [RPM bundled documentation](#rpm-bundled-documentation)
+        * [General Searching Techniques](#general-searching-techniques)
+    * [Shell history](#shell-history)
+    * [Globbing](#globbing)
+    * [I/O Redirection and Pipes](#io-redirection-and-pipes)
+* [grep](#grep)
+* [Switch Users (su)](#switch-users-su)
+* [Finding Files](#finding-files)
+    * [locate](#locate)
+    * [find](#find)
+* [Archiving and Compression](#archiving-and-compression)
+* [Hard and Soft Links](#hard-and-soft-links)
+* [File Types and Permissions](#file-types-and-permissions)
+    * [setuid setgid](#setuid-setgid)
+    * [Sticky bit](#sticky-bit)
+    * [umask (user mask)](#umask-user-mask)
+* [User and Group Management](#user-and-group-management)
+* [Rando cool](#rando-cool)
+
+<!-- vim-markdown-toc -->
 
 # Essential Tools
 
@@ -18,7 +59,14 @@ Alternatively:
     mandb
     apropos passwd
 
-Specific sections with man, refer to different topics, e.g. section 5 is about files, so `man 5 passwd` would bring up the documentation on `/etc/passwd`.
+Specific sections with man, refer to different topics, e.g. section 5 is about config files, so `man 5 passwd` would bring up the documentation on `/etc/passwd`.
+
+1 = user commands
+5 = configuration files
+7 = broad topics such as background
+8 = sys admin
+
+    man -k user | grep 8 | grep create
 
 ### GNU info
 
@@ -26,14 +74,14 @@ Specific sections with man, refer to different topics, e.g. section 5 is about f
 
 Some keys for driving info:
 
-- `n` next node
-- `p` previous node
-- `u` parent node
-- `t` top node
-- `home` `end` `pgup` `pgdn` scroll content
-- `l` go back
-- `q` quit
-- `H` keyboard shortcuts cheatsheet
+-   `n` next node
+-   `p` previous node
+-   `u` parent node
+-   `t` top node
+-   `home` `end` `pgup` `pgdn` scroll content
+-   `l` go back
+-   `q` quit
+-   `H` keyboard shortcuts cheatsheet
 
 Searching info:
 
@@ -47,6 +95,7 @@ And then `info gawk tee` for example to pull up the third result.
 ### /usr/share/doc
 
 A gold mine of documents and sample configuration files. Usually for distributions that are not considered core, and don't offer man or info pages.
+
 ### RPM bundled documentation
 
     $ rpm -qd tmux
@@ -57,53 +106,56 @@ A gold mine of documents and sample configuration files. Usually for distributio
 
 ### General Searching Techniques
 
+General search engine:
+
     $ updatedb
     $ locate passwd
 
+Search path for `passwd`:
+
     $ which passwd
     /usr/bin/passwd
+
+Search one-line man page descriptions:
 
     $ whatis passwd
     passwd (1)           - update user's authentication tokens
     sslpasswd (1ssl)     - compute password hashes
     passwd (5)           - password file
 
-    $ whereis passwd
-    passwd: /usr/bin/passwd /etc/passwd /usr/share/man/man1/passwd.1.gz /usr/share/man/man5/passwd.5.gz
+Find binaries and man pages for `ls`:
 
+    $ whereis -bm ls
+    ls: /usr/bin/ls /usr/share/man/man1/ls.1.gz /usr/share/man/man1/ls.1p.gz
 
-## Finding Files
+## Shell history
 
-### locate
+-   `history` dump history, by default the last 1000 commands
+-   `ctrl+r` to search backwards through history for pattern
+-   `history -c` clear history (in-memory only)
+-   `history -w` write history
+-   `!32` run history event 32 (again)
 
+## Globbing
 
-### find
+aka using wildcards see `man 7 glob`
 
-    $ find /etc -name motd  #named motd
-    $ find /etc -user schnerg  #owned by user shnerg
-    $ find / -mtime 3  #modified in last 3 days
-    $ find / -mtime +3  #not within the last 3 days
+-   `ls host*` zero or more chars
+-   `ls ?ost` any single char
+-   `ls [hm]ost` groups of chars
+-   `ls [!hm]ost` negated groups of chars
+-   `ls [0-9][0-9]script` multiple groups of restricted chars
 
-    $ id ben
-    uid=1000(ben) gid=1000(ben) groups=1000(ben),1004(finance)
-    $ find / -uid 1000  #owned by uid 1000 (ben)
-    
-    $ find / -user ben -type f  #filter by files
-    $ find / -user ben -type f -exec cp {} /home/mary \; #execute a shell command against each result file `{}`
+## I/O Redirection and Pipes
 
+-   `<` stdin from a file or another programs stdout
+-   `>` stdout to new file (overwrite if exists)
+-   `>>` stdout to file (appending if exists)
+-   `2>` stderr redirection
+-   `2>&1` stderr to stdout (useful for piping stderr, as pipes only work with stdout)
+-   `|` pipe stdout from one program to stdin of another (pipes only support stdout to stdin communication, i.e. not stderr)
 
-
-
-## Redirection
-
-`>` stdout to new file (overwrite if exists)
-`>>` stdout to file (appending if exists)
-`2>` stderr redirection
-`2>&1` stderr to stdout (useful for piping stderr, as pipes only work with stdout)
-`|` pipe stdout from one program to stdin of another
-
-
-## grep
+# grep
 
 `-v` to inverse (e.g. things not comments `grep -v '^#'`)
 `-i` case insensitive
@@ -112,18 +164,16 @@ A gold mine of documents and sample configuration files. Usually for distributio
 
 Regular expressions:
 
-- `.` any single character
-- `?` one or more
-- `*` zero or more
+-   `.` any single character
+-   `?` one or more
+-   `*` zero or more
 
 Extended regular expressions can be used with `-E` switch or the `egrep` command.
 
     grep -E '(a)+' file
     grep 'l...x' file
 
-
-
-## Switch Users (su)
+# Switch Users (su)
 
 A login shell (`.bash_profile`) vs interactive shell (`.bashrc`).
 
@@ -135,9 +185,25 @@ A login shell can be obtained by passed `-` (dash), `-l` or `--login` to the `su
 
 `/etc/profile` is the global shell configuration, and applies to all users login shells.
 
+# Finding Files
 
+## locate
 
-## Archiving and Compression
+## find
+
+    $ find /etc -name motd  #named motd
+    $ find /etc -user schnerg  #owned by user shnerg
+    $ find / -mtime 3  #modified in last 3 days
+    $ find / -mtime +3  #not within the last 3 days
+
+    $ id ben
+    uid=1000(ben) gid=1000(ben) groups=1000(ben),1004(finance)
+    $ find / -uid 1000  #owned by uid 1000 (ben)
+
+    $ find / -user ben -type f  #filter by files
+    $ find / -user ben -type f -exec cp {} /home/mary \; #execute a shell command against each result file `{}`
+
+# Archiving and Compression
 
 Creating archives:
 
@@ -157,7 +223,7 @@ Extract them:
 
 Diffencing an archives contents with an existing exploded structure:
 
-    $ tar -dzvf dir1-v2.tar.gz 
+    $ tar -dzvf dir1-v2.tar.gz
     directory1/
     directory1/file4
     directory1/wookie4
@@ -171,8 +237,6 @@ Diffencing an archives contents with an existing exploded structure:
     directory1/imp2
     directory1/file1
     directory1/file2
-
-
 
 Compression:
 
@@ -191,8 +255,7 @@ Archiving with `star`.
     star -c -f=foo.tar directory1 hello1 hello2
     star -cz -f=foo.tar.gz directory1 hello1 hello2 #with compression
 
-
-Listing 
+Listing
 
     $ star -t -f=foo.tar
     directory1/
@@ -209,9 +272,7 @@ Extract a specific (`hello1`) file from the archive:
 
     star -x -f=foo.tar hello1
 
-
-
-## Hard and Soft Links
+# Hard and Soft Links
 
 Soft links, or symbolic links (symlinks), are simply pointers to other files. Symlinks can span multiple file systems. Permissions on symlinks aren't real. The underlying permissions of the target file is what gets applied. They can easily be created with `ln` like so:
 
@@ -233,13 +294,11 @@ Hard links are links to a specific inode on the file system. Due to this couplin
 
 In the `ls` long listing output, take note of the 2nd column, which represents the count of references to the same inode, which increases after creating a hard link. Some properties of hard links:
 
-- Same permissions and modification timestamps
-- Inode reference counts will increase for each hard link.
-- Removal of the target file or hard link will not result in broken links, as they both physically reference the same inode.
+-   Same permissions and modification timestamps
+-   Inode reference counts will increase for each hard link.
+-   Removal of the target file or hard link will not result in broken links, as they both physically reference the same inode.
 
-
-
-## File Types and Permissions
+# File Types and Permissions
 
 File permissions are applied at 3 levels; the owner, the group and everyone else. Each can read, write and/or execute.
 
@@ -252,11 +311,9 @@ A sample file permission bitmap could be `-rwxrw-rw-`. The first bit `-` a dash 
     chmod o+wx file1
     chmod +x file1
 
-
-- To navigate directory structure, requires execute permission on the directory. Execute bits could be set on directories, but not files, to allow a browsable tree, using `chmod` with the `X` (big x) modifier.
-- When creating new files, the default owner and group will be that of the user (e.g. ben). `newgrp finance` will default the group to `finance`.
-- Default permissions are applied with `umask`.
-
+-   To navigate directory structure, requires execute permission on the directory. Execute bits could be set on directories, but not files, to allow a browsable tree, using `chmod` with the `X` (big x) modifier.
+-   When creating new files, the default owner and group will be that of the user (e.g. ben). `newgrp finance` will default the group to `finance`.
+-   Default permissions are applied with `umask`.
 
     groupadd finance #add group
     getent group #verify
@@ -266,18 +323,16 @@ A sample file permission bitmap could be `-rwxrw-rw-`. The first bit `-` a dash 
     chmod -R o-rwx g+rw /home/finance #remove other perms and +rw group perms
     exit #logout user to reload groups
 
-
 Recursively setting execute on directories only:
 
     chmod ugo-x -R finance #strip execute on everything
     chmod ug+X -R finance #user and group directory exec bit only
 
-
 To apply the permission bits to all specify `a` (as opposed to the usual `u`, `g` and `o`):
 
     chmod a+r file1
 
-### setuid setgid
+## setuid setgid
 
 The running of processes as their original owner. Impersonation if you will. Known as suid. Take for example the `/usr/bin/passwd` program:
 
@@ -291,8 +346,7 @@ Note the `s` (suid) bit. While `passwd` is owned and grouped by root, its runnab
     chmod 2500 file1 #set s-bit for group with 500
     chmod 6444 file #set s-bit both user and group with 444
 
-
-### Sticky bit
+## Sticky bit
 
 Prevents the removal of files and/or directories unless the rightful owner. To set:
 
@@ -303,26 +357,26 @@ Prevents the removal of files and/or directories unless the rightful owner. To s
 
     drw-rw---T. 1 ben  finance    0 May 14 19:06 dolphin
              ^
+
 The sticky bit in Linux is only useful when applies to directories. Files within "sticky" directories will no be deletable.
 
-
-### umask (user mask)
+## umask (user mask)
 
 Defines the default, user specific permission mask. For files, the default is 666 or read/write and no execute for user/group/other. For directories, the default is 777 or read/write/execute for user/group/other.
 
     $ umask
     0022
 
-Breaking down each bit. The first `0` will not apply any mask to the special bits (suid/guid/sticky bit). The second `0` will apply no mask to the owner. The third `2` will mask out (think subtract)  *write* permission (2 in octal), and similarly for all other users for the fourth `2` will strip write perms.
+Breaking down each bit. The first `0` will not apply any mask to the special bits (suid/guid/sticky bit). The second `0` will apply no mask to the owner. The third `2` will mask out (think subtract) _write_ permission (2 in octal), and similarly for all other users for the fourth `2` will strip write perms.
 
-
-
-
-## User and Group Management
+# User and Group Management
 
 By default prvileged users (such as root) have UID less than 200. Also their group is typically set to `wheel`, to pickup sgid (pseudo impersonation privileges).
 
     id -gn #users group name
     id -un #users user name
 
+# Rando cool
 
+-   `ctrl+l` = clear terminal
+-   `ls -d` don't show contents of directories that match a glob
