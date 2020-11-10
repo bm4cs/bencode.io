@@ -19,20 +19,21 @@ tags:
 * [Essential Tools](#essential-tools)
     * [Documentation](#documentation)
         * [man](#man)
-        * [GNU info](#gnu-info)
         * [/usr/share/doc](#usrsharedoc)
         * [RPM bundled documentation](#rpm-bundled-documentation)
         * [General Searching Techniques](#general-searching-techniques)
     * [Shell history](#shell-history)
     * [Globbing](#globbing)
     * [I/O Redirection and Pipes](#io-redirection-and-pipes)
+* [Essential File Management](#essential-file-management)
+    * [Linux file system layout](#linux-file-system-layout)
+    * [Finding Files](#finding-files)
+        * [locate](#locate)
+        * [find](#find)
+    * [Archiving and compression with tar](#archiving-and-compression-with-tar)
+    * [Hard and Soft Links](#hard-and-soft-links)
 * [grep](#grep)
 * [Switch Users (su)](#switch-users-su)
-* [Finding Files](#finding-files)
-    * [locate](#locate)
-    * [find](#find)
-* [Archiving and Compression](#archiving-and-compression)
-* [Hard and Soft Links](#hard-and-soft-links)
 * [File Types and Permissions](#file-types-and-permissions)
     * [setuid setgid](#setuid-setgid)
     * [Sticky bit](#sticky-bit)
@@ -67,30 +68,6 @@ Specific sections with man, refer to different topics, e.g. section 5 is about c
 8 = sys admin
 
     man -k user | grep 8 | grep create
-
-### GNU info
-
-    info info
-
-Some keys for driving info:
-
--   `n` next node
--   `p` previous node
--   `u` parent node
--   `t` top node
--   `home` `end` `pgup` `pgdn` scroll content
--   `l` go back
--   `q` quit
--   `H` keyboard shortcuts cheatsheet
-
-Searching info:
-
-    $ info --apropos=tee
-    "(coreutils)tee invocation" -- tee
-    "(libc)Control Functions" -- feupdateenv
-    "(gawk)Tee Program" -- 'tee' utility
-
-And then `info gawk tee` for example to pull up the third result.
 
 ### /usr/share/doc
 
@@ -155,42 +132,33 @@ aka using wildcards see `man 7 glob`
 -   `2>&1` stderr to stdout (useful for piping stderr, as pipes only work with stdout)
 -   `|` pipe stdout from one program to stdin of another (pipes only support stdout to stdin communication, i.e. not stderr)
 
-# grep
+# Essential File Management
 
-`-v` to inverse (e.g. things not comments `grep -v '^#'`)
-`-i` case insensitive
-`[^linux]` negate characters, this will match against any characters that are not 'l', 'i', 'n', 'u' or 'x'.
-`-E` extended regular expression support
+## Linux file system layout
 
-Regular expressions:
+See `man hier` and `man file-hierarchy`
 
--   `.` any single character
--   `?` one or more
--   `*` zero or more
+Big hitters:
 
-Extended regular expressions can be used with `-E` switch or the `egrep` command.
+-   Boot partition: `/boot/` and `/efi/`
+-   System configuration: `/etc/`
+-   Scripts and binaries: `/bin/`, `/sbin/`, `/usr/sbin/` now all link back to `/usr/bin/`
+-   Shared libraries: `/lib/`, `/lib64/` link to `/usr/lib/` and `/usr/lib64/` respectively
+-   Virtual kernel file system: `/proc/` such as `/proc/meminfo`
+-   Persistent variable data: `/var/` such as `/var/cache/`, `/var/log/`, `/var/tmp`
 
-    grep -E '(a)+' file
-    grep 'l...x' file
+## Finding Files
 
-# Switch Users (su)
+### locate
 
-A login shell (`.bash_profile`) vs interactive shell (`.bashrc`).
+    $ updatedb
+    $ locate passwd
 
-A login shell can be obtained by passed `-` (dash), `-l` or `--login` to the `su` command.
+### find
 
-    su - shnerg
-    su -l shnerg
-    su --login shnerg
+Basic examples:
 
-`/etc/profile` is the global shell configuration, and applies to all users login shells.
-
-# Finding Files
-
-## locate
-
-## find
-
+    $ find / -size +100M -exec ls -l {} \;
     $ find /etc -name motd  #named motd
     $ find /etc -user schnerg  #owned by user shnerg
     $ find / -mtime 3  #modified in last 3 days
@@ -198,28 +166,32 @@ A login shell can be obtained by passed `-` (dash), `-l` or `--login` to the `su
 
     $ id ben
     uid=1000(ben) gid=1000(ben) groups=1000(ben),1004(finance)
-    $ find / -uid 1000  #owned by uid 1000 (ben)
+    $ find / -uid 1000
 
     $ find / -user ben -type f  #filter by files
     $ find / -user ben -type f -exec cp {} /home/mary \; #execute a shell command against each result file `{}`
 
-# Archiving and Compression
+## Archiving and compression with tar
 
 Creating archives:
 
-    tar -cvf foo.tar directory1 file1 file2
-    tar -czvf foo.tar.gz directory1 file1 file2 #with gzip
-    tar -cjvf foo.tar.bz directory1 file1 file2 #with bzip
+    tar cvf foo.tar directory1 file1 file2
+    tar czvf foo.tar.gz directory1 file1 file2 #with gzip
+    tar cjvf foo.tar.bz directory1 file1 file2 #with bzip
 
 List contents (without extraction):
 
-    tar -tvf foo.tar
+    tar tvf foo.tar
 
 Extract them:
 
-    tar -xvf foo.tar
-    tar -xzvf foo.tar.gz
-    tar -xjvf foo.tar.bz
+    tar xvf foo.tar
+    tar xzvf foo.tar.gz
+    tar xjvf foo.tar.bz
+
+Extract from a base directory:
+
+    tar xvf foo.tar -C /
 
 Diffencing an archives contents with an existing exploded structure:
 
@@ -242,7 +214,7 @@ Compression:
 
     gzip file1
     gzip -d file1
-    bzip file1
+    bzip2 file1
 
 Listing compression stats on a compressed file:
 
@@ -272,13 +244,13 @@ Extract a specific (`hello1`) file from the archive:
 
     star -x -f=foo.tar hello1
 
-# Hard and Soft Links
+## Hard and Soft Links
 
 Soft links, or symbolic links (symlinks), are simply pointers to other files. Symlinks can span multiple file systems. Permissions on symlinks aren't real. The underlying permissions of the target file is what gets applied. They can easily be created with `ln` like so:
 
     ln -s /etc/motd ~/motd
 
-Hard links are links to a specific inode on the file system. Due to this coupling, cannot span different file systems. Created with `ln`:
+Hard links are links to a specific inode (shown with `ls -i`) on the file system. Due to this coupling, cannot span different file systems or devices.
 
     $ ls -l
     drwxrwxr-x. 2 ben ben 4096 May 13 20:42 directory1
@@ -294,9 +266,39 @@ Hard links are links to a specific inode on the file system. Due to this couplin
 
 In the `ls` long listing output, take note of the 2nd column, which represents the count of references to the same inode, which increases after creating a hard link. Some properties of hard links:
 
--   Same permissions and modification timestamps
--   Inode reference counts will increase for each hard link.
+-   Hard links will always report the same metadata such as permission bits, modification timestamps, etc
+-   inode reference counts will increase for each hard link.
 -   Removal of the target file or hard link will not result in broken links, as they both physically reference the same inode.
+
+# grep
+
+`-v` to inverse (e.g. things not comments `grep -v '^#'`)
+`-i` case insensitive
+`[^linux]` negate characters, this will match against any characters that are not 'l', 'i', 'n', 'u' or 'x'.
+`-E` extended regular expression support
+
+Regular expressions:
+
+-   `.` any single character
+-   `?` one or more
+-   `*` zero or more
+
+Extended regular expressions can be used with `-E` switch or the `egrep` command.
+
+    grep -E '(a)+' file
+    grep 'l...x' file
+
+# Switch Users (su)
+
+A login shell (`.bash_profile`) vs interactive shell (`.bashrc`).
+
+A login shell can be obtained by passed `-` (dash), `-l` or `--login` to the `su` command.
+
+    su - shnerg
+    su -l shnerg
+    su --login shnerg
+
+`/etc/profile` is the global shell configuration, and applies to all users login shells.
 
 # File Types and Permissions
 
@@ -379,4 +381,7 @@ By default prvileged users (such as root) have UID less than 200. Also their gro
 # Rando cool
 
 -   `ctrl+l` = clear terminal
--   `ls -d` don't show contents of directories that match a glob
+-   `ls -d` don't show contents of directories
+-   `\ls` un-alias a command, by preceding it with a backslash `\`
+-   `alias` to display evaluated bash aliases
+-   `tar` command options are not prefixed with a hypen `-`
