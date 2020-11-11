@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "RHCSA quickly"
+title: "RHCSA"
 slug: "rhcsa"
 draft: true
 date: "2017-05-03 20:51:43"
@@ -13,6 +13,8 @@ tags:
     - rhel
     - redhat
 ---
+
+My preperation for the RHCSA 8 exam.
 
 <!-- vim-markdown-toc GFM -->
 
@@ -32,7 +34,10 @@ tags:
         * [find](#find)
     * [Archiving and compression with tar](#archiving-and-compression-with-tar)
     * [Hard and Soft Links](#hard-and-soft-links)
-* [grep](#grep)
+* [Working with text](#working-with-text)
+    * [Regular expressions](#regular-expressions)
+    * [grep](#grep)
+    * [sed and awk](#sed-and-awk)
 * [Switch Users (su)](#switch-users-su)
 * [File Types and Permissions](#file-types-and-permissions)
     * [setuid setgid](#setuid-setgid)
@@ -270,23 +275,59 @@ In the `ls` long listing output, take note of the 2nd column, which represents t
 -   inode reference counts will increase for each hard link.
 -   Removal of the target file or hard link will not result in broken links, as they both physically reference the same inode.
 
-# grep
+# Working with text
 
-`-v` to inverse (e.g. things not comments `grep -v '^#'`)
-`-i` case insensitive
-`[^linux]` negate characters, this will match against any characters that are not 'l', 'i', 'n', 'u' or 'x'.
-`-E` extended regular expression support
+## Regular expressions
 
-Regular expressions:
+See `man 7 regex`
 
 -   `.` any single character
 -   `?` one or more
 -   `*` zero or more
 
-Extended regular expressions can be used with `-E` switch or the `egrep` command.
+-   `cat` for concatenation, commonly used to dump contents to `stdout`
+-   `tac` concatenation in reverse order
+-   `cut` parses fields based on simple delimiter `cut -d : -f 1 /etc/passwd` cuts the first field in `/etc/passwd` based on a colon delimiter
+-   `sort` can sort alphabetically or numerically e.g. `cut -d : -f 3 /etc/passwd | sort -n`
+-   `head` first n lines
+-   `tail` last n lines
+-   `tr` translator e.g. lower to upper casing `cut -d : -f 1 /etc/passwd | tr [a-z] [A-Z]`
 
-    grep -E '(a)+' file
-    grep 'l...x' file
+## grep
+
+The pinnacle of text processing, handed down by god himself.
+
+    grep '^#' /etc/sysconfig/sshd
+
+Noteworthy:
+
+-   always place regex between single quotes to avoid ambiguity of globbing
+-   use `-e` to specify multiple expressions e.g. `man -k password | grep -e '1' -e '8'`
+-   `-B` will provide n lines of before context e.g. `-B 5` shows preceding 5 lines of each match
+-   `-v` to inverse (e.g. things not comments `grep -v '^#'`)
+-   `-i` case insensitive
+-   `[^linux]` negate characters, this will match against any characters that are not 'l', 'i', 'n', 'u' or 'x'.
+-   `-E` extended regular expression support
+
+## sed and awk
+
+Powerful, line oriented text editors and full blown text based languages in their own right.
+
+    awk -F : '/anna/ { print $4 }' /etc/passwd
+
+`sed` is a stream based (i.e. non-interactive) editor.
+
+Print line 5 (`-n` will suppress auto printing of pattern space):
+
+    sed -n 5p /etc/passwd
+
+Change user bill to william (`-i` is in-place mode and will mutate the target file, use without `-i` to test and write out to `stdout` first):
+
+    sed -i s/bill/william/g /etc/passwd
+
+Delete line 4 (using `-e` editor mode):
+
+    sed -i -e '4d' /etc/passwd
 
 # Switch Users (su)
 
@@ -385,3 +426,5 @@ By default prvileged users (such as root) have UID less than 200. Also their gro
 -   `\ls` un-alias a command, by preceding it with a backslash `\`
 -   `alias` to display evaluated bash aliases
 -   `tar` command options are not prefixed with a hypen `-`
+-   `tac` is the inverse program of `cat`
+-   `chvt` jumps between TTY e.g. `chvt 3`
