@@ -38,7 +38,11 @@ My preperation for the RHCSA 8 exam.
     * [Regular expressions](#regular-expressions)
     * [grep](#grep)
     * [sed and awk](#sed-and-awk)
-* [Switch Users (su)](#switch-users-su)
+* [Connecting a Linux host](#connecting-a-linux-host)
+    * [Consoles Terminals and TTYs](#consoles-terminals-and-ttys)
+    * [Switch Users (su)](#switch-users-su)
+    * [sudo](#sudo)
+    * [SSH](#ssh)
 * [File Types and Permissions](#file-types-and-permissions)
     * [setuid setgid](#setuid-setgid)
     * [Sticky bit](#sticky-bit)
@@ -329,17 +333,67 @@ Delete line 4 (using `-e` editor mode):
 
     sed -i -e '4d' /etc/passwd
 
-# Switch Users (su)
+# Connecting a Linux host
 
-A login shell (`.bash_profile`) vs interactive shell (`.bashrc`).
+## Consoles Terminals and TTYs
 
-A login shell can be obtained by passed `-` (dash), `-l` or `--login` to the `su` command.
+A _console_ is the environment which a user is presented with (e.g. graphical or textual)
+
+A _terminal_ an envionment opened on a _console_ that provides access to a shell.
+
+Graphical environments are optional in Linux. To make multiple consoles possible, has the concept of a _virtual terminal_ aka a TTY (short for TeleTYpewriter).
+
+Every terminal is associated with a device `/dev/tty1` to `/dev/tty6`.
+
+This interestly also applies to terminal emulators that are launched a graphical environment such as GNOME, `/dev/pts/1`, `/dev/pts/2` and so on. Use the `tty` program to output the connected TTY.
+
+The shortcut Alt+F1-6 (or the `chvt` program) will jump you between TTY1 through to TTY6:
+
+-   TTY1 graphical login
+-   TTY2 graphical console
+-   TTY3 graphical session
+-   TTY4-6 non-graphical consoles
+
+## Switch Users (su)
+
+When creating a shell, its environment dictates much of its behavior.
+
+`su` by default will create a *sub shell*, that will simply use the existing environment.
+
+This often is not wanted. More useful is to create fresh the environment of the target user.
+
+This is known as a *login shell*, and can be obtained by passing a bare `-` (dash), `-l` or `--login` to the `su` command.
 
     su - shnerg
     su -l shnerg
     su --login shnerg
 
 `/etc/profile` is the global shell configuration, and applies to all users login shells.
+
+A login shell (`.bash_profile`) vs interactive shell (`.bashrc`).
+
+
+## sudo
+
+`sudo` executes a command as another user, without requiring use of a login shell.
+
+`sudo` uses a pluggable based policy, `/etc/sudoers` by default, to determine what users can do.
+
+`/etc/sudoers` should never be edited directly, but instead using the `visudo` command.
+
+The `%wheel` rule is commonly (lazily?) used to grant users sudo access, by putting them in the `wheel` group.
+
+
+## SSH
+
+Remote encrypted access, using OpenSSH server daemon.
+
+    systemctl status sshd
+
+SSH supports authentication via a simple username and password, but also using an asymetric keypair.
+
+    ssh-keygen -t dsa
+
 
 # File Types and Permissions
 
@@ -428,3 +482,4 @@ By default prvileged users (such as root) have UID less than 200. Also their gro
 -   `tar` command options are not prefixed with a hypen `-`
 -   `tac` is the inverse program of `cat`
 -   `chvt` jumps between TTY e.g. `chvt 3`
+- `ssh-keygen` supports a number of ciphers, set using `[-t dsa | ecdsa | ed25519 | rsa]`, RSA by default
