@@ -2,9 +2,9 @@
 layout: post
 title: "RHCSA"
 slug: "rhcsa"
-draft: true
+draft: false
 date: "2017-05-03 20:51:43"
-lastmod: "2020-11-09 20:51:45"
+lastmod: "2020-11-15 20:23:27"
 comments: false
 categories:
     - linux
@@ -14,7 +14,7 @@ tags:
     - redhat
 ---
 
-My preperation for the RHCSA 8 exam.
+My preparation notes for the RHCSA 8 exam.
 
 <!-- vim-markdown-toc GFM -->
 
@@ -43,11 +43,16 @@ My preperation for the RHCSA 8 exam.
     * [Switch Users (su)](#switch-users-su)
     * [sudo](#sudo)
     * [SSH](#ssh)
-* [File Types and Permissions](#file-types-and-permissions)
+* [Managing users and groups](#managing-users-and-groups)
+    * [Creating users](#creating-users)
+    * [User properties](#user-properties)
+    * [User configuration files](#user-configuration-files)
+    * [Creating and managing groups](#creating-and-managing-groups)
+    * [Managing password properties](#managing-password-properties)
+* [Managing Permissions](#managing-permissions)
     * [setuid setgid](#setuid-setgid)
     * [Sticky bit](#sticky-bit)
     * [umask (user mask)](#umask-user-mask)
-* [User and Group Management](#user-and-group-management)
 * [Rando cool](#rando-cool)
 
 <!-- vim-markdown-toc -->
@@ -358,11 +363,11 @@ The shortcut Alt+F1-6 (or the `chvt` program) will jump you between TTY1 through
 
 When creating a shell, its environment dictates much of its behavior.
 
-`su` by default will create a *sub shell*, that will simply use the existing environment.
+`su` by default will create a _sub shell_, that will simply use the existing environment.
 
 This often is not wanted. More useful is to create fresh the environment of the target user.
 
-This is known as a *login shell*, and can be obtained by passing a bare `-` (dash), `-l` or `--login` to the `su` command.
+This is known as a _login shell_, and can be obtained by passing a bare `-` (dash), `-l` or `--login` to the `su` command.
 
     su - shnerg
     su -l shnerg
@@ -371,7 +376,6 @@ This is known as a *login shell*, and can be obtained by passing a bare `-` (das
 `/etc/profile` is the global shell configuration, and applies to all users login shells.
 
 A login shell (`.bash_profile`) vs interactive shell (`.bashrc`).
-
 
 ## sudo
 
@@ -383,7 +387,6 @@ A login shell (`.bash_profile`) vs interactive shell (`.bashrc`).
 
 The `%wheel` rule is commonly (lazily?) used to grant users sudo access, by putting them in the `wheel` group.
 
-
 ## SSH
 
 Remote encrypted access, using OpenSSH server daemon.
@@ -394,12 +397,86 @@ SSH supports authentication via a simple username and password, but also using a
 
     ssh-keygen -t dsa
 
+# Managing users and groups
 
-# File Types and Permissions
+Broadly, there are users for services, humans and root.
 
-File permissions are applied at 3 levels; the owner, the group and everyone else. Each can read, write and/or execute.
+Conventions for UID (see `/etc/login.defs`):
 
-A sample file permission bitmap could be `-rwxrw-rw-`. The first bit `-` a dash indicates its a plain old file (there are several types, such as `l` for symlink, `d` a directory, ...). Then the owner, group and other bits.
+-   < 201: privilaged users
+-   201 - 999: system accounts
+-   1000 - 60000: average joe users
+
+Humans don't always need to interact directly with a Linux host, for example a web or email server. If this is the case, their default shell should be changed from `/bin/bash` to `/sbin/nologin`
+
+## Creating users
+
+`useradd shnerg` will register a new local user account on the system. This involves:
+
+-   create entry in `/etc/passwd`
+-   create entry in `/etc/shadow`
+-   create home directory `/home/shnerg`
+-   create user specific bash initialisation scripts `.bash_profile`, `.bashrc` and `.bash_logout`
+
+The `/etc/skel/` directory provides the skeleton scripts and files to be copied into new users home directories.
+
+To remove a user and their home directory, use the `-r` option, and `-f` even if the user is logged in.
+
+`userdel -rf shnerg`
+
+## User properties
+
+User objects are made up of many attributes, shown by `usermod --help`
+
+-   `-c` an arbitrary annotation such as a role (`GECOS` field)
+-   `-d` home dir path
+-   `-e` point in time to disable the user
+-   `-g -u` gid uid
+-   `-G` groups
+-   `-s` default shell such as `/bin/bash`, `/sbin/nologin`
+-   `-R` location to `chroot` the user into, interesting!
+-   `-L -U` lock unlock
+
+## User configuration files
+
+-   `/etc/default/useradd` default new user properties
+-   `/etc/login.defs` more default new user properties (if conflicts, takes precedence)
+-   `/etc/skel/` cloned to new user home directories
+-   `/etc/passwd` user database, all properties of users are encoded here
+-   `/etc/shadow` user password storage and properties, the format of an entry: `login:encrypted-password:password-changed-date:min-age:max-age:warning-days:inactive-days:user-expiry-date`. Use `passwd -S shnerg` to display password props for a user.
+-   `/etc/group` all groups
+
+## Creating and managing groups
+
+`groupadd`, `groupdel` and `groupmod`
+
+The most common property is the `gid`
+
+Ways to add users to a group:
+
+-   `vi /etc/group`
+-   `vigr` for vi with group validation
+-   `usermod -aG shnerg people`
+
+Use `getent group finance` to validate a group exists, and `id <user>` to validate the group memberships the user has.
+
+## Managing password properties
+
+Programs to be across: `passwd`, `chage`
+
+-   `passwd -S mike` displays all password related props
+-   `echo password | passwd --stdin` to set password programmatically (by default will interactively prompt)
+-   default password attributes are controlled by `/etc/login.defs`
+
+# Managing Permissions
+
+File permissions are applied at 3 levels; the user, the group and others. Each can read, write and/or execute.
+
+A sample file permission bitmap could be `-rwxrw-rw-`. The first bit `-` a dash indicates its a plain old file (there are several types, such as `l` for symlink, `d` a directory, ...).
+
+Then follows the user, group and others bits.
+
+note: Linux uses a simplistic _exit on match_ algorithm. If the user matches and has no permissions, Linux will not bother evaluating the group or others permission bits (even if they would grant access!).
 
 `chmod` supports symbolic and octal variations of permissions. Some symbolic examples:
 
@@ -408,9 +485,11 @@ A sample file permission bitmap could be `-rwxrw-rw-`. The first bit `-` a dash 
     chmod o+wx file1
     chmod +x file1
 
--   To navigate directory structure, requires execute permission on the directory. Execute bits could be set on directories, but not files, to allow a browsable tree, using `chmod` with the `X` (big x) modifier.
--   When creating new files, the default owner and group will be that of the user (e.g. ben). `newgrp finance` will default the group to `finance`.
--   Default permissions are applied with `umask`.
+To navigate directory structure, requires execute permission on the directory. Execute bits could be set on directories, but not files, to allow a browsable tree, using `chmod` with the `X` (big x) modifier.
+
+When creating new files, the default owner and group will be that of the user (e.g. ben). `newgrp finance` will default the group to `finance`.
+
+Default permissions are applied with `umask`.
 
     groupadd finance #add group
     getent group #verify
@@ -466,13 +545,6 @@ Defines the default, user specific permission mask. For files, the default is 66
 
 Breaking down each bit. The first `0` will not apply any mask to the special bits (suid/guid/sticky bit). The second `0` will apply no mask to the owner. The third `2` will mask out (think subtract) _write_ permission (2 in octal), and similarly for all other users for the fourth `2` will strip write perms.
 
-# User and Group Management
-
-By default prvileged users (such as root) have UID less than 200. Also their group is typically set to `wheel`, to pickup sgid (pseudo impersonation privileges).
-
-    id -gn #users group name
-    id -un #users user name
-
 # Rando cool
 
 -   `ctrl+l` = clear terminal
@@ -482,4 +554,4 @@ By default prvileged users (such as root) have UID less than 200. Also their gro
 -   `tar` command options are not prefixed with a hypen `-`
 -   `tac` is the inverse program of `cat`
 -   `chvt` jumps between TTY e.g. `chvt 3`
-- `ssh-keygen` supports a number of ciphers, set using `[-t dsa | ecdsa | ed25519 | rsa]`, RSA by default
+-   `ssh-keygen` supports a number of ciphers, set using `[-t dsa | ecdsa | ed25519 | rsa]`, RSA by default
