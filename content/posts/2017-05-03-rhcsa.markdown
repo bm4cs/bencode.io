@@ -50,9 +50,14 @@ My preparation notes for the RHCSA 8 exam.
     * [Creating and managing groups](#creating-and-managing-groups)
     * [Managing password properties](#managing-password-properties)
 * [Managing Permissions](#managing-permissions)
-    * [setuid setgid](#setuid-setgid)
-    * [Sticky bit](#sticky-bit)
-    * [umask (user mask)](#umask-user-mask)
+    * [Changing file ownership](#changing-file-ownership)
+    * [Managing basic permissions](#managing-basic-permissions)
+    * [Understanding umask (user mask)](#understanding-umask-user-mask)
+    * [Special permissions](#special-permissions)
+        * [suid](#suid)
+        * [sgid](#sgid)
+        * [Sticky bit](#sticky-bit)
+    * [Understanding ACLs](#understanding-acls)
 * [Rando cool](#rando-cool)
 
 <!-- vim-markdown-toc -->
@@ -363,11 +368,11 @@ The shortcut Alt+F1-6 (or the `chvt` program) will jump you between TTY1 through
 
 When creating a shell, its environment dictates much of its behavior.
 
-`su` by default will create a _sub shell_, that will simply use the existing environment.
+`su` by default will create a _sub shell_, that will simply use the existing environment. The `bashrc` file is used to bootstrap a _sub shell_.
 
 This often is not wanted. More useful is to create fresh the environment of the target user.
 
-This is known as a _login shell_, and can be obtained by passing a bare `-` (dash), `-l` or `--login` to the `su` command.
+This is known as a _login shell_, and can be obtained by passing a bare `-` (dash), `-l` or `--login` to the `su` command. The `profile` file is used to bootstrap a _login shell_.
 
     su - shnerg
     su -l shnerg
@@ -460,6 +465,8 @@ Ways to add users to a group:
 
 Use `getent group finance` to validate a group exists, and `id <user>` to validate the group memberships the user has.
 
+Some facinating (to me anyway) group management programs include `newgrp` to switch the primary group for the current session, and `sg` to execute a command as a different group.
+
 ## Managing password properties
 
 Programs to be across: `passwd`, `chage`
@@ -478,11 +485,39 @@ Then follows the user, group and others bits.
 
 note: Linux uses a simplistic _exit on match_ algorithm. If the user matches and has no permissions, Linux will not bother evaluating the group or others permission bits (even if they would grant access!).
 
+## Changing file ownership
+
+-   `chown` change owner, can take the names of the login and group like so `chown anna:sales sales`. Either the user or group can be omitted to not change its existing value.
+-   `chgrp` will change only the group ownership. Its redundant these days with the powers that `chown` has.
+
+## Managing basic permissions
+
+Linux supports three levels of permissions:, known affectionately as **UGO** (user/group/others).
+
+| Permission | Octal | File   | Dir           |
+| ---------- | ----- | ------ | ------------- |
+| read       | 4     | open   | list          |
+| write      | 2     | modify | create/delete |
+| execute    | 1     | run    | cd            |
+
 `chmod` supports symbolic and octal variations of permissions. Some symbolic examples:
+
+In octal notation, set read/write/execute for the user, read/write for the group and just read for others:
+
+    chmod 764 afile
+
+In symbolic notation, set user bits to read/execute, remove the write permission for the group (leaving other permission in tact), and add execute permission for others:
+
+    chmod u=rx,g-w,o+x afile
+
+More examples:
 
     chmod u+x file1
     chmod g-rw file1
     chmod o+wx file1
+
+Perhaps the most useful form, apply execute permission to user, group and others:
+
     chmod +x file1
 
 To navigate directory structure, requires execute permission on the directory. Execute bits could be set on directories, but not files, to allow a browsable tree, using `chmod` with the `X` (big x) modifier.
@@ -508,42 +543,106 @@ To apply the permission bits to all specify `a` (as opposed to the usual `u`, `g
 
     chmod a+r file1
 
-## setuid setgid
+## Understanding umask (user mask)
+
+Simply put is a bit mask.
+
+This mask is applied to the system wide defaults `666` for files, and `777` for directories.
+
+    $ umask
+    0022
+
+Breaking down each bit:
+
+-   The first `0` will not apply any mask to the special bits (suid/guid/sticky bit)
+-   The second `0` will apply no mask to the _owner_
+-   The third `2` will mask/strip out (think subtract) _write_ permission (2 in octal) for the _group_
+-   The forth bit `2` will mask/strip out _write_ for _others_
+
+In practice `umask` values of `0`, `2` and `7` are used:
+
+-   `0` means `6` for files, and `7` for directories
+-   `2` means `4` for files and `5` for directories
+-   `7` means `0` for files and `0` for directories
+
+The base `/etc/bashrc` and `/etc/profile` bash environment bootstrapping files contain entries for setting up default `umask` values.
+
+## Special permissions
+
+| Permission | Octal | File         | Dir                  |
+| ---------- | ----- | ------------ | -------------------- |
+| suid       | 4     | run as owner | -                    |
+| sgid       | 2     | run as group | inherit group owner  |
+| sticky     | 1     | -            | only delete if owner |
+
+### suid
 
 The running of processes as their original owner. Impersonation if you will. Known as suid. Take for example the `/usr/bin/passwd` program:
 
     -rwsr-xr-x.   1 root root       27872 Feb  5  2016 passwd
        ^
 
-Note the `s` (suid) bit. While `passwd` is owned and grouped by root, its runnable by average joe users under roots context, as if being run by the real root user. Can be set with `chmod`:
+Note the `s` (suid) bit. While `passwd` is owned and grouped by root, its runnable by average joe users under roots context, as if being run by the real root user.
 
-    chmod u+s file1 #set s-bit for user
-    chmod 4500 file1 #set s-bit for user with 500
-    chmod 2500 file1 #set s-bit for group with 500
-    chmod 6444 file #set s-bit both user and group with 444
+Can be set with `chmod`:
 
-## Sticky bit
+    chmod u+s file1
+    chmod 4500 file1
+    chmod 2500 file1
+    chmod 6444 file
 
-Prevents the removal of files and/or directories unless the rightful owner. To set:
+### sgid
 
-    chmod +t dolphin #set sticky bit
-    chmod 1777 dolphin #set sticky and 777
+Very useful for defining a group owner that gets inherited within a directory tree.
+
+-   Imagine a `/data/sales/` dir.
+-   If a user `mike` creates a file (or dir) within `/data/sales/` the user will be set to `mike`, and the group also set to `mike`.
+-   In a group environment, such as `/data/sales/`, it would be more useful if the group was set to the `sales` group
+-   The sgid special bit will propagate the group owner to new files or directories and is set with `chmod g+s /data/sales/` or `chmod 2770 /data/sales/`
+
+### Sticky bit
+
+Prevents the removal of files and/or directories unless that user is the owner. To set:
+
+    chmod +t mydir
+    chmod 1777 mydir
 
 `+t` sets the sticky bit:
 
-    drw-rw---T. 1 ben  finance    0 May 14 19:06 dolphin
+    drw-rw---T. 1 ben  finance    0 May 14 19:06 mydir
              ^
 
-The sticky bit in Linux is only useful when applies to directories. Files within "sticky" directories will no be deletable.
+## Understanding ACLs
 
-## umask (user mask)
+Several years later, in addition to the special bits, ACL (access control list) support was introduced to the kernel.
 
-Defines the default, user specific permission mask. For files, the default is 666 or read/write and no execute for user/group/other. For directories, the default is 777 or read/write/execute for user/group/other.
+ACLs offer a few benefits over the simple _UGO_ system:
 
-    $ umask
-    0022
+-   more granular inheritable permission chains on specific directories
+-   multiple owners
 
-Breaking down each bit. The first `0` will not apply any mask to the special bits (suid/guid/sticky bit). The second `0` will apply no mask to the owner. The third `2` will mask out (think subtract) _write_ permission (2 in octal), and similarly for all other users for the fourth `2` will strip write perms.
+Scenario, under `/data/` exists `accounting/` (owned by root:accounting) and `sales/` (owned by root:sales).
+
+We want to grant the `sales` group `rx` permission to `/data/accounting/`.
+
+This is not possible with the simple UGO model.
+
+For directories:
+
+-   `setfacl -R -m g:sales:rx accounting` to set ACLs on existing files and directories
+-   `setfacl -m d:g:sales:rx accounting` to set the default ACL on new objects that are created
+-   `getfacl accounting` to view ACLs
+
+For files:
+
+- `setfacl -m u:george:r myfile`
+
+To remove ACLs involves using the dash `-`
+
+For example `setfacl -m d:o::- secret-dir` will strip all ACLs for others. Interestingly this (i.e. no permissions for others) will propagate down the tree to any new objects created within `secret-dir`, awesome!
+
+
+`ls` will tack a `+` symbol to the end of the permission breakdown (e.g. `drwxrwxr-x+`), to indicate an ACL exists.
 
 # Rando cool
 
