@@ -58,6 +58,13 @@ My preparation notes for the RHCSA 8 exam.
         * [sgid](#sgid)
         * [Sticky bit](#sticky-bit)
     * [Understanding ACLs](#understanding-acls)
+* [Configuring Networking](#configuring-networking)
+    * [Network device naming](#network-device-naming)
+    * [Managing runtime network configuration with ip](#managing-runtime-network-configuration-with-ip)
+    * [Storing network configuration persistently](#storing-network-configuration-persistently)
+        * [nmcli](#nmcli)
+    * [Routing and DNS](#routing-and-dns)
+    * [Network Analysis Tools](#network-analysis-tools)
 * [Rando cool](#rando-cool)
 
 <!-- vim-markdown-toc -->
@@ -643,6 +650,88 @@ For example `setfacl -m d:o::- secret-dir` will strip all ACLs for others. Inter
 
 
 `ls` will tack a `+` symbol to the end of the permission breakdown (e.g. `drwxrwxr-x+`), to indicate an ACL exists.
+
+# Configuring Networking
+
+## Network device naming
+
+- BIOS naming based on hardware properties such as `em[1-N]` for embedded NICs, `p[slot_number]p[port_number]`
+- udev naming `ethX`
+- Physical naming similar to BIOS naming with more variations
+- Logical naming such as vlan or alias
+- To get classical `ethX` naming, use `biosdevname=0` and `net.ifnames=0` GRUB boot options
+
+## Managing runtime network configuration with ip
+
+`ip addr help`
+`ip addr add 10.0.0.10/24 dev enpls0`
+`ip link show`
+
+## Storing network configuration persistently
+
+Persistent network configuration is stored in `/etc/sysconfig/network-scripts/`, each NIC device is represented e.g. `ifcfg-enp1s0`
+
+The Network Manager service is responsible for managing these configurations. An active NM configuration for a NIC device is termed a *connection*.
+
+Frontends include `nmcli` and `nmtui`
+
+### nmcli
+
+`man nmcli-examples`
+
+Bash tab completion rocks for CLI's like `nmcli`, check its installed with `rpm -qa bash-completion`
+
+To add a new connection:
+
+    nmcli connection add ifname enp1s0 type ethernet ip4 192.168.4.210/24 gw4 192.168.4.2
+
+To activate other connection profiles for the same device:
+
+    nmcli connection up enp1s0-profile
+
+Verify connection status:
+
+    nmcli connection show
+
+Modify an existing connection profile to define the DNS:
+
+    nmcli connection modify enp1s0-profile ipv4.dns 8.8.8.8
+
+`nmcli` in the above will update `/etc/resolv.conf`
+
+`nmcli` also features an interacive edit mode `nmcli connection edit simoid-enp1s0`, which will display a shell `nmcli>`
+
+
+## Routing and DNS
+
+`ip route show`
+`ip route del default via 192.168.4.1`
+`ip route add default via 192.168.4.2`
+
+Using `nmcli` to set persistent routes (default gateway):
+
+    nmcli connection edit simoid-enp1s0
+    nmcli> set ipv4.gatway 192.168.122.1
+    nmcli> save
+    nmcli> quit
+    nmcli connection up simoid-enp1s0
+
+Setting the hostname on RHEL is done with `hostnamectl`:
+
+- `hostnamectl status`
+- `hostnamectl set-hostname host14.bencode.net`
+
+## Network Analysis Tools
+
+Useful troubleshooting tools:
+
+- `hostname`
+- `ping` send ICMP packets to other hosts and subnets
+- `traceroute` shows routers involves
+- `dig` DNS hostname resolution
+- `netstat` now `ss` list open ports
+- `nmap` firewall validation of remote hosts
+- `ip`
 
 # Rando cool
 
