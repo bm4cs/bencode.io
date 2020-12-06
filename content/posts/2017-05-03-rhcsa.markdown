@@ -4,7 +4,7 @@ title: "RHCSA"
 slug: "rhcsa"
 draft: false
 date: "2017-05-03 20:51:43"
-lastmod: "2020-11-15 20:23:27"
+lastmod: "2020-12-06 21:38:09"
 comments: false
 categories:
     - linux
@@ -64,7 +64,23 @@ My preparation notes for the RHCSA 8 exam.
     * [Storing network configuration persistently](#storing-network-configuration-persistently)
         * [nmcli](#nmcli)
     * [Routing and DNS](#routing-and-dns)
-    * [Network Analysis Tools](#network-analysis-tools)
+* [Managing Processes](#managing-processes)
+    * [Shell jobs](#shell-jobs)
+    * [ps](#ps)
+    * [Memory usage](#memory-usage)
+    * [CPU load](#cpu-load)
+    * [System activity with top](#system-activity-with-top)
+    * [Sending signals to processes](#sending-signals-to-processes)
+    * [Priority and niceness](#priority-and-niceness)
+    * [tuned profiles](#tuned-profiles)
+* [Managing Software](#managing-software)
+    * [RPM and yum](#rpm-and-yum)
+        * [rpm queries](#rpm-queries)
+        * [yum Groups](#yum-groups)
+    * [Repositories](#repositories)
+    * [Modules and Application Streams](#modules-and-application-streams)
+    * [Red Hat Subscription Manager](#red-hat-subscription-manager)
+* [Systemd](#systemd)
 * [Rando cool](#rando-cool)
 
 <!-- vim-markdown-toc -->
@@ -642,12 +658,11 @@ For directories:
 
 For files:
 
-- `setfacl -m u:george:r myfile`
+-   `setfacl -m u:george:r myfile`
 
 To remove ACLs involves using the dash `-`
 
 For example `setfacl -m d:o::- secret-dir` will strip all ACLs for others. Interestingly this (i.e. no permissions for others) will propagate down the tree to any new objects created within `secret-dir`, awesome!
-
 
 `ls` will tack a `+` symbol to the end of the permission breakdown (e.g. `drwxrwxr-x+`), to indicate an ACL exists.
 
@@ -655,13 +670,15 @@ For example `setfacl -m d:o::- secret-dir` will strip all ACLs for others. Inter
 
 ## Network device naming
 
-- BIOS naming based on hardware properties such as `em[1-N]` for embedded NICs, `p[slot_number]p[port_number]`
-- udev naming `ethX`
-- Physical naming similar to BIOS naming with more variations
-- Logical naming such as vlan or alias
-- To get classical `ethX` naming, use `biosdevname=0` and `net.ifnames=0` GRUB boot options
+-   BIOS naming based on hardware properties such as `em[1-N]` for embedded NICs, `p[slot_number]p[port_number]`
+-   udev naming `ethX`
+-   Physical naming similar to BIOS naming with more variations
+-   Logical naming such as vlan or alias
+-   To get classical `ethX` naming, use `biosdevname=0` and `net.ifnames=0` GRUB boot options
 
 ## Managing runtime network configuration with ip
+
+`ip` is useful for showing live networking state.
 
 `ip addr help`
 `ip addr add 10.0.0.10/24 dev enpls0`
@@ -671,21 +688,32 @@ For example `setfacl -m d:o::- secret-dir` will strip all ACLs for others. Inter
 
 Persistent network configuration is stored in `/etc/sysconfig/network-scripts/`, each NIC device is represented e.g. `ifcfg-enp1s0`
 
-The Network Manager service is responsible for managing these configurations. An active NM configuration for a NIC device is termed a *connection*.
+The _Network Manager_ service is responsible for managing these network interface configs. An NM configuration is called a _connection_.
 
-Frontends include `nmcli` and `nmtui`
+Frontends to the core `NetworkManager` service, include `nmcli` and `nmtui`. They depend on the `NetworkManager` daemon to be running.
 
 ### nmcli
 
-`man nmcli-examples`
+`man nmcli-examples` (example 10)
 
-Bash tab completion rocks for CLI's like `nmcli`, check its installed with `rpm -qa bash-completion`
+Bash tab completion rocks for CLI's like `nmcli`, check its installed with `rpm -qa bash-completion`. With `nmcli` go nuts with double tabbing which will even sensibly dump out specific interface names, to figure out all the options it needs.
+
+Commonly used options:
+
+-   `con-name` for the profile label
+-   `ipv4.method` for static vs DHCP
+-   `ipv4.addresses`
+-   `ipv4.dns`
+-   `ipv4.gateway`
+-   `autoconnect`
+
+_Hot tip:_ always specify a CIDR style subnet mask, as the default is 32!
 
 To add a new connection:
 
-    nmcli connection add ifname enp1s0 type ethernet ip4 192.168.4.210/24 gw4 192.168.4.2
+    nmcli connection add con-name limeleaf ifname enp1s0 type ethernet ip4.addresses 192.168.4.210/24 ipv4.gateway 192.168.4.2 ip4.addresses 1.2.3.4/24 ipv4.dns 8.8.8.8
 
-To activate other connection profiles for the same device:
+To activate a connection profile (this will re-parse configuration even if the same connection is already active):
 
     nmcli connection up enp1s0-profile
 
@@ -700,7 +728,6 @@ Modify an existing connection profile to define the DNS:
 `nmcli` in the above will update `/etc/resolv.conf`
 
 `nmcli` also features an interacive edit mode `nmcli connection edit simoid-enp1s0`, which will display a shell `nmcli>`
-
 
 ## Routing and DNS
 
@@ -718,20 +745,243 @@ Using `nmcli` to set persistent routes (default gateway):
 
 Setting the hostname on RHEL is done with `hostnamectl`:
 
-- `hostnamectl status`
-- `hostnamectl set-hostname host14.bencode.net`
+-   `hostnamectl status`
+-   `hostnamectl set-hostname host14.bencode.net`
 
-## Network Analysis Tools
+# Managing Processes
 
-Useful troubleshooting tools:
+-   In Linux everything is a process (including threads). Threads cannot be individually managed.
+-   All processes are assigned a PID
+-   Mother hening chores includes setting their scheduling priority and sending signals
 
-- `hostname`
-- `ping` send ICMP packets to other hosts and subnets
-- `traceroute` shows routers involves
-- `dig` DNS hostname resolution
-- `netstat` now `ss` list open ports
-- `nmap` firewall validation of remote hosts
-- `ip`
+## Shell jobs
+
+The concept of foreground and background shell processes.
+
+Normally when running a shell command interactively, it is blocking (synchronous) with `stdout` and `stdin` wired to the terminal.
+
+Trailing the command with an ampersand `&`, will unhook `stdin` and `stdout`, assign it a job number, and let it continue processing.
+
+-   Example `sleep 100 &` will output the assigned job number and pid e.g. `[3] 2970` = job 3, pid 2970
+-   `jobs` will list all background jobs
+-   `fg 3` will foreground job 3
+-   To background an active shell process `Ctrl-Z` to stop the job, and simply `bg` to background it.
+
+## ps
+
+The way god reports on processes.
+
+-   `ps` supports both BSD (naked options) and sys-v (hyphened options) styles, `ps -L` completely different meaning to `ps L`
+-   `ps aux` overview of all processes
+-   `ps -fax` process tree
+-   `ps -fU benjamin` all processes owned by a user
+-   `ps -f --forest -C sshd` show process tree only for the `sshd` process
+-   `ps L` show all format specifiers available
+-   `ps -eo pid,ppid,user,cmd` list processes using specific format specifiers
+
+## Memory usage
+
+-   Linux tries to cache files for provide a fast experience. Often as a result, memory appears to over-saturated.
+-   Swap provides a virtual (fake) memory address space, backing the memory by (much slower) disk if needed.
+
+Use `free` to report on the memory situation e.g. `free -m` show memory units in mebibytes:
+
+-   `free` truly un-utilised memory
+-   `available` memory be used by buffers or cache that can be liberated immediately
+-   If `free` memory is low and swap `used`, indicates the server is under memory pressure and could use more RAM
+
+## CPU load
+
+Processes as placed into a _run queue_, which the kernel scheduler uses to allocate processes to CPU cores.
+
+-   `uptime` to show load averages over 1, 5 and 15 minute spans
+-   Load average is the average count of processes that are in a runnable or uninteruptable state.
+-   `lscpu` for CPU meta, including number of CPU's, sockets, cores per socket and threads per core.
+-   `uptime` load is not normalised by the number of CPU cores (i.e. `1` on single core = 100%, but on a 4 core CPU = 25% load)
+
+## System activity with top
+
+Keyboard options:
+
+-   `f` select display fields
+-   `M,P,T` sort on memory use, CPU or time
+-   `W` save display settings
+-   `1` show individual CPU cores
+-   `k` to kill a PID
+-   `r` to set nice level on a PID
+
+Interpreting `top` by line:
+
+-   1 is just `uptime`
+-   2 is processes by categories: `stopped` = ctrl-z, `zombie` child processes that have lost their parent process and have become unmanagable.
+-   3 is CPU stats: `us` user space, `sy` system space, `ni` processes with changed niceness, `id` idle time, `wa` blocked on I/O, `hi` hardware interupts, `st` stolen time (zen virtualisation)
+-   4 for memory stats:
+
+## Sending signals to processes
+
+Signals are a way of communicating with processes, even if they're busily working away.
+
+-   `man 7 signal` describes the classical signals such as `SIGHUP` (1), `SIGKILL` (9) and `SIGTERM` (15).
+-   Signal handling very much depends on the program. Example, `nginx` will gracefully reparse config if it receives a `SIGHUP` with terminating active connections.
+-   `kill` is used to send a signal to a PID
+-   `killall` to send signals to all processes that match a search expression (e.g. `killall -SIGTERM 'dd'` to send SIGTERM to all `dd` processes)
+-   `pkill` will send a signal based on a the text pattern of a several process attributes (e.g. `pkill -signal 15 -U bob` send SIGTERM to all of bob's processes, `pkill -signal 1 sshd` send SIGHUP to the `sshd` process).
+
+## Priority and niceness
+
+In a nutshell, the amount of priority the process scheduler will give to a process.
+
+-   Nice values range from -20 to 19 (the lower the more priority, the higher the nicer a process is consider toward other processes)
+-   Users can make their processes nicer (lower scheduler priority), but not more aggressive (i.e. higher priority)
+-   Use the `nice` and `renice` commands to alter the priority of non-realtime processes
+-   `nice` will spawn new processes with a nice preset e.g. `nice -n -5 dd if=/dev/zero of=/dev/null`
+-   `renice` will alter the niceness of an existing process e.g. `renice -n 10 -p 34627`
+
+In `top`:
+
+-   the `PR` column is priority, the lower the higher priority. Priority `rt` or realtime is a special case, and is the supreme priority.
+-   `NI` is nice level (-20 most aggressive, 19 nicest)
+
+## tuned profiles
+
+`tuned` is a system performance optimiser service.
+
+-   Make sure its running `systemctl status tuned`
+-   `tuned-adm` is the CLI
+-   `tuned-adm list` show available profiles
+-   `tuned-adm profile powersave` to set the powersave profile
+-   `tuned-adm active` show current profile
+
+# Managing Software
+
+## RPM and yum
+
+RPM remains the package format of choice for hat-based distros. RPM facts:
+
+-   its from the 90's
+-   its an archive packed by `cpio` includes a manifest, and list of dependencies
+-   they can include scripts
+-   RHEL 8 has the concept of protected base packages that can't be removed (such as `vi`)
+
+`yum` was built to be a friendly package frontend:
+
+-   `yum search nmap`
+-   `yum install nmap`
+-   `yum remove`
+-   `yum update` update all packages
+-   `yum update kernel` update just the kernel package
+-   `yum provides */sepolicy` a deeper search that scans files within each package
+-   `yum info nmap` show the package manifest
+-   `yum list all`
+-   `yum list installed`
+-   `yum history` list of recent package activity
+-   `yum history undo 4` undo transaction 4 in the above history list
+
+Cool tip `yumdownloader` (in the `yum-utils` package) will download RPM to file system for inspection.
+
+### rpm queries
+
+With `yum`, the older `rpm` CLI is used less directly these days. However RPMs are still managed by the same underlying accounting database as forever, which the `rpm` CLI exposes.
+
+This is useful for querying, such as the specific files installed as part of a package, and so on.
+
+-   `rpm -qf /usr/bin/awk` which package installed this file?
+-   `rpm -ql tmux` list each file installed by the `tmux` package
+-   `rpm -qc openssh-server` list the configuration files for a package
+-   `rpm -qp --scripts foo.rpm` review the scriptlets (pre-install, post-install) of a standalone RPM
+
+### yum Groups
+
+Chunks up software into broad categories.
+
+-   `yum group list`
+-   `yum group list hidden`
+-   `yum group info "System Tools"`
+-   `yum group install --with-optional "Directory Client"`
+
+## Repositories
+
+New in RHEL 8 are AppStreams.
+
+Defined by `/etc/yum.repos.d/`.
+
+appstream.repo:
+
+    [appstream]
+    name=appstream
+    baseurl=file:///repo/AppStream
+    gpgcheck=0
+
+base.repo:
+
+    [base]
+    name=base
+    baseurl=file:///repo/BaseOS
+    gpgcheck=0
+
+To verify run `yum repolist`
+
+## Modules and Application Streams
+
+New in RHEL 8, appstreams separate user (i.e. application) packages from core system (i.e. base) packages.
+
+-   _Application Streams_ come as either traditional RPMs or the new module format.
+-   Modules (ex: php) themselves can in-turn contain streams (ex php:7.1, php:7.2).
+-   Enabling a module stream (`php:7.1`) opens up access to its packages
+-   Modules can have profiles (e.g. a minimal, devel)
+-   Module streams support upgraded and downgrading between each other (`php:7.1` > `php:7.3` or `php:8.0` > `php:7.1`)
+
+Managed with `yum`:
+
+-   `yum module list`
+-   `yum module provides httpd` show the module that provides a paricular package
+-   `yum module info php` specific module info
+-   `yum module info --profile php` show the profiles of a specific module
+-   `yum module list php` to list available modules
+-   `yum module install php:7.3` or `yum install @php:7.3` will enable and install specific module stream
+-   `yum module install php:7.3/devel` to install the module using a specific profile
+-   `yum module enable php:7.1` enables the module stream, without installing
+
+Updates between module streams just works:
+
+-   `yum module install php:7.1`
+-   some time later `yum module install php:7.3`
+
+Beware `yum update` will use enabled module streams (e.g. `php:7.1` will not automatically be upgraded to `php:7.3`)
+
+## Red Hat Subscription Manager
+
+The RHEL repositories require an active subscription.
+
+-   `subscription-manager register`
+-   `subscription-manager attach --auto`
+
+# Systemd
+
+The init system. The kernel hands over to it, when its ready to bootstrap user space.
+
+-   Managed items are called units (services, mounts, timers, sockets etc)
+-   `systemctl` is the management CLI
+-   `systemctl -t help` list of supported unit types
+-   `systemctl list-unit-files` list each unit, its definition file and status
+-   `systemctl enabled vsftpd` enable (auto start) service
+-   `systemctl start vsftpd` start the service process
+
+Modifying service configuration (see `man systemd.service`):
+
+-   Default unit files: `/usr/lib/systemd/system/`
+-   Custom unit files: `/etc/systemd/system/`
+-   Runtime generated unit files: `/run/systemd/`
+-   `systemctl cat rsyslog.service` dump unit configuration
+-   `systemctl edit unit.service` will create overlay in `/etc/systemd/system`
+-   `systemctl show` to dump available parameters that can be used in unit configs
+-   `systemctl daemon-reload` after modifying unit files, often is necessary
+
+When editing an overlay, can just add the extra options as they will be additive to the existing base configuration:
+
+    [Service]
+    Restart=on-failure
+    RestartSec=60
 
 # Rando cool
 
@@ -743,3 +993,5 @@ Useful troubleshooting tools:
 -   `tac` is the inverse program of `cat`
 -   `chvt` jumps between TTY e.g. `chvt 3`
 -   `ssh-keygen` supports a number of ciphers, set using `[-t dsa | ecdsa | ed25519 | rsa]`, RSA by default
+-   `yum history` full journal of package installs
+-   `yumdownloader` is included in `yum-utils` lets you download packages to local file system
