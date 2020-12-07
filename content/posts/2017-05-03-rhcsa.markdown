@@ -81,6 +81,12 @@ My preparation notes for the RHCSA 8 exam.
     * [Modules and Application Streams](#modules-and-application-streams)
     * [Red Hat Subscription Manager](#red-hat-subscription-manager)
 * [Systemd](#systemd)
+* [Scheduling Tasks](#scheduling-tasks)
+    * [cron](#cron)
+    * [-   Configured by `/etc/anacrontab`](#----configured-by-etcanacrontab)
+    * [at](#at)
+    * [systemd Timers](#systemd-timers)
+    * [Managing temporary files](#managing-temporary-files)
 * [Rando cool](#rando-cool)
 
 <!-- vim-markdown-toc -->
@@ -983,6 +989,85 @@ When editing an overlay, can just add the extra options as they will be additive
     Restart=on-failure
     RestartSec=60
 
+# Scheduling Tasks
+
+## cron
+
+`cron`, the classical scheduling daemon.
+
+-   has no `stdout`
+-   `crontab -e` to create user specific job
+-   `/etc/cron.d/` to create system wide job
+-   `/etc/cron.{hourly,daily,weekly,monthly}` managed by `anacron`, for regular script execution
+-   `/etc/crontab` (deprecated) was once used to configure jobs. `crontab` remains useful for specifying the environment for `cron` such as the `SHELL`.
+
+`cron` time specification (`man 5 crontab`) example `*/10 4 11 12 1-5`:
+
+-   `*/10` every 10 minutes
+-   `4` only on hour 4
+-   `11` only on day 11
+-   `12` only on month 12
+-   `1-5` only on day of week 1-5
+
+Example, write `hello` to syslog on minute 57, hour 20:
+
+-   `crontab -e`
+-   `57 20 * * * logger hello`
+
+`anacron`, runs commands periodically.
+
+-   Unlike `cron` doesn't assume the machine is running all day everyday.
+-   Configured by `/etc/anacrontab`
+-
+
+## at
+
+`at` unlike `cron` is used for one-off jobs.
+
+-   make sure `atd` daemon is running
+-   provide its own interactive shell to take job specifications
+-   `atq` to list `at` queue
+-   `atrm` to remove `at` job
+
+Example:
+
+-   `at teatime`
+-   `logger have a cup of tea`
+
+## systemd Timers
+
+`cron` is still the gold standard, however this is still a viable option.
+
+-   `man 5 systemd.timer` and `man 5 systemd.time` for time specification
+-   `ls /usr/lib/systemd/system/*.timer` to list timers
+
+```
+[Unit]
+Description=Discard unused blocks once a week
+Documentation=man:fstrim
+ConditionVirtualization=!container
+
+[Timer]
+OnCalendar=weekly
+AccuracySec=1h
+Persistent=true
+RandomizedDelaySec=6000
+
+[Install]
+WantedBy=timers.target
+```
+
+## Managing temporary files
+
+A common way to manage (create, delete) temporary files. See `man tmpfiles.d`.
+
+-   `/usr/lib/tmpfiles.d/` setting files
+-   For example `/usr/lib/tmpfiles.d/tmp.conf` contain settings for automatic `tmp` files cleanup
+-   `systemd-tmpfiles-clean.timer` unit can be configured to automatically clean up temporary files (by triggering `systemd-tmpfiles-clean.service` which in turn runs `systemd-tmpfiles --clean`).
+-   If you want to make modifications, copy conf file from `/usr/lib/tmpfiles.d/` to `/etc/tmpfiles.d/` and edit it there.
+-   Run `systemd-tmpfiles --clean /etc/tmpfiles.d/tmp.conf` manually to parse and test configuration changes.
+-   To register a new custom tmpfiles configuration `systemd-tmpfiles --create /etc/tmpfiles.d/foo.conf`
+
 # Rando cool
 
 -   `ctrl+l` = clear terminal
@@ -995,3 +1080,4 @@ When editing an overlay, can just add the extra options as they will be additive
 -   `ssh-keygen` supports a number of ciphers, set using `[-t dsa | ecdsa | ed25519 | rsa]`, RSA by default
 -   `yum history` full journal of package installs
 -   `yumdownloader` is included in `yum-utils` lets you download packages to local file system
+-   `run-parts` which comes as part of the `cron` ecosystem, is a script that runs all executables in a directory.
