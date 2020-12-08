@@ -87,6 +87,10 @@ My preparation notes for the RHCSA 8 exam.
     * [at](#at)
     * [systemd Timers](#systemd-timers)
     * [Managing temporary files](#managing-temporary-files)
+* [Logging](#logging)
+    * [Rsyslog](#rsyslog)
+    * [Systemd Journal](#systemd-journal)
+    * [Logrotate](#logrotate)
 * [Rando cool](#rando-cool)
 
 <!-- vim-markdown-toc -->
@@ -1067,6 +1071,51 @@ A common way to manage (create, delete) temporary files. See `man tmpfiles.d`.
 -   If you want to make modifications, copy conf file from `/usr/lib/tmpfiles.d/` to `/etc/tmpfiles.d/` and edit it there.
 -   Run `systemd-tmpfiles --clean /etc/tmpfiles.d/tmp.conf` manually to parse and test configuration changes.
 -   To register a new custom tmpfiles configuration `systemd-tmpfiles --create /etc/tmpfiles.d/foo.conf`
+
+# Logging
+
+## Rsyslog
+
+> The rocket-fast Syslog Server
+
+`rsyslogd` is the defacto syslogd used by most distros. It monitors configurable sources (e.g. `/dev/log`) and writes to configurable sinks (e.g. in `/var/log/`)
+
+-   A daemon managed by the `rsyslogd.service` unit
+-   Configured by `/etc/rsyslog.conf`
+-   Snap-in configs in `/etc/rsyslog.d/`
+-   Each logger rule line is made up of 3 elements; _facility_ ({auth,authpriv,cron,daemon,kern,lpr,mail,mark,news,security,syslog,user,uucp,local{0-7}}), _severity_ ({debug,info,notice,warn,err,crit,alert,emerg,panic}) and an _action_ (regular file, database table, remote machine, a tty, discard, and more).
+-   For services that don't have a specific facilty, use `local{0-7}`
+-   You can use the `logger` CLI to write messages to `rsyslogd` manually
+
+Sample rules from `/etc/rsyslog.conf`:
+
+    *.info;mail.none;authpriv.none;cron.none       /var/log/messages
+
+Log everything INFO or higher, exception mail/authpriv/cron to `/var/log/messages`
+
+    mail.*                                         -/var/log/maillog
+
+Notice the `-` before the filename. This tells rsyslog to buffer writes.
+
+## Systemd Journal
+
+Being `systemd`, it invented its own logger, called `journald`. By default `journald` is in-memory, but it sinks logs to `/dev/log` which `rsyslog` listens to.
+
+While `rsyslogd`, depending on it config, will likely perist `journald` logs to `/var/log/`.
+
+-   By default writes journal to `/run/log/journal`, which is cleared across reboots.
+-   It's possible to persist the systemd journal logs. `mkdir /var/log/journal/` and restart the `journald.service` unit.
+-   Update `/etc/systemd/journald.conf`, set `Storage` to one of `{persistent,volatile,auto}` (auto will use `/var/log/journal/` only if it exists)
+-   Journal logs are propagated to `rsyslogd` using the `imjournal` input module
+-   The `journalctl` CLI is the frontend for querying journal logs.
+-   Use tab completion to build out filters, such as `journalctl UNIT=dbus.service`
+
+## Logrotate
+
+Used to roll up (rotate) logs.
+
+-   Its started through `cron.daily`
+-   Configured by `/etc/logrorate.conf` or `/etc/logrotate.d/`
 
 # Rando cool
 
