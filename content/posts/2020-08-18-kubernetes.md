@@ -24,6 +24,9 @@ tags:
   - [Web UI dashboard](#web-ui-dashboard)
 - [Pods](#pods)
   - [Creating a pod](#creating-a-pod)
+    - [Option 1: Imperatively with the CLI](#option-1-imperatively-with-the-cli)
+    - [Option 2: Declaratively with YAML](#option-2-declaratively-with-yaml)
+  - [Port forwarding](#port-forwarding)
   - [Managing pods](#managing-pods)
   - [Pod Health](#pod-health)
 - [Deployments and ReplicaSets](#deployments-and-replicasets)
@@ -35,6 +38,21 @@ tags:
     - [Blue Green](#blue-green)
     - [Canary](#canary)
     - [Rollbacks](#rollbacks)
+- [Services](#services)
+  - [Service Types](#service-types)
+  - [Port forwarding take 2](#port-forwarding-take-2)
+  - [Services YAML](#services-yaml)
+    - [NodePort example](#nodeport-example)
+    - [ExternalName example](#externalname-example)
+  - [Testing Service and Pod with curl](#testing-service-and-pod-with-curl)
+- [Storage](#storage)
+  - [Volumes](#volumes)
+    - [Volume Types](#volume-types)
+    - [Viewing a Pods volumes](#viewing-a-pods-volumes)
+    - [emptyDir volume example](#emptydir-volume-example)
+  - [PeristentVolumes](#peristentvolumes)
+  - [PeristentVolumesClaims](#peristentvolumesclaims)
+  - [StorageClasses](#storageclasses)
 - [The API](#the-api)
 - [General kubectl](#general-kubectl)
 - [Waaay cool](#waaay-cool)
@@ -96,15 +114,13 @@ Terminology:
 
 ## Creating a pod
 
-Option 1: Imperatively with the CLI `kubectl run my-frontend-pod --image=nginx:alpine`
+### Option 1: Imperatively with the CLI
 
-After the pod is made, need to expose the pod externally in some way, so the outside world can get in. One option is simple port forwarding with `kubectl port-forward my-frontend-pod 8080:80` (8080 = external, 80 = internal)
+With `kubectl run my-frontend-pod --image=nginx:alpine`
 
-1. `kubectl run my-nginx --image=nginx:alpine`
-2. `kubectl get pods -o yaml`
-3. `kubectl port-forward my-nginx 8080:80 --address 0.0.0.0`
+### Option 2: Declaratively with YAML
 
-Option 2: Declaratively with YAML using `kubectl create/apply`.
+Using `kubectl create/apply`.
 
 First you need to articulate the various object settings as YAML.
 
@@ -138,6 +154,14 @@ Highlights:
 - `kubectl create` has an `--save-config` option which will export the base configuration as YAML as store it in the YAML as an `metadata: Annotation`
 - `kubectl delete -f my-nginx-pod.yml`
 - YAML can be interactively edited with `kubectl edit` or patched with `kubectl patch`
+
+## Port forwarding
+
+After the pod is made, need to expose the pod externally in some way, so the outside world can get in. One option is simple port forwarding with `kubectl port-forward my-frontend-pod 8080:80` (8080 = external, 80 = internal)
+
+1. `kubectl run my-nginx --image=nginx:alpine`
+2. `kubectl get pods -o yaml`
+3. `kubectl port-forward my-nginx 8080:80 --address 0.0.0.0`
 
 ## Managing pods
 
@@ -310,6 +334,180 @@ Deploying a canary involves deploying the new app side by side the old version, 
 
 Reinstate the previous version of the deployment.
 
+# Services
+
+An abstraction to expose an app running on a set of _Pods_ as a network service.
+
+Using Pod IP addresses directly simply doesnt scale, as Pods, and hence their IPs are ephemeral (i.e. can be killed off), and they can also be dynamically provisioned.
+
+- _Services_ decouple consumers from _Pods_
+- A _Service_ is assigned a fixed virtual IP (on the _Node_ by `kubectl`) and can load balance request over to the _Pods_
+- Labels play a key role, in allowing the _Service_ to marry up to particular _Pods_
+- _Services_ are not ephemeral
+- _Pods_ in turn can (and should) address other _Pods_ through _Services_
+- A _Service_ can map any incoming `port` to a `targetPort`
+- A _Service_ can have multiple port definitions if needed
+- Services when given a `.metadata.name`, its registered into the internal DNS within the cluster automatically (i.e. within cluster can just refer to its friendly name e.g. frontend _Pod_ can just access `backend:8080`)
+
+## Service Types
+
+Different way to network up _Services_ (ex: such as exposing a frontend app to an external IP for use by web browsers).
+
+Types (as of late 2020) include:
+
+1. `ClusterIP` exposes the Service on a cluster-internal IP (only reachable from within the cluster)
+2. `NodePort` exposes the Service on each Node's IP at a static port. A ClusterIP Service, to which the NodePort Service routes, is automatically created. You'll be able to contact the NodePort Service, from outside the cluster, by requesting `<NodeIP>:<NodePort>`
+3. `LoadBalancer` exposes the Service externally using a cloud provider's load balancer. `NodePort` and `ClusterIP` Services, are automatically created
+4. `ExternalName` just like an alias or proxy to an external service that _Pods_ connect with. This will map the _Service_ to the contents of the `externalName` field (e.g. foo.bar.example.com), by returning a `CNAME` record with its value.
+
+## Port forwarding take 2
+
+As seen with _Pods_ you can port forward to them directly `kubectl port-forward my-frontend-pod 8080:80`
+
+This can be applied to the high level constructs of _Deployments_ and _Services_:
+
+```yml
+kubectl port-forward deployment/my-sik-deployment 8080:80
+kubectl port-forward service/my-sik-service 8080:80
+```
+
+## Services YAML
+
+Based on [ServiceSpec v1 core](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#servicespec-v1-core).
+
+Basic blueprint:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type:
+  selector:
+  ports:
+```
+
+- `type` is one of `ClusterIP`, `NodePort`, `LoadBalancer`
+- `selector` selects _Pods_ this _Service_ applies to
+- `port` the externally exposed port
+- `targetPort` the _Pod_ port to forward onto
+
+### NodePort example
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: NodePort
+  selector:
+    app: my-nginx
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 31000 #normally dynamically generated
+```
+
+### ExternalName example
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-service
+spec:
+  type: ExternalName
+  externalName: api.bencode.net
+  ports:
+    - port: 9000
+```
+
+Pods wanting to consume the externally hosted API `https://api.bencode.net`, would instead target `external-service:9000`.
+
+## Testing Service and Pod with curl
+
+Shell into Pod a test URL. Note, you'll need to add `-c [container-id]` if a Pod is housing multiple containers.
+
+```bash
+kubectl exec [pod-name] -- curl -s http://[pod-ip]
+```
+
+`curl` is a luxury item when it comes to lean containers, and will need to be installed (ex: alpine) over an interactive TTY like so:
+
+```bash
+kubectl exec [pod-name] -it sh
+apk add curl
+curl -s http://[pod-ip]
+```
+
+# Storage
+
+## Volumes
+
+[Volumes](https://kubernetes.io/docs/concepts/storage/volumes/) are used to preserve state for Pods and containers.
+
+- Volumes can be attached to Pods
+- Containers rely on `mountPath` to get to the Volume
+- Volumes can outlive the lifetime of Pods
+
+### Volume Types
+
+There are [many](https://kubernetes.io/docs/concepts/storage/volumes/#volume-types), some common options:
+
+- `emptyDir` first created when a Pod is assigned to a Node, and exists as long as that Pod is running on that node. Useful for housing temporary scratch files.
+- `hostPath` Pod mounts to the Nodes file system
+- `nfs` literally an NFS backed file share mounted into the Pod
+- `configMap` a way to inject configuration data into pods. The data stored in a ConfigMap can be referenced in a volume of type `configMap` and then consumed by containerized applications running in a pod.
+- `persistentVolumeClaim` gives Pods more persistent storage
+
+### Viewing a Pods volumes
+
+Both `get` and `describe` commands on the Pod object expose volumes:
+
+- `kubectl describe pod [pod-name]`
+- `kubectl get pod [pod-name] -o yaml`
+
+### emptyDir volume example
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-alpine-volume
+spec:
+  containers:
+    - name: nginx
+      image: nginx:alpine
+      volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+          readOnly: true
+      resources:
+    - name: html-updater
+      image: alpine
+      command: ["/bin/sh", "-c"]
+      args:
+        - while true; do date >> /html/index.html;sleep 10; done
+      resources:
+      volumeMounts:
+        - name: html
+          mountPath: /html
+  volumes:
+    - name: html
+      emptyDir: {} #lifecycle tied to Pod
+
+# kubectl apply -f nginx-alpine-emptyDir.pod.yml
+# kubectl port-forward nginx-alpine-volume 8080:80
+```
+
+## PeristentVolumes
+
+## PeristentVolumesClaims
+
+## StorageClasses
+
 # The API
 
 [Kubernetes API reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/)
@@ -335,6 +533,7 @@ Versioning is taken very seriously, with the goal of not breaking compatibility.
 # Waaay cool
 
 - [Canary deployments](https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#canary-deployments)
+- Services when given a `.metadata.name`, its registered into the internal DNS within the cluster automatically!
 
 # Samples
 
@@ -367,7 +566,7 @@ ENTRYPOINT ["node", "server.js"]
 
 In the directory containing the `Dockerfile` and `server.js` build and tag a new image.
 
-```sh
+```bash
 docker build -t node-app:1.0 .
 ```
 
@@ -437,5 +636,5 @@ complete -F __start_kubectl k
 - [kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
 - [kubernetes the hard way](https://github.com/kelseyhightower/kubernetes-the-hard-way)
 - [Kubernetes API reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/)
-- [DanWahlin GitHub repo](https://github.com/DanWahlin/DockerAndKubernetesCourseCode)
+- [Useful GitHub repo with samples](https://github.com/DanWahlin/DockerAndKubernetesCourseCode)
 - [NGINX Ingress Controller Documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/)
