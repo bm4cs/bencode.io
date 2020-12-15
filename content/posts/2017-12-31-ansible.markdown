@@ -4,69 +4,73 @@ title: "Ansible"
 date: "2017-12-31 18:09:01"
 comments: false
 categories:
-- linux
+  - linux
 ---
 
 > Ansible is a radically simple IT automation platform that makes your applications and systems easier to deploy. Avoid writing scripts or custom code to deploy and update your applications. Automate in a language that approaches plain English, using SSH, with no agents to install on remote systems.
 
-With Ansible and its amazing [module](http://docs.ansible.com/ansible/latest/modules/modules_by_category.html) ecosystem, you describe *what* needs to be accomplished (i.e. declarative), rather than describing *how* to accomplish each step (i.e. imperative).
+With Ansible and its amazing [module](http://docs.ansible.com/ansible/latest/modules/modules_by_category.html) ecosystem, you describe _what_ needs to be accomplished (i.e. declarative), rather than describing _how_ to accomplish each step (i.e. imperative).
 
 Ansible is Python 2 based and uses SSH to communicate with remote hosts; the only prerequisites.
 
-
-
 # Contents
 
+- [Contents](#contents)
 - [Development Setup](#development-setup)
-    - [LXC (Lexy) Primer](#lxc-lexy-primer)
-    - [Installation](#installation)
-        - [Target Machine Requirements](#target-machine-requirements)
-        - [SSH Security](#ssh-security)
-    - [ansible.cfg](#ansiblecfg)
-    - [Priming a target host](#priming-a-target-host)
-    - [Hosts (Inventory) File](#hosts-inventory-file)
+  - [LXC (Lexy) Primer](#lxc-lexy-primer)
+  - [Installation](#installation)
+    - [Target Machine Requirements](#target-machine-requirements)
+    - [SSH Security](#ssh-security)
+  - [ansible.cfg](#ansiblecfg)
+  - [Priming a target host](#priming-a-target-host)
+  - [````yaml](#yaml)
+- [Run with ansible-playbook <filename> -k](#run-with-ansible-playbook-filename--k)
+- [(make sure to add the IPs of machines you want to manage to /etc/ansible/hosts first)](#make-sure-to-add-the-ips-of-machines-you-want-to-manage-to-etcansiblehosts-first)
+  - [Hosts (Inventory) File](#hosts-inventory-file)
 - [Adhoc Commands](#adhoc-commands)
-    - [Examples](#examples)
+  - [Examples](#examples)
 - [Playbooks](#playbooks)
-    - [Playbook Structure](#playbook-structure)
-    - [Tasks](#tasks)
-    - [Blocks](#blocks)
-    - [Templates (Jinja2)](#templates-jinja2)
-        - [Syntax](#syntax)
-        - [Loops](#loops)
-        - [Filters](#filters)
-        - [Escaping](#escaping)
-    - [Variables and Facts](#variables-and-facts)
-        - [Built-in Variables](#built-in-variables)
-        - [Task Results and Control Flow](#task-results-and-control-flow)
-        - [Globally Scoped](#globally-scoped)
-        - [Playbook Scoped](#playbook-scoped)
-        - [Inventory File Variables](#inventory-file-variables)
-        - [Command Line Vars](#command-line-vars)
-    - [Control Flow](#control-flow)
-        - [when](#when)
-        - [register](#register)
-        - [Iteration](#iteration)
-            - [with_items](#with-items)
-            - [with_dict](#with-dict)
-            - [with_nested](#with-nested)
-        - [changed_when](#changed-when)
-        - [failed_when](#failed-when)
+  - [Playbook Structure](#playbook-structure)
+  - [Tasks](#tasks)
+  - [Blocks](#blocks)
+  - [Templates (Jinja2)](#templates-jinja2)
+    - [Syntax](#syntax)
+    - [Loops](#loops)
+    - [Filters](#filters)
+    - [Escaping](#escaping)
+  - [Variables and Facts](#variables-and-facts)
+    - [Built-in Variables](#built-in-variables)
+    - [Task Results and Control Flow](#task-results-and-control-flow)
+    - [Globally Scoped](#globally-scoped)
+    - [Playbook Scoped](#playbook-scoped)
+    - [Inventory File Variables](#inventory-file-variables)
+    - [Command Line Vars](#command-line-vars)
+  - [Control Flow](#control-flow)
+    - [when](#when)
+    - [register](#register)
+    - [Iteration](#iteration)
+      - [with_items](#with_items)
+      - [with_dict](#with_dict)
+      - [with_nested](#with_nested)
+    - [changed_when](#changed_when)
+    - [failed_when](#failed_when)
+  - [Execution Strategies](#execution-strategies)
+    - [Serial (default)](#serial-default)
+    - [Free (go nuts)](#free-go-nuts)
+    - [Failure Percentage](#failure-percentage)
 - [Modules](#modules)
-    - [Bread & Butter Modules](#bread-butter-modules)
-        - [Package Management](#package-management)
-        - [Files and Directories](#files-and-directories)
-        - [System](#system)
-        - [Miscellaneous](#miscellaneous)
+  - [Bread & Butter Modules](#bread--butter-modules)
+    - [Package Management](#package-management)
+    - [Files and Directories](#files-and-directories)
+    - [System](#system)
+    - [Miscellaneous](#miscellaneous)
 - [Debugging](#debugging)
-    - [Verbosity](#verbosity)
+  - [Verbosity](#verbosity)
 - [Working Example Notes](#working-example-notes)
-    - [Document!](#document)
-    - [Same Host Multiple Roles](#same-host-multiple-roles)
-    - [Variable Things](#variable-things)
+  - [Document!](#document)
+  - [Same Host Multiple Roles](#same-host-multiple-roles)
+  - [Variable Things](#variable-things)
 - [Resources](#resources)
-
-
 
 # Development Setup
 
@@ -81,8 +85,7 @@ LXC was first released in 2008, and is an OS level virtualisation method for run
 3. Spark it up with `lxc-start -n ansibley -d`. The `-d` runs it in daemon mode, preventing it from taking over stdout and stdin.
 4. Get a state of play with `lxc-ls -f`
 5. When you're ready to jump into a container, `lxc-attach -n web1`
-6. Ensure that Ansibles only dependency *python 2.7* is on all participating machines. This can be done using a playbook, but keep things low tech for now. `lxc-attach` each container, and do a `yum install python27`.
-
+6. Ensure that Ansibles only dependency _python 2.7_ is on all participating machines. This can be done using a playbook, but keep things low tech for now. `lxc-attach` each container, and do a `yum install python27`.
 
 ## Installation
 
@@ -93,7 +96,6 @@ Bleeding edge:
     git submodule update --init --recursive
     dnf install python-jinja2 python-paramiko python-yaml sshpass
     source ./hacking/env-setup
-
 
 ### Target Machine Requirements
 
@@ -127,7 +129,6 @@ Edit `/etc/sysconfig/network-scripts/ifcfg-eth0` (or that relevent to the networ
     TYPE=Ethernet
     IPV6INIT=no
 
-
 ### SSH Security
 
 Create `ansible` accounts on all participating nodes, and give it noprompt sudo.
@@ -140,9 +141,7 @@ Below the root user specification add:
 
     ansible ALL=(ALL) NOPASSWD: ALL
 
-
 When running a playbook over SSH (e.g. from Jenkins or cron), to prevent credential prompts, ensure that the `ansible` user on the control node has a key pair (`/home/ansible/.ssh/id_rsa`), and that it is exchanged with all other partipating nodes:
-
 
     $ su - ansible
     $ ssh-keygen
@@ -158,7 +157,6 @@ Alternatively, on the controller, copy (clipboard) the public key:
 
 And on the participating machines, copy and paste it into the `~/.ssh/authorized_keys`
 
-
 ## ansible.cfg
 
 The main configuration. The probe path to find one is:
@@ -168,16 +166,13 @@ The main configuration. The probe path to find one is:
 3. Nope? `ansible.cfg` in home dir.
 4. Nope? `/etc/ansible/ansible.cfg`
 
-
-
-## Priming a target host 
+## Priming a target host
 
 Typically new hosts need to be "primed" to support being an Ansible target; installing a Python 2 runtime, and bedding in the SSH public key of user that Ansible will be running under. Suprisingly this initial setup can itself be achieved using a playbook (tip: disabling `gather_facts` prevents Ansible reaching out to Python, which is non-existant at this point):
 
-
 **prepare_ansible_target.yml**
 
-{% highlight yaml %}
+````yaml
 ---
 # Run with ansible-playbook <filename> -k
 #   (make sure to add the IPs of machines you want to manage to /etc/ansible/hosts first)
@@ -196,13 +191,13 @@ Typically new hosts need to be "primed" to support being an Ansible target; inst
     - name: Install Python 2
       raw: test -e /usr/bin/python || (apt-get update && apt-get install -y python)
 
-    {% raw %}
+    ```
     - name: Fancy way of doing authorized_keys
       authorized_key: user=ansible
                       exclusive=no
                       key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-     {% endraw %}
-    
+     ```
+
     - name: COMMON | Set environment
       blockinfile:
         dest: /etc/environment
@@ -210,7 +205,7 @@ Typically new hosts need to be "primed" to support being an Ansible target; inst
           LC_ALL=en_US.UTF-8
           LANG=en_US.UTF-8
       register: newenv
-    
+
     - block:
       - name: COMMON | Generate locales
         raw: locale-gen en_US.UTF-8
@@ -219,33 +214,27 @@ Typically new hosts need to be "primed" to support being an Ansible target; inst
         raw: update-locale LANG=en_US.UTF-8
       # only run this task block when we've just changed /etc/environment
       when: newenv.changed
-{% endhighlight %}
-
-
+````
 
 ## Hosts (Inventory) File
 
-Ansible provides it own base inventory file at `/etc/ansible/hosts`, which is nicely documented. Create a new *inventory* file in your working dir, similar to the following:
+Ansible provides it own base inventory file at `/etc/ansible/hosts`, which is nicely documented. Create a new _inventory_ file in your working dir, similar to the following:
 
     [allservers]
     192.168.124.120
     192.168.124.121
     192.168.124.122
-    
+
     [web]
     192.168.124.120
     192.168.124.121
-    
+
     [db]
     192.168.124.122
-
 
 Ansible can be pointed at specific inventory files with the `-i` switch like this:
 
     ansible-playbook -i inventory-file
-
-
-
 
 # Adhoc Commands
 
@@ -269,28 +258,27 @@ Run an adhoc one liner:
 
 Very nice. This scales to any task, such as registering the EPEL (Extra Packages for Enterprise Linux) package repo for the fleet of servers.
 
-    $ ansible web -a "wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm" -i inventory 
-
+    $ ansible web -a "wget http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm" -i inventory
 
 Ansible has an insane library of [modules](http://docs.ansible.com/ansible/latest/modules/modules_by_category.html) for accomplishing most tasks. Lets take the [ping](http://docs.ansible.com/ansible/latest/modules/ping_module.html) module for a run on a specific host (this is not an actual ICMP ping, but does verify Ansible is able to run on the target):
 
-    $ ansible 192.168.124.120 -m ping -i inventory 
+    $ ansible 192.168.124.120 -m ping -i inventory
     192.168.124.120 | SUCCESS => {
-        "changed": false, 
+        "changed": false,
         "ping": "pong"
     }
 
-Install nginx across all hosts in the web group, using the [package](http://docs.ansible.com/ansible/latest/modules/package_module.html) module. The `-b` switch here is the *become* option, which will by default elevate to root using `su`.
+Install nginx across all hosts in the web group, using the [package](http://docs.ansible.com/ansible/latest/modules/package_module.html) module. The `-b` switch here is the _become_ option, which will by default elevate to root using `su`.
 
     $ ansible web -m package -a "name=nginx state=installed" -i inventory -b
     192.168.124.121 | SUCCESS => {
-        "changed": true, 
-        "msg": "warning: /var/cache/yum/x86_64/7/base/packages/libunwind-1.2-2.el7.x86_64.rpm: Header V3 RSA/SHA256 
+        "changed": true,
+        "msg": "warning: /var/cache/yum/x86_64/7/base/packages/libunwind-1.2-2.el7.x86_64.rpm: Header V3 RSA/SHA256
     ...omitted...
 
 Now run a one liner `yum` on every server to check `nginx` is indeed installed- only the two web hosts should return SUCCESS:
 
-    $ ansible allservers -a "yum list installed nginx" -i inventory 
+    $ ansible allservers -a "yum list installed nginx" -i inventory
     [WARNING]: Consider using yum module rather than running yum
 
     192.168.124.121 | SUCCESS | rc=0 >>
@@ -310,23 +298,18 @@ Showing off the `-B` (timeout) and `-P` (poll time) arguments:
 
     ansible allservers -B 2400 -P 5 -a "apt-get update && apt-get upgrade -y" -u root
 
-
-
-
 # Playbooks
 
 Core concepts:
 
-- **Tasks**: an individual piece of desired state, such as ensuring the latest version of a package is installed. If useful tasks can be grouped into *blocks*.
-- **Templates**: a base file that can have state injected into it, annotated with handlebar style tags thanks to the [Jinja template engine](http://jinja.pocoo.org/) e.g. {% raw %}`{{ site_name }}`{% endraw %}
+- **Tasks**: an individual piece of desired state, such as ensuring the latest version of a package is installed. If useful tasks can be grouped into _blocks_.
+- **Templates**: a base file that can have state injected into it, annotated with handlebar style tags thanks to the [Jinja template engine](http://jinja.pocoo.org/) e.g. `{{ site_name }}`
 - **Handlers**: a hook that is triggered as late in the playbook run as possible (e.g. if multiple handlers to restart nginx are wired up, Ansible will minimise the number of restarts by deferring the trigger until the very last task that requires a restart is complete).
 - **Roles**: clumps of reusable tasks, templates and handlers; allowing higher level of abstraction (e.g. the web role, caching role, database role and so on).
 
 Playbooks are run with the `ansible-playbook` command, like so:
 
     ansible-playbook configure_fleet.yml -i inventory
-
-
 
 ## Playbook Structure
 
@@ -352,10 +335,9 @@ Dave has put together two (one in pure Python and one in Ansible) [handy scripts
 
     ./create_playbook.py ./boilerplate-playbook web database common
 
-
 A real world playbook (`playbook.yml`) might look like this:
 
-{% highlight yaml %}
+```yaml
 ---
 - name: Database Setup
   hosts: dbservers
@@ -370,75 +352,67 @@ A real world playbook (`playbook.yml`) might look like this:
   roles:
     - common
     - web
-{% endhighlight %}
-
+```
 
 Sample handlers in `/roles/role1/handlers/main.yml`:
 
-{% highlight yaml %}
+```yaml
 ---
 - name: reload nginx
   service: name=nginx state=reloaded
 
 - name: reload systemd
   command: systemctl daemon-reload
-{% endhighlight %}
-
-
-
+```
 
 ## Tasks
 
 A single chore to be acheived. Here are a few tasks:
 
-{% raw %}
-    tasks:
-      - name: NGINX | Remove default vhost
-        file: path=/etc/nginx/sites-enabled/default state=absent
-    
-      - name: NGINX | Start
-        service: name=nginx state=started
-        register: nginx_started
-    
-      - name: STAT | Check dir exists
-        stat: path={{ foo_directory }}
-        register: foo_directory
-{% endraw %}
+```yaml
+tasks:
+  - name: NGINX | Remove default vhost
+    file: path=/etc/nginx/sites-enabled/default state=absent
+
+  - name: NGINX | Start
+    service: name=nginx state=started
+    register: nginx_started
+
+  - name: STAT | Check dir exists
+    stat: path={{ foo_directory }}
+    register: foo_directory
+```
 
 The third task highlights the ability to store the result of a task in a variable, in this case the `stat` task result, which could be used for a conditional `when` directive like so:
 
     when: foo_directory.stat.exists == False
 
-
-
 ## Blocks
 
-Tasks can be grouped into *blocks*, for example:
+Tasks can be grouped into _blocks_, for example:
 
-{% raw %}
-    - block:
-      - name: PostgreSQL | Setup pg_hba.conf, allow connections from web servers
-        template: src=pg_hba.conf dest={{ PGA_HB_CONF }}
-        notify:
-          - restart postgres
-    
-      - name: PostgreSQL | Listen on all IPs
-        lineinfile:
-          dest: "{{ PG_CONF }}"
-          line: listen_addresses='*'
-        notify:
-          - restart postgres
-      rescue:
-        - name: Only run when a task blows up
-          debug: msg="boom!"
-      always:
-        - name: Always always run
-          debug: msg="Regardless of what happened, I'm running"
-      when: hostvars[groups['webservers][0]]['inventory_hostname'] != inventory_hostname
-{% endraw %}
+```yaml
+- block:
+    - name: PostgreSQL | Setup pg_hba.conf, allow connections from web servers
+      template: src=pg_hba.conf dest={{ PGA_HB_CONF }}
+      notify:
+        - restart postgres
+    - name: PostgreSQL | Listen on all IPs
+      lineinfile:
+        dest: "{{ PG_CONF }}"
+        line: listen_addresses='*'
+      notify:
+        - restart postgres
+  rescue:
+    - name: Only run when a task blows up
+      debug: msg="boom!"
+  always:
+    - name: Always always run
+      debug: msg="Regardless of what happened, I'm running"
+  when: hostvars[groups['webservers][0]]['inventory_hostname'] != inventory_hostname
+```
 
 Blocks can be a useful way to deal with control flow, exceptions and cleanup. They always start with the `block` keyword, and support the `rescue` and `always` hooks.
-
 
 ## Templates (Jinja2)
 
@@ -446,33 +420,32 @@ For templating Ansible leverages the Python [Jinja2](http://jinja.pocoo.org/docs
 
 ### Syntax
 
-- {% raw %}`{% ... %}`{% endraw %} for statements
-- {% raw %}`{{ ... }}`{% endraw %} for expressions to print to the template output
-- {% raw %}`{# ... #}`{% endraw %} for comments not included in the template output
-- {% raw %}`# ... ##`{% endraw %} for line statements
-
+- `{% ... %}` for statements
+- `{{ ... }}` for expressions to print to the template output
+- `{# ... #}` for comments not included in the template output
+- `# ... ##` for line statements
 
 In action snippet:
 
-{% raw %}
-    local    all             postgres               peer
-    
+```
+local all postgres peer
+
     {% for host in groups['webservers'] %}
     host all all {{ hostvars[host]['inventory_hostname']}}/32 md5
     {% endfor %}
-{% endraw %}
+
+```
 
 ### Loops
 
 Great support for [control structures](http://jinja.pocoo.org/docs/dev/templates/#list-of-control-structures) exists, supporting the vanilla Python style `for...in` loop:
 
-{% raw %}
-    {# A list of webservers #}
-    {% for server in groups['webservers'] %}
-        web{{ loop.index }}.bm4cs.io
-    {% endfor %}
-    
-    
+```jinja
+{# A list of webservers #}
+{% for server in groups['webservers'] %}
+web{{ loop.index }}.bm4cs.io
+{% endfor %}
+
     {# A navigation menu #}
     <nav class="menu">
       <ul>
@@ -481,8 +454,8 @@ Great support for [control structures](http://jinja.pocoo.org/docs/dev/templates
         {% endfor %}
       </ul>
     </nav>
-{% endraw %}
 
+```
 
 ### Filters
 
@@ -490,7 +463,7 @@ Jinja2 [filters](http://jinja.pocoo.org/docs/dev/templates/#builtin-filters) are
 
 **groupby**
 
-{% raw %}
+```jinja
     <ul>
     {% for group in persons|groupby('gender') %}
         <li>{{ group.grouper }}<ul>
@@ -499,27 +472,23 @@ Jinja2 [filters](http://jinja.pocoo.org/docs/dev/templates/#builtin-filters) are
         {% endfor %}</ul></li>
     {% endfor %}
     </ul>
-{% endraw %}
+```
 
 **join**
 
-{% raw %}
+```jinja
     {{ [1, 2, 3]|join('|') }}
         -> 1|2|3
-    
+
     {{ [1, 2, 3]|join }}
         -> 123
 
     { webservers|join(', ') }}
-{% endraw %}
+```
 
 ### Escaping
 
 When you just want to dump out something completely, put them inbetween some `raw` and `endraw` tags.
-
-
-
-
 
 ## Variables and Facts
 
@@ -534,13 +503,11 @@ Some common ways to define variables:
 - host or host group scoped vars can be defined in the inventory
 - role specific vars in `/role/rolename/vars/`
 
-
 The existance of variables can be tested with a `when`:
 
     - name: Check foo_var is defined
       debug: msg="Yes, foo_var is defined"
       when: foo_var is defined
-
 
 Ansible will probe hosts defined in the inventory, and sniff out "facts" about them. Why is this useful? The `package` module for example, allows you to work with packages in an agnostic manner, insulating you from the nuances of `yum`, `apt`, `package`, `pacman` or whatever whacky package manager of the day is. Thanks to facts, the package module can dynamically target a variety of package managers and operating systems.
 
@@ -552,20 +519,20 @@ Facts can be leveraged throughout plays, and are represented as a dictionary cal
 
 Some fact testing examples:
 
-{% raw %}
-    - name: All the things
-      debug: msg={{ hostvars[inventory_hostname] }}
-    
+```yaml
+- name: All the things
+  debug: msg={{ hostvars[inventory_hostname] }}
+
     - name: However this machine is listed in the inventory
       debug: msg={{ inventory_hostname }}
-    
+
     - name: Just the hostname
       debug: msg={{ ansible_hostname }}
-    
+
     - name: Just the primary IPv4 address
       debug: msg={{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
-{% endraw %}
 
+```
 
 ### Built-in Variables
 
@@ -573,35 +540,36 @@ Some fact testing examples:
 - `group_names`: list of groups current host is a member of
 - `groups`: all groups in the inventory
 - `inventory_hostname`: current hostname that ansible is executing tasks on
-- `environment`: 
-
+- `environment`:
 
 ### Task Results and Control Flow
 
 The outcome of a task can be set as a variable using `register`, for example:
 
-    tasks:
-      - name: start nginx
-        service: name=nginx state=started
-        register: nginx_started
+```yaml
+tasks:
+  - name: start nginx
+    service: name=nginx state=started
+    register: nginx_started
+```
 
 The resulting data structure can be used for making downstream decisions:
 
-    - stat: path={{ app_dir }}
-      register: app_dir
-    
-    - name: Another task
-      module: arg1=123 arg2=456
-      when: app_dir.stat.exists == False
+```yaml
+- stat: path={{ app_dir }}
+  register: app_dir
 
+- name: Another task
+  module: arg1=123 arg2=456
+  when: app_dir.stat.exists == False
+```
 
 ### Globally Scoped
 
 For globally scoped variables, use the `group_vars/all` YAML file, for example:
 
-{% highlight yaml %}
+```yaml
 ---
-
 aws_region: ap-southeast-2
 aws_pubkey_name: "vim-ansible"
 
@@ -609,14 +577,13 @@ db_master_name: "ThinkDb"
 db_master_user: "su"
 db_master_pass: "chaching"
 db_conn_string: "Initial Catalog={{ db_master_name }}; User={{ db_master_user }}; Password={{ db_master_password }}"
-{% endhighlight %}
-
+```
 
 ### Playbook Scoped
 
 As `vars:` above the task blocks.
 
-{% highlight yaml %}
+```yaml
 --
 - hosts: web
   vars:
@@ -627,18 +594,16 @@ As `vars:` above the task blocks.
   tasks:
     - name: Install nginx.
       package: name=nginx state=latest
-{% endhighlight %}
-
+```
 
 ### Inventory File Variables
 
     [webservers]
     web1.evilcorp.com server_name="yin.evilcorp.com"
     web2.evilcorp.com server_name="yang.evilcorp.com"
-    
+
     [webservers:vars]
     web_home_path=/var/www/home/
-
 
 ### Command Line Vars
 
@@ -646,56 +611,52 @@ Using `--extra-vars` during invocation. This will clobber/override any variables
 
     ansible-playbook install_nginx.yml --extra-vars "version=1.01 website_url=www.bencode.io"
 
-
-
 ## Control Flow
 
 ### when
 
 Task runs if the "when" clause is truthy. Supported [tests](http://jinja.pocoo.org/docs/dev/templates/#builtin-tests) are consistent with Jinja2.
 
-{% highlight yaml %}
+```yaml
 - name: If host uses systemd, create unit file
   template: src=foo.service dest=/etc/systemd/system/foo.service
   when: systemd_installed.stat.exists
-{% endhighlight %}
+```
 
-{% raw %}
-    - block:
-      - name: PostgreSQL | Setup pg_hba.conf, allow connections from web servers
-        template: src=pg_hba.conf dest={{ PGA_HB_CONF }}
-        notify:
-          - restart postgres
-    
-      - name: PostgreSQL | Listen on all IPs
-        lineinfile:
-          dest: "{{ PG_CONF }}"
-          line: listen_addresses='*'
-        notify:
-          - restart postgres
-      when: hostvars[groups['webservers][0]]['inventory_hostname'] != inventory_hostname
-{% endraw %}
+```yaml
+block:
+  - name: PostgreSQL | Setup pg_hba.conf, allow connections from web servers
+    template: src=pg_hba.conf dest={{ PGA_HB_CONF }}
+    notify:
+      - restart postgres
+  - name: PostgreSQL | Listen on all IPs
+    lineinfile:
+      dest: "{{ PG_CONF }}"
+      line: listen_addresses='*'
+    notify:
+      - restart postgres
+when: hostvars[groups['webservers][0]]['inventory_hostname'] != inventory_hostname
+```
 
 ### register
 
 Stores the output of a task into a variable. Useful for downstream control flow.
 
-{% highlight yaml %}
+```yaml
 - stat: path=/var/www/public/foo
   register: foo_web_dir
 
 - shell: whoami
   register: user_name
-{% endhighlight %}
+```
 
 Consuming variables is easy with double handlebar syntax:
 
-{% raw %}
-    {{ user_name.stdout }}
-    {{ user_name.stderr }}
-    {{ foo_web_dir.stat.exists == False }}
-{% endraw %}
-
+```jinja
+{{ user_name.stdout }}
+{{ user_name.stderr }}
+{{ foo_web_dir.stat.exists == False }}
+```
 
 ### Iteration
 
@@ -705,27 +666,27 @@ When iterators (e.g. `with_items`, `with_dict`) are used with a `when`, the `whe
 
 Iterates over a list:
 
-{% raw %}
-    - name: Install essentials
-      package: name={{ item }} state=present
-      with_items:
-        - wget
-        - vim
-        - curl
-        - tmux
-{% endraw %}
+```yaml
+- name: Install essentials
+  package: name={{ item }} state=present
+  with_items:
+    - wget
+    - vim
+    - curl
+    - tmux
+```
 
 Supports list variables too.
 
-{% raw %}
-    with_items: "{{ my_list }}"
-{% endraw %}
+```
+with_items: "{{ my_list }}"
+```
 
 #### with_dict
 
 Iterates over a YAML hash:
 
-{% highlight yaml %}
+```yaml
 ---
 fruits:
   banana:
@@ -737,50 +698,49 @@ fruits:
   apple:
     awesome: 10
     cals: 52
-{% endhighlight %}
+```
 
 Using `with_dict` like this:
 
-{% raw %}
-    - name: Fruit pondering
-      debug: var="{{ item.key }} is {{ item.value.awesome }} out of 10, and has about {{ item.value.cals }} per serve."
-      with_dict: "{{ fruits }}"
-{% endraw %}
+```- name: Fruit pondering
+debug: var="{{ item.key }} is {{ item.value.awesome }} out of 10, and has about {{ item.value.cals }} per serve."
+with_dict: "{{ fruits }}"
+```
 
 #### with_nested
 
 Nested loops.
 
-{% raw %}
-    - name: Give users access to multiple databases
-      mysql_user: name={{ item[0] }} priv={{ item[1] }}.*:ALL append_privs=yes password=foo
-      with_nested:
-        - [ 'alice', 'bob', 'dave' ]
-        - [ 'clientdb', 'employeedb', 'providerdb', 'testdb' ]
-{% endraw %}
-
+```yaml
+- name: Give users access to multiple databases
+  mysql_user: name={{ item[0] }} priv={{ item[1] }}.\*:ALL append_privs=yes password=foo
+  with_nested:
+    - ["alice", "bob", "dave"]
+    - ["clientdb", "employeedb", "providerdb", "testdb"]
+```
 
 ### changed_when
 
 Gives you finer grained control over how a task reports that it has indeed changed. Some modules like `raw` or `shell` always report a change, because Ansible doesn't actually know if they resulted in a side effect or not.
 
-    - command: "apt-get upgrade -y"
-      register: apt_upgrade
-      changed_when: "'0 upgraded, 0 newly installed' not in apt_upgrade.stdout"
-
+```yaml
+- command: "apt-get upgrade -y"
+  register: apt_upgrade
+  changed_when: "'0 upgraded, 0 newly installed' not in apt_upgrade.stdout"
+```
 
 ### failed_when
 
 Same idea as `changed_when`, when its not clear if a task actually succeeded or failed:
 
-    - command: "ls /foo/bar/baz"
-      register: listing_output
-      failed_when: "'baz' not in listing_output.stderr"
-      ignore_errors: yes
+```yaml
+- command: "ls /foo/bar/baz"
+  register: listing_output
+  failed_when: "'baz' not in listing_output.stderr"
+  ignore_errors: yes
+```
 
 When you actually expect a task to produce `stderr`, you can ignore them with `ignore_errors`.
-
-
 
 ## Execution Strategies
 
@@ -817,7 +777,6 @@ Provided enough resources, will go full throttle on hosts as fast as possible.
       strategy: free
       tasks:
 
-
 ### Failure Percentage
 
 If a certain failure threshold is met (e.g. 5%), abort everything.
@@ -827,14 +786,12 @@ If a certain failure threshold is met (e.g. 5%), abort everything.
       serial:
         - 10%
 
-
 # Modules
 
 Ansible provides a [HUGE](http://docs.ansible.com/ansible/latest/modules/list_of_all_modules.html) ecosystem of modules. A module is specified after a given tasks` name, for example:
 
-{% highlight yaml %}
+```yaml
 ---
-
 - hosts: webserver
   vars:
     site_url: bm4cs.io
@@ -850,12 +807,10 @@ Ansible provides a [HUGE](http://docs.ansible.com/ansible/latest/modules/list_of
         src: "templates/website.conf"
         dest: "/etc/nginx/conf.d/{{ site_name }}.conf"
       notify:
-      - restart nginx
-{% endhighlight %}
+        - restart nginx
+```
 
 Can see the `package`, `file` and `template` modules in action, and the arguments they are fed.
-
-
 
 ## Bread & Butter Modules
 
@@ -866,7 +821,7 @@ Could use `apt`, `yum`, `pkg`, `rpm` directly, dont. Use [package](http://docs.a
 ### Files and Directories
 
 - `template`: run a jinja template, and copy the result to a location
-- `file`: CRUD files and directories. Important properties, are `state` (file, link, directory, hard, touch, absent) state=absent will delete, `recurse`, 
+- `file`: CRUD files and directories. Important properties, are `state` (file, link, directory, hard, touch, absent) state=absent will delete, `recurse`,
 - `lineinfile` and `blockinfile`: insert/update/remove a line (or block) of text content.
 - `copy`: copying local files to target/s
 - `fetch`: copying remote files from target/s to local
@@ -897,12 +852,6 @@ Could use `apt`, `yum`, `pkg`, `rpm` directly, dont. Use [package](http://docs.a
 - `rds`: AWS DB management
 - `lxc_container`: manage all things LXC container related
 
-
-
-
-
-
-
 # Debugging
 
 The `debug` module to the rescue.
@@ -918,10 +867,9 @@ Debug and `register` compliment each other, when you want to verify what data st
     - name: Debug uptime
       debug: var=tehuptime
 
-
 ## Verbosity
 
-A really handy way to dig into the underlying commands that Ansible actually throws at the inventory hosts, is by enabling *very very verbose* logging. When running Ansible can pass the `-v` or `-vv` or the very very verbose `-vvv` options.
+A really handy way to dig into the underlying commands that Ansible actually throws at the inventory hosts, is by enabling _very very verbose_ logging. When running Ansible can pass the `-v` or `-vv` or the very very verbose `-vvv` options.
 
 The `debug` module supports filtering on the verbosity level:
 
@@ -933,11 +881,6 @@ The `debug` module supports filtering on the verbosity level:
 
     - name: Debug verbosity 3
       debug: var=myuptime verbosity=3
-
-
-
-
-
 
 # Working Example Notes
 
@@ -951,9 +894,9 @@ Documenting what the playbook expects in `group_vars/all` is a good practice, fo
 
 Allowing the playbook to make some assumptions can greatly simplify things. For example, knowing that we are dealing with a single DB server, enables us to use the IP of the first DB server in inventory, for later binding into our web servers database connection strings, example:
 
-{% raw %}
-    db_server: "{{ hostvars[groups['dbservers'][0]]['ansible_default_ipv4']['address'] }}"
-{% endraw %}
+```
+db_server: "{{ hostvars[groups['dbservers'][0]]['ansible_default_ipv4']['address'] }}"
+```
 
 ## Same Host Multiple Roles
 
@@ -961,7 +904,7 @@ The same host can act as multiple roles, example:
 
     [web]
     10.1.3.1
-    
+
     [database]
     10.1.3.1
 
@@ -969,21 +912,11 @@ The same host can act as multiple roles, example:
 
 It's fine to consume variables just after declaring them, example:
 
-{% raw %}
-    PG_VERSION: "9.3"
-    PG_HBA_CONF: /etc/postgresql/{{ PG_VERSION }}/main/pg_hba.conf
-{% endraw %}
-
-
-
-
-
-
-
-
-
+```
+PG_VERSION: "9.3"
+PG_HBA_CONF: /etc/postgresql/{{ PG_VERSION }}/main/pg_hba.conf
+```
 
 # Resources
 
 [Dave Cohen's Hands On Ansible GitHub Repo](https://github.com/groovemonkey/hands-on-ansible)
-
