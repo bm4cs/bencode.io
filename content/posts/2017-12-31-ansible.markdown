@@ -1,10 +1,16 @@
 ---
 layout: post
+draft: false
 title: "Ansible"
+slug: "ansible"
 date: "2017-12-31 18:09:01"
+lastmod: "2017-12-31 18:09:01"
 comments: false
 categories:
   - linux
+tags:
+  - ansible
+  - devops
 ---
 
 > Ansible is a radically simple IT automation platform that makes your applications and systems easier to deploy. Avoid writing scripts or custom code to deploy and update your applications. Automate in a language that approaches plain English, using SSH, with no agents to install on remote systems.
@@ -451,14 +457,14 @@ Great support for [control structures](http://jinja.pocoo.org/docs/dev/templates
 web{{ loop.index }}.bm4cs.io
 {% endfor %}
 
-    {# A navigation menu #}
-    <nav class="menu">
-      <ul>
-        {% for item in navigation %}
-          <li><a href="{{ item.href }}">{{ item.label }}</a></li>
-        {% endfor %}
-      </ul>
-    </nav>
+{# A navigation menu #}
+<nav class="menu">
+  <ul>
+    {% for item in navigation %}
+      <li><a href="{{ item.href }}">{{ item.label }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
 
 ```
 
@@ -469,26 +475,26 @@ Jinja2 [filters](http://jinja.pocoo.org/docs/dev/templates/#builtin-filters) are
 **groupby**
 
 ```jinja
-    <ul>
-    {% for group in persons|groupby('gender') %}
-        <li>{{ group.grouper }}<ul>
-        {% for person in group.list %}
-            <li>{{ person.first_name }} {{ person.last_name }}</li>
-        {% endfor %}</ul></li>
-    {% endfor %}
-    </ul>
+<ul>
+{% for group in persons|groupby('gender') %}
+    <li>{{ group.grouper }}<ul>
+    {% for person in group.list %}
+        <li>{{ person.first_name }} {{ person.last_name }}</li>
+    {% endfor %}</ul></li>
+{% endfor %}
+</ul>
 ```
 
 **join**
 
 ```jinja
-    {{ [1, 2, 3]|join('|') }}
-        -> 1|2|3
+{{ [1, 2, 3]|join('|') }}
+    -> 1|2|3
 
-    {{ [1, 2, 3]|join }}
-        -> 123
+{{ [1, 2, 3]|join }}
+    -> 123
 
-    { webservers|join(', ') }}
+{ webservers|join(', ') }}
 ```
 
 ### Escaping
@@ -821,7 +827,7 @@ Can see the `package`, `file` and `template` modules in action, and the argument
 
 ### Package Management
 
-Could use `apt`, `yum`, `pkg`, `rpm` directly, dont. Use [package](http://docs.ansible.com/ansible/latest/modules/package_module.html#package) instead.
+Could use `pacman`, `apt`, `yum`, `pkg`, `rpm` directly, dont. Use [package](http://docs.ansible.com/ansible/latest/modules/package_module.html#package) instead.
 
 ### Files and Directories
 
