@@ -19,7 +19,10 @@ Ansible is Python 2 based and uses SSH to communicate with remote hosts; the onl
 - [Development Setup](#development-setup)
   - [LXC (Lexy) Primer](#lxc-lexy-primer)
   - [Installation](#installation)
-    - [Target Machine Requirements](#target-machine-requirements)
+    - [Managed Node Requirements](#managed-node-requirements)
+      - [Python 2 (or 3)](#python-2-or-3)
+      - [OpenSSH](#openssh)
+      - [Static IP](#static-ip)
     - [SSH Security](#ssh-security)
   - [ansible.cfg](#ansiblecfg)
   - [Priming a target host](#priming-a-target-host)
@@ -89,6 +92,8 @@ LXC was first released in 2008, and is an OS level virtualisation method for run
 
 ## Installation
 
+Follow the [docs](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+
 Bleeding edge:
 
     git clone https://github.com/ansible/ansible
@@ -97,17 +102,17 @@ Bleeding edge:
     dnf install python-jinja2 python-paramiko python-yaml sshpass
     source ./hacking/env-setup
 
-### Target Machine Requirements
+### Managed Node Requirements
 
-Only requirements are Python 2 and OpenSSH.
+Only requirements are Python and OpenSSH.
 
-**Python 2**
+#### Python 2 (or 3)
 
 If `python --version` doesn't spit out a sane version e.g. 2.7.5, then install it:
 
     yum install python
 
-**OpenSSH**
+#### OpenSSH
 
 CentOS `sshd` is already installed. To configure it:
 
@@ -116,7 +121,7 @@ CentOS `sshd` is already installed. To configure it:
 1. `systemctl start sshd.service`
 1. `netstat -tupln | grep :22`
 
-**Static IP**
+#### Static IP
 
 Edit `/etc/sysconfig/network-scripts/ifcfg-eth0` (or that relevent to the network device of concern):
 
