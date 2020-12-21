@@ -4,7 +4,7 @@ draft: false
 title: "Kubernetes"
 slug: "k8s"
 date: "2020-08-18 20:11:30"
-lastmod: "2020-12-17 22:14:51"
+lastmod: "2020-12-21 21:45:20"
 comments: false
 categories:
   - linux
