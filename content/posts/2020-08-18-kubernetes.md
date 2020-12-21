@@ -51,9 +51,19 @@ tags:
     - [emptyDir volume example](#emptydir-volume-example)
   - [PeristentVolumes and PeristentVolumesClaims](#peristentvolumes-and-peristentvolumesclaims)
   - [StorageClasses](#storageclasses)
-- [ConfigMaps and Secrets](#configmaps-and-secrets)
+- [Managing configuration with ConfigMaps and Secrets](#managing-configuration-with-configmaps-and-secrets)
   - [Defining ConfigMaps](#defining-configmaps)
   - [Consuming ConfigMaps](#consuming-configmaps)
+  - [Secrets](#secrets)
+    - [Secret best practices](#secret-best-practices)
+  - [Storing Secrets](#storing-secrets)
+  - [Using Secrets](#using-secrets)
+    - [Secrets as environment variables](#secrets-as-environment-variables)
+    - [Secrets as files](#secrets-as-files)
+- [Troubleshooting](#troubleshooting)
+  - [Logs](#logs)
+  - [Configuration verification](#configuration-verification)
+  - [Shell into Pod container](#shell-into-pod-container)
 - [The API](#the-api)
 - [General kubectl](#general-kubectl)
 - [Waaay cool](#waaay-cool)
@@ -705,7 +715,7 @@ spec:
             claimName: mongo-pvc
 ```
 
-# ConfigMaps and Secrets
+# Managing configuration with ConfigMaps and Secrets
 
 `ConfigMaps` store configuration information and surface it to containers.
 
@@ -833,6 +843,114 @@ spec:
             path: "user-interface.properties"
 ```
 
+## Secrets
+
+[Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) let you store and manage sensitive information, such as passwords, OAuth tokens, and ssh keys.
+
+- `Secrets` can be mounted into `Pods` as files, or environment variables.
+- Secrets are only released to Nodes running Pods that request the Secret
+- Secrets are stored in `tmpfs` (in memory) on only Nodes that require them
+
+### Secret best practices
+
+- Enabled encryption at rest for cluster data
+- Limit access to `etcd` to only admins
+- TLS for `etcd` peer-to-peer communication
+- Secret manifest defintions (YAML) are only base64 encoded, don't blindly store these in Git and so on.
+- By design Pods can get to Secrets, therefore who can create Pods must be locked down with RBAC.
+
+## Storing Secrets
+
+Close compatibility to dealing with `ConfigMaps`.
+
+- can represent entire files (ex: JSON, XML, YAML) or specific key/value pairs
+- values can be provided with [`kubectl`](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/) (CLI) ex:
+  - `--from-literal`: `kubectl create secret generic dev-db-secret --from-literal=username=devuser --from-literal=password='S!B\*d$zDsb='`
+  - `--from-file`: `kubectl create secret generic db-user-pass --from-file=username=./username.txt --from-file=password=./password.txt`
+- There are a bunch of Secret types (ex: token, TLS), that are domain specific: `kubectl create secret tls tls-secret --cert=path/to/tls.cer --key=path/to/tls.key`
+- `Secret` manifest (YAML) are supported, with values always being base64 encoded:
+
+```yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  username: YWRtaW4=
+  password: MWYyZDFlMmU2N2Rm
+```
+
+## Using Secrets
+
+- list all `kubectl get secrets`
+- detailed YAML for specific secret `kubectl get secrets db-password -o yaml`
+- to decode a Secret is easy `kubectl get secret db-user-pass -o jsonpath='{.data}'` then wash the secret text through `base64 --decode` like so `echo 'MWYyZDFlMmU2N2Rm' | base64 --decode`
+
+### Secrets as environment variables
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-env-pod
+spec:
+  containers:
+    - name: mycontainer
+      image: redis
+      env:
+        - name: SECRET_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: username
+        - name: SECRET_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: password
+  restartPolicy: Never
+```
+
+### Secrets as files
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+    - name: mypod
+      image: redis
+      volumeMounts:
+        - name: foo
+          mountPath: "/etc/foo"
+          readOnly: true
+  volumes:
+    - name: foo
+      secret:
+        secretName: mysecret
+```
+
+# Troubleshooting
+
+## Logs
+
+- view all Pod level logs `kubectl logs [pod-name]`
+- view specific container logs for a Pod `kubectl logs [pod-name] -c [container-name]`
+- for an old (possibly deallocated) Pod `kubectl logs -p [pod-name]`
+- tail a Pod's logs `kubectl logs -f [pod-name]`
+
+## Configuration verification
+
+- `kubectl describe pod [pod-name]`
+- `kubectl get pod [pod-name] -o yaml`
+
+## Shell into Pod container
+
+- `kubectl exec [pod-name] -it sh`
+
 # The API
 
 [Kubernetes API reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/)
@@ -859,6 +977,9 @@ Versioning is taken very seriously, with the goal of not breaking compatibility.
 
 - [Canary deployments](https://kubernetes.io/docs/concepts/cluster-administration/manage-deployment/#canary-deployments)
 - Services when given a `.metadata.name`, its registered into the internal DNS within the cluster automatically!
+- [Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) added in 1.14, is a tool for customising k8s configurations, by generating resources from other sources such as Secrets and ConfigMaps, setting cross-cutting fields for resources, composing and customizing collections of resources through bases and overlays.
+- Namespaces?
+- `kubectl apply -f k8s/` supports taking a directory name, full of various YAML files, and create all objects it finds
 
 # Samples
 
@@ -985,3 +1106,4 @@ TODO: web UI dashboard, local image registry,
 - [Useful GitHub repo with samples](https://github.com/DanWahlin/DockerAndKubernetesCourseCode)
 - [NGINX Ingress Controller Documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/)
 - [Official examples GitHub repo](https://github.com/kubernetes/examples/)
+- [Dockerfile instruction reference](https://docs.docker.com/engine/reference/builder/)
