@@ -4,7 +4,7 @@ draft: false
 title: "Kubernetes"
 slug: "k8s"
 date: "2020-08-18 20:11:30"
-lastmod: "2020-12-13 22:02:34"
+lastmod: "2020-12-17 22:14:51"
 comments: false
 categories:
   - linux
@@ -14,8 +14,6 @@ tags:
 ---
 
 > The name Kubernetes originates from Greek, meaning helmsman or pilot.
-
-<!-- vim-markdown-toc Marked -->
 
 - [Terminology](#terminology)
 - [Essentials](#essentials)
@@ -38,6 +36,7 @@ tags:
     - [Blue Green](#blue-green)
     - [Canary](#canary)
     - [Rollbacks](#rollbacks)
+  - [StatefulSets](#statefulsets)
 - [Services](#services)
   - [Service Types](#service-types)
   - [Port forwarding take 2](#port-forwarding-take-2)
@@ -50,18 +49,20 @@ tags:
     - [Volume Types](#volume-types)
     - [Viewing a Pods volumes](#viewing-a-pods-volumes)
     - [emptyDir volume example](#emptydir-volume-example)
-  - [PeristentVolumes](#peristentvolumes)
-  - [PeristentVolumesClaims](#peristentvolumesclaims)
+  - [PeristentVolumes and PeristentVolumesClaims](#peristentvolumes-and-peristentvolumesclaims)
   - [StorageClasses](#storageclasses)
+- [ConfigMaps and Secrets](#configmaps-and-secrets)
+  - [Defining ConfigMaps](#defining-configmaps)
+  - [Consuming ConfigMaps](#consuming-configmaps)
 - [The API](#the-api)
 - [General kubectl](#general-kubectl)
 - [Waaay cool](#waaay-cool)
 - [Samples](#samples)
   - [node.js app](#nodejs-app)
 - [microk8s](#microk8s)
+  - [Shell improvements](#shell-improvements)
+  - [PersistentVolume storage location](#persistentvolume-storage-location)
 - [Resources](#resources)
-
-<!-- vim-markdown-toc -->
 
 # Terminology
 
@@ -334,6 +335,29 @@ Deploying a canary involves deploying the new app side by side the old version, 
 
 Reinstate the previous version of the deployment.
 
+## StatefulSets
+
+> Manages the deployment and scaling of a set of Pods, and provides guarantees about the ordering and uniqueness of these Pods.
+
+`Deployment` or `ReplicaSet` workload types are stateless, in that `Pods` when provisioned or rescheduled are:
+
+- not assigned stable identifier
+- not deployed in any particular order
+- not deleted in any particular order
+- not scaled in any paricular order
+
+A StatefulSet is almost identitical to a Deployment (i.e. based on the same container spec), however it:
+
+- maintains a sticky identity for each Pod
+- provides ordered deployment, deletion or scaling
+
+Use cases:
+
+- Stable, unique network identifiers
+- Stable, persistent storage
+- Ordered, graceful deployment and scaling
+- Ordered, automated rolling updates
+
 # Services
 
 An abstraction to expose an app running on a set of _Pods_ as a network service.
@@ -499,14 +523,315 @@ spec:
       emptyDir: {} #lifecycle tied to Pod
 
 # kubectl apply -f nginx-alpine-emptyDir.pod.yml
-# kubectl port-forward nginx-alpine-volume 8080:80
+# kubectl port-forward nginx-alpine-volume 8080:80 --address 0.0.0.0
 ```
 
-## PeristentVolumes
+## PeristentVolumes and PeristentVolumesClaims
 
-## PeristentVolumesClaims
+A _PersistentVolume_ is provisioned by an administrator (i.e. not dynamically as part of a _Deployment_), is cluster wide storage unit, that has a lifecycle independent from a _Pod_.
+
+A _PeristentVolumesClaim_ is simply a request to make use of a particular _PersistentVolume_.
+
+- A _PersistentVolume_ is available to a _Pod_, even if reallocated to another _Node_
+- Relies on an underlying storage provider (GlusterFS, Ceph, NFS, cloud storage, etc)
+- A _Pod_ binds to a _PersistentVolume_ by issuing a _PersistentVolumeClaim_
 
 ## StorageClasses
+
+A way to manage storage as "profiles" (ex: a backup profile vs a low latency profile).
+
+- Can dynamically provision storage as needed (unlike a _PersistentVolume_)
+- Acts a storage template
+- If enabled, admins dont have to get involved to create _PeristentVolumes_ in advance
+
+StorageClass workflow:
+
+1. Define a `StorageClass` (YAML)
+2. Create a `PeristentVolumesClaim` that references the `StorageClass`
+3. `StorageClass` provisioner will create `PersistentVolume`
+4. After the actual storage is creatd for the `PersistentVolume`, the `PersistentVolume` is connected up to the original `PeristentVolumesClaim` (from step 2)
+
+```yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: mongo-env
+  name: mongo-env
+data:
+  MONGODB_DBNAME: myMongoDb
+  #TODO: Use Secret
+  MONGODB_PASSWORD: password
+  MONGODB_ROLE: readWrite
+  #TODO: Use Secret
+  MONGODB_ROOT_PASSWORD: password
+  MONGODB_ROOT_ROLE: root
+  MONGODB_ROOT_USERNAME: dbadmin
+  MONGODB_USERNAME: webrole
+
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: local-storage
+provisioner: kubernetes.io/no-provisioner
+# The reclaim policy (keep storage around forevs) applies to the persistent volumes not the storage class itself
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+
+---
+# Note: While a local storage PV works, going with a more durable solution (NFS, cloud option, etc.) is recommended
+# https://kubernetes.io/blog/2018/04/13/local-persistent-volumes-beta/
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+spec:
+  capacity:
+    storage: 10Gi
+  # volumeMode block feature gate enabled by default with 1.13+
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  # StorageClass has a reclaim policy default so it'll be "inherited" by the PV
+  # persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /tmp/data/db
+  # the node this storage will be bound to
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - foobox002
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  selector:
+    app: mongo
+  ports:
+    - port: 27017
+      targetPort: 27017
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: mongo
+  name: mongo
+spec:
+  serviceName: mongo
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - image: mongo
+          name: mongo
+          ports:
+            - containerPort: 27017
+          command:
+            - mongod
+            - "--auth"
+          resources: {}
+          volumeMounts:
+            - name: mongo-volume
+              mountPath: /data/db
+          env:
+            - name: MONGODB_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: MONGODB_DBNAME
+                  name: mongo-env
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: MONGODB_PASSWORD
+                  name: mongo-env
+            - name: MONGODB_ROLE
+              valueFrom:
+                configMapKeyRef:
+                  key: MONGODB_ROLE
+                  name: mongo-env
+            - name: MONGODB_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: MONGODB_ROOT_PASSWORD
+                  name: mongo-env
+            - name: MONGODB_ROOT_ROLE
+              valueFrom:
+                configMapKeyRef:
+                  key: MONGODB_ROOT_ROLE
+                  name: mongo-env
+            - name: MONGODB_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: MONGODB_ROOT_USERNAME
+                  name: mongo-env
+            - name: MONGODB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: MONGODB_USERNAME
+                  name: mongo-env
+      volumes:
+        - name: mongo-volume
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+```
+
+# ConfigMaps and Secrets
+
+`ConfigMaps` store configuration information and surface it to containers.
+
+- configuration is surfaced through to `Pods` as they are scheduled throughout the cluster
+- can represent entire files (ex: JSON, XML, YAML) or specific key/value pairs
+- values can be provided with `kubectl` (CLI) ex:
+  - `--from-file`: `kubectl create configmap app-settings --from-file=settings.properties` this will implicitly add the file name as a root key into the `ConfigMap` data
+  - `--from-env-file`: `kubectl create cm app-settings --from-env-file=settings.properties` will NOT add file name as root key, will quote non-string values.
+  - `--from-literal`: `kubectl create configmap app-settings --from-literal=apiUrl=https://my-api --from-literal=otherKey=otherValue --from-literal=count=50`
+- `ConfigMaps` are first class object type and can be defined with a manifest (YAML) like other k8s objects i.e. `kubectl apply -f settings.configmap.yml`
+
+## Defining ConfigMaps
+
+When adding a raw config file using `kubectl` and `--from-file`, note the file name is used as key for values:
+
+`kubectl create configmap game-config --from-file=game.settings`
+
+```yml
+apiVersion: v1
+kind: ConfigMap
+data:
+  game.config: |-
+    enemies=aliens
+    lives=3
+    enemies.cheat=true
+    enemies.cheat.level=noGoodRotten
+```
+
+Hand crafting the manifest work nicely, here some key/values and files are defined:
+
+```yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-demo
+data:
+  # property-like keys; each key maps to a simple value
+  player_initial_lives: "3"
+  ui_properties_file_name: "user-interface.properties"
+
+  # file-like keys
+  game.properties: |
+    enemy.types=aliens,monsters
+    player.maximum-lives=5
+  user-interface.properties: |
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true
+```
+
+## Consuming ConfigMaps
+
+To examine a `ConfigMap` as its manifest definition use `kubectl get configmap game-config -o yaml`
+
+There are 4 ways to consume `ConfigMaps` from `Pods`:
+
+1. Inside a container command and args
+2. Environment variables for a container
+3. Add as a file in read-only volume, for application to read
+4. Write code to run within the `Pod` that uses the k8s API to read a `ConfigMap`
+
+`Pods` can reference specific `ConfigMap` keys:
+
+```yml
+- name: UI_PROPERTIES_FILE_NAME
+    valueFrom:
+    configMapKeyRef:
+        name: game-demo
+        key: ui_properties_file_name
+```
+
+Or just expose every key defined in the `ConfigMap` as a corresponding container environment variable using the `envFrom` directive:
+
+```yml
+spec:
+  containers:
+    - name: demo
+      image: alpine
+      command: ["sleep", "3600"]
+      envFrom:
+        - configMapRef:
+          name: game-demo
+```
+
+Complete example:
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-demo-pod
+spec:
+  containers:
+    - name: demo
+      image: alpine
+      command: ["sleep", "3600"]
+      env:
+        # Define the environment variable
+        - name: PLAYER_INITIAL_LIVES # Notice that the case is different here
+          # from the key name in the ConfigMap.
+          valueFrom:
+            configMapKeyRef:
+              name: game-demo # The ConfigMap this value comes from.
+              key: player_initial_lives # The key to fetch.
+        - name: UI_PROPERTIES_FILE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: game-demo
+              key: ui_properties_file_name
+      volumeMounts:
+        - name: config
+          mountPath: "/config"
+          readOnly: true
+  volumes:
+    # You set volumes at the Pod level, then mount them into containers inside that Pod
+    - name: config
+      configMap:
+        # Provide the name of the ConfigMap you want to mount.
+        name: game-demo
+        # An array of keys from the ConfigMap to create as files
+        items:
+          - key: "game.properties"
+            path: "game.properties"
+          - key: "user-interface.properties"
+            path: "user-interface.properties"
+```
 
 # The API
 
@@ -624,12 +949,33 @@ Create deployment YAML for v2 (just change the image from `node-app:1.0` to `nod
 
 Love this distribution, which just works.
 
+## Shell improvements
+
 ```bash
 alias kubectl="microk8s kubectl"
 alias mkctl="microk8s kubectl"
 alias k="microk8s kubectl"
 complete -F __start_kubectl k
 ```
+
+## PersistentVolume storage location
+
+[How to change microk8s kubernetes storage location](https://stackoverflow.com/questions/63803171/how-to-change-microk8s-kubernetes-storage-location)
+
+[Microk8s storage configuration](https://discuss.kubernetes.io/t/microk8s-storage-configuration/8829)
+
+By default uses `/var/snap/microk8s/common/var/lib/containerd` and `/var/snap/microk8s/common/run/`.
+
+Edit `/var/snap/microk8s/current/args/containerd` and point the `--root` and `--state` to the volume you want. Here is an example that targets `/mnt`:
+
+```
+--config ${SNAP_DATA}/args/containerd.toml
+--root /mnt/var/lib/containerd
+--state /mnt/run/containerd
+--address ${SNAP_COMMON}/run/containerd.sock
+```
+
+TODO: web UI dashboard, local image registry,
 
 # Resources
 
@@ -638,3 +984,4 @@ complete -F __start_kubectl k
 - [Kubernetes API reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/)
 - [Useful GitHub repo with samples](https://github.com/DanWahlin/DockerAndKubernetesCourseCode)
 - [NGINX Ingress Controller Documentation](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/)
+- [Official examples GitHub repo](https://github.com/kubernetes/examples/)

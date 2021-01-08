@@ -19,9 +19,6 @@ With Ansible and its amazing [module](http://docs.ansible.com/ansible/latest/mod
 
 Ansible is Python 2 based and uses SSH to communicate with remote hosts; the only prerequisites.
 
-# Contents
-
-- [Contents](#contents)
 - [Development Setup](#development-setup)
   - [LXC (Lexy) Primer](#lxc-lexy-primer)
   - [Installation](#installation)
@@ -32,7 +29,8 @@ Ansible is Python 2 based and uses SSH to communicate with remote hosts; the onl
     - [SSH Security](#ssh-security)
   - [ansible.cfg](#ansiblecfg)
   - [Priming a target host](#priming-a-target-host)
-  - [````yaml](#yaml)
+    - [prepare_ansible_target.yml](#prepare_ansible_targetyml)
+  - [````yml](#yml)
 - [Run with ansible-playbook <filename> -k](#run-with-ansible-playbook-filename--k)
 - [(make sure to add the IPs of machines you want to manage to /etc/ansible/hosts first)](#make-sure-to-add-the-ips-of-machines-you-want-to-manage-to-etcansiblehosts-first)
   - [Hosts (Inventory) File](#hosts-inventory-file)
@@ -73,12 +71,14 @@ Ansible is Python 2 based and uses SSH to communicate with remote hosts; the onl
     - [Files and Directories](#files-and-directories)
     - [System](#system)
     - [Miscellaneous](#miscellaneous)
-- [Debugging](#debugging)
+- [Cool things](#cool-things)
+  - [Debugging](#debugging)
   - [Verbosity](#verbosity)
-- [Working Example Notes](#working-example-notes)
   - [Document!](#document)
   - [Same Host Multiple Roles](#same-host-multiple-roles)
   - [Variable Things](#variable-things)
+  - [Template a block of multiline text](#template-a-block-of-multiline-text)
+  - [Private SSH key passphrases](#private-ssh-key-passphrases)
 - [Resources](#resources)
 
 # Development Setup
@@ -179,11 +179,11 @@ The main configuration. The probe path to find one is:
 
 ## Priming a target host
 
-Typically new hosts need to be "primed" to support being an Ansible target; installing a Python 2 runtime, and bedding in the SSH public key of user that Ansible will be running under. Suprisingly this initial setup can itself be achieved using a playbook (tip: disabling `gather_facts` prevents Ansible reaching out to Python, which is non-existant at this point):
+Typically new hosts need to be "primed" to support being an Ansible target; installing a Python 2 runtime, and bedding in the SSH public key of user that Ansible will be running under. Suprisingly this initial setup can itself be achieved using a playbook (tip: disabling `gather_facts` prevents Ansible reaching out to Python, which is non-existant at this point).
 
-**prepare_ansible_target.yml**
+### prepare_ansible_target.yml
 
-````yaml
+````yml
 ---
 # Run with ansible-playbook <filename> -k
 #   (make sure to add the IPs of machines you want to manage to /etc/ansible/hosts first)
@@ -438,7 +438,7 @@ For templating Ansible leverages the Python [Jinja2](http://jinja.pocoo.org/docs
 
 In action snippet:
 
-```
+```jinja
 local all postgres peer
 
     {% for host in groups['webservers'] %}
@@ -863,7 +863,9 @@ Could use `pacman`, `apt`, `yum`, `pkg`, `rpm` directly, dont. Use [package](htt
 - `rds`: AWS DB management
 - `lxc_container`: manage all things LXC container related
 
-# Debugging
+# Cool things
+
+## Debugging
 
 The `debug` module to the rescue.
 
@@ -892,8 +894,6 @@ The `debug` module supports filtering on the verbosity level:
 
     - name: Debug verbosity 3
       debug: var=myuptime verbosity=3
-
-# Working Example Notes
 
 ## Document!
 
@@ -928,6 +928,24 @@ PG_VERSION: "9.3"
 PG_HBA_CONF: /etc/postgresql/{{ PG_VERSION }}/main/pg_hba.conf
 ```
 
+## Template a block of multiline text
+
+```
+- name: /etc/enviroment proxy server settings
+  blockinfile:
+    dest: /etc/environment
+    block: "{{ lookup('template', 'etc-profile') }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+```
+
+## Private SSH key passphrases
+
+Run `ssh-agent`.
+
 # Resources
 
 [Dave Cohen's Hands On Ansible GitHub Repo](https://github.com/groovemonkey/hands-on-ansible)
+
+```
+
+```
