@@ -7,10 +7,10 @@ date: "2017-12-31 18:09:01"
 lastmod: "2017-12-31 18:09:01"
 comments: false
 categories:
-    - linux
+  - linux
 tags:
-    - ansible
-    - devops
+  - ansible
+  - devops
 ---
 
 > Ansible is a radically simple IT automation platform that makes your applications and systems easier to deploy. Avoid writing scripts or custom code to deploy and update your applications. Automate in a language that approaches plain English, using SSH, with no agents to install on remote systems.
@@ -19,61 +19,67 @@ With Ansible and its amazing [module](http://docs.ansible.com/ansible/latest/mod
 
 Ansible is Python 2 based and uses SSH to communicate with remote hosts; the only prerequisites.
 
--   [Development Setup](#development-setup)
-    -   [LXC (Lexy) Primer](#lxc-lexy-primer)
-    -   [Installation](#installation)
-        -   [Target Machine Requirements](#target-machine-requirements)
-        -   [SSH Security](#ssh-security)
-    -   [ansible.cfg](#ansiblecfg)
-    -   [Priming a target host](#priming-a-target-host)
-        -   [prepare_ansible_target.yml](#prepare_ansible_targetyml)
--   [Run with ansible-playbook <filename> -k](#run-with-ansible-playbook-filename--k)
--   [(make sure to add the IPs of machines you want to manage to /etc/ansible/hosts first)](#make-sure-to-add-the-ips-of-machines-you-want-to-manage-to-etcansiblehosts-first)
-    -   [Hosts (Inventory) File](#hosts-inventory-file)
--   [Adhoc Commands](#adhoc-commands)
-    -   [Examples](#examples)
--   [Playbooks](#playbooks)
-    -   [Playbook Structure](#playbook-structure)
-    -   [Tasks](#tasks)
-    -   [Blocks](#blocks)
-    -   [Templates (Jinja2)](#templates-jinja2)
-        -   [Syntax](#syntax)
-        -   [Loops](#loops)
-        -   [Filters](#filters)
-        -   [Escaping](#escaping)
-    -   [Variables and Facts](#variables-and-facts)
-        -   [Built-in Variables](#built-in-variables)
-        -   [Task Results and Control Flow](#task-results-and-control-flow)
-        -   [Globally Scoped](#globally-scoped)
-        -   [Playbook Scoped](#playbook-scoped)
-        -   [Inventory File Variables](#inventory-file-variables)
-        -   [Command Line Vars](#command-line-vars)
-    -   [Control Flow](#control-flow)
-        -   [when](#when)
-        -   [register](#register)
-        -   [Iteration](#iteration)
-            -   [with_items](#with_items)
-            -   [with_dict](#with_dict)
-            -   [with_nested](#with_nested)
-        -   [changed_when](#changed_when)
-        -   [failed_when](#failed_when)
-    -   [Execution Strategies](#execution-strategies)
-        -   [Serial (default)](#serial-default)
-        -   [Free (go nuts)](#free-go-nuts)
-        -   [Failure Percentage](#failure-percentage)
--   [Modules](#modules)
-    -   [Bread & Butter Modules](#bread--butter-modules)
-        -   [Package Management](#package-management)
-        -   [Files and Directories](#files-and-directories)
-        -   [System](#system)
-        -   [Miscellaneous](#miscellaneous)
--   [Debugging](#debugging)
-    -   [Verbosity](#verbosity)
--   [Working Example Notes](#working-example-notes)
-    -   [Document!](#document)
-    -   [Same Host Multiple Roles](#same-host-multiple-roles)
-    -   [Variable Things](#variable-things)
--   [Resources](#resources)
+- [Development Setup](#development-setup)
+  - [LXC (Lexy) Primer](#lxc-lexy-primer)
+  - [Installation](#installation)
+    - [Managed Node Requirements](#managed-node-requirements)
+      - [Python 2 (or 3)](#python-2-or-3)
+      - [OpenSSH](#openssh)
+      - [Static IP](#static-ip)
+    - [SSH Security](#ssh-security)
+  - [ansible.cfg](#ansiblecfg)
+  - [Priming a target host](#priming-a-target-host)
+    - [prepare_ansible_target.yml](#prepare_ansible_targetyml)
+  - [````yml](#yml)
+- [Run with ansible-playbook <filename> -k](#run-with-ansible-playbook-filename--k)
+- [(make sure to add the IPs of machines you want to manage to /etc/ansible/hosts first)](#make-sure-to-add-the-ips-of-machines-you-want-to-manage-to-etcansiblehosts-first)
+  - [Hosts (Inventory) File](#hosts-inventory-file)
+- [Adhoc Commands](#adhoc-commands)
+  - [Examples](#examples)
+- [Playbooks](#playbooks)
+  - [Playbook Structure](#playbook-structure)
+  - [Tasks](#tasks)
+  - [Blocks](#blocks)
+  - [Templates (Jinja2)](#templates-jinja2)
+    - [Syntax](#syntax)
+    - [Loops](#loops)
+    - [Filters](#filters)
+    - [Escaping](#escaping)
+  - [Variables and Facts](#variables-and-facts)
+    - [Built-in Variables](#built-in-variables)
+    - [Task Results and Control Flow](#task-results-and-control-flow)
+    - [Globally Scoped](#globally-scoped)
+    - [Playbook Scoped](#playbook-scoped)
+    - [Inventory File Variables](#inventory-file-variables)
+    - [Command Line Vars](#command-line-vars)
+  - [Control Flow](#control-flow)
+    - [when](#when)
+    - [register](#register)
+    - [Iteration](#iteration)
+      - [with_items](#with_items)
+      - [with_dict](#with_dict)
+      - [with_nested](#with_nested)
+    - [changed_when](#changed_when)
+    - [failed_when](#failed_when)
+  - [Execution Strategies](#execution-strategies)
+    - [Serial (default)](#serial-default)
+    - [Free (go nuts)](#free-go-nuts)
+    - [Failure Percentage](#failure-percentage)
+- [Modules](#modules)
+  - [Bread & Butter Modules](#bread--butter-modules)
+    - [Package Management](#package-management)
+    - [Files and Directories](#files-and-directories)
+    - [System](#system)
+    - [Miscellaneous](#miscellaneous)
+- [Cool things](#cool-things)
+  - [Debugging](#debugging)
+  - [Verbosity](#verbosity)
+  - [Document!](#document)
+  - [Same Host Multiple Roles](#same-host-multiple-roles)
+  - [Variable Things](#variable-things)
+  - [Template a block of multiline text](#template-a-block-of-multiline-text)
+  - [Private SSH key passphrases](#private-ssh-key-passphrases)
+- [Resources](#resources)
 
 # Development Setup
 
@@ -92,6 +98,8 @@ LXC was first released in 2008, and is an OS level virtualisation method for run
 
 ## Installation
 
+Follow the [docs](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+
 Bleeding edge:
 
     git clone https://github.com/ansible/ansible
@@ -100,17 +108,17 @@ Bleeding edge:
     dnf install python-jinja2 python-paramiko python-yaml sshpass
     source ./hacking/env-setup
 
-### Target Machine Requirements
+### Managed Node Requirements
 
-Only requirements are Python 2 and OpenSSH.
+Only requirements are Python and OpenSSH.
 
-**Python 2**
+#### Python 2 (or 3)
 
 If `python --version` doesn't spit out a sane version e.g. 2.7.5, then install it:
 
     yum install python
 
-**OpenSSH**
+#### OpenSSH
 
 CentOS `sshd` is already installed. To configure it:
 
@@ -119,7 +127,7 @@ CentOS `sshd` is already installed. To configure it:
 1. `systemctl start sshd.service`
 1. `netstat -tupln | grep :22`
 
-**Static IP**
+#### Static IP
 
 Edit `/etc/sysconfig/network-scripts/ifcfg-eth0` (or that relevent to the network device of concern):
 
@@ -171,11 +179,11 @@ The main configuration. The probe path to find one is:
 
 ## Priming a target host
 
-Typically new hosts need to be "primed" to support being an Ansible target; installing a Python 2 runtime, and bedding in the SSH public key of user that Ansible will be running under. Suprisingly this initial setup can itself be achieved using a playbook (tip: disabling `gather_facts` prevents Ansible reaching out to Python, which is non-existant at this point):
+Typically new hosts need to be "primed" to support being an Ansible target; installing a Python 2 runtime, and bedding in the SSH public key of user that Ansible will be running under. Suprisingly this initial setup can itself be achieved using a playbook (tip: disabling `gather_facts` prevents Ansible reaching out to Python, which is non-existant at this point).
 
 ### prepare_ansible_target.yml
 
-```yaml
+````yml
 ---
 # Run with ansible-playbook <filename> -k
 #   (make sure to add the IPs of machines you want to manage to /etc/ansible/hosts first)
@@ -217,7 +225,7 @@ Typically new hosts need to be "primed" to support being an Ansible target; inst
         raw: update-locale LANG=en_US.UTF-8
       # only run this task block when we've just changed /etc/environment
       when: newenv.changed
-```
+````
 
 ## Hosts (Inventory) File
 
@@ -305,10 +313,10 @@ Showing off the `-B` (timeout) and `-P` (poll time) arguments:
 
 Core concepts:
 
--   **Tasks**: an individual piece of desired state, such as ensuring the latest version of a package is installed. If useful tasks can be grouped into _blocks_.
--   **Templates**: a base file that can have state injected into it, annotated with handlebar style tags thanks to the [Jinja template engine](http://jinja.pocoo.org/) e.g. `{{ site_name }}`
--   **Handlers**: a hook that is triggered as late in the playbook run as possible (e.g. if multiple handlers to restart nginx are wired up, Ansible will minimise the number of restarts by deferring the trigger until the very last task that requires a restart is complete).
--   **Roles**: clumps of reusable tasks, templates and handlers; allowing higher level of abstraction (e.g. the web role, caching role, database role and so on).
+- **Tasks**: an individual piece of desired state, such as ensuring the latest version of a package is installed. If useful tasks can be grouped into _blocks_.
+- **Templates**: a base file that can have state injected into it, annotated with handlebar style tags thanks to the [Jinja template engine](http://jinja.pocoo.org/) e.g. `{{ site_name }}`
+- **Handlers**: a hook that is triggered as late in the playbook run as possible (e.g. if multiple handlers to restart nginx are wired up, Ansible will minimise the number of restarts by deferring the trigger until the very last task that requires a restart is complete).
+- **Roles**: clumps of reusable tasks, templates and handlers; allowing higher level of abstraction (e.g. the web role, caching role, database role and so on).
 
 Playbooks are run with the `ansible-playbook` command, like so:
 
@@ -346,15 +354,15 @@ A real world playbook (`playbook.yml`) might look like this:
   hosts: dbservers
   remote_user: ansible
   roles:
-      - common
-      - database
+    - common
+    - database
 
 - name: Web Server Setup
   hosts: webservers
   remote_user: ansible
   roles:
-      - common
-      - web
+    - common
+    - web
 ```
 
 Sample handlers in `/roles/role1/handlers/main.yml`:
@@ -374,16 +382,16 @@ A single chore to be acheived. Here are a few tasks:
 
 ```yaml
 tasks:
-    - name: NGINX | Remove default vhost
-      file: path=/etc/nginx/sites-enabled/default state=absent
+  - name: NGINX | Remove default vhost
+    file: path=/etc/nginx/sites-enabled/default state=absent
 
-    - name: NGINX | Start
-      service: name=nginx state=started
-      register: nginx_started
+  - name: NGINX | Start
+    service: name=nginx state=started
+    register: nginx_started
 
-    - name: STAT | Check dir exists
-      stat: path={{ foo_directory }}
-      register: foo_directory
+  - name: STAT | Check dir exists
+    stat: path={{ foo_directory }}
+    register: foo_directory
 ```
 
 The third task highlights the ability to store the result of a task in a variable, in this case the `stat` task result, which could be used for a conditional `when` directive like so:
@@ -396,22 +404,22 @@ Tasks can be grouped into _blocks_, for example:
 
 ```yaml
 - block:
-      - name: PostgreSQL | Setup pg_hba.conf, allow connections from web servers
-        template: src=pg_hba.conf dest={{ PGA_HB_CONF }}
-        notify:
-            - restart postgres
-      - name: PostgreSQL | Listen on all IPs
-        lineinfile:
-            dest: "{{ PG_CONF }}"
-            line: listen_addresses='*'
-        notify:
-            - restart postgres
+    - name: PostgreSQL | Setup pg_hba.conf, allow connections from web servers
+      template: src=pg_hba.conf dest={{ PGA_HB_CONF }}
+      notify:
+        - restart postgres
+    - name: PostgreSQL | Listen on all IPs
+      lineinfile:
+        dest: "{{ PG_CONF }}"
+        line: listen_addresses='*'
+      notify:
+        - restart postgres
   rescue:
-      - name: Only run when a task blows up
-        debug: msg="boom!"
+    - name: Only run when a task blows up
+      debug: msg="boom!"
   always:
-      - name: Always always run
-        debug: msg="Regardless of what happened, I'm running"
+    - name: Always always run
+      debug: msg="Regardless of what happened, I'm running"
   when: hostvars[groups['webservers][0]]['inventory_hostname'] != inventory_hostname
 ```
 
@@ -423,14 +431,14 @@ For templating Ansible leverages the Python [Jinja2](http://jinja.pocoo.org/docs
 
 ### Syntax
 
--   `{% ... %}` for statements
--   `{{ ... }}` for expressions to print to the template output
--   `{# ... #}` for comments not included in the template output
--   `# ... ##` for line statements
+- `{% ... %}` for statements
+- `{{ ... }}` for expressions to print to the template output
+- `{# ... #}` for comments not included in the template output
+- `# ... ##` for line statements
 
 In action snippet:
 
-```
+```jinja
 local all postgres peer
 
     {% for host in groups['webservers'] %}
@@ -499,12 +507,12 @@ Variables are scoped as Global (visible across playbooks), Per-Play and Per-Host
 
 Some common ways to define variables:
 
--   `--extra-vars` on the command line
--   in the playbook as `vars:`
--   in the `global_vars/all` file
--   import a YAML file full of variables with `include_vars: foo_vars.yml`
--   host or host group scoped vars can be defined in the inventory
--   role specific vars in `/role/rolename/vars/`
+- `--extra-vars` on the command line
+- in the playbook as `vars:`
+- in the `global_vars/all` file
+- import a YAML file full of variables with `include_vars: foo_vars.yml`
+- host or host group scoped vars can be defined in the inventory
+- role specific vars in `/role/rolename/vars/`
 
 The existance of variables can be tested with a `when`:
 
@@ -539,11 +547,11 @@ Some fact testing examples:
 
 ### Built-in Variables
 
--   `hostvars`: access facts and variables from other hosts (for current host key the dictionary on `inventory_hostname`)
--   `group_names`: list of groups current host is a member of
--   `groups`: all groups in the inventory
--   `inventory_hostname`: current hostname that ansible is executing tasks on
--   `environment`:
+- `hostvars`: access facts and variables from other hosts (for current host key the dictionary on `inventory_hostname`)
+- `group_names`: list of groups current host is a member of
+- `groups`: all groups in the inventory
+- `inventory_hostname`: current hostname that ansible is executing tasks on
+- `environment`:
 
 ### Task Results and Control Flow
 
@@ -551,9 +559,9 @@ The outcome of a task can be set as a variable using `register`, for example:
 
 ```yaml
 tasks:
-    - name: start nginx
-      service: name=nginx state=started
-      register: nginx_started
+  - name: start nginx
+    service: name=nginx state=started
+    register: nginx_started
 ```
 
 The resulting data structure can be used for making downstream decisions:
@@ -628,16 +636,16 @@ Task runs if the "when" clause is truthy. Supported [tests](http://jinja.pocoo.o
 
 ```yaml
 block:
-    - name: PostgreSQL | Setup pg_hba.conf, allow connections from web servers
-      template: src=pg_hba.conf dest={{ PGA_HB_CONF }}
-      notify:
-          - restart postgres
-    - name: PostgreSQL | Listen on all IPs
-      lineinfile:
-          dest: "{{ PG_CONF }}"
-          line: listen_addresses='*'
-      notify:
-          - restart postgres
+  - name: PostgreSQL | Setup pg_hba.conf, allow connections from web servers
+    template: src=pg_hba.conf dest={{ PGA_HB_CONF }}
+    notify:
+      - restart postgres
+  - name: PostgreSQL | Listen on all IPs
+    lineinfile:
+      dest: "{{ PG_CONF }}"
+      line: listen_addresses='*'
+    notify:
+      - restart postgres
 when: hostvars[groups['webservers][0]]['inventory_hostname'] != inventory_hostname
 ```
 
@@ -673,10 +681,10 @@ Iterates over a list:
 - name: Install essentials
   package: name={{ item }} state=present
   with_items:
-      - wget
-      - vim
-      - curl
-      - tmux
+    - wget
+    - vim
+    - curl
+    - tmux
 ```
 
 Supports list variables too.
@@ -692,15 +700,15 @@ Iterates over a YAML hash:
 ```yaml
 ---
 fruits:
-    banana:
-        awesome: 7
-        cals: 89
-    kiwi:
-        awesome: 6
-        cals: 61
-    apple:
-        awesome: 10
-        cals: 52
+  banana:
+    awesome: 7
+    cals: 89
+  kiwi:
+    awesome: 6
+    cals: 61
+  apple:
+    awesome: 10
+    cals: 52
 ```
 
 Using `with_dict` like this:
@@ -718,8 +726,8 @@ Nested loops.
 - name: Give users access to multiple databases
   mysql_user: name={{ item[0] }} priv={{ item[1] }}.\*:ALL append_privs=yes password=foo
   with_nested:
-      - ["alice", "bob", "dave"]
-      - ["clientdb", "employeedb", "providerdb", "testdb"]
+    - ["alice", "bob", "dave"]
+    - ["clientdb", "employeedb", "providerdb", "testdb"]
 ```
 
 ### changed_when
@@ -797,20 +805,20 @@ Ansible provides a [HUGE](http://docs.ansible.com/ansible/latest/modules/list_of
 ---
 - hosts: webserver
   vars:
-      site_url: bm4cs.io
+    site_url: bm4cs.io
   tasks:
-      - name: Install nginx
-        package: name=nginx state=latest
+    - name: Install nginx
+      package: name=nginx state=latest
 
-      - name: Create website dir
-        file: path="/var/www/{{ site_name }}" state=directory mode=0755
+    - name: Create website dir
+      file: path="/var/www/{{ site_name }}" state=directory mode=0755
 
-      - name: Create nginx config
-        template:
-            src: "templates/website.conf"
-            dest: "/etc/nginx/conf.d/{{ site_name }}.conf"
-        notify:
-            - restart nginx
+    - name: Create nginx config
+      template:
+        src: "templates/website.conf"
+        dest: "/etc/nginx/conf.d/{{ site_name }}.conf"
+      notify:
+        - restart nginx
 ```
 
 Can see the `package`, `file` and `template` modules in action, and the arguments they are fed.
@@ -823,39 +831,41 @@ Could use `pacman`, `apt`, `yum`, `pkg`, `rpm` directly, dont. Use [package](htt
 
 ### Files and Directories
 
--   `template`: run a jinja template, and copy the result to a location
--   `file`: CRUD files and directories. Important properties, are `state` (file, link, directory, hard, touch, absent) state=absent will delete, `recurse`,
--   `lineinfile` and `blockinfile`: insert/update/remove a line (or block) of text content.
--   `copy`: copying local files to target/s
--   `fetch`: copying remote files from target/s to local
--   `stat`: existance check
+- `template`: run a jinja template, and copy the result to a location
+- `file`: CRUD files and directories. Important properties, are `state` (file, link, directory, hard, touch, absent) state=absent will delete, `recurse`,
+- `lineinfile` and `blockinfile`: insert/update/remove a line (or block) of text content.
+- `copy`: copying local files to target/s
+- `fetch`: copying remote files from target/s to local
+- `stat`: existance check
 
 ### System
 
--   `service`: service management agnostic of init system (e.g. SysV, systemd, upstart). The `state` property (started, stopped, restarted, reloaded).
--   `user`
--   `group`
--   `cron`
--   `hostname`
--   `authorized_keys`: asserts the existance of, if not adds.
--   `iptables`: managing rules
--   `modprobe`: kernel mods
--   `kernel_blacklist`
--   `gluster_volume`
--   `lvm`
--   `zfs`
+- `service`: service management agnostic of init system (e.g. SysV, systemd, upstart). The `state` property (started, stopped, restarted, reloaded).
+- `user`
+- `group`
+- `cron`
+- `hostname`
+- `authorized_keys`: asserts the existance of, if not adds.
+- `iptables`: managing rules
+- `modprobe`: kernel mods
+- `kernel_blacklist`
+- `gluster_volume`
+- `lvm`
+- `zfs`
 
 ### Miscellaneous
 
--   `raw`: invokes a down and dirty SSH command
--   `synchronize`: basically rsync
--   `get_url`: can pull from lots of protos (http, ftp, and more)
--   `unarchive`: unpack things on target/s
--   `ec2`: AWS compute management
--   `rds`: AWS DB management
--   `lxc_container`: manage all things LXC container related
+- `raw`: invokes a down and dirty SSH command
+- `synchronize`: basically rsync
+- `get_url`: can pull from lots of protos (http, ftp, and more)
+- `unarchive`: unpack things on target/s
+- `ec2`: AWS compute management
+- `rds`: AWS DB management
+- `lxc_container`: manage all things LXC container related
 
-# Debugging
+# Cool things
+
+## Debugging
 
 The `debug` module to the rescue.
 
@@ -884,8 +894,6 @@ The `debug` module supports filtering on the verbosity level:
 
     - name: Debug verbosity 3
       debug: var=myuptime verbosity=3
-
-# Working Example Notes
 
 ## Document!
 
@@ -919,6 +927,20 @@ It's fine to consume variables just after declaring them, example:
 PG_VERSION: "9.3"
 PG_HBA_CONF: /etc/postgresql/{{ PG_VERSION }}/main/pg_hba.conf
 ```
+
+## Template a block of multiline text
+
+```
+- name: /etc/enviroment proxy server settings
+  blockinfile:
+    dest: /etc/environment
+    block: "{{ lookup('template', 'etc-profile') }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+```
+
+## Private SSH key passphrases
+
+Run `ssh-agent`.
 
 # Resources
 
