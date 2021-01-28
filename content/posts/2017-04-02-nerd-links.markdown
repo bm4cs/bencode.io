@@ -63,6 +63,7 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 
 # Containers
 
+-   [The Docker Handbook](https://www.freecodecamp.org/news/the-docker-handbook/)
 -   [25 Basic Docker Commands for Beginners](https://codeopolis.com/posts/25-basic-docker-commands-for-beginners/)
 -   [Setting the Record Straight: containers vs. Zones vs. Jails vs. VMs]()
 -   [Docker Security Best Practices](https://blog.sqreen.io/docker-security/) tools and methods to help secure Docker
@@ -71,7 +72,7 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 -   [lens](https://github.com/lensapp/lens/) kube IDE
 -   [kubeseal](https://crypt.codemancers.com/posts/2020-04-27-encrypting-and-storing-kubernetes-secrets-in-git/) how to safely store secrets in `git` if you want to use them in k8s
 -   [Container Technologies at Coinbase](https://blog.coinbase.com/container-technologies-at-coinbase-d4ae118dcb6c) great history on how the industry got to containers, an why kubernetes isn't used
--   [10 most common mistakes using kubernetes](https://blog.pipetail.io/posts/2020-05-04-most-common-mistakes-k8s/)
+-   [A Practical Introduction to Container Security](https://cloudberry.engineering/article/practical-introduction-container-security/)
 
 # Culture
 
@@ -83,7 +84,7 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 # Databases
 
 -   [Things I Wished More Developers Knew About Databases](https://medium.com/@rakyll/things-i-wished-more-developers-knew-about-databases-2d0178464f78)
--   [Introduction to Apache Hadoop (The Linux Foundation)](https://www.edx.org/course/introduction-apache-hadoop-linuxfoundationx-lfs103x#!)
+-   [SQL Coding Standards](http://wiki.c2.com/?AntiPatternsCatalog)
 
 # Development
 

@@ -3,7 +3,7 @@ layout: post
 title: "Vim"
 slug: "vim"
 date: "2007-04-16 21:50:01"
-lastmod: "2020-10-31 10:20:17"
+lastmod: "2021-01-22 20:28:15"
 comments: false
 categories:
     - dev
@@ -11,7 +11,7 @@ tags:
     - vim
 ---
 
-_Updated: 2020-10-31_
+_Updated: 2021-01-22 20:28:26_
 
 I finally (2007) bit the bullet and commited to learning a real text editor. Having dabbled with `vi` since the late 90s, decided on Vim. Once you break through its initial, steep, learning curve, its truly life changing. Level up, and become a text surgeon today.
 
@@ -46,6 +46,7 @@ Vim is incredibly customisable. Its important to take the time to craft your own
     * [vim-prettier](#vim-prettier)
     * [vim-css-color](#vim-css-color)
     * [coc.nvim](#cocnvim)
+* [Setup behind a proxy](#setup-behind-a-proxy)
 * [Resources](#resources)
 
 <!-- vim-markdown-toc -->
@@ -281,6 +282,22 @@ You can manually register LSP servers in jsonc format in the `~/.config/nvim/coc
 CoC web dev support (JS, ES6 and CSS):
 
     :CocInstall coc-tsserver coc-eslint coc-json coc-prettier coc-css
+
+# Setup behind a proxy
+
+Getting my Vim setup on a corporate network.
+
+TODO: Investigate containerising it.
+
+-   `git config --global http.proxy http://proxy.bencode.net:8080`
+-   nnn.vim: nnn
+-   prettier: node v10+
+-   denite: python3, pip3 install --user pynvim
+-   coc.nvim:
+    -   node v10+
+    -   [yarn](https://classic.yarnpkg.com/en/docs/install/#debian-stable)
+    -   `yarn config set proxy http://proxy.bencode.net:8080`
+    -   `yarn config set https-proxy http://proxy.bencode.net:8080`
 
 # Resources
 
