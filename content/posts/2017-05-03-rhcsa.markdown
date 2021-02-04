@@ -7,91 +7,92 @@ date: "2017-05-03 20:51:43"
 lastmod: "2020-12-06 21:38:09"
 comments: false
 categories:
-    - linux
+  - linux
 tags:
-    - certification
-    - rhel
-    - redhat
+  - certification
+  - rhel
+  - redhat
 ---
 
 My preparation notes for the RHCSA 8 exam.
 
 <!-- vim-markdown-toc GFM -->
 
-* [Essential Tools](#essential-tools)
-    * [Documentation](#documentation)
-        * [man](#man)
-        * [/usr/share/doc](#usrsharedoc)
-        * [RPM bundled documentation](#rpm-bundled-documentation)
-        * [General Searching Techniques](#general-searching-techniques)
-    * [Shell history](#shell-history)
-    * [Globbing](#globbing)
-    * [I/O Redirection and Pipes](#io-redirection-and-pipes)
-* [Essential File Management](#essential-file-management)
-    * [Linux file system layout](#linux-file-system-layout)
-    * [Finding Files](#finding-files)
-        * [locate](#locate)
-        * [find](#find)
-    * [Archiving and compression with tar](#archiving-and-compression-with-tar)
-    * [Hard and Soft Links](#hard-and-soft-links)
-* [Working with text](#working-with-text)
-    * [Regular expressions](#regular-expressions)
-    * [grep](#grep)
-    * [sed and awk](#sed-and-awk)
-* [Connecting a Linux host](#connecting-a-linux-host)
-    * [Consoles Terminals and TTYs](#consoles-terminals-and-ttys)
-    * [Switch Users (su)](#switch-users-su)
-    * [sudo](#sudo)
-    * [SSH](#ssh)
-* [Managing users and groups](#managing-users-and-groups)
-    * [Creating users](#creating-users)
-    * [User properties](#user-properties)
-    * [User configuration files](#user-configuration-files)
-    * [Creating and managing groups](#creating-and-managing-groups)
-    * [Managing password properties](#managing-password-properties)
-* [Managing Permissions](#managing-permissions)
-    * [Changing file ownership](#changing-file-ownership)
-    * [Managing basic permissions](#managing-basic-permissions)
-    * [Understanding umask (user mask)](#understanding-umask-user-mask)
-    * [Special permissions](#special-permissions)
-        * [suid](#suid)
-        * [sgid](#sgid)
-        * [Sticky bit](#sticky-bit)
-    * [Understanding ACLs](#understanding-acls)
-* [Configuring Networking](#configuring-networking)
-    * [Network device naming](#network-device-naming)
-    * [Managing runtime network configuration with ip](#managing-runtime-network-configuration-with-ip)
-    * [Storing network configuration persistently](#storing-network-configuration-persistently)
-        * [nmcli](#nmcli)
-    * [Routing and DNS](#routing-and-dns)
-* [Managing Processes](#managing-processes)
-    * [Shell jobs](#shell-jobs)
-    * [ps](#ps)
-    * [Memory usage](#memory-usage)
-    * [CPU load](#cpu-load)
-    * [System activity with top](#system-activity-with-top)
-    * [Sending signals to processes](#sending-signals-to-processes)
-    * [Priority and niceness](#priority-and-niceness)
-    * [tuned profiles](#tuned-profiles)
-* [Managing Software](#managing-software)
-    * [RPM and yum](#rpm-and-yum)
-        * [rpm queries](#rpm-queries)
-        * [yum Groups](#yum-groups)
-    * [Repositories](#repositories)
-    * [Modules and Application Streams](#modules-and-application-streams)
-    * [Red Hat Subscription Manager](#red-hat-subscription-manager)
-* [Systemd](#systemd)
-* [Scheduling Tasks](#scheduling-tasks)
-    * [cron](#cron)
-    * [-   Configured by `/etc/anacrontab`](#----configured-by-etcanacrontab)
-    * [at](#at)
-    * [systemd Timers](#systemd-timers)
-    * [Managing temporary files](#managing-temporary-files)
-* [Logging](#logging)
-    * [Rsyslog](#rsyslog)
-    * [Systemd Journal](#systemd-journal)
-    * [Logrotate](#logrotate)
-* [Rando cool](#rando-cool)
+- [Essential Tools](#essential-tools)
+  - [Documentation](#documentation)
+    - [man](#man)
+    - [/usr/share/doc](#usrsharedoc)
+    - [RPM bundled documentation](#rpm-bundled-documentation)
+    - [General Searching Techniques](#general-searching-techniques)
+  - [Shell history](#shell-history)
+  - [Globbing](#globbing)
+  - [I/O Redirection and Pipes](#io-redirection-and-pipes)
+- [Essential File Management](#essential-file-management)
+  - [Linux file system layout](#linux-file-system-layout)
+  - [Finding Files](#finding-files)
+    - [locate](#locate)
+    - [find](#find)
+  - [Archiving and compression with tar](#archiving-and-compression-with-tar)
+  - [Hard and Soft Links](#hard-and-soft-links)
+- [Working with text](#working-with-text)
+  - [Regular expressions](#regular-expressions)
+  - [grep](#grep)
+  - [sed and awk](#sed-and-awk)
+- [Connecting a Linux host](#connecting-a-linux-host)
+  - [Consoles Terminals and TTYs](#consoles-terminals-and-ttys)
+  - [Switch Users (su)](#switch-users-su)
+  - [sudo](#sudo)
+  - [SSH](#ssh)
+- [Managing users and groups](#managing-users-and-groups)
+  - [Creating users](#creating-users)
+  - [User properties](#user-properties)
+  - [User configuration files](#user-configuration-files)
+  - [Creating and managing groups](#creating-and-managing-groups)
+  - [Managing password properties](#managing-password-properties)
+- [Managing Permissions](#managing-permissions)
+  - [Changing file ownership](#changing-file-ownership)
+  - [Managing basic permissions](#managing-basic-permissions)
+  - [Understanding umask (user mask)](#understanding-umask-user-mask)
+  - [Special permissions](#special-permissions)
+    - [suid](#suid)
+    - [sgid](#sgid)
+    - [Sticky bit](#sticky-bit)
+  - [Understanding ACLs](#understanding-acls)
+- [Configuring Networking](#configuring-networking)
+  - [Network device naming](#network-device-naming)
+  - [Managing runtime network configuration with ip](#managing-runtime-network-configuration-with-ip)
+  - [Storing network configuration persistently](#storing-network-configuration-persistently)
+    - [nmcli](#nmcli)
+  - [Routing and DNS](#routing-and-dns)
+- [Managing Processes](#managing-processes)
+  - [Shell jobs](#shell-jobs)
+  - [ps](#ps)
+  - [Memory usage](#memory-usage)
+  - [CPU load](#cpu-load)
+  - [System activity with top](#system-activity-with-top)
+  - [Sending signals to processes](#sending-signals-to-processes)
+  - [Priority and niceness](#priority-and-niceness)
+  - [tuned profiles](#tuned-profiles)
+- [Managing Software](#managing-software)
+  - [RPM and yum](#rpm-and-yum)
+    - [rpm queries](#rpm-queries)
+    - [yum Groups](#yum-groups)
+  - [Repositories](#repositories)
+  - [Modules and Application Streams](#modules-and-application-streams)
+  - [Red Hat Subscription Manager](#red-hat-subscription-manager)
+- [Systemd](#systemd)
+- [Scheduling Tasks](#scheduling-tasks)
+  - [cron](#cron)
+  - [at](#at)
+  - [systemd Timers](#systemd-timers)
+  - [Managing temporary files](#managing-temporary-files)
+- [Logging](#logging)
+  - [Rsyslog](#rsyslog)
+  - [Systemd Journal](#systemd-journal)
+  - [Logrotate](#logrotate)
+- [Managing Storage](#managing-storage)
+  - [Disk layout](#disk-layout)
+- [Rando cool](#rando-cool)
 
 <!-- vim-markdown-toc -->
 
@@ -159,30 +160,30 @@ Find binaries and man pages for `ls`:
 
 ## Shell history
 
--   `history` dump history, by default the last 1000 commands
--   `ctrl+r` to search backwards through history for pattern
--   `history -c` clear history (in-memory only)
--   `history -w` write history
--   `!32` run history event 32 (again)
+- `history` dump history, by default the last 1000 commands
+- `ctrl+r` to search backwards through history for pattern
+- `history -c` clear history (in-memory only)
+- `history -w` write history
+- `!32` run history event 32 (again)
 
 ## Globbing
 
 aka using wildcards see `man 7 glob`
 
--   `ls host*` zero or more chars
--   `ls ?ost` any single char
--   `ls [hm]ost` groups of chars
--   `ls [!hm]ost` negated groups of chars
--   `ls [0-9][0-9]script` multiple groups of restricted chars
+- `ls host*` zero or more chars
+- `ls ?ost` any single char
+- `ls [hm]ost` groups of chars
+- `ls [!hm]ost` negated groups of chars
+- `ls [0-9][0-9]script` multiple groups of restricted chars
 
 ## I/O Redirection and Pipes
 
--   `<` stdin from a file or another programs stdout
--   `>` stdout to new file (overwrite if exists)
--   `>>` stdout to file (appending if exists)
--   `2>` stderr redirection
--   `2>&1` stderr to stdout (useful for piping stderr, as pipes only work with stdout)
--   `|` pipe stdout from one program to stdin of another (pipes only support stdout to stdin communication, i.e. not stderr)
+- `<` stdin from a file or another programs stdout
+- `>` stdout to new file (overwrite if exists)
+- `>>` stdout to file (appending if exists)
+- `2>` stderr redirection
+- `2>&1` stderr to stdout (useful for piping stderr, as pipes only work with stdout)
+- `|` pipe stdout from one program to stdin of another (pipes only support stdout to stdin communication, i.e. not stderr)
 
 # Essential File Management
 
@@ -192,12 +193,12 @@ See `man hier` and `man file-hierarchy`
 
 Big hitters:
 
--   Boot partition: `/boot/` and `/efi/`
--   System configuration: `/etc/`
--   Scripts and binaries: `/bin/`, `/sbin/`, `/usr/sbin/` now all link back to `/usr/bin/`
--   Shared libraries: `/lib/`, `/lib64/` link to `/usr/lib/` and `/usr/lib64/` respectively
--   Virtual kernel file system: `/proc/` such as `/proc/meminfo`
--   Persistent variable data: `/var/` such as `/var/cache/`, `/var/log/`, `/var/tmp`
+- Boot partition: `/boot/` and `/efi/`
+- System configuration: `/etc/`
+- Scripts and binaries: `/bin/`, `/sbin/`, `/usr/sbin/` now all link back to `/usr/bin/`
+- Shared libraries: `/lib/`, `/lib64/` link to `/usr/lib/` and `/usr/lib64/` respectively
+- Virtual kernel file system: `/proc/` such as `/proc/meminfo`
+- Persistent variable data: `/var/` such as `/var/cache/`, `/var/log/`, `/var/tmp`
 
 ## Finding Files
 
@@ -318,9 +319,9 @@ Hard links are links to a specific inode (shown with `ls -i`) on the file system
 
 In the `ls` long listing output, take note of the 2nd column, which represents the count of references to the same inode, which increases after creating a hard link. Some properties of hard links:
 
--   Hard links will always report the same metadata such as permission bits, modification timestamps, etc
--   inode reference counts will increase for each hard link.
--   Removal of the target file or hard link will not result in broken links, as they both physically reference the same inode.
+- Hard links will always report the same metadata such as permission bits, modification timestamps, etc
+- inode reference counts will increase for each hard link.
+- Removal of the target file or hard link will not result in broken links, as they both physically reference the same inode.
 
 # Working with text
 
@@ -328,17 +329,17 @@ In the `ls` long listing output, take note of the 2nd column, which represents t
 
 See `man 7 regex`
 
--   `.` any single character
--   `?` one or more
--   `*` zero or more
+- `.` any single character
+- `?` one or more
+- `*` zero or more
 
--   `cat` for concatenation, commonly used to dump contents to `stdout`
--   `tac` concatenation in reverse order
--   `cut` parses fields based on simple delimiter `cut -d : -f 1 /etc/passwd` cuts the first field in `/etc/passwd` based on a colon delimiter
--   `sort` can sort alphabetically or numerically e.g. `cut -d : -f 3 /etc/passwd | sort -n`
--   `head` first n lines
--   `tail` last n lines
--   `tr` translator e.g. lower to upper casing `cut -d : -f 1 /etc/passwd | tr [a-z] [A-Z]`
+- `cat` for concatenation, commonly used to dump contents to `stdout`
+- `tac` concatenation in reverse order
+- `cut` parses fields based on simple delimiter `cut -d : -f 1 /etc/passwd` cuts the first field in `/etc/passwd` based on a colon delimiter
+- `sort` can sort alphabetically or numerically e.g. `cut -d : -f 3 /etc/passwd | sort -n`
+- `head` first n lines
+- `tail` last n lines
+- `tr` translator e.g. lower to upper casing `cut -d : -f 1 /etc/passwd | tr [a-z] [A-Z]`
 
 ## grep
 
@@ -348,13 +349,13 @@ The pinnacle of text processing, handed down by god himself.
 
 Noteworthy:
 
--   always place regex between single quotes to avoid ambiguity of globbing
--   use `-e` to specify multiple expressions e.g. `man -k password | grep -e '1' -e '8'`
--   `-B` will provide n lines of before context e.g. `-B 5` shows preceding 5 lines of each match
--   `-v` to inverse (e.g. things not comments `grep -v '^#'`)
--   `-i` case insensitive
--   `[^linux]` negate characters, this will match against any characters that are not 'l', 'i', 'n', 'u' or 'x'.
--   `-E` extended regular expression support
+- always place regex between single quotes to avoid ambiguity of globbing
+- use `-e` to specify multiple expressions e.g. `man -k password | grep -e '1' -e '8'`
+- `-B` will provide n lines of before context e.g. `-B 5` shows preceding 5 lines of each match
+- `-v` to inverse (e.g. things not comments `grep -v '^#'`)
+- `-i` case insensitive
+- `[^linux]` negate characters, this will match against any characters that are not 'l', 'i', 'n', 'u' or 'x'.
+- `-E` extended regular expression support
 
 ## sed and awk
 
@@ -392,10 +393,10 @@ This interestly also applies to terminal emulators that are launched a graphical
 
 The shortcut Alt+F1-6 (or the `chvt` program) will jump you between TTY1 through to TTY6:
 
--   TTY1 graphical login
--   TTY2 graphical console
--   TTY3 graphical session
--   TTY4-6 non-graphical consoles
+- TTY1 graphical login
+- TTY2 graphical console
+- TTY3 graphical session
+- TTY4-6 non-graphical consoles
 
 ## Switch Users (su)
 
@@ -441,9 +442,9 @@ Broadly, there are users for services, humans and root.
 
 Conventions for UID (see `/etc/login.defs`):
 
--   < 201: privilaged users
--   201 - 999: system accounts
--   1000 - 60000: average joe users
+- < 201: privilaged users
+- 201 - 999: system accounts
+- 1000 - 60000: average joe users
 
 Humans don't always need to interact directly with a Linux host, for example a web or email server. If this is the case, their default shell should be changed from `/bin/bash` to `/sbin/nologin`
 
@@ -451,10 +452,10 @@ Humans don't always need to interact directly with a Linux host, for example a w
 
 `useradd shnerg` will register a new local user account on the system. This involves:
 
--   create entry in `/etc/passwd`
--   create entry in `/etc/shadow`
--   create home directory `/home/shnerg`
--   create user specific bash initialisation scripts `.bash_profile`, `.bashrc` and `.bash_logout`
+- create entry in `/etc/passwd`
+- create entry in `/etc/shadow`
+- create home directory `/home/shnerg`
+- create user specific bash initialisation scripts `.bash_profile`, `.bashrc` and `.bash_logout`
 
 The `/etc/skel/` directory provides the skeleton scripts and files to be copied into new users home directories.
 
@@ -466,23 +467,23 @@ To remove a user and their home directory, use the `-r` option, and `-f` even if
 
 User objects are made up of many attributes, shown by `usermod --help`
 
--   `-c` an arbitrary annotation such as a role (`GECOS` field)
--   `-d` home dir path
--   `-e` point in time to disable the user
--   `-g -u` gid uid
--   `-G` groups
--   `-s` default shell such as `/bin/bash`, `/sbin/nologin`
--   `-R` location to `chroot` the user into, interesting!
--   `-L -U` lock unlock
+- `-c` an arbitrary annotation such as a role (`GECOS` field)
+- `-d` home dir path
+- `-e` point in time to disable the user
+- `-g -u` gid uid
+- `-G` groups
+- `-s` default shell such as `/bin/bash`, `/sbin/nologin`
+- `-R` location to `chroot` the user into, interesting!
+- `-L -U` lock unlock
 
 ## User configuration files
 
--   `/etc/default/useradd` default new user properties
--   `/etc/login.defs` more default new user properties (if conflicts, takes precedence)
--   `/etc/skel/` cloned to new user home directories
--   `/etc/passwd` user database, all properties of users are encoded here
--   `/etc/shadow` user password storage and properties, the format of an entry: `login:encrypted-password:password-changed-date:min-age:max-age:warning-days:inactive-days:user-expiry-date`. Use `passwd -S shnerg` to display password props for a user.
--   `/etc/group` all groups
+- `/etc/default/useradd` default new user properties
+- `/etc/login.defs` more default new user properties (if conflicts, takes precedence)
+- `/etc/skel/` cloned to new user home directories
+- `/etc/passwd` user database, all properties of users are encoded here
+- `/etc/shadow` user password storage and properties, the format of an entry: `login:encrypted-password:password-changed-date:min-age:max-age:warning-days:inactive-days:user-expiry-date`. Use `passwd -S shnerg` to display password props for a user.
+- `/etc/group` all groups
 
 ## Creating and managing groups
 
@@ -492,9 +493,9 @@ The most common property is the `gid`
 
 Ways to add users to a group:
 
--   `vi /etc/group`
--   `vigr` for vi with group validation
--   `usermod -aG shnerg people`
+- `vi /etc/group`
+- `vigr` for vi with group validation
+- `usermod -aG shnerg people`
 
 Use `getent group finance` to validate a group exists, and `id <user>` to validate the group memberships the user has.
 
@@ -504,9 +505,9 @@ Some facinating (to me anyway) group management programs include `newgrp` to swi
 
 Programs to be across: `passwd`, `chage`
 
--   `passwd -S mike` displays all password related props
--   `echo password | passwd --stdin` to set password programmatically (by default will interactively prompt)
--   default password attributes are controlled by `/etc/login.defs`
+- `passwd -S mike` displays all password related props
+- `echo password | passwd --stdin` to set password programmatically (by default will interactively prompt)
+- default password attributes are controlled by `/etc/login.defs`
 
 # Managing Permissions
 
@@ -520,8 +521,8 @@ note: Linux uses a simplistic _exit on match_ algorithm. If the user matches and
 
 ## Changing file ownership
 
--   `chown` change owner, can take the names of the login and group like so `chown anna:sales sales`. Either the user or group can be omitted to not change its existing value.
--   `chgrp` will change only the group ownership. Its redundant these days with the powers that `chown` has.
+- `chown` change owner, can take the names of the login and group like so `chown anna:sales sales`. Either the user or group can be omitted to not change its existing value.
+- `chgrp` will change only the group ownership. Its redundant these days with the powers that `chown` has.
 
 ## Managing basic permissions
 
@@ -587,16 +588,16 @@ This mask is applied to the system wide defaults `666` for files, and `777` for 
 
 Breaking down each bit:
 
--   The first `0` will not apply any mask to the special bits (suid/guid/sticky bit)
--   The second `0` will apply no mask to the _owner_
--   The third `2` will mask/strip out (think subtract) _write_ permission (2 in octal) for the _group_
--   The forth bit `2` will mask/strip out _write_ for _others_
+- The first `0` will not apply any mask to the special bits (suid/guid/sticky bit)
+- The second `0` will apply no mask to the _owner_
+- The third `2` will mask/strip out (think subtract) _write_ permission (2 in octal) for the _group_
+- The forth bit `2` will mask/strip out _write_ for _others_
 
 In practice `umask` values of `0`, `2` and `7` are used:
 
--   `0` means `6` for files, and `7` for directories
--   `2` means `4` for files and `5` for directories
--   `7` means `0` for files and `0` for directories
+- `0` means `6` for files, and `7` for directories
+- `2` means `4` for files and `5` for directories
+- `7` means `0` for files and `0` for directories
 
 The base `/etc/bashrc` and `/etc/profile` bash environment bootstrapping files contain entries for setting up default `umask` values.
 
@@ -628,10 +629,10 @@ Can be set with `chmod`:
 
 Very useful for defining a group owner that gets inherited within a directory tree.
 
--   Imagine a `/data/sales/` dir.
--   If a user `mike` creates a file (or dir) within `/data/sales/` the user will be set to `mike`, and the group also set to `mike`.
--   In a group environment, such as `/data/sales/`, it would be more useful if the group was set to the `sales` group
--   The sgid special bit will propagate the group owner to new files or directories and is set with `chmod g+s /data/sales/` or `chmod 2770 /data/sales/`
+- Imagine a `/data/sales/` dir.
+- If a user `mike` creates a file (or dir) within `/data/sales/` the user will be set to `mike`, and the group also set to `mike`.
+- In a group environment, such as `/data/sales/`, it would be more useful if the group was set to the `sales` group
+- The sgid special bit will propagate the group owner to new files or directories and is set with `chmod g+s /data/sales/` or `chmod 2770 /data/sales/`
 
 ### Sticky bit
 
@@ -651,8 +652,8 @@ Several years later, in addition to the special bits, ACL (access control list) 
 
 ACLs offer a few benefits over the simple _UGO_ system:
 
--   more granular inheritable permission chains on specific directories
--   multiple owners
+- more granular inheritable permission chains on specific directories
+- multiple owners
 
 Scenario, under `/data/` exists `accounting/` (owned by root:accounting) and `sales/` (owned by root:sales).
 
@@ -662,13 +663,13 @@ This is not possible with the simple UGO model.
 
 For directories:
 
--   `setfacl -R -m g:sales:rx accounting` to set ACLs on existing files and directories
--   `setfacl -m d:g:sales:rx accounting` to set the default ACL on new objects that are created
--   `getfacl accounting` to view ACLs
+- `setfacl -R -m g:sales:rx accounting` to set ACLs on existing files and directories
+- `setfacl -m d:g:sales:rx accounting` to set the default ACL on new objects that are created
+- `getfacl accounting` to view ACLs
 
 For files:
 
--   `setfacl -m u:george:r myfile`
+- `setfacl -m u:george:r myfile`
 
 To remove ACLs involves using the dash `-`
 
@@ -680,11 +681,11 @@ For example `setfacl -m d:o::- secret-dir` will strip all ACLs for others. Inter
 
 ## Network device naming
 
--   BIOS naming based on hardware properties such as `em[1-N]` for embedded NICs, `p[slot_number]p[port_number]`
--   udev naming `ethX`
--   Physical naming similar to BIOS naming with more variations
--   Logical naming such as vlan or alias
--   To get classical `ethX` naming, use `biosdevname=0` and `net.ifnames=0` GRUB boot options
+- BIOS naming based on hardware properties such as `em[1-N]` for embedded NICs, `p[slot_number]p[port_number]`
+- udev naming `ethX`
+- Physical naming similar to BIOS naming with more variations
+- Logical naming such as vlan or alias
+- To get classical `ethX` naming, use `biosdevname=0` and `net.ifnames=0` GRUB boot options
 
 ## Managing runtime network configuration with ip
 
@@ -710,12 +711,12 @@ Bash tab completion rocks for CLI's like `nmcli`, check its installed with `rpm 
 
 Commonly used options:
 
--   `con-name` for the profile label
--   `ipv4.method` for static vs DHCP
--   `ipv4.addresses`
--   `ipv4.dns`
--   `ipv4.gateway`
--   `autoconnect`
+- `con-name` for the profile label
+- `ipv4.method` for static vs DHCP
+- `ipv4.addresses`
+- `ipv4.dns`
+- `ipv4.gateway`
+- `autoconnect`
 
 _Hot tip:_ always specify a CIDR style subnet mask, as the default is 32!
 
@@ -755,14 +756,14 @@ Using `nmcli` to set persistent routes (default gateway):
 
 Setting the hostname on RHEL is done with `hostnamectl`:
 
--   `hostnamectl status`
--   `hostnamectl set-hostname host14.bencode.net`
+- `hostnamectl status`
+- `hostnamectl set-hostname host14.bencode.net`
 
 # Managing Processes
 
--   In Linux everything is a process (including threads). Threads cannot be individually managed.
--   All processes are assigned a PID
--   Mother hening chores includes setting their scheduling priority and sending signals
+- In Linux everything is a process (including threads). Threads cannot be individually managed.
+- All processes are assigned a PID
+- Mother hening chores includes setting their scheduling priority and sending signals
 
 ## Shell jobs
 
@@ -772,95 +773,95 @@ Normally when running a shell command interactively, it is blocking (synchronous
 
 Trailing the command with an ampersand `&`, will unhook `stdin` and `stdout`, assign it a job number, and let it continue processing.
 
--   Example `sleep 100 &` will output the assigned job number and pid e.g. `[3] 2970` = job 3, pid 2970
--   `jobs` will list all background jobs
--   `fg 3` will foreground job 3
--   To background an active shell process `Ctrl-Z` to stop the job, and simply `bg` to background it.
+- Example `sleep 100 &` will output the assigned job number and pid e.g. `[3] 2970` = job 3, pid 2970
+- `jobs` will list all background jobs
+- `fg 3` will foreground job 3
+- To background an active shell process `Ctrl-Z` to stop the job, and simply `bg` to background it.
 
 ## ps
 
 The way god reports on processes.
 
--   `ps` supports both BSD (naked options) and sys-v (hyphened options) styles, `ps -L` completely different meaning to `ps L`
--   `ps aux` overview of all processes
--   `ps -fax` process tree
--   `ps -fU benjamin` all processes owned by a user
--   `ps -f --forest -C sshd` show process tree only for the `sshd` process
--   `ps L` show all format specifiers available
--   `ps -eo pid,ppid,user,cmd` list processes using specific format specifiers
+- `ps` supports both BSD (naked options) and sys-v (hyphened options) styles, `ps -L` completely different meaning to `ps L`
+- `ps aux` overview of all processes
+- `ps -fax` process tree
+- `ps -fU benjamin` all processes owned by a user
+- `ps -f --forest -C sshd` show process tree only for the `sshd` process
+- `ps L` show all format specifiers available
+- `ps -eo pid,ppid,user,cmd` list processes using specific format specifiers
 
 ## Memory usage
 
--   Linux tries to cache files for provide a fast experience. Often as a result, memory appears to over-saturated.
--   Swap provides a virtual (fake) memory address space, backing the memory by (much slower) disk if needed.
+- Linux tries to cache files for provide a fast experience. Often as a result, memory appears to over-saturated.
+- Swap provides a virtual (fake) memory address space, backing the memory by (much slower) disk if needed.
 
 Use `free` to report on the memory situation e.g. `free -m` show memory units in mebibytes:
 
--   `free` truly un-utilised memory
--   `available` memory be used by buffers or cache that can be liberated immediately
--   If `free` memory is low and swap `used`, indicates the server is under memory pressure and could use more RAM
+- `free` truly un-utilised memory
+- `available` memory be used by buffers or cache that can be liberated immediately
+- If `free` memory is low and swap `used`, indicates the server is under memory pressure and could use more RAM
 
 ## CPU load
 
 Processes as placed into a _run queue_, which the kernel scheduler uses to allocate processes to CPU cores.
 
--   `uptime` to show load averages over 1, 5 and 15 minute spans
--   Load average is the average count of processes that are in a runnable or uninteruptable state.
--   `lscpu` for CPU meta, including number of CPU's, sockets, cores per socket and threads per core.
--   `uptime` load is not normalised by the number of CPU cores (i.e. `1` on single core = 100%, but on a 4 core CPU = 25% load)
+- `uptime` to show load averages over 1, 5 and 15 minute spans
+- Load average is the average count of processes that are in a runnable or uninteruptable state.
+- `lscpu` for CPU meta, including number of CPU's, sockets, cores per socket and threads per core.
+- `uptime` load is not normalised by the number of CPU cores (i.e. `1` on single core = 100%, but on a 4 core CPU = 25% load)
 
 ## System activity with top
 
 Keyboard options:
 
--   `f` select display fields
--   `M,P,T` sort on memory use, CPU or time
--   `W` save display settings
--   `1` show individual CPU cores
--   `k` to kill a PID
--   `r` to set nice level on a PID
+- `f` select display fields
+- `M,P,T` sort on memory use, CPU or time
+- `W` save display settings
+- `1` show individual CPU cores
+- `k` to kill a PID
+- `r` to set nice level on a PID
 
 Interpreting `top` by line:
 
--   1 is just `uptime`
--   2 is processes by categories: `stopped` = ctrl-z, `zombie` child processes that have lost their parent process and have become unmanagable.
--   3 is CPU stats: `us` user space, `sy` system space, `ni` processes with changed niceness, `id` idle time, `wa` blocked on I/O, `hi` hardware interupts, `st` stolen time (zen virtualisation)
--   4 for memory stats:
+- 1 is just `uptime`
+- 2 is processes by categories: `stopped` = ctrl-z, `zombie` child processes that have lost their parent process and have become unmanagable.
+- 3 is CPU stats: `us` user space, `sy` system space, `ni` processes with changed niceness, `id` idle time, `wa` blocked on I/O, `hi` hardware interupts, `st` stolen time (zen virtualisation)
+- 4 for memory stats:
 
 ## Sending signals to processes
 
 Signals are a way of communicating with processes, even if they're busily working away.
 
--   `man 7 signal` describes the classical signals such as `SIGHUP` (1), `SIGKILL` (9) and `SIGTERM` (15).
--   Signal handling very much depends on the program. Example, `nginx` will gracefully reparse config if it receives a `SIGHUP` with terminating active connections.
--   `kill` is used to send a signal to a PID
--   `killall` to send signals to all processes that match a search expression (e.g. `killall -SIGTERM 'dd'` to send SIGTERM to all `dd` processes)
--   `pkill` will send a signal based on a the text pattern of a several process attributes (e.g. `pkill -signal 15 -U bob` send SIGTERM to all of bob's processes, `pkill -signal 1 sshd` send SIGHUP to the `sshd` process).
+- `man 7 signal` describes the classical signals such as `SIGHUP` (1), `SIGKILL` (9) and `SIGTERM` (15).
+- Signal handling very much depends on the program. Example, `nginx` will gracefully reparse config if it receives a `SIGHUP` with terminating active connections.
+- `kill` is used to send a signal to a PID
+- `killall` to send signals to all processes that match a search expression (e.g. `killall -SIGTERM 'dd'` to send SIGTERM to all `dd` processes)
+- `pkill` will send a signal based on a the text pattern of a several process attributes (e.g. `pkill -signal 15 -U bob` send SIGTERM to all of bob's processes, `pkill -signal 1 sshd` send SIGHUP to the `sshd` process).
 
 ## Priority and niceness
 
 In a nutshell, the amount of priority the process scheduler will give to a process.
 
--   Nice values range from -20 to 19 (the lower the more priority, the higher the nicer a process is consider toward other processes)
--   Users can make their processes nicer (lower scheduler priority), but not more aggressive (i.e. higher priority)
--   Use the `nice` and `renice` commands to alter the priority of non-realtime processes
--   `nice` will spawn new processes with a nice preset e.g. `nice -n -5 dd if=/dev/zero of=/dev/null`
--   `renice` will alter the niceness of an existing process e.g. `renice -n 10 -p 34627`
+- Nice values range from -20 to 19 (the lower the more priority, the higher the nicer a process is consider toward other processes)
+- Users can make their processes nicer (lower scheduler priority), but not more aggressive (i.e. higher priority)
+- Use the `nice` and `renice` commands to alter the priority of non-realtime processes
+- `nice` will spawn new processes with a nice preset e.g. `nice -n -5 dd if=/dev/zero of=/dev/null`
+- `renice` will alter the niceness of an existing process e.g. `renice -n 10 -p 34627`
 
 In `top`:
 
--   the `PR` column is priority, the lower the higher priority. Priority `rt` or realtime is a special case, and is the supreme priority.
--   `NI` is nice level (-20 most aggressive, 19 nicest)
+- the `PR` column is priority, the lower the higher priority. Priority `rt` or realtime is a special case, and is the supreme priority.
+- `NI` is nice level (-20 most aggressive, 19 nicest)
 
 ## tuned profiles
 
 `tuned` is a system performance optimiser service.
 
--   Make sure its running `systemctl status tuned`
--   `tuned-adm` is the CLI
--   `tuned-adm list` show available profiles
--   `tuned-adm profile powersave` to set the powersave profile
--   `tuned-adm active` show current profile
+- Make sure its running `systemctl status tuned`
+- `tuned-adm` is the CLI
+- `tuned-adm list` show available profiles
+- `tuned-adm profile powersave` to set the powersave profile
+- `tuned-adm active` show current profile
 
 # Managing Software
 
@@ -868,24 +869,24 @@ In `top`:
 
 RPM remains the package format of choice for hat-based distros. RPM facts:
 
--   its from the 90's
--   its an archive packed by `cpio` includes a manifest, and list of dependencies
--   they can include scripts
--   RHEL 8 has the concept of protected base packages that can't be removed (such as `vi`)
+- its from the 90's
+- its an archive packed by `cpio` includes a manifest, and list of dependencies
+- they can include scripts
+- RHEL 8 has the concept of protected base packages that can't be removed (such as `vi`)
 
 `yum` was built to be a friendly package frontend:
 
--   `yum search nmap`
--   `yum install nmap`
--   `yum remove`
--   `yum update` update all packages
--   `yum update kernel` update just the kernel package
--   `yum provides */sepolicy` a deeper search that scans files within each package
--   `yum info nmap` show the package manifest
--   `yum list all`
--   `yum list installed`
--   `yum history` list of recent package activity
--   `yum history undo 4` undo transaction 4 in the above history list
+- `yum search nmap`
+- `yum install nmap`
+- `yum remove`
+- `yum update` update all packages
+- `yum update kernel` update just the kernel package
+- `yum provides */sepolicy` a deeper search that scans files within each package
+- `yum info nmap` show the package manifest
+- `yum list all`
+- `yum list installed`
+- `yum history` list of recent package activity
+- `yum history undo 4` undo transaction 4 in the above history list
 
 Cool tip `yumdownloader` (in the `yum-utils` package) will download RPM to file system for inspection.
 
@@ -895,19 +896,19 @@ With `yum`, the older `rpm` CLI is used less directly these days. However RPMs a
 
 This is useful for querying, such as the specific files installed as part of a package, and so on.
 
--   `rpm -qf /usr/bin/awk` which package installed this file?
--   `rpm -ql tmux` list each file installed by the `tmux` package
--   `rpm -qc openssh-server` list the configuration files for a package
--   `rpm -qp --scripts foo.rpm` review the scriptlets (pre-install, post-install) of a standalone RPM
+- `rpm -qf /usr/bin/awk` which package installed this file?
+- `rpm -ql tmux` list each file installed by the `tmux` package
+- `rpm -qc openssh-server` list the configuration files for a package
+- `rpm -qp --scripts foo.rpm` review the scriptlets (pre-install, post-install) of a standalone RPM
 
 ### yum Groups
 
 Chunks up software into broad categories.
 
--   `yum group list`
--   `yum group list hidden`
--   `yum group info "System Tools"`
--   `yum group install --with-optional "Directory Client"`
+- `yum group list`
+- `yum group list hidden`
+- `yum group info "System Tools"`
+- `yum group install --with-optional "Directory Client"`
 
 ## Repositories
 
@@ -935,27 +936,27 @@ To verify run `yum repolist`
 
 New in RHEL 8, appstreams separate user (i.e. application) packages from core system (i.e. base) packages.
 
--   _Application Streams_ come as either traditional RPMs or the new module format.
--   Modules (ex: php) themselves can in-turn contain streams (ex php:7.1, php:7.2).
--   Enabling a module stream (`php:7.1`) opens up access to its packages
--   Modules can have profiles (e.g. a minimal, devel)
--   Module streams support upgraded and downgrading between each other (`php:7.1` > `php:7.3` or `php:8.0` > `php:7.1`)
+- _Application Streams_ come as either traditional RPMs or the new module format.
+- Modules (ex: php) themselves can in-turn contain streams (ex php:7.1, php:7.2).
+- Enabling a module stream (`php:7.1`) opens up access to its packages
+- Modules can have profiles (e.g. a minimal, devel)
+- Module streams support upgraded and downgrading between each other (`php:7.1` > `php:7.3` or `php:8.0` > `php:7.1`)
 
 Managed with `yum`:
 
--   `yum module list`
--   `yum module provides httpd` show the module that provides a paricular package
--   `yum module info php` specific module info
--   `yum module info --profile php` show the profiles of a specific module
--   `yum module list php` to list available modules
--   `yum module install php:7.3` or `yum install @php:7.3` will enable and install specific module stream
--   `yum module install php:7.3/devel` to install the module using a specific profile
--   `yum module enable php:7.1` enables the module stream, without installing
+- `yum module list`
+- `yum module provides httpd` show the module that provides a paricular package
+- `yum module info php` specific module info
+- `yum module info --profile php` show the profiles of a specific module
+- `yum module list php` to list available modules
+- `yum module install php:7.3` or `yum install @php:7.3` will enable and install specific module stream
+- `yum module install php:7.3/devel` to install the module using a specific profile
+- `yum module enable php:7.1` enables the module stream, without installing
 
 Updates between module streams just works:
 
--   `yum module install php:7.1`
--   some time later `yum module install php:7.3`
+- `yum module install php:7.1`
+- some time later `yum module install php:7.3`
 
 Beware `yum update` will use enabled module streams (e.g. `php:7.1` will not automatically be upgraded to `php:7.3`)
 
@@ -963,29 +964,29 @@ Beware `yum update` will use enabled module streams (e.g. `php:7.1` will not aut
 
 The RHEL repositories require an active subscription.
 
--   `subscription-manager register`
--   `subscription-manager attach --auto`
+- `subscription-manager register`
+- `subscription-manager attach --auto`
 
 # Systemd
 
 The init system. The kernel hands over to it, when its ready to bootstrap user space.
 
--   Managed items are called units (services, mounts, timers, sockets etc)
--   `systemctl` is the management CLI
--   `systemctl -t help` list of supported unit types
--   `systemctl list-unit-files` list each unit, its definition file and status
--   `systemctl enabled vsftpd` enable (auto start) service
--   `systemctl start vsftpd` start the service process
+- Managed items are called units (services, mounts, timers, sockets etc)
+- `systemctl` is the management CLI
+- `systemctl -t help` list of supported unit types
+- `systemctl list-unit-files` list each unit, its definition file and status
+- `systemctl enabled vsftpd` enable (auto start) service
+- `systemctl start vsftpd` start the service process
 
 Modifying service configuration (see `man systemd.service`):
 
--   Default unit files: `/usr/lib/systemd/system/`
--   Custom unit files: `/etc/systemd/system/`
--   Runtime generated unit files: `/run/systemd/`
--   `systemctl cat rsyslog.service` dump unit configuration
--   `systemctl edit unit.service` will create overlay in `/etc/systemd/system`
--   `systemctl show` to dump available parameters that can be used in unit configs
--   `systemctl daemon-reload` after modifying unit files, often is necessary
+- Default unit files: `/usr/lib/systemd/system/`
+- Custom unit files: `/etc/systemd/system/`
+- Runtime generated unit files: `/run/systemd/`
+- `systemctl cat rsyslog.service` dump unit configuration
+- `systemctl edit unit.service` will create overlay in `/etc/systemd/system`
+- `systemctl show` to dump available parameters that can be used in unit configs
+- `systemctl daemon-reload` after modifying unit files, often is necessary
 
 When editing an overlay, can just add the extra options as they will be additive to the existing base configuration:
 
@@ -999,51 +1000,50 @@ When editing an overlay, can just add the extra options as they will be additive
 
 `cron`, the classical scheduling daemon.
 
--   has no `stdout`
--   `crontab -e` to create user specific job
--   `/etc/cron.d/` to create system wide job
--   `/etc/cron.{hourly,daily,weekly,monthly}` managed by `anacron`, for regular script execution
--   `/etc/crontab` (deprecated) was once used to configure jobs. `crontab` remains useful for specifying the environment for `cron` such as the `SHELL`.
+- has no `stdout`
+- `crontab -e` to create user specific job
+- `/etc/cron.d/` to create system wide job
+- `/etc/cron.{hourly,daily,weekly,monthly}` managed by `anacron`, for regular script execution
+- `/etc/crontab` (deprecated) was once used to configure jobs. `crontab` remains useful for specifying the environment for `cron` such as the `SHELL`.
 
 `cron` time specification (`man 5 crontab`) example `*/10 4 11 12 1-5`:
 
--   `*/10` every 10 minutes
--   `4` only on hour 4
--   `11` only on day 11
--   `12` only on month 12
--   `1-5` only on day of week 1-5
+- `*/10` every 10 minutes
+- `4` only on hour 4
+- `11` only on day 11
+- `12` only on month 12
+- `1-5` only on day of week 1-5
 
 Example, write `hello` to syslog on minute 57, hour 20:
 
--   `crontab -e`
--   `57 20 * * * logger hello`
+- `crontab -e`
+- `57 20 * * * logger hello`
 
 `anacron`, runs commands periodically.
 
--   Unlike `cron` doesn't assume the machine is running all day everyday.
--   Configured by `/etc/anacrontab`
--
+- Unlike `cron` doesn't assume the machine is running all day everyday.
+- Configured by `/etc/anacrontab`
 
 ## at
 
 `at` unlike `cron` is used for one-off jobs.
 
--   make sure `atd` daemon is running
--   provide its own interactive shell to take job specifications
--   `atq` to list `at` queue
--   `atrm` to remove `at` job
+- make sure `atd` daemon is running
+- provide its own interactive shell to take job specifications
+- `atq` to list `at` queue
+- `atrm` to remove `at` job
 
 Example:
 
--   `at teatime`
--   `logger have a cup of tea`
+- `at teatime`
+- `logger have a cup of tea`
 
 ## systemd Timers
 
 `cron` is still the gold standard, however this is still a viable option.
 
--   `man 5 systemd.timer` and `man 5 systemd.time` for time specification
--   `ls /usr/lib/systemd/system/*.timer` to list timers
+- `man 5 systemd.timer` and `man 5 systemd.time` for time specification
+- `ls /usr/lib/systemd/system/*.timer` to list timers
 
 ```
 [Unit]
@@ -1065,12 +1065,12 @@ WantedBy=timers.target
 
 A common way to manage (create, delete) temporary files. See `man tmpfiles.d`.
 
--   `/usr/lib/tmpfiles.d/` setting files
--   For example `/usr/lib/tmpfiles.d/tmp.conf` contain settings for automatic `tmp` files cleanup
--   `systemd-tmpfiles-clean.timer` unit can be configured to automatically clean up temporary files (by triggering `systemd-tmpfiles-clean.service` which in turn runs `systemd-tmpfiles --clean`).
--   If you want to make modifications, copy conf file from `/usr/lib/tmpfiles.d/` to `/etc/tmpfiles.d/` and edit it there.
--   Run `systemd-tmpfiles --clean /etc/tmpfiles.d/tmp.conf` manually to parse and test configuration changes.
--   To register a new custom tmpfiles configuration `systemd-tmpfiles --create /etc/tmpfiles.d/foo.conf`
+- `/usr/lib/tmpfiles.d/` setting files
+- For example `/usr/lib/tmpfiles.d/tmp.conf` contain settings for automatic `tmp` files cleanup
+- `systemd-tmpfiles-clean.timer` unit can be configured to automatically clean up temporary files (by triggering `systemd-tmpfiles-clean.service` which in turn runs `systemd-tmpfiles --clean`).
+- If you want to make modifications, copy conf file from `/usr/lib/tmpfiles.d/` to `/etc/tmpfiles.d/` and edit it there.
+- Run `systemd-tmpfiles --clean /etc/tmpfiles.d/tmp.conf` manually to parse and test configuration changes.
+- To register a new custom tmpfiles configuration `systemd-tmpfiles --create /etc/tmpfiles.d/foo.conf`
 
 # Logging
 
@@ -1080,18 +1080,18 @@ A common way to manage (create, delete) temporary files. See `man tmpfiles.d`.
 
 `rsyslogd` is the defacto syslogd used by most distros. It monitors configurable sources (e.g. `/dev/log`) and writes to configurable sinks (e.g. in `/var/log/`)
 
--   A daemon managed by the `rsyslogd.service` unit
--   Configured by `/etc/rsyslog.conf`
--   Snap-in configs in `/etc/rsyslog.d/`
--   Each logger rule line is made up of 3 elements; _facility_ ({auth,authpriv,cron,daemon,kern,lpr,mail,mark,news,security,syslog,user,uucp,local{0-7}}), _severity_ ({debug,info,notice,warn,err,crit,alert,emerg,panic}) and an _action_ (regular file, database table, remote machine, a tty, discard, and more).
--   For services that don't have a specific facilty, use `local{0-7}`
--   You can use the `logger` CLI to write messages to `rsyslogd` manually
+- A daemon managed by the `rsyslogd.service` unit
+- Configured by `/etc/rsyslog.conf`
+- Snap-in configs in `/etc/rsyslog.d/`
+- Each logger rule line is made up of 3 elements; _facility_ (`{auth,authpriv,cron,daemon,kern,lpr,mail,mark,news,security,syslog,user,uucp,local{0-7}}`), _severity_ (`{debug,info,notice,warn,err,crit,alert,emerg,panic}`) and an _action_ (regular file, database table, remote machine, a tty, discard, and more).
+- For services that don't have a specific facilty, use `local{0-7}`
+- You can use the `logger` CLI to write messages to `rsyslogd` manually
 
 Sample rules from `/etc/rsyslog.conf`:
 
     *.info;mail.none;authpriv.none;cron.none       /var/log/messages
 
-Log everything INFO or higher, exception mail/authpriv/cron to `/var/log/messages`
+Log everything INFO or higher, except mail/authpriv/cron to `/var/log/messages`
 
     mail.*                                         -/var/log/maillog
 
@@ -1103,30 +1103,47 @@ Being `systemd`, it invented its own logger, called `journald`. By default `jour
 
 While `rsyslogd`, depending on it config, will likely perist `journald` logs to `/var/log/`.
 
--   By default writes journal to `/run/log/journal`, which is cleared across reboots.
--   It's possible to persist the systemd journal logs. `mkdir /var/log/journal/` and restart the `journald.service` unit.
--   Update `/etc/systemd/journald.conf`, set `Storage` to one of `{persistent,volatile,auto}` (auto will use `/var/log/journal/` only if it exists)
--   Journal logs are propagated to `rsyslogd` using the `imjournal` input module
--   The `journalctl` CLI is the frontend for querying journal logs.
--   Use tab completion to build out filters, such as `journalctl UNIT=dbus.service`
+- By default writes journal to `/run/log/journal`, which is cleared across reboots.
+- It's possible to persist the systemd journal logs. `mkdir /var/log/journal/` and restart the `journald.service` unit.
+- Update `/etc/systemd/journald.conf`, set `Storage` to one of `{persistent,volatile,auto}` (auto will use `/var/log/journal/` only if it exists)
+- Journal logs are propagated to `rsyslogd` using the `imjournal` input module
+- The `journalctl` CLI is the frontend for querying journal logs.
+- Use tab completion to build out filters, such as `journalctl UNIT=dbus.service`
 
 ## Logrotate
 
 Used to roll up (rotate) logs.
 
--   Its started through `cron.daily`
--   Configured by `/etc/logrorate.conf` or `/etc/logrotate.d/`
+- Its started through `cron.daily`
+- Configured by `/etc/logrorate.conf` or `/etc/logrotate.d/`
+
+# Managing Storage
+
+## Disk layout
+
+This is driven by the underlying management scheme; either BIOS based or UEFI based.
+
+_BIOS_, designed in the early 80's, uses a MBR (master boot record) to define the partition layout of the system. With a cap of 64 bytes, can support upto 4 partitions. The 4 partition limitation was later overcome, by leveraging logical partitions within an extended partition.
+
+_UEFI_ (Universal Extended Firmware Interface), uses GPT (GUID partition table), supports upto 128 partitions.
+
+Useful commands:
+
+- `lsblk` dumps all block devices attached to a system
+- `parted` is the preferred partition management program
+- All block devices are represented in `/dev/` e.g. `/dev/vda1`
+- `/proc/partitions`
 
 # Rando cool
 
--   `ctrl+l` = clear terminal
--   `ls -d` don't show contents of directories
--   `\ls` un-alias a command, by preceding it with a backslash `\`
--   `alias` to display evaluated bash aliases
--   `tar` command options are not prefixed with a hypen `-`
--   `tac` is the inverse program of `cat`
--   `chvt` jumps between TTY e.g. `chvt 3`
--   `ssh-keygen` supports a number of ciphers, set using `[-t dsa | ecdsa | ed25519 | rsa]`, RSA by default
--   `yum history` full journal of package installs
--   `yumdownloader` is included in `yum-utils` lets you download packages to local file system
--   `run-parts` which comes as part of the `cron` ecosystem, is a script that runs all executables in a directory.
+- `ctrl+l` = clear terminal
+- `ls -d` don't show contents of directories
+- `\ls` un-alias a command, by preceding it with a backslash `\`
+- `alias` to display evaluated bash aliases
+- `tar` command options are not prefixed with a hypen `-`
+- `tac` is the inverse program of `cat`
+- `chvt` jumps between TTY e.g. `chvt 3`
+- `ssh-keygen` supports a number of ciphers, set using `[-t dsa | ecdsa | ed25519 | rsa]`, RSA by default
+- `yum history` full journal of package installs
+- `yumdownloader` is included in `yum-utils` lets you download packages to local file system
+- `run-parts` which comes as part of the `cron` ecosystem, is a script that runs all executables in a directory.
