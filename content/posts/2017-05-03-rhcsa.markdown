@@ -92,6 +92,14 @@ My preparation notes for the RHCSA 8 exam.
   - [Logrotate](#logrotate)
 - [Managing Storage](#managing-storage)
   - [Disk layout](#disk-layout)
+  - [Storage Options](#storage-options)
+  - [Creating partitions](#creating-partitions)
+    - [GPT partitions with parted](#gpt-partitions-with-parted)
+    - [MBR partitions with fdisk](#mbr-partitions-with-fdisk)
+  - [File System Choices](#file-system-choices)
+    - [XFS](#xfs)
+    - [Ext4](#ext4)
+  - [Mounting](#mounting)
 - [Rando cool](#rando-cool)
 
 <!-- vim-markdown-toc -->
@@ -1123,16 +1131,70 @@ Used to roll up (rotate) logs.
 
 This is driven by the underlying management scheme; either BIOS based or UEFI based.
 
-_BIOS_, designed in the early 80's, uses a MBR (master boot record) to define the partition layout of the system. With a cap of 64 bytes, can support upto 4 partitions. The 4 partition limitation was later overcome, by leveraging logical partitions within an extended partition.
+_BIOS_, designed in the early 80's, uses a MBR (master boot record) to define the partition layout of the system. With 512 bytes to store boot information, and 64 bytes for partition layout, can support upto 4 partitions with a max size of 2TiB. The 4 partition limitation was later overcome, by leveraging logical partitions contained within an extended partition.
 
 _UEFI_ (Universal Extended Firmware Interface), uses GPT (GUID partition table), supports upto 128 partitions.
 
 Useful commands:
 
-- `lsblk` dumps all block devices attached to a system
+- `lsblk` lists out all block devices attached to a system
 - `parted` is the preferred partition management program
 - All block devices are represented in `/dev/` e.g. `/dev/vda1`
 - `/proc/partitions`
+
+## Storage Options
+
+- Partitions: the classical method of allocating dedicated storage to types of data
+- LVM (Logical Volume Manager) volumes: a higher level abstraction of storage, with rich features; resizing, snapshots
+- Stratis: RHEL8+ nextgen volume manager, implemented in user space, to better support cloud and containerised environments
+- Virtual Data Optimiser (VDO): focuses on storage data in the most efficient way, by introducing concepts such as deduplicated and compressed storage pools
+
+## Creating partitions
+
+### GPT partitions with parted
+
+`parted` is now the defacto utility to be used, however `fdisk` and `gdisk` remain available.
+
+- `parted /dev/sdb` to get started on a block device
+- `print` to list partition table
+- `mklabel msdos|gpt` to define the partition type (MBR or GPT)
+- `mkpart [part-type] name fs-type start end`
+  - `part-type` (optional) of primary, logical or extended only applies to MBR
+  - `name` a mandatory label
+  - `fs-type` an irrelevant file system piece of metadata (does NOT actually layer a file system onto the volume)
+  - `start end` the locations starting from the beginning of the block device to apply the partition
+- `udevadm settle` to flush changes
+- `cat /proc/partitions` to verify
+
+### MBR partitions with fdisk
+
+Good old `fdisk`. Sanely defaults when working with MBR partitions, e.g. if 3 primary partitions exist, it will default the next partition to type extended, which you can then fill up with logical partitions.
+
+If the block device is in use, `fdisk` will be unable to write the partition table. Run `partprobe` if this is the case.
+
+## File System Choices
+
+### XFS
+
+The default.
+
+- Fast
+- CoW (copy on write) to guarantee data integrity; before writing a file to disk, the original is preserved elsewhere making it possible to revert to it's previous state
+- Size can be increased, but not decreased
+- `mkfs.xfs /dev/vdb2`
+
+### Ext4
+
+The old (v6 and before) default.
+
+- Backward compatible with Ext2
+- Uses a journal to guarantee data integrity
+- Size can be increased and decreased
+- `mkfs.ext4 /dev/vdb3`
+
+## Mounting
+
+- When unmounting, you may get a _target is busy_ response. Use the awesome `lsof /mnt` to track down processes currently using the mountpoint.
 
 # Rando cool
 
@@ -1147,3 +1209,5 @@ Useful commands:
 - `yum history` full journal of package installs
 - `yumdownloader` is included in `yum-utils` lets you download packages to local file system
 - `run-parts` which comes as part of the `cron` ecosystem, is a script that runs all executables in a directory.
+- A sector is 512 bytes.
+- The act of creating a file system is referred to as _making_ as opposed to _formatting_ on Linux
