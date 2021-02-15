@@ -92,7 +92,6 @@ My preparation notes for the RHCSA 8 exam.
   - [Logrotate](#logrotate)
 - [Managing Storage](#managing-storage)
   - [Disk layout](#disk-layout)
-  - [Storage Options](#storage-options)
   - [Creating partitions](#creating-partitions)
     - [GPT partitions with parted](#gpt-partitions-with-parted)
     - [MBR partitions with fdisk](#mbr-partitions-with-fdisk)
@@ -100,6 +99,12 @@ My preparation notes for the RHCSA 8 exam.
     - [XFS](#xfs)
     - [Ext4](#ext4)
   - [Mounting](#mounting)
+    - [Persistent block device naming](#persistent-block-device-naming)
+    - [systemd mounts](#systemd-mounts)
+  - [Swap](#swap)
+  - [LVM](#lvm)
+  - [Stratis](#stratis)
+  - [VDO](#vdo)
 - [Rando cool](#rando-cool)
 
 <!-- vim-markdown-toc -->
@@ -1142,13 +1147,6 @@ Useful commands:
 - All block devices are represented in `/dev/` e.g. `/dev/vda1`
 - `/proc/partitions`
 
-## Storage Options
-
-- Partitions: the classical method of allocating dedicated storage to types of data
-- LVM (Logical Volume Manager) volumes: a higher level abstraction of storage, with rich features; resizing, snapshots
-- Stratis: RHEL8+ nextgen volume manager, implemented in user space, to better support cloud and containerised environments
-- Virtual Data Optimiser (VDO): focuses on storage data in the most efficient way, by introducing concepts such as deduplicated and compressed storage pools
-
 ## Creating partitions
 
 ### GPT partitions with parted
@@ -1168,9 +1166,17 @@ Useful commands:
 
 ### MBR partitions with fdisk
 
-Good old `fdisk`. Sanely defaults when working with MBR partitions, e.g. if 3 primary partitions exist, it will default the next partition to type extended, which you can then fill up with logical partitions.
+Good old `fdisk`. Sanely defaults when working with MBR partitions, e.g. if 3 primary partitions exist, knows that only 4 primaries can exist, so defaults the next partition to type extended, which you can then fill up with logical partitions.
 
 If the block device is in use, `fdisk` will be unable to write the partition table. Run `partprobe` if this is the case.
+
+Logical partitions get named sequentially within the extended partition, in which they live. If a logical partition is removed, other higher logical partitions will decrement. For example:
+
+- `vdb4` is an extended
+- `vdb5` is logical
+- `vdb6` is logical
+- `vdb5` gets removed
+- `vdb6` becomes `vdb5` (breaking any fstab entries dependent on the block device name)
 
 ## File System Choices
 
@@ -1182,6 +1188,12 @@ The default.
 - CoW (copy on write) to guarantee data integrity; before writing a file to disk, the original is preserved elsewhere making it possible to revert to it's previous state
 - Size can be increased, but not decreased
 - `mkfs.xfs /dev/vdb2`
+- `xfs_admin` to manage properties of an XFS file system, such as defining a label
+- `xfsdump` for creating backups, including XFS specific attributes
+  - Example: `xfsdump -I 0 -f /backupfiles/data.xfsdump /data` creates a full backup of the contents of `/data`
+- `xfsrestore` to restore these backups:
+  - Example: `xfsrestore -f /backupfiles/data.xfsdump /data`
+- `xfsrepair` is used to repair broken XFS file systems
 
 ### Ext4
 
@@ -1191,10 +1203,141 @@ The old (v6 and before) default.
 - Uses a journal to guarantee data integrity
 - Size can be increased and decreased
 - `mkfs.ext4 /dev/vdb3`
+- `tune2fs` to manage Ext4, like labelling
 
 ## Mounting
 
+The act of attaching a block device to sub-branch within the `/` file system tree.
+
+- `/etc/fstab` (fs table) is used to persistently mount volumes
+- In the post systemd world, fstab nowdays is simply a frontend to _systemd mounts_ (using the `systemd-fstab-generator` code generator)
+- After modifying `fstab` ensure you refresh systemd with `systemctl daemon-reload`
+- To auto mount, unmounted volumes in fstab `mount -a`
 - When unmounting, you may get a _target is busy_ response. Use the awesome `lsof /mnt` to track down processes currently using the mountpoint.
+
+### Persistent block device naming
+
+Block device names, like `/dev/sdb` are not guaranteed to be reissued consistently (particularly in cloud environments), or if partitions get reorganised.
+
+Other identifiers include _UUID_, _labels_ and _device paths_, which are all represented under `/dev/disk/`.
+
+- `blkid` shows the UUID and LABEL id's assigned to each block device
+- To mount based on a UUID:
+  - Use `blkid` to find the uuid for the block device
+  - In `fstab` replace the block device name with `UUID=22c2d576-0ec2-4ded-8392-fb17a795fb42`
+- To mount based on a label:
+  - Use `tune2fs -L` or `xfs_admin -L` to set labels on Ext4 or XFS
+  - In `fstab` replace the block device name with `LABEL=foo`
+
+### systemd mounts
+
+systemd manages all persistent mounts, even those done using `fstab`
+
+- Hand crafting `.mount` files, allows you to directly define a systemd mount
+- This provides finer control over when a mount is required (unlike `fstab` which is simply done at startup)
+- `/usr/lib/systemd/system/tmp.mount` provides a great example (disabled by default)
+- Convention is for system RPM packages to use `/usr/lib/systemd/system/` and user defined mounts `/etc/systemd/system/`
+- The name of the `.mount` file is important! It must match the path of the mount point e.g. `foo.mount` mounts to `/foo`. `foo-bar.mount` mounts to `/foo/bar`
+
+## Swap
+
+RAM emulated on disk.
+
+- All Linux systems should have some swap space.
+- Can exist on a block device, including on a swap file
+- Using `parted` ensure to set the type to `linux-swap`, or type 82 in `fdisk`
+- Use `mkswap` to initialise the swap FS.
+- Activate it with `swapon`
+- Use `free -m` to show available swap space
+
+## LVM
+
+LVM (Logical Volume Manager) is a higher level abstraction of storage, with rich features; resizing, snapshots.
+
+It works by abstracting physical volumes (PVs) from logical logical volumes (LVs), through a volume group (VG). For example a 20GiB LV can span two 10GiB PV's.
+
+Device Mapper is the
+
+The LVM tango:
+
+- Create partitions as type lvm (`set n lvm on` in `parted`, or type `8e` in `fdisk`)
+- Create PV with `pvcreate /dev/sdb1`
+- Verify with `pvs`
+- Create VG with `vgcreate vgdata /dev/sdb1`
+- Verify with `vgs`
+- Create LV with `lvcreate -n lvdata -L 1G vgdata`
+- Verify with `lvs`
+- Apply a file system `mkfs.xfs /dev/vgdata/lvdata`
+- Register LV in `fstab` (no need for labels or uuid based mounting, as LVM is device independent)
+
+Growing LVM depends on how far down the LV/VG/PV stack the space shortage goes.
+
+Growth tango:
+
+- Is there enough space in the volume group with `vgs`
+- No? `vgextend`
+- Extend the logical volume with `lvextend -r -L +1G` to grow the volume file system its hosting
+- If you forget the `-r` switch its over to you based on what FS you're dealing with
+  - Ext4 use `e2resize`
+  - XFS use `xfs _growfs`
+
+## Stratis
+
+Stratis is RedHats solution to Btrfs and ZFS, implemented in user space, to better support cloud and containerised environments.
+
+- Built on top of raw block devices (including LVM). No partitions.
+- Features include; thin provisioning, snapshots, cache tier, programmatic API, monitoring and repair
+- Creates a `/dev/stratis/my-pool/` for each pool, full of links to actual devices
+- XFS is put on a volume on top of the pool
+- Each pool can contain one or more file systems
+- `df` doesnt work, as stratis volumes are thin provisioned
+- instead use the `stratis` related utilities, such as `stratis [blockdev|filesystem|pool]`
+
+Creating a new pool:
+
+- `yum install stratis-cli stratisd`
+- `systemctl enable --now stratisd`
+- `wipefs -a /dev/vdb` to clear any existing partition tables that may exist
+- `stratis pool create mypool /dev/vdb` - partitions NOT supported, at least 1GiB
+- `stratis filesystem create mypool myfs1` plops on XFS
+- `stratis filesystem list mypool`
+
+Mounting the pool:
+
+- `mkdir /myfs1`
+- `mount /dev/stratis/mypool/myfs1 /myfs1`
+- `stratis pool list`
+- `stratis filesystem list`
+- `stratis blockdev list mypool`
+- `blkid` to find UUID of stratis volume, then mount in `fstab` as normal
+
+Snapshots:
+
+- An independent file system that can be mounted
+- Needs at least 0.5GiB to store the XFS journal
+- The snapshot is not linked to it origin in anyway
+- To create one `stratis filesystem snapshot mypool myfs1 myfs1-snapshot`
+- To revert to a snapshot:
+  - `umount /myfs1`
+  - `stratis filesystem destroy mypool myfs1`
+  - `stratis filesystem snapshot mypool myfs1-snapshot myfs1`
+
+## VDO
+
+Virtual Data Optimiser (VDO): focuses on storage data in the most efficient way, by introducing concepts such as deduplicated and compressed storage pools
+
+- Used mainly in cloud and containerised environments.
+- Like stratis provides thin-provisioned storage.
+  - For VMs and containers, set the logical size 10x the physical size.
+  - For object storage, go 3x.
+- Must be at least 4GiB.
+- Can be created on a block device OR a partition.
+- `df` doesnt work here either :( instead use `vdostats --human-readable`
+- `yum install vdo kmod-kvdo`
+- `vdo create --name=vdo1 --device=/dev/vdb1 --vdoLogicalSize=1T`
+- `mkfs.xfs -K /dev/mapper/vdo1` -K (do NOT attempt to discard blocks) is handy speed up hack, when working with thin-provisioned storage
+- In `fstab` include the `x-systemd.requires=vdo.service`, and the `discard` mount options
+- Remember `/usr/share/doc/vdo/examples` has great systemd mount templates
 
 # Rando cool
 
@@ -1202,7 +1345,7 @@ The old (v6 and before) default.
 - `ls -d` don't show contents of directories
 - `\ls` un-alias a command, by preceding it with a backslash `\`
 - `alias` to display evaluated bash aliases
-- `tar` command options are not prefixed with a hypen `-`
+- `tar` command options are not prefixed with a hypen `-` (BSD compat)
 - `tac` is the inverse program of `cat`
 - `chvt` jumps between TTY e.g. `chvt 3`
 - `ssh-keygen` supports a number of ciphers, set using `[-t dsa | ecdsa | ed25519 | rsa]`, RSA by default
