@@ -1,8 +1,1 @@
-
-
-.post-title {
-	border: 0;
-	--border: 0;
-	margin: 0;
-	padding-bottom: 10px;
-}
+.post-title { margin-top: 0 !important; }
