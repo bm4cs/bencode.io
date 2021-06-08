@@ -18,94 +18,113 @@ My preparation notes for the RHCSA 8 exam.
 
 <!-- vim-markdown-toc GFM -->
 
-- [Essential Tools](#essential-tools)
-  - [Documentation](#documentation)
-    - [man](#man)
-    - [/usr/share/doc](#usrsharedoc)
-    - [RPM bundled documentation](#rpm-bundled-documentation)
-    - [General Searching Techniques](#general-searching-techniques)
-  - [Shell history](#shell-history)
-  - [Globbing](#globbing)
-  - [I/O Redirection and Pipes](#io-redirection-and-pipes)
-- [Essential File Management](#essential-file-management)
-  - [Linux file system layout](#linux-file-system-layout)
-  - [Finding Files](#finding-files)
-    - [locate](#locate)
-    - [find](#find)
-  - [Archiving and compression with tar](#archiving-and-compression-with-tar)
-  - [Hard and Soft Links](#hard-and-soft-links)
-- [Working with text](#working-with-text)
-  - [Regular expressions](#regular-expressions)
-  - [grep](#grep)
-  - [sed and awk](#sed-and-awk)
-- [Connecting a Linux host](#connecting-a-linux-host)
-  - [Consoles Terminals and TTYs](#consoles-terminals-and-ttys)
-  - [Switch Users (su)](#switch-users-su)
-  - [sudo](#sudo)
-  - [SSH](#ssh)
-- [Managing users and groups](#managing-users-and-groups)
-  - [Creating users](#creating-users)
-  - [User properties](#user-properties)
-  - [User configuration files](#user-configuration-files)
-  - [Creating and managing groups](#creating-and-managing-groups)
-  - [Managing password properties](#managing-password-properties)
-- [Managing Permissions](#managing-permissions)
-  - [Changing file ownership](#changing-file-ownership)
-  - [Managing basic permissions](#managing-basic-permissions)
-  - [Understanding umask (user mask)](#understanding-umask-user-mask)
-  - [Special permissions](#special-permissions)
-    - [suid](#suid)
-    - [sgid](#sgid)
-    - [Sticky bit](#sticky-bit)
-  - [Understanding ACLs](#understanding-acls)
-- [Configuring Networking](#configuring-networking)
-  - [Network device naming](#network-device-naming)
-  - [Managing runtime network configuration with ip](#managing-runtime-network-configuration-with-ip)
-  - [Storing network configuration persistently](#storing-network-configuration-persistently)
-    - [nmcli](#nmcli)
-  - [Routing and DNS](#routing-and-dns)
-- [Managing Processes](#managing-processes)
-  - [Shell jobs](#shell-jobs)
-  - [ps](#ps)
-  - [Memory usage](#memory-usage)
-  - [CPU load](#cpu-load)
-  - [System activity with top](#system-activity-with-top)
-  - [Sending signals to processes](#sending-signals-to-processes)
-  - [Priority and niceness](#priority-and-niceness)
-  - [tuned profiles](#tuned-profiles)
-- [Managing Software](#managing-software)
-  - [RPM and yum](#rpm-and-yum)
-    - [rpm queries](#rpm-queries)
-    - [yum Groups](#yum-groups)
-  - [Repositories](#repositories)
-  - [Modules and Application Streams](#modules-and-application-streams)
-  - [Red Hat Subscription Manager](#red-hat-subscription-manager)
-- [Systemd](#systemd)
-- [Scheduling Tasks](#scheduling-tasks)
-  - [cron](#cron)
-  - [at](#at)
-  - [systemd Timers](#systemd-timers)
-  - [Managing temporary files](#managing-temporary-files)
-- [Logging](#logging)
-  - [Rsyslog](#rsyslog)
-  - [Systemd Journal](#systemd-journal)
-  - [Logrotate](#logrotate)
-- [Managing Storage](#managing-storage)
-  - [Disk layout](#disk-layout)
-  - [Creating partitions](#creating-partitions)
-    - [GPT partitions with parted](#gpt-partitions-with-parted)
-    - [MBR partitions with fdisk](#mbr-partitions-with-fdisk)
-  - [File System Choices](#file-system-choices)
-    - [XFS](#xfs)
-    - [Ext4](#ext4)
-  - [Mounting](#mounting)
-    - [Persistent block device naming](#persistent-block-device-naming)
-    - [systemd mounts](#systemd-mounts)
-  - [Swap](#swap)
-  - [LVM](#lvm)
-  - [Stratis](#stratis)
-  - [VDO](#vdo)
-- [Rando cool](#rando-cool)
+* [Essential Tools](#essential-tools)
+    * [Documentation](#documentation)
+        * [man](#man)
+        * [/usr/share/doc](#usrsharedoc)
+        * [RPM bundled documentation](#rpm-bundled-documentation)
+        * [General Searching Techniques](#general-searching-techniques)
+    * [Shell history](#shell-history)
+    * [Globbing](#globbing)
+    * [I/O Redirection and Pipes](#io-redirection-and-pipes)
+* [Essential File Management](#essential-file-management)
+    * [Linux file system layout](#linux-file-system-layout)
+    * [Finding Files](#finding-files)
+        * [locate](#locate)
+        * [find](#find)
+    * [Archiving and compression with tar](#archiving-and-compression-with-tar)
+    * [Hard and Soft Links](#hard-and-soft-links)
+* [Working with text](#working-with-text)
+    * [Regular expressions](#regular-expressions)
+    * [grep](#grep)
+    * [sed and awk](#sed-and-awk)
+* [Connecting a Linux host](#connecting-a-linux-host)
+    * [Consoles Terminals and TTYs](#consoles-terminals-and-ttys)
+    * [Switch Users (su)](#switch-users-su)
+    * [sudo](#sudo)
+    * [SSH](#ssh)
+* [Managing users and groups](#managing-users-and-groups)
+    * [Creating users](#creating-users)
+    * [User properties](#user-properties)
+    * [User configuration files](#user-configuration-files)
+    * [Creating and managing groups](#creating-and-managing-groups)
+    * [Managing password properties](#managing-password-properties)
+* [Managing Permissions](#managing-permissions)
+    * [Changing file ownership](#changing-file-ownership)
+    * [Managing basic permissions](#managing-basic-permissions)
+    * [Understanding umask (user mask)](#understanding-umask-user-mask)
+    * [Special permissions](#special-permissions)
+        * [suid](#suid)
+        * [sgid](#sgid)
+        * [Sticky bit](#sticky-bit)
+    * [Understanding ACLs](#understanding-acls)
+* [Configuring Networking](#configuring-networking)
+    * [Network device naming](#network-device-naming)
+    * [Managing runtime network configuration with ip](#managing-runtime-network-configuration-with-ip)
+    * [Storing network configuration persistently](#storing-network-configuration-persistently)
+        * [nmcli](#nmcli)
+    * [Routing and DNS](#routing-and-dns)
+* [Managing Processes](#managing-processes)
+    * [Shell jobs](#shell-jobs)
+    * [ps](#ps)
+    * [Memory usage](#memory-usage)
+    * [CPU load](#cpu-load)
+    * [System activity with top](#system-activity-with-top)
+    * [Sending signals to processes](#sending-signals-to-processes)
+    * [Priority and niceness](#priority-and-niceness)
+    * [tuned profiles](#tuned-profiles)
+* [Managing Software](#managing-software)
+    * [RPM and yum](#rpm-and-yum)
+        * [rpm queries](#rpm-queries)
+        * [yum Groups](#yum-groups)
+    * [Repositories](#repositories)
+    * [Modules and Application Streams](#modules-and-application-streams)
+    * [Red Hat Subscription Manager](#red-hat-subscription-manager)
+* [Systemd](#systemd)
+* [Scheduling Tasks](#scheduling-tasks)
+    * [cron](#cron)
+    * [at](#at)
+    * [systemd Timers](#systemd-timers)
+    * [Managing temporary files](#managing-temporary-files)
+* [Logging](#logging)
+    * [Rsyslog](#rsyslog)
+    * [Systemd Journal](#systemd-journal)
+    * [Logrotate](#logrotate)
+* [Managing Storage](#managing-storage)
+    * [Disk layout](#disk-layout)
+    * [Creating partitions](#creating-partitions)
+        * [GPT partitions with parted](#gpt-partitions-with-parted)
+        * [MBR partitions with fdisk](#mbr-partitions-with-fdisk)
+    * [File System Choices](#file-system-choices)
+        * [XFS](#xfs)
+        * [Ext4](#ext4)
+    * [Mounting](#mounting)
+        * [Persistent block device naming](#persistent-block-device-naming)
+        * [systemd mounts](#systemd-mounts)
+    * [Swap](#swap)
+* [Advanced Storage](#advanced-storage)
+    * [LVM](#lvm)
+    * [Stratis](#stratis)
+    * [VDO](#vdo)
+    * [LUKS](#luks)
+* [Advanced tasks](#advanced-tasks)
+    * [Kernel management](#kernel-management)
+    * [Boot procedure](#boot-procedure)
+        * [GRUB](#grub)
+        * [Systemd targets](#systemd-targets)
+    * [Essential troubleshooting](#essential-troubleshooting)
+        * [Changing root password](#changing-root-password)
+    * [Bash scripting](#bash-scripting)
+* [Managing network services](#managing-network-services)
+    * [SSH](#ssh-1)
+    * [httpd](#httpd)
+    * [SELinux](#selinux)
+    * [Network security](#network-security)
+    * [Automating installs](#automating-installs)
+    * [Configuring time services](#configuring-time-services)
+    * [Access remote file systems](#access-remote-file-systems)
+    * [Containers](#containers)
+* [Rando cool](#rando-cool)
 
 <!-- vim-markdown-toc -->
 
@@ -1201,7 +1220,7 @@ The old (v6 and before) default.
 
 - Backward compatible with Ext2
 - Uses a journal to guarantee data integrity
-- Size can be increased and decreased
+- Size can be increased and decreased (after growing partitions with `parted`, use `resize2fs <device-name>`)
 - `mkfs.ext4 /dev/vdb3`
 - `tune2fs` to manage Ext4, like labelling
 
@@ -1250,6 +1269,8 @@ RAM emulated on disk.
 - Activate it with `swapon`
 - Use `free -m` to show available swap space
 
+# Advanced Storage
+
 ## LVM
 
 LVM (Logical Volume Manager) is a higher level abstraction of storage, with rich features; resizing, snapshots.
@@ -1283,7 +1304,7 @@ Growth tango:
 
 ## Stratis
 
-Stratis is RedHats solution to Btrfs and ZFS, implemented in user space, to better support cloud and containerised environments.
+Stratis is RedHat's solution to Btrfs and ZFS, implemented in user space, to better support cloud and containerised environments.
 
 - Built on top of raw block devices (including LVM). No partitions.
 - Features include; thin provisioning, snapshots, cache tier, programmatic API, monitoring and repair
@@ -1324,7 +1345,7 @@ Snapshots:
 
 ## VDO
 
-Virtual Data Optimiser (VDO): focuses on storage data in the most efficient way, by introducing concepts such as deduplicated and compressed storage pools
+Virtual Data Optimiser (VDO): focuses on storage data in the most efficient way, with the concept of deduplicated and compressed storage pools.
 
 - Used mainly in cloud and containerised environments.
 - Like stratis provides thin-provisioned storage.
@@ -1334,10 +1355,168 @@ Virtual Data Optimiser (VDO): focuses on storage data in the most efficient way,
 - Can be created on a block device OR a partition.
 - `df` doesnt work here either :( instead use `vdostats --human-readable`
 - `yum install vdo kmod-kvdo`
-- `vdo create --name=vdo1 --device=/dev/vdb1 --vdoLogicalSize=1T`
+- `vdo create --name=vdo1 --device=/dev/vdb --vdoLogicalSize=1T`
 - `mkfs.xfs -K /dev/mapper/vdo1` -K (do NOT attempt to discard blocks) is handy speed up hack, when working with thin-provisioned storage
 - In `fstab` include the `x-systemd.requires=vdo.service`, and the `discard` mount options
 - Remember `/usr/share/doc/vdo/examples` has great systemd mount templates
+
+Troubleshooting:
+
+- When creating may get the error `vdo: ERROR - Found existing signature on /dev/vdb at offset 512`. This is a safety check, telling you the volume looks to already be initialised, as possibly used. If its an old partition and you're happy to replace it, run `wipefs --all --force /dev/vdb`
+
+## LUKS
+
+> The Linux Unified Key Setup (LUKS) is a disk encryption specification created by Clemens Fruhwirth in 2004. 
+
+LUKS is a standard on-disk format. This facilitates compatibility and interoperability between programs, and assures programs implement password management in a secure manner.
+
+Two default programs are provided, `cryptsetup` a `dm-crypt` reference implementation, and `luksmeta` for storing metadata in a LUKSv1 header.
+
+To setup a LUKS encrytped volume:
+
+1. Create partition with `parted`
+2. Format the LUKS device `cryptsetup luksFormat <partition-device-name>`
+3. Bind LUKS volume as a device mapper name `cryptsetup luksOpen <partition-device-name> <device-mapper-name>`
+4. Format the LUKS volume `mkfs.xfs <device-mapper-name>`
+5. Mount the device mapper name (ex `/dev/mapper/<device-mapper-name>`)
+
+The `/etc/crypttab` and `/etc/fstab` files can be used to automate steps 3 and 4.
+
+An example `crypttab` entry (see `man crypttab` for more). The third param sets the password (if empty, or set to `none` or `-`, the password must be interactively entered during system boot):
+
+```
+myluksvolume    /dev/sda5    none
+```
+
+# Advanced tasks
+
+## Kernel management
+
+Use `modprobe <module-name>` to manually load a kernel module, `modprobe -r <module-name` to unload, and `modinfo <module-name>` to list parameters that a module supports.
+
+Module params can be edited under `/etc/modprobe.d/`
+
+The `/proc` directory provides a UI to the kernel.
+
+- Pid directories map to each running process, providing metadata about each
+- Status files such as `/proc/partitions`
+- Tunable kernel parameters are managed under `/proc/sys`. To temporarily update echo new value into the `/proc/sys` file of interest such as `echo 1 > /proc/sys/net/ipv4/ip_forward`. Once happy persist the configuration using `/etc/sysctl.conf`.
+- `sysctl -a` to dump all kernel tunables
+
+Install new kernel with `yum update kernel` or `yum install kernel` (both have the same effect).
+
+
+## Boot procedure
+
+### GRUB
+
+GRUB2 runtime parameters, are editing before bootstrapping the system. When booting, the GRUB bootloader will display boot entries:
+
+- `e` to edit. The `linux` line is most interesting, responsible for booting the kernel. Options are tacked on the back of this line, and can be freely edited here. When ready boot the system with the desired parameters.
+  - `rhgb` redhat graphical boot
+  - `quiet` quiet boot
+- `c` for command interface. `help` for lits of supported commands. `esc` will return you out to boot menu.
+
+To persist GRUB2 boot parameters:
+
+1. Edit the `/etc/default/grub` file.
+2. Compile changes to `grub.cfg` using either:
+  - For BIOS systems: `grub2-mkconfig -o /boot/grub2/grub.cfg`
+  - For UEFI systems: `grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg`
+
+### Systemd targets
+
+A target is just a group of unit files. *Isolatable* targets define a desired final state, such as `emergency.target`, `rescue.target`, `multi-user.target` and `graphical.target`.
+
+Disabling and enabling services, links them into their desired targets. This is dictated by their `WantedBy` setting within the unit file, as shown by `systemctl cat httpd`
+
+```
+[Install]
+WantedBy=multi-user.target
+```
+
+The default target and their *wants* are defined in `/etc/systemd/system/`, as symlinks. This directory is just a big bag of symlinks.
+
+
+To boot into a specific target:
+
+- GRUB2 boot prompt `systemd.unit=rescue.target`
+- On a running system `systemctl isloate xxx.target`
+
+`systemctl list-dependencies` visually lays out the hierarchy of targets and units.
+
+`systemctl get-default` and `set-default` can be used to, you guessed it, set the default target.
+
+## Essential troubleshooting
+
+Depending how deep the problem is. Common solutions include:
+
+- Tweaking GRUB2 kernel args
+  - `rd.break` to pause in initramfs just after loading the kernel
+  - setting the init system to `init=/bin/bash`
+- Then setout to reduce the service footprint using `systemd.unit=emergency.target` and `systemd.unit=rescue.target`.
+
+### Changing root password
+
+Edit GRUB2 entry while booting, add `rd.break` to end of linux kernel line, once in a shell, remount sysroot as rw, update the root password and flag to selinux this is cool:
+
+```
+mount -o remount,rw /sysroot
+chroot /sysroot
+echo secret | passwd --stdin root
+touch /.autorelabel
+^d ^d
+```
+
+## Bash scripting
+
+Only the most basic skills needed.
+
+# Managing network services
+
+## SSH
+
+- `ssh-keygen` creates a new keypair
+- `ssh-copy-id` copies public key to target host
+- `ssh-agent /bin/bash` caches private key passphrase in shell
+- `ssh-add` adds passphrase to cache
+
+Configuration:
+
+- server = `/etc/ssh/sshd_config`
+- client = `/etc/ssh/ssh_config`
+
+Key settings: Port, PermitRootLogin, AllowUsers, PubkeyAuthentication, PasswordAuthentication, X11Forwarding
+
+Remote file management:
+
+- `scp local-file user@remote-host:/path`
+- `sftp` FTP over SSH
+- `rsync`
+  - `-r` recurse entire tree
+  - `-l` sync symlinks
+  - `-p` preserve symlinks
+  - `-n` dry run
+  - `-a` archive mode (same as `-rlptgoD`)
+  - `-A` archive mode and syncs ACLs
+  - `-X` sync SELinux context labels
+
+
+## httpd
+
+## SELinux
+
+## Network security
+
+## Automating installs
+
+## Configuring time services
+
+## Access remote file systems
+
+## Containers
+
+
 
 # Rando cool
 
@@ -1354,3 +1533,5 @@ Virtual Data Optimiser (VDO): focuses on storage data in the most efficient way,
 - `run-parts` which comes as part of the `cron` ecosystem, is a script that runs all executables in a directory.
 - A sector is 512 bytes.
 - The act of creating a file system is referred to as _making_ as opposed to _formatting_ on Linux
+- `man test` for a quickref of bash evaluations possible
+
