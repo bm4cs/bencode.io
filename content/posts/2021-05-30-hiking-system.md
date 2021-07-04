@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Hiking pack packing system"
+title: "Hiking pack system"
 slug: "pack"
 date: "2021-05-29 22:46:47"
 lastmod: "2021-05-2cgedit  22:46:49"
@@ -86,66 +86,66 @@ A method for rehydrating meals using just cold water, over a couple of hours. Th
 
 ## Refried beans
 
-Dehdrated refried beans (or Quinoa)
-Seasoning
-Corn chips
-Olive oil
+- Dehdrated refried beans (or Quinoa)
+- Seasoning
+- Corn chips
+- Olive oil
 
 ## Pinto beans
 
-Dehydrated precooked pinto beans
-Taco seasoning
-Corn chips
-Olive oil
+- Dehydrated precooked pinto beans
+- Taco seasoning
+- Corn chips
+- Olive oil
 
 ## Cous Cous
 
-Couscous
-Sun flower seeds
-Pine nuts
-Raisins
-Vegetable soup mix
-Olive oil
-Curry powder
-Sun dried tomatoes
-Tuna packet
+- Couscous
+- Sun flower seeds
+- Pine nuts
+- Raisins
+- Vegetable soup mix
+- Olive oil
+- Curry powder
+- Sun dried tomatoes
+- Tuna packet
 
 ## Veggies
 
-Dehydrated vegetables
-Cous Cous
+- Dehydrated vegetables
+- Cous Cous
 
 ## Oil wrap
 
-Almond butter
-Dried fruits
-Tortilla
+- Almond butter
+- Dried fruits
+- Tortilla
 
 ## Potato Bomb
 
-Powdered potatoes
-Corn chips
-Summer sausage
+- Powdered potatoes
+- Corn chips
+- Summer sausage
 
 ## Rice Bomb
 
-Knorr rice side (mexican or spanish)
-Tortilla
-Corn chips
-Refried beans
+- Knorr rice side (mexican or spanish)
+- Tortilla
+- Corn chips
+- Refried beans
 
 ## Oatmeal
 
-Oatmeal
-Protein powder
-Dried fruit
-Paleo mix
+- Oatmeal
+- Protein powder
+- Dried fruit
+- Paleo mix
 
 ## Cereal
 
-Cereal (ex nutri-grain)
-Protein powder
-Dried fruit
+- Cereal (ex nutri-grain)
+- Protein powder
+- Dried fruit
 
 # Resources
 
