@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "Nerd Links"
+title: "Nerd Gems"
 slug: "links"
 date: "2017-04-02 13:38:10"
-lastmod: "2020-05-21 20:37:20"
+lastmod: "2021-07-10 10:07:08"
 comments: false
 categories:
     - geek
 ---
 
-This is a list of valuable (to me) resources that I've managed to stumble across (hacker news, lobste.rs, cron.weekly) for learning more about mostly technology related topics.
+This is a list of valuable (to me) developer resources that I've managed to stumble across (hacker news, lobste.rs, cron.weekly, friends, university, etcetera).
 
 <!-- vim-markdown-toc GFM -->
 
@@ -21,9 +21,11 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 * [Culture](#culture)
 * [Databases](#databases)
 * [Development](#development)
+* [dotfiles](#dotfiles)
 * [Git](#git)
 * [Golang](#golang)
 * [Hardware](#hardware)
+* [Jobs](#jobs)
 * [Linux](#linux)
 * [Monitoring](#monitoring)
 * [Networking](#networking)
@@ -63,6 +65,7 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 
 # Containers
 
+-   [OKD: The Community Distribution of Kubernetes that powers OpenShift](https://github.com/openshift/okd/)
 -   [The Docker Handbook](https://www.freecodecamp.org/news/the-docker-handbook/)
 -   [25 Basic Docker Commands for Beginners](https://codeopolis.com/posts/25-basic-docker-commands-for-beginners/)
 -   [Setting the Record Straight: containers vs. Zones vs. Jails vs. VMs]()
@@ -92,6 +95,12 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 -   [Why the developers who use Rust love it so much](https://stackoverflow.blog/2020/06/05/why-the-developers-who-use-rust-love-it-so-much/)
 -   [Smocker](https://smocker.dev/) simple HTTP mock server, uses YAML to define mocks and responses
 
+# dotfiles
+
+-   [HexDSL](https://git.hexdsl.co.uk/HexDSL/dots)
+-   [LukeSmithxyz](https://github.com/LukeSmithxyz/voidrice)
+-   [uoou](https://gitlab.com/uoou)
+
 # Git
 
 -   [Better Git configuration](https://blog.scottnonnenberg.com/better-git-configuration) links and resources on configuring & using git
@@ -99,6 +108,7 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 
 # Golang
 
+-   [Everyday Golang](https://gumroad.com/l/everyday-golang)
 -   [Containerize Your Go Developer Environment – Part 1](https://www.docker.com/blog/containerize-your-go-developer-environment-part-1/)
 -   [Communicating Between Python and Go with gRPC](https://www.ardanlabs.com/blog/2020/06/python-go-grpc.html)
 -   [GoFakeIt: A Random Fake Data Generator](https://github.com/brianvoe/gofakeit) over 120 functions for generating things like names, emails, locations, user agents, ...
@@ -115,6 +125,10 @@ This is a list of valuable (to me) resources that I've managed to stumble across
 # Hardware
 
 -   [Backblaze hard drive stats](https://www.backblaze.com/blog/backblaze-hard-drive-stats-q1-2020/)
+
+# Jobs
+
+-   [Inspired corp](inspiredcorp.com.au)
 
 # Linux
 

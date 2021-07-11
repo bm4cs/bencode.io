@@ -16,20 +16,21 @@ tags:
 
 * [Stacked packing system](#stacked-packing-system)
     * [Inner pack](#inner-pack)
-    * [Outer](#outer)
-        * [Side pockets](#side-pockets)
-        * [Front pocket](#front-pocket)
-* [Cold soak meals](#cold-soak-meals)
-    * [Refried beans](#refried-beans)
-    * [Pinto beans](#pinto-beans)
-    * [Cous Cous](#cous-cous)
-    * [Veggies](#veggies)
-    * [Oil wrap](#oil-wrap)
-    * [Potato Bomb](#potato-bomb)
-    * [Rice Bomb](#rice-bomb)
-    * [Oatmeal](#oatmeal)
-    * [Cereal](#cereal)
-* [Resources](#resources)
+    * [Side pockets](#side-pockets)
+    * [Front pocket](#front-pocket)
+* [Tips](#tips)
+* [Food](#food)
+    * [Cold soak meals](#cold-soak-meals)
+        * [Refried beans](#refried-beans)
+        * [Pinto beans](#pinto-beans)
+        * [Cous Cous](#cous-cous)
+        * [Veggies](#veggies)
+        * [Oil wrap](#oil-wrap)
+        * [Potato Bomb](#potato-bomb)
+        * [Rice Bomb](#rice-bomb)
+        * [Oatmeal](#oatmeal)
+        * [Cereal](#cereal)
+* [Dope resources](#dope-resources)
 
 <!-- vim-markdown-toc -->
 
@@ -41,7 +42,7 @@ As a result has made hiking more enjoyable for me. Not only do I have more energ
 
 # Stacked packing system
 
-This stacking method, I discovered on the amazing [Darwin Hikes - 35L how to pack walkthrough](https://www.youtube.com/watch?v=4yt31hDdEuk), is a modular system, that involves stacking components up in a specific sequence.
+Maximising the space in a 35L is essential. Using the _stacking method_, I discovered on the amazing [Darwin Hikes - 35L how to pack walkthrough](https://www.youtube.com/watch?v=4yt31hDdEuk), is a modular system, that involves stacking components up in a specific sequence.
 
 Some benefits:
 
@@ -62,92 +63,108 @@ Some benefits:
 7. Tent
 8. Rain jacket
 
-## Outer
-
-Using a 35L pack, its essential to maximise the outer pockets.
-
-### Side pockets
+## Side pockets
 
 1. 1L water bottle on bother side (to balance the pack out)
 2. Cold soak container
 3. Snacks
 4. Water filter
 
-### Front pocket
+## Front pocket
 
 1. Tent stakes
 2. Trowel and toilet paper.
 3. Ditty bag.
 4. Empty 1L platypus bladder.
 
-# Cold soak meals
+# Tips
+
+- In colder seasons don't scrimp on warm gear to save grams
+  - booties
+  - heavy quilt
+  - high R value sleeping pad
+  - gloves
+- A 1L nalgene bottle is great as a hot water bottle
+- Cook system is optional (see _cold soaking_ below)
+- Try a single hiking pole
+
+
+# Food
+
+Things that have worked for me, over trial and error:
+
+-   Plan for at least 700 grams of food per day.
+-   At least 4L of water per day.
+-   Drink of much as possible at water sources.
+
+## Cold soak meals
 
 A method for rehydrating meals using just cold water, over a couple of hours. The plus side, not having to carry out a cook system (i.e. weight savings).
 
-## Refried beans
+### Refried beans
 
-- Dehdrated refried beans (or Quinoa)
-- Seasoning
-- Corn chips
-- Olive oil
+-   Dehdrated refried beans (or Quinoa)
+-   Seasoning
+-   Corn chips
+-   Olive oil
 
-## Pinto beans
+### Pinto beans
 
-- Dehydrated precooked pinto beans
-- Taco seasoning
-- Corn chips
-- Olive oil
+-   Dehydrated precooked pinto beans
+-   Taco seasoning
+-   Corn chips
+-   Olive oil
 
-## Cous Cous
+### Cous Cous
 
-- Couscous
-- Sun flower seeds
-- Pine nuts
-- Raisins
-- Vegetable soup mix
-- Olive oil
-- Curry powder
-- Sun dried tomatoes
-- Tuna packet
+-   Couscous
+-   Sun flower seeds
+-   Pine nuts
+-   Raisins
+-   Vegetable soup mix
+-   Olive oil
+-   Curry powder
+-   Sun dried tomatoes
+-   Tuna packet
 
-## Veggies
+### Veggies
 
-- Dehydrated vegetables
-- Cous Cous
+-   Dehydrated vegetables
+-   Cous Cous
 
-## Oil wrap
+### Oil wrap
 
-- Almond butter
-- Dried fruits
-- Tortilla
+-   Almond butter
+-   Dried fruits
+-   Tortilla
 
-## Potato Bomb
+### Potato Bomb
 
-- Powdered potatoes
-- Corn chips
-- Summer sausage
+-   Powdered potatoes
+-   Corn chips
+-   Summer sausage
 
-## Rice Bomb
+### Rice Bomb
 
-- Knorr rice side (mexican or spanish)
-- Tortilla
-- Corn chips
-- Refried beans
+-   Knorr rice side (mexican or spanish)
+-   Tortilla
+-   Corn chips
+-   Refried beans
 
-## Oatmeal
+### Oatmeal
 
-- Oatmeal
-- Protein powder
-- Dried fruit
-- Paleo mix
+-   Oatmeal
+-   Protein powder
+-   Dried fruit
+-   Paleo mix
 
-## Cereal
+### Cereal
 
-- Cereal (ex nutri-grain)
-- Protein powder
-- Dried fruit
+-   Cereal (ex nutri-grain)
+-   Protein powder
+-   Dried fruit
 
-# Resources
+# Dope resources
 
 -   [Darwins 35L how to pack walkthrough](https://www.youtube.com/watch?v=4yt31hDdEuk)
 -   [DARWIN ONTHETRAIL pack list](https://darwinonthetrail.com/gear-list/)
