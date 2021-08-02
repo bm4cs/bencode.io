@@ -33,6 +33,8 @@ I'm back at the University of UNSW and taking the *Wireless, Mobile and IoT Secu
 * [WiFi defences](#wifi-defences)
     * [Client protections](#client-protections)
 * [Cool resources](#cool-resources)
+* [Reading recommendations](#reading-recommendations)
+* [Questions to ponder](#questions-to-ponder)
 
 <!-- vim-markdown-toc -->
 
@@ -233,3 +235,19 @@ To defend can think across the client, protocol and network itself.
 - [ACMA Australian radiofrequency spectrum allocations chart](https://www.acma.gov.au/sites/default/files/2019-10/Australian%20radiofrequency%20spectrum%20allocations%20chart.pdf)
 - [CIA triad]() general purpose risk assessment fy.com.au
 ramework
+- [Active Measures by Thomas Ridd]()
+- [Social Delemma by Netflix]()
+
+
+# Reading recommendations
+
+- [Active Measures: The Secret History of Disinformation and Political Warfare by Thomas Rid](https://us.macmillan.com/books/9780374287269)
+- [Basic Economics: A Citizen's Guide to the Economy by Thomas Sowell](https://www.goodreads.com/book/show/3023.Basic_Economics)
+
+
+# Questions to ponder
+
+- How practical is the KRACKATTACK
+- How privacy focused policies such as GDPR and CCPA, might influence gargantuan tech companies
+
+
