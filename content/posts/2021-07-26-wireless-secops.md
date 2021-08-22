@@ -41,7 +41,7 @@ I'm back at the University of UNSW and taking the _Wireless, Mobile and IoT Secu
 * [Reading recommendations](#reading-recommendations)
 * [Questions to ponder](#questions-to-ponder)
 * [Discussion on ethics](#discussion-on-ethics)
-* [UNSW Cyber Lab](#unsw-cyber-lab)
+* [UNSW Cyber Lab Remote Access Cheatsheet](#unsw-cyber-lab-remote-access-cheatsheet)
 
 <!-- vim-markdown-toc -->
 
@@ -354,9 +354,9 @@ No need to connect to the network as part of the bypass MAC challenge.
 
 Client attack 1, flag.
 
-# UNSW Cyber Lab
+# UNSW Cyber Lab Remote Access Cheatsheet
 
-To access the cyber range remotely now COVID has ruined everything.
+Now COVID has ruined everything...
 
 1. Download the CISCO AnyConnect software from [vpn.unsw.edu.au](https://vpn.unsw.edu.au) - you'll need to login
 2. The Linux installer is just a tarball full of bash
