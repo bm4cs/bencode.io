@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "React in an NGINX container"
+title: "Production React in an NGINX container"
 draft: false
 slug: "react-build"
 date: "2021-08-21 22:05:15"
