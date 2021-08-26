@@ -98,6 +98,12 @@ cat $originalfile | envsubst | tee $tmpfile &&  mv $tmpfile $originalfile
 
 Here I stumbled upon `envsubst`. This little program will read a file and replace `$VARIABLE_NAME` formatted text, with actual environment variable value, if such a variable exists. It wont overwrite an existing file, hence the `tee` business.
 
+I will probably change this over to a `sed` implementation, something along the lines:
+
+```
+sed -i -e "s|REPLACE_API_URI|$API_URI|g" index.html
+```
+
 Finally, its just a matter of invoking this little script which I called `set-env.sh`, just prior to launching the `nginx` daemon process.
 
 I decided to do this in the `CMD` directive in the `Dockerfile`, like so:
