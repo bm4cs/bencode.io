@@ -101,7 +101,17 @@ Here I stumbled upon `envsubst`. This little program will read a file and replac
 I will probably change this over to a `sed` implementation, something along the lines:
 
 ```
+if [[ -v API_URI]]; then
 sed -i -e "s|REPLACE_API_URI|$API_URI|g" index.html
+fi
+
+if [[ -v CONFLUENCE_URI]]; then
+sed -i -e "s|REPLACE_CONFLUENCE_URI|$CONFLUENCE_URI|g" index.html
+fi
+
+if [[ -v INTRANET_URI]]; then
+sed -i -e "s|REPLACE_INTRANET_URI|$INTRANET_URI|g" index.html
+fi
 ```
 
 Finally, its just a matter of invoking this little script which I called `set-env.sh`, just prior to launching the `nginx` daemon process.
