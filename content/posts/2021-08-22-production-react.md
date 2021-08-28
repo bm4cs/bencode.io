@@ -4,7 +4,7 @@ title: "Production React in an NGINX container"
 draft: false
 slug: "react-build"
 date: "2021-08-21 22:05:15"
-lastmod: "2021-08-22 22:05:19"
+lastmod: "2021-08-28 16:40:39"
 comments: false
 categories:
     - react
@@ -84,7 +84,7 @@ This suggests injecting global variables in the page as follows, and using a pro
 
 Given this is running in a spartan `alpine` base image, I opted to go with a tiny shell script using classical UNIX tools such as `sed`:
 
-```sh
+```bash
 #!/bin/sh
 
 # Substitute container environment into production packaged react app
@@ -96,11 +96,13 @@ cp $originalfile $tmpfile
 cat $originalfile | envsubst | tee $tmpfile &&  mv $tmpfile $originalfile
 ```
 
-Here I stumbled upon `envsubst`. This little program will read a file and replace `$VARIABLE_NAME` formatted text, with actual environment variable value, if such a variable exists. It wont overwrite an existing file, hence the `tee` business.
+Here I stumbled upon the nifty `envsubst`. This little program will read a file and replace `$VARIABLE_NAME` formatted text, with actual environment variable value, if such a variable exists. It wont overwrite an existing file, hence the `tee` business.
 
-I will probably change this over to a `sed` implementation, something along the lines:
+I will probably change this over to a neater `sed` implementation, which supports in place edits and environment variables, something along the lines of this:
 
-```
+```bash
+#!/bin/sh
+
 if [[ -v API_URI]]; then
 sed -i -e "s|REPLACE_API_URI|$API_URI|g" index.html
 fi
@@ -125,12 +127,10 @@ COPY package*.json ./
 RUN npm install --legacy-peer-deps
 COPY . .
 RUN npm run build
-# EXPOSE 3000
-# CMD [ "npm", "start" ]
 
-FROM nginx:alpine
+FROM nginxinc:nginx-unprivileged:alpine
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 8080
 CMD ["sh", "-c", "cd /usr/share/nginx/html/ && ./set-env.sh && nginx -g 'daemon off;'"]
 ```
 

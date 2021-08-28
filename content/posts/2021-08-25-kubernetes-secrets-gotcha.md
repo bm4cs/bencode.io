@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Kubernetes secrets gotcha"
+title: "Kubernetes Secrets encoding gotcha"
 draft: false
 slug: "k8s-secrets"
 date: "2021-08-25 14:17:32"

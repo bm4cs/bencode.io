@@ -3,12 +3,12 @@ layout: post
 title: "Vim"
 slug: "vim"
 date: "2007-04-16 21:50:01"
-lastmod: "2021-01-22 20:28:15"
+lastmod: "2021-06-25 20:28:15"
 comments: false
 categories:
-    - dev
+  - dev
 tags:
-    - vim
+  - vim
 ---
 
 _Updated: 2021-01-22 20:28:26_
@@ -24,30 +24,30 @@ Vim is incredibly customisable. Its important to take the time to craft your own
 
 <!-- vim-markdown-toc GFM -->
 
-* [Help](#help)
-* [Operators](#operators)
-* [Object Selection](#object-selection)
-* [Windows](#windows)
-* [The Edit (e) Command](#the-edit-e-command)
-* [Cool Things](#cool-things)
-    * [relativenumber](#relativenumber)
-    * [Calculator](#calculator)
-    * [Spell checking](#spell-checking)
-    * [Sudo Save](#sudo-save)
-* [Plugins](#plugins)
-    * [nnn.vim](#nnnvim)
-    * [denite](#denite)
-    * [surround](#surround)
-    * [vim-markdown-toc](#vim-markdown-toc)
-    * [vim-easy-align](#vim-easy-align)
-    * [vim-commentary](#vim-commentary)
-    * [vim-easy-motion](#vim-easy-motion)
-    * [vim-better-whitespace](#vim-better-whitespace)
-    * [vim-prettier](#vim-prettier)
-    * [vim-css-color](#vim-css-color)
-    * [coc.nvim](#cocnvim)
-* [Setup behind a proxy](#setup-behind-a-proxy)
-* [Resources](#resources)
+- [Help](#help)
+- [Operators](#operators)
+- [Object Selection](#object-selection)
+- [Windows](#windows)
+- [The Edit (e) Command](#the-edit-e-command)
+- [Cool Things](#cool-things)
+  - [relativenumber](#relativenumber)
+  - [Calculator](#calculator)
+  - [Spell checking](#spell-checking)
+  - [Sudo Save](#sudo-save)
+- [Plugins](#plugins)
+  - [nnn.vim](#nnnvim)
+  - [denite](#denite)
+  - [surround](#surround)
+  - [vim-markdown-toc](#vim-markdown-toc)
+  - [vim-easy-align](#vim-easy-align)
+  - [vim-commentary](#vim-commentary)
+  - [vim-easy-motion](#vim-easy-motion)
+  - [vim-better-whitespace](#vim-better-whitespace)
+  - [vim-prettier](#vim-prettier)
+  - [vim-css-color](#vim-css-color)
+  - [coc.nvim](#cocnvim)
+- [Setup behind a proxy](#setup-behind-a-proxy)
+- [Resources](#resources)
 
 <!-- vim-markdown-toc -->
 
@@ -55,10 +55,10 @@ Vim is incredibly customisable. Its important to take the time to craft your own
 
 Vim has brilliant built-in help. Its only one `:help` away, `:h operator` or `:h motion`.
 
--   `:h cmd` normal mode _cmd_ help
--   `:h i_cmd` insert mode _cmd_ help
--   `:h v_cmd` visual mode _cmd_ help
--   `:h c_cmd` command line _cmd_ help
+- `:h cmd` normal mode _cmd_ help
+- `:h i_cmd` insert mode _cmd_ help
+- `:h v_cmd` visual mode _cmd_ help
+- `:h c_cmd` command line _cmd_ help
 
 # Operators
 
@@ -78,10 +78,10 @@ Vim has brilliant built-in help. Its only one `:help` away, `:h operator` or `:h
 
 See `:h operator` for more. All of these support being combined with a motion (or a visual mode selection). Some examples:
 
--   gUaw - make a word shout case
--   dap - delete entire paragraph
--   g?ap - ROT13 encode paragraph
--   gUgU - shout case entire line (factoid: when two operators are invoked in duplicate, applies to current line)
+- gUaw - make a word shout case
+- dap - delete entire paragraph
+- g?ap - ROT13 encode paragraph
+- gUgU - shout case entire line (factoid: when two operators are invoked in duplicate, applies to current line)
 
 # Object Selection
 
@@ -112,20 +112,19 @@ Learning object selectors is one of the best ways of becoming more efficient wit
 
 Leverage the built-in windows manager, which can do splits to view multiple files at the same time.
 
--   `:sp` horizontal split
--   `:vs` vertical split
--   `ctrl+w o` - close all windows other than the active one.
--   `ctrl+w x` - exchange active window with the next one.
--   `ctrl+w c` - close the current window.
--   `ctrl+w r` - rotate windows clockwise (or counter clockwise).
+- `:sp` horizontal split
+- `:vs` vertical split
+- `ctrl+w o` - close all windows other than the active one.
+- `ctrl+w x` - exchange active window with the next one.
+- `ctrl+w c` - close the current window.
+- `ctrl+w r` - rotate windows clockwise (or counter clockwise).
 
 # The Edit (e) Command
 
 Vim's built-in edit command, will present you with a nice file system explorer, for example `:e .` to present the current working directory.
 
-# Cool Things
 
-## relativenumber
+# relativenumber
 
 Makes line numbering relative. So good! Makes it fast to figure out how many lines up or down you need to move, to get to the line you want. Example, `14j` to jump 14 lines down.
 
@@ -136,24 +135,24 @@ Makes line numbering relative. So good! Makes it fast to figure out how many lin
       2 ¬
       3 Vim has brilliant built-in help. Its only one `:help` away.
 
-## Calculator
+# Calculator
 
 By typing `<C>r=` in insert mode, can do quick calculations are spit the out into the buffer.
 
 For example, `<C>r=16*4<CR>` will output 128 where the cursor is currently located.
 
-## Spell checking
+# Spell checking
 
 Built in spell checker, enable with `:set spell`.
 
--   `]s` jump to next error
--   `[s` jump to previous error
--   `z=` suggest corrections for current word
--   `zg` add word to dictionary
--   `zw` remove word from dictionary
--   `zug` undo `zg` or `zw` for current word
+- `]s` jump to next error
+- `[s` jump to previous error
+- `z=` suggest corrections for current word
+- `zg` add word to dictionary
+- `zw` remove word from dictionary
+- `zug` undo `zg` or `zw` for current word
 
-## Sudo Save
+# Sudo Save
 
 Editing a file, but don't have privileges to save.
 
@@ -162,6 +161,31 @@ Editing a file, but don't have privileges to save.
 `:w` writes to `sudo tee %`. `tee` flows the output of the file write to `%`, the name of the current file. I have a handy key binding `w!!` to do this:
 
     cmap w!! w !sudo tee %
+
+# Normalise line endings
+
+The classic `#!/bin/bash no such file or directory` error message. Shebang is busted likely due to encoding problems.
+
+Litmus test:
+
+```
+$ head -1 <your_file> | od -c
+```
+
+Should show:
+
+```
+0000000   #   !   /   b   i   n   /   b   a   s   h  \n
+```
+
+Vim to the rescue:
+
+```
+vim <your_file>
+:set ff=unix
+:set nobomb
+:wq
+```
 
 # Plugins
 
@@ -175,8 +199,8 @@ Coming from bloated power tool IDE's like awesome JetBrains tools, in order to b
 
 Ditch NERDTree, and instead surface the [nnn](https://github.com/jarun/nnn) terminal file manager within Vim, genius.
 
--   `<leader>n` start nnn in window
--   `^G` discard selection
+- `<leader>n` start nnn in window
+- `^G` discard selection
 
 ## denite
 
@@ -184,73 +208,73 @@ Buffer management and fuzzy finder. Quickly fuzzy find files recursively in a so
 
 Launch shortcuts:
 
--   `;` browse currently open buffers
--   `<leader>f` browse list of files in current directory
--   `<leader>g` recursive grep from current directory for occurences of given term and close window if no results
--   `<leader>j` recursive grep from current directory for occurences of word under cursor
+- `;` browse currently open buffers
+- `<leader>f` browse list of files in current directory
+- `<leader>g` recursive grep from current directory for occurences of given term and close window if no results
+- `<leader>j` recursive grep from current directory for occurences of word under cursor
 
 Once launched shortcuts:
 
--   `q or <Esc>` quit denite window
--   `d` delete currenly selected file
--   `p` preview currently selected file
--   `<C-o> or i` switch to insert mode inside of filter prompt
--   `<C-t>` open currently selected file in a new tab
--   `<C-v>` open currently selected file a vertical split
--   `<C-h>` open currently selected file in a horizontal split
+- `q or <Esc>` quit denite window
+- `d` delete currenly selected file
+- `p` preview currently selected file
+- `<C-o> or i` switch to insert mode inside of filter prompt
+- `<C-t>` open currently selected file in a new tab
+- `<C-v>` open currently selected file a vertical split
+- `<C-h>` open currently selected file in a horizontal split
 
 ## surround
 
 Surround chunks of text with quotes or tags.
 
--   `ysiw"` surround word with double quotes
--   `v$S"` surround visual selection with double quotes
--   `vipS<p>` surround paragraph with `<p></p>`
--   `cs"'` change double quotes to single quotes
+- `ysiw"` surround word with double quotes
+- `v$S"` surround visual selection with double quotes
+- `vipS<p>` surround paragraph with `<p></p>`
+- `cs"'` change double quotes to single quotes
 
 ## vim-markdown-toc
 
 Make a table of contents inferred from markdown heading tags.
 
--   `:GenTocGFM`
--   `:GenTocGitLab`
--   `:UpdateToc`
+- `:GenTocGFM`
+- `:GenTocGitLab`
+- `:UpdateToc`
 
 ## vim-easy-align
 
 OCD much? This helps to line up code based on a particular symbol.
 
--   `vipga=` visual select code block, align all `=` symbols by padding out
+- `vipga=` visual select code block, align all `=` symbols by padding out
 
 ## vim-commentary
 
 Smart commenting based on the file type.
 
--   `gcc` comment current line
--   `gc<motion>` comment motion based selection e.g. `gcap` for paragraph selection
+- `gcc` comment current line
+- `gc<motion>` comment motion based selection e.g. `gcap` for paragraph selection
 
 ## vim-easy-motion
 
 Vim motioning on steroids! Creates micro jumps based on a search pattern you provide, and dims down the buffer with each highlight getting a unique id you can hit.
 
--   `<leader><leader>w` beginning of all words
--   `<leader><leader>fo` motion all `o` characters going forward
--   `<leader><leader>to` motion before (till) `o` characters
--   `<leader><leader>n` jump to latest `/` or `?`
--   `<leader><leader>s` search
+- `<leader><leader>w` beginning of all words
+- `<leader><leader>fo` motion all `o` characters going forward
+- `<leader><leader>to` motion before (till) `o` characters
+- `<leader><leader>n` jump to latest `/` or `?`
+- `<leader><leader>s` search
 
 ## vim-better-whitespace
 
 Utilities to highlight and remove redundant use of whitespace.
 
--   `:EnableWhitespace`
--   `:DisableWhitespace`
--   `ToggleWhitespace`
--   `:StripWhitespace`
+- `:EnableWhitespace`
+- `:DisableWhitespace`
+- `ToggleWhitespace`
+- `:StripWhitespace`
 
 ## vim-prettier
 
--   `<leader>p` run the current buffer through prettier
+- `<leader>p` run the current buffer through prettier
 
 ## vim-css-color
 
@@ -268,16 +292,18 @@ CoC Go support:
 
 You can manually register LSP servers in jsonc format in the `~/.config/nvim/coc-settings.json` (use `:CocConfig` to auto jump you to this file). For example, the below registers `gopls`, Google's offical LSP for golang:
 
-    {
-      "languageserver": {
-        "golang": {
-          "command": "gopls",
-          "args": [],
-          "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
-          "filetypes": ["go"]
-        }
-      }
+```json
+{
+    "languageserver": {
+    "golang": {
+        "command": "gopls",
+        "args": [],
+        "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+        "filetypes": ["go"]
     }
+    }
+}
+```
 
 CoC web dev support (JS, ES6 and CSS):
 
@@ -289,19 +315,19 @@ Getting my Vim setup on a corporate network.
 
 TODO: Investigate containerising it.
 
--   `git config --global http.proxy http://proxy.bencode.net:8080`
--   nnn.vim: nnn
--   prettier: node v10+
--   denite: python3, pip3 install --user pynvim
--   coc.nvim:
-    -   node v10+
-    -   [yarn](https://classic.yarnpkg.com/en/docs/install/#debian-stable)
-    -   `yarn config set proxy http://proxy.bencode.net:8080`
-    -   `yarn config set https-proxy http://proxy.bencode.net:8080`
+- `git config --global http.proxy http://proxy.evilcorp.com:8080`
+- nnn.vim: nnn
+- prettier: node v10+
+- denite: python3, pip3 install --user pynvim
+- coc.nvim:
+  - node v10+
+  - [yarn](https://classic.yarnpkg.com/en/docs/install/#debian-stable)
+  - `yarn config set proxy http://proxy.evilcorp.com:8080`
+  - `yarn config set https-proxy http://proxy.evilcorp.com:8080`
 
 # Resources
 
--   [Smash into Vim](https://airbladesoftware.com/peepcode-vim/) the awesome PeepCode screencast that help me break through the learning curve back in 2010.
--   [Vim Cheat Sheet](https://vim.rtorr.com/) good quick reference.
--   [A guide to modern Web Development with (Neo)vim](https://medium.freecodecamp.org/a-guide-to-modern-web-development-with-neo-vim-333f7efbf8e2) convinced me that coc and denite are really the two power plugins needed, integration with ripgrep and LSP (lang server protocol) for autocompletion is unreal.
--   [How I'm still not using GUIs in 2019: A guide to the terminal](https://lucasfcosta.com/2019/02/10/terminal-guide-2019.html) excitement around (neo)Vim, some good basic tips, I recommend using `coc` over `ycm` for autocompletion, which integrates with the VSCode autocomplete engine.
+- [Smash into Vim](https://airbladesoftware.com/peepcode-vim/) the awesome PeepCode screencast that help me break through the learning curve back in 2010.
+- [Vim Cheat Sheet](https://vim.rtorr.com/) good quick reference.
+- [A guide to modern Web Development with (Neo)vim](https://medium.freecodecamp.org/a-guide-to-modern-web-development-with-neo-vim-333f7efbf8e2) convinced me that coc and denite are really the two power plugins needed, integration with ripgrep and LSP (lang server protocol) for autocompletion is unreal.
+- [How I'm still not using GUIs in 2019: A guide to the terminal](https://lucasfcosta.com/2019/02/10/terminal-guide-2019.html) excitement around (neo)Vim, some good basic tips, I recommend using `coc` over `ycm` for autocompletion, which integrates with the VSCode autocomplete engine.
