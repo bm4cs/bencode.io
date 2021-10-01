@@ -1,14 +1,16 @@
-My [hugo](https://gohugo.io/) static site, for software development related content, available at <https://www.bencode.net>
+# Yet Another Hugo Site (YAHS)
 
-# Theme customisation
+My [hugo](https://gohugo.io/) static site, for software development related thoughts and content, available at <https://www.bencode.net>
+
+## Theme customisation
 
 Uses the mint [terminal](https://github.com/panr/hugo-theme-terminal#how-to-edit) theme by [Radek Kozieł](https://github.com/panr).
 
-## Post sort order
+### Post sort order
 
 Edit `layouts/_default/index.html` sort posts by lastmod descending with `$paginator := .Paginate (where $PageContext.RegularPages.ByLastmod.Reverse "Type" $contentTypeName)`
 
-## Simplify post summaries in the main list view
+### Simplify post summaries in the main list view
 
 Rip out all content in `layouts/_default/index.html` except the title, and the last modified date of the post in `January 2021` format.
 
@@ -48,11 +50,11 @@ Should end up with something similar to:
 {{ end }}
 ```
 
-## Padding tweaks now leaner post summaries
+### Padding tweaks now leaner post summaries
 
 In `assets/css/main.css` patch `..headings--one-size` setting the `margin-top` to `0`.
 
-## Rebuild the theme
+### Rebuild the theme
 
 A node toolchain is needed to proceed. Install dependencies and build:
 
