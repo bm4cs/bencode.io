@@ -1,4 +1,4 @@
-My [hugo](https://gohugo.io/) static site, for software development related content.
+My [hugo](https://gohugo.io/) static site, for software development related content, available at <https://www.bencode.net>
 
 # Theme customisation
 
@@ -10,7 +10,7 @@ Edit `layouts/_default/index.html` sort posts by lastmod descending with `$pagin
 
 ## Simplify post summaries in the main list view
 
-Rip out all content in `layouts/_default/index.html` except the title, and the last modified date of the post in **January 2021** format.
+Rip out all content in `layouts/_default/index.html` except the title, and the last modified date of the post in `January 2021` format.
 
 Should end up with something similar to:
 
