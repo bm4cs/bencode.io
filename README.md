@@ -4,7 +4,7 @@ My [hugo](https://gohugo.io/) static site, for software development related thou
 
 ## Theme customisation
 
-Uses the mint [terminal](https://github.com/panr/hugo-theme-terminal#how-to-edit) theme by [Radek Kozieł](https://github.com/panr).
+Uses the mint [terminal](https://hugo-terminal.vercel.app/) theme by [Radek Kozieł](https://github.com/panr).
 
 ### Post sort order
 

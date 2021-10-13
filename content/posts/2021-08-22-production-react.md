@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "Production React in an NGINX container"
+title: "React environment variables in an nginx container"
 draft: false
 slug: "react-build"
 date: "2021-08-21 22:05:15"
-lastmod: "2021-08-28 16:40:39"
+lastmod: "2021-10-05 14:48:10"
 comments: false
 categories:
     - react
@@ -12,6 +12,7 @@ tags:
     - webdev
     - react
     - containers
+    - k8s
 ---
 
 Your React app is ready to ship. Congratulations!
@@ -20,9 +21,9 @@ Packaging for production is (and should) be different from your development conf
 
 In the case of [Create React App](https://create-react-app.dev/) the toolchain is rich, includes development productivity conveniences such as hot reloading, source maps and [custom environment variables](https://create-react-app.dev/docs/adding-custom-environment-variables/).
 
-This is truly wonderful as you develop the app, `npm start` and watch the magic unfold.
+This toolchain is mind blowingly productive as you develop the app, `npm start` and watch the magic unfold.
 
-At this point, its possible to put all this in one big happy container:
+At this point, its possible to put the React app one big (~1.7GB) happy container:
 
 ```dockerfile
 FROM node:latest
@@ -34,13 +35,13 @@ EXPOSE 3000
 CMD [ "npm", "start" ]
 ```
 
-But damn, that is going to be a heavy container. Expect a weigh in of about 1.7GB. The real question...Why ship the complete development toolchain (such as webpack, eslint, babeljs) and all the source code out to customers in a production build.
+Why ship the complete development toolchain (such as webpack, eslint, babeljs) and all the source code out to customers in a production build?
 
-Its time to lean the build down.
+Its time to put the runtime container on a diet.
 
-CRA provides an `npm task` for this very purpose called `build`. It instructs node and webpack to prepare a production bundle.
+_Create React App_ provides an `npm task` for this very purpose called `build`. It instructs `node` and `webpack` to prepare a production bundle.
 
-The output of `build` is a mess of minimified, tree shaken, optimised, transpiled ball of JS/CSS/HTML. Not intended for human consumption. But the cool thing at this point is these can now be served as static assets. Pick your favourite web server running on an alpine image, such as `nginx:alpine`:
+The output of `build` is a big ball of minified, tree shaken, optimised, transpiled JS, CSS and HTML. Not intended for human consumption, but perfect for serving up as static assets. Pick your favourite `httpd` such as `nginx:alpine`:
 
 ```dockerfile
 FROM node:latest as build
@@ -56,13 +57,15 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-In testing, my docker image weighed in at a lean 27MB (in contrast to the ~1700MB of the node based container).
+It turns out the `nginx:alpine` container image is WAY WAY faster, and WAY WAY WAY (98.5%) smaller at 27MB.
 
-One _disappointing_ side effect, is support for managing custom [environment variables](https://create-react-app.dev/docs/adding-custom-environment-variables/) goes away, with the loss of the development toolchain.
+However, one _disappointing_ trade-off is that support for managing custom [environment variables](https://create-react-app.dev/docs/adding-custom-environment-variables/) drops off, with the loss of the development toolchain.
+
+The documentation highlights this:
 
 > The environment variables are embedded during the build time. Since Create React App produces a static HTML/CSS/JS bundle, it can’t possibly read them at runtime. To read them at runtime, you would need to load HTML into memory on the server and replace placeholders in runtime, as [described here](https://create-react-app.dev/docs/title-and-meta-tags/#injecting-data-from-the-server-into-the-page). Alternatively you can rebuild the app on the server anytime you change them.
 
-This suggests injecting global variables in the page as follows, and using a process on the server to substitute them with corresponding environment:
+In a nutshell this suggests using global `window` variables in the base page, and replacing placeholders at runtime. For example:
 
 ```html
 <!DOCTYPE html>
@@ -82,43 +85,35 @@ This suggests injecting global variables in the page as follows, and using a pro
 </html>
 ```
 
-Given this is running in a spartan `alpine` base image, I opted to go with a tiny shell script using classical UNIX tools such as `sed`:
+Given this is running from a spartan `alpine` base image, I opted to _live off the land_ and use `sed` to do this *find and replace* work. Using the `-e` switch `sed` can read env vars:
 
 ```bash
 #!/bin/sh
 
 # Substitute container environment into production packaged react app
-# CRA does have some support for managing .env files, but not when built
+# CRA does have some support for managing .env files, but not as an `npm build` output
 
-originalfile="index.html"
-tmpfile=$(mktemp)
-cp $originalfile $tmpfile
-cat $originalfile | envsubst | tee $tmpfile &&  mv $tmpfile $originalfile
+# To test:
+# docker run --rm -e API_URI=http://localhost:5000/api -e CONFLUENCE_URI=https://confluence.evilcorp.org -e INTRANET_URI=https://intranet.evilcorp.org -it -p 3000:80/tcp dam-frontend:latest
+
+cp -f /usr/share/nginx/html/index.html /tmp
+
+if [ -n "$API_URI" ]; then
+sed -i -e "s|REPLACE_API_URI|$API_URI|g" /tmp/index.html
+fi
+
+if [ -n "$CONFLUENCE_URI" ]; then
+sed -i -e "s|REPLACE_CONFLUENCE_URI|$CONFLUENCE_URI|g" /tmp/index.html
+fi
+
+if [ -n "$INTRANET_URI" ]; then
+sed -i -e "s|REPLACE_INTRANET_URI|$INTRANET_URI|g" /tmp/index.html
+fi
+
+cat /tmp/index.html > /usr/share/nginx/html/index.html
 ```
 
-Here I stumbled upon the nifty `envsubst`. This little program will read a file and replace `$VARIABLE_NAME` formatted text, with actual environment variable value, if such a variable exists. It wont overwrite an existing file, hence the `tee` business.
-
-I will probably change this over to a neater `sed` implementation, which supports in place edits and environment variables, something along the lines of this:
-
-```bash
-#!/bin/sh
-
-if [[ -v API_URI]]; then
-sed -i -e "s|REPLACE_API_URI|$API_URI|g" index.html
-fi
-
-if [[ -v CONFLUENCE_URI]]; then
-sed -i -e "s|REPLACE_CONFLUENCE_URI|$CONFLUENCE_URI|g" index.html
-fi
-
-if [[ -v INTRANET_URI]]; then
-sed -i -e "s|REPLACE_INTRANET_URI|$INTRANET_URI|g" index.html
-fi
-```
-
-Finally, its just a matter of invoking this little script which I called `set-env.sh`, just prior to launching the `nginx` daemon process.
-
-I decided to do this in the `CMD` directive in the `Dockerfile`, like so:
+Finally its simply a matter of invoking this shell script `set-env.sh` as part of the `CMD` directive in the `Dockerfile`, like so:
 
 ```dockerfile
 FROM node:latest as build
@@ -134,4 +129,4 @@ EXPOSE 8080
 CMD ["sh", "-c", "cd /usr/share/nginx/html/ && ./set-env.sh && nginx -g 'daemon off;'"]
 ```
 
-To get it in the container, I lazily put the `set-env.sh` script into the `public` folder within the react source tree. `npm run build` automatically puts all assets in `public` into the output build directory. You could of course run a second `COPY` directive in the `Dockerfile`. Your choice.
+To get `set-env.sh` in the container, I lazily put the `set-env.sh` script into the `public` folder within the React source tree. `npm run build` automatically puts all assets in `public` into the output build directory. You could of course run a second `COPY` directive in the `Dockerfile`. Your choice.

@@ -4,7 +4,7 @@ title: "RHCSA"
 slug: "rhcsa"
 draft: false
 date: "2017-05-03 20:51:43"
-lastmod: "2020-12-06 21:38:09"
+lastmod: "2021-10-13 22:20:09"
 comments: false
 categories:
   - linux
@@ -723,9 +723,9 @@ For example `setfacl -m d:o::- secret-dir` will strip all ACLs for others. Inter
 
 `ip` is useful for showing live networking state.
 
-`ip addr help`
-`ip addr add 10.0.0.10/24 dev enpls0`
-`ip link show`
+- `ip addr help`
+- `ip addr add 10.0.0.10/24 dev enpls0`
+- `ip link show`
 
 ## Storing network configuration persistently
 
@@ -733,7 +733,7 @@ Persistent network configuration is stored in `/etc/sysconfig/network-scripts/`,
 
 The _Network Manager_ service is responsible for managing these network interface configs. An NM configuration is called a _connection_.
 
-Frontends to the core `NetworkManager` service, include `nmcli` and `nmtui`. They depend on the `NetworkManager` daemon to be running.
+`nmcli` and `nmtui` are frontends to the core `NetworkManager` daemon.
 
 ### nmcli
 
@@ -1441,7 +1441,7 @@ The default target and their *wants* are defined in `/etc/systemd/system/`, as s
 To boot into a specific target:
 
 - GRUB2 boot prompt `systemd.unit=rescue.target`
-- On a running system `systemctl isloate xxx.target`
+- On a running system `systemctl isolate xxx.target`
 
 `systemctl list-dependencies` visually lays out the hierarchy of targets and units.
 
@@ -1502,21 +1502,276 @@ Remote file management:
   - `-X` sync SELinux context labels
 
 
-## httpd
+## httpd (apache)
+
+The original web server.
+
+Configured by `/etc/httpd/conf/httpd.conf` or as snap-in under `/etc/httpd/conf.d/`
+
+```
+yum install httpd
+systemctl enable --now httpd
+vim /var/www/html/index.html
+systemctl restart httpd
+```
 
 ## SELinux
 
-## Network security
+Fine grained kernel level access control. If its not explicitly allowed, deny it.
+
+- Exam tip: NEVER disable SELinux
+- Most GNU progs support a `-Z` switch to show selinux context labels (`ps auxZ` or `ls -lZ`)
+- Enabling or disabling needs a reboot (being kernel based) using `/etc/sysconfig/selinux`
+- When enabled either is in *Enforcing* (i.e fully operational) or *Permissive* (for troubleshooting only) mode
+- Check current status with `sestatus` and `getenforce`
+- Modes can be changed at runtime with `setenforce [enforcing|permissive]`
+- Disabling will cause selinux to stop tracking file activity, as a result turning it back on will require a full *relabel* to occur; i.e., all files are evaluated against active policies and labelled if needed
+
+### Context Labels
+
+- A *context label* is applied to every OS object `user_context:role_context:type`
+- The `type` defines whats operations the object may perform
+- The context type are used by policies, to define what *source object* has access to what *target object*
+
+Tying this together, a look at the OpenSSH daemon:
+
+```
+# ps auxZ | grep sshd
+system_u:system_r:sshd_t:s0-s0:c0.c1023 root 1021 0.0  0.1  92292  2944 ?        Ss   Oct08   0:00 /usr/sbin/sshd -D
+
+# ls -lZ /etc/ssh/
+-rw-r--r--. 1 root root     system_u:object_r:etc_t:s0      577388 Apr 27  2020 moduli
+-rw-r--r--. 1 root root     system_u:object_r:etc_t:s0        1770 Apr 27  2020 ssh_config
+drwxr-xr-x. 2 root root     system_u:object_r:etc_t:s0          28 Apr 27  2020 ssh_config.d
+-rw-------. 1 root root     system_u:object_r:etc_t:s0        4291 Jun  8 21:34 sshd_config
+-rw-r-----. 1 root ssh_keys system_u:object_r:sshd_key_t:s0    492 Nov  1  2020 ssh_host_ecdsa_key
+-rw-r--r--. 1 root root     system_u:object_r:sshd_key_t:s0    162 Nov  1  2020 ssh_host_ecdsa_key.pub
+-rw-r-----. 1 root ssh_keys system_u:object_r:sshd_key_t:s0    387 Nov  1  2020 ssh_host_ed25519_key
+-rw-r--r--. 1 root root     system_u:object_r:sshd_key_t:s0     82 Nov  1  2020 ssh_host_ed25519_key.pub
+-rw-r-----. 1 root ssh_keys system_u:object_r:sshd_key_t:s0   2578 Nov  1  2020 ssh_host_rsa_key
+-rw-r--r--. 1 root root     system_u:object_r:sshd_key_t:s0    554 Nov  1  2020 ssh_host_rsa_key.pub
+```
+
+A policy allows the source object `sshd_t` access to target objects `sshd_key_t` and `etc_t`
+
+### Booleans
+
+- Higher level concept for turning on/off complete set of functionlity
+- `getsebool -a` list all
+- To toggle a bool `setsebool -P httpd_enable_homedirs on`
+
+```
+# getsebool -a | grep http
+httpd_anon_write --> off
+httpd_builtin_scripting --> on
+httpd_can_check_spam --> off
+httpd_can_connect_ftp --> off
+httpd_can_connect_ldap --> off
+httpd_can_connect_mythtv --> off
+httpd_can_connect_zabbix --> off
+httpd_can_network_connect --> off
+httpd_can_network_connect_cobbler --> off
+httpd_can_network_connect_db --> off
+httpd_can_network_memcache --> off
+httpd_can_network_relay --> off
+httpd_can_sendmail --> off
+httpd_enable_homedirs --> off
+...
+```
+
+### File context labels
+
+Uses the general purpose `semanage` to define file, port and other object contexts.
+
+- `semanage fcontext` writes a file context into the selinux policy for use.
+- For file system based objects, tweaking a policy does not take affect immediately.
+- Use `restorecon` to enforce a policy on the file system e.g. `restorecon -Rv /etc`
+- Another option is to `touch /.autorelabel` and reboot
+
+
+### SELinux logs
+
+- Default uses `auditd`, logs are not human friendly `grep AVC /var/log/audit/audit.log`
+- AVC = access vector cache, and is a signature of selinux logs
+- Nicer is `sealert` which parses raw audit log events, value adds and writes `/var/log/messages`
+- Run `sealert <uuid>` to get advice on a known event
+- Use `journalctl | grep sealert` to locate UUID
+
+### SELinux troubleshooting
+
+- If a service is not working, always suspect selinux
+- Check if its running `getenforce`
+- Temporarily relax to permissive mode `setenforce 0`
+- Re-test, if the service is operational, you know selinux is to blame
+- `grep sealert /var/log/messages`
+
+
+## Firewalling with firewalld
+
+Components:
+
+- *Service* defines one or more ports, and optional supporting kernel modules
+- *Zone* is the default config a NIC can be assigned
+- *Ports* optional port level rules (stick with services when possible)
+
+The CLI:
+
+- `firewall-cmd --list-all` show all rules
+- `firewall-cmd --get-services`
+- Use `--permanent` to persist config (TIP: this does not impact runtime, you need to run twice with and without)
+- `firewall-cmd --reload` dump everything and re-read config
+- `firewall-cmd --add-service ftp`
+
+The GUI:
+
+- `yum install firewall-config`
+
 
 ## Automating installs
 
-## Configuring time services
+Kickstart is the classical solution. For more contemporary options see `cloud-init` or `vagrant`.
 
-## Access remote file systems
+- Typically paired with a PXE boot server, KS pre-defines installation options (root password, network interfaces, timezone, etc)
+- The core kickstart file is `/root/anaconda-ks.cfg`
+- Client hosts need to obtain a target kickstart file somehow, and can be specified using the `ks=` boot param:
+  - Network ex: `http://dasserver/ks.cfg`
+  - Local mount ex: `file:///mnt/ks.cfg`
+- PXE is the way to go but outside RHCSA scope.
+- Boot params can be manually specified, by booting a client off installation media, selecting the install type and hitting `TAB`.
+
+## Time services
+
+- The OS clock bases itself on the hardware clock; so its critcal the HW clock is correct
+- `timedatectl` supersedes older CLI's `date` and `tzselect`
+- `hwclock` CLI can manipulate both clocks
+- NTP is a network protocol so synchronising time across computers, however not if the time delta is greater than 1000 seconds.
+- In this case the hardware and system clocks need to be dealt first
+- NTP is implemented with `cronyc` and `cronyd`, core configuation is `/etc/crony.conf`
+
+
+Examples:
+
+- `timedatectl list-timezones`
+- `timedatectl set-timezone America/Los_Angeles`
+- `cronyc sources`
+- `date -s 16:25` set system clock
+
+## Remote file systems
+
+### NFS
+
+Setup an NFS server (for testing):
+
+- Run `nfs-server` daemon
+- Creating share directory on file system ex: `/data`
+- Edit `/etc/exports` config with `/data *(rw,no_root_squash)` - ONLY for testing
+- Enable the `nfs`, `mountd` and `rpc-bind` services with firewalld (both runtime and permanently)
+
+Mounting NFS:
+
+- Show exports with `showmount -e server.evilcorp.com`
+- Mounting takes the form `server:/mount-path` ex: `mount server.evilcorp.com:/share /mnt`
+- `fstab` options: `_netdev` flags with systemd functional networking is needed first
+
+### CIFS with Samba
+
+Setup an SMB server (for testing):
+
+- Install `samba`
+- Create directory to share `mkdir /samba`
+- Create local user `useradd samba`
+- Set linux ACLs for user on share directory `chown samba /samba && chmod 770 /samba`
+- Setup a Windows account that maps to local Linux user `smbpasswd -a samba`
+- Configure share in `/etc/samba/smb.conf`
+- Start the `smb` service
+- Register `samba` with `firewalld`
+- On RHEL 8 I found SELinux issues with Samba, so as a HACK put it in permissive mode, [RTFM](https://wiki.samba.org/index.php/Troubleshooting_SELinux_on_a_Samba_AD_DC) but setting up an smb server is beyond RHCSA scope, kthxbai
+
+Mounting CIFS:
+
+- Install client software `cifs-utils` and `samba-client`
+- Discover shares with `smbclient -L //server.evilcorp.com` (press enter when prompted for `DOMAIN\root` password, to list anonymously)
+- Mounting takes the form of `//server/share` ex: mount -o username=shnerg //server.evilcorp.com/share /mnt`
+- Unlike NFS, samba needs an explicit user (mount option), which maps to the Windows NetBIOS user
+- `fstab` options: `username=` and `password=` and `_netdev` (flags with systemd functional networking is needed first)
+
+## Automount
+
+Lazy load volumes when they are needed, not simply at boot-time with `fstab`.
+
+- Install the `autofs` package
+- `/etc/auto.master` defines the directory and mount options file ex: `/data /etc/auto.data`
+- `/etc/auto.data` defines the sub-directory (within `/data`) and how to mount the thing ex: `files    -rw    nfs.evilcorp.com:/data/files`
+- Start `autofs` service
+- Automount when started will auto create `/misc` and `/net`, which it uses
+- There are great examples in `/etc/auto.misc`
+- Automount will auto unmount idle volumes
 
 ## Containers
 
+On 8 redhat ditched Docker for the CRI-O ecosystem, including `podman` (managing containers and images), `buildah` (making images) and `skopeo` (image signing and inspection).
 
+Running containers:
+
+- Install `yum module install container-tools`
+- Run using dockerhub `podman run -d nginx`
+- Registries are processed in sequence from `/etc/containers/registries.conf`, and prioritise redhat official registries over dockerhub
+- Specify registry `podman pull registry.access.redhat.com/ubi8/ubi:latest` (UBI = universal base image, which redhat uses as the basis for all its container based offerings)
+- `podman run -d` detached mode to free up TTY
+- `podman run -it` interactive TTY mode
+- `crtl-p,ctrl-q` to detach from interactive
+- `--rm` to blow away the writable layer auto created for every container instance, when it stops running
+- `podman info` to show bound registries and more
+
+Managing images:
+
+- `podman search` across all registries
+- `podman search --no-trunc registry.redhat.io/rhel8` searches a named registry using `rhel8` search string
+- `--limit 5`
+- `--filter stars=5`
+- `--filter is-official=true`
+- `skopeo` security inspects images before pulling `skopeo inspect docker://registry.redhat.io/ubi8/ubi`
+- For local images (already pulled) use `podman`
+- Some containers need root which can be run with `sudo podman`
+- `podman images` and `podman rmi` to clean up images
+
+Managing containers:
+
+- Non-privileged containers can only port map to non-priviliged ports on the host (i.e. > 1024)
+- `podman port -a` shows all container port mappings
+- Make sure to firewall the host `firewall-cmd --add-port=8000/tcp --permanent`
+- `podman ps` show running containers
+- `podman ps -a` include stopped state
+- `podman stop <container>` SIGTERM and after 10s SIGKILL
+- `podman kill <container>` SIGKILL
+- `podman exec -it <container> /bin/bash` to shell in interactively
+- `podman exec -l exec cat /etc/redhat-release` what container do you think this runs on? the last one?
+
+Host storage:
+
+- Check user in container has access (ACL's) to host directory
+- Set SELinux context type of this directory to `container_file_t` ex: `sudo semanage fcontext -a -t container_file_t "/dbfiles(/.*)?"`
+- If the user owns directory the `:Z` option can be used ex: `podman run -d -v /web:/web:Z nginx`
+
+Troubleshooting:
+
+- `podman logs <container-id>` to tail stdout
+- `podman inspect` for the usage line
+
+### Autostarting non-root containers with systemd user units
+
+Systemd user unit files are perfect for running rootless containers.
+
+By default user units start when a user session is starts, not ideal for system daemons amirite? `loginctl enable-linger <user>` changes this behavior to start these service at boot time. `loginctl show-user <user>` shows linger info for a user.
+
+- First create a service account user (i.e. not an interactive human user), that will manage containers
+- Use `podman` to generate systemd user unit file for a given container ex: `podman generate systemd --name nginx-box --files`
+- `--new` (ephemeral mode) systemd will create and destroy the container on service start/stop
+- Put the user unit file in `~/.config/systemd/user` for the service account user
+- `systemctl --user daemon-reload` reload user unit defintions
+- `systemctl --user enable das-app.service` (linger must be enabled for the user)
+- `systemctl --user start das-app.service`
+- For root containers, run the above in `/etc/systemd/system`
 
 # Rando cool
 
@@ -1534,4 +1789,7 @@ Remote file management:
 - A sector is 512 bytes.
 - The act of creating a file system is referred to as _making_ as opposed to _formatting_ on Linux
 - `man test` for a quickref of bash evaluations possible
-
+- `cloud-init` is a multi-distribution method for cross-platform cloud instance initialisation, supporting all major public cloud providers, provisioning systems for private cloud infrastructure, and bare-metal installations.
+- `timedatectl` supersedes legacy `date`
+- `fstab` sports a `noauto` option for disabling entries
+- Lazy load volumes with `automount` (unlike `fstab` which is at boot) which is AMAZING - when a read op on the file system to the autofs path happens (ex: `cd /files/nfs`), it hooks that event and pre-mounts it

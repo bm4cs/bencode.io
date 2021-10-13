@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Client certificate authentication"
-draft: false
+draft: true
 date: "2021-09-10 17:49:22"
 lastmod: "2021-09-10 17:49:22"
 comments: false
