@@ -9,7 +9,7 @@ Hi I'm Ben.
 
 This is one of my heros, Dennis Ritchie.
 
-I'm a...computer maniac, and programming addict. Linux or BSD systems only thanks.
+I'm a...computer maniac and programming addict. Linux or BSD systems only thanks.
 
     // 
     // Dear maintainer:

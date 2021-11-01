@@ -4,7 +4,7 @@ title: "RHCSA"
 slug: "rhcsa"
 draft: false
 date: "2017-05-03 20:51:43"
-lastmod: "2021-10-13 22:20:09"
+lastmod: "2021-10-29 16:20:09"
 comments: false
 categories:
     - linux
@@ -14,7 +14,11 @@ tags:
     - redhat
 ---
 
-My preparation notes for the RHCSA 8 exam, based on the excellent [Sander van Vugt](https://www.sandervanvugt.com/) [course](https://www.sandervanvugt.com/red-hat-video-courses/).
+My Red Hat Certified System Adminirator (RHCSA) 8 exam preparation, based on [Sander van Vugt's](https://www.sandervanvugt.com/) superb [video courses](https://www.sandervanvugt.com/red-hat-video-courses/).
+
+Update 2021-10-29: I cleared the exam.
+
+![RHCSA badge](/images/4UNONHPY4EHDU5PWQH6LGPCESQAEQU3CUPSQX2KSDXT6RW46LQ3T7ULZ55KZZ56SKO7EQ3ETTLYZQ4U5NQYTCNA62RUWOCM34WWBUYQ=.png)
 
 <!-- vim-markdown-toc GFM -->
 
