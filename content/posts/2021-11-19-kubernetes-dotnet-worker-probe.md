@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Kubernetes dotnet worker service health probe"
+title: "dotnet worker kubernetes health probe"
 draft: false
 slug: "k8s-worker"
 date: "2021-11-18 16:48:40"
@@ -19,9 +19,9 @@ You have a (headless) background worker process that needs to communicate its re
 
 # The Solution
 
-ASP.NET Core provides a standardised [health checks framework](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks). There are [hundreds](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/tree/master/src) of health probes available such as `Network`, `Kafka` and `NpgSql`.
+ASP.NET Core provides a decent [approach](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks) to performing a series of agnostic health checks. There are [hundreds](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/tree/master/src) of health probes available such as `Network`, `Elasticsearch`, `Kafka` and `NpgSql`.
 
-However being part of ASP.NET Core, does mean that some of these dependencies, such as [Microsoft.AspNetCore.Diagnostics.HealthChecks](https://www.nuget.org/packages/Microsoft.AspNetCore.Diagnostics.HealthChecks) package will bleed into the worker. The plus side is that you can avoid reinventing the wheel.
+However being part of ASP.NET Core, does mean that some of these dependencies, such as [Microsoft.AspNetCore.Diagnostics.HealthChecks](https://www.nuget.org/packages/Microsoft.AspNetCore.Diagnostics.HealthChecks) package, will bleed into the worker as a needed dependency. The plus side is that you can avoid reinventing the wheel.
 
 First we need to create a `IHealthCheckPublisher` that will publish the health of the worker application, in this case by writing a file out to disk:
 
@@ -67,7 +67,6 @@ namespace worker.Health
 }
 ```
 
-
 When bootstrapping the worker in `Program.cs` first up register the individual health checks needed (see snippet below which does postgres, rabbitmq and elasticsearch checks), followed by dependency injecting the custom `IHealthCheckPublisher` implementation prior to launching the worker service itself:
 
 ```c#
@@ -86,23 +85,39 @@ namespace worker
                 {
                     IConfiguration configuration = hostContext.Configuration;
                     CoolAppOptions coolAppOptions = configuration.GetSection("dam").Get<CoolAppOptions>();
-                    
+
                     services.ConnectToRabbitMq(coolAppOptions);
                     var rabbitConnectionFactory = services.BuildServiceProvider().GetService<ConnectionFactory>();
                     services.AddHealthChecks()
                         .AddNpgSql(coolAppOptions.Db.ConnectionString)
                         .AddRabbitMQ(_ => rabbitConnectionFactory)
                         .AddElasticsearch(coolAppOptions.Elastic.Uri);
-                    
+
                     services.AddSingleton<IHealthCheckPublisher, HealthCheckPublisher>(_ => new HealthCheckPublisher(coolAppOptions));
                     services.Configure<HealthCheckPublisherOptions>(options =>
                     {
                         options.Delay = TimeSpan.FromSeconds(5);
                         options.Period = TimeSpan.FromSeconds(20);
                     });
-                    
+
                     services.AddHostedService<Worker>();
                 });
     }
 }
+```
+
+The worker will now emit a file e.g. `/app/health` to indicate its up and running and can connect to everything it needs to.
+
+Finally setup kubernetes readiness and liveness probes to look for this file. Using `find -mmin -1` will only return 0 if a `health` file less than a minute old exists.
+
+```yaml
+livenessProbe:
+    exec:
+        command:
+            - find
+            - /app/health
+            - -mmin
+            - "-1"
+    initialDelaySeconds: 5
+    periodSeconds: 10
 ```
