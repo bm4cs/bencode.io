@@ -28,10 +28,14 @@ Vim is incredibly customisable. Its important to take the time to craft your own
 * [Calculator](#calculator)
 * [Spell checking](#spell-checking)
 * [Sudo Save](#sudo-save)
+* [Jumps](#jumps)
+* [Registers](#registers)
+* [Macros](#macros)
 * [Normalise line endings](#normalise-line-endings)
 * [Plugins](#plugins)
     * [nnn.vim](#nnnvim)
     * [nvim-lspconfig](#nvim-lspconfig)
+        * [golang](#golang)
     * [telescope.nvim](#telescopenvim)
     * [fugitive.vim](#fugitivevim)
     * [surround](#surround)
@@ -157,6 +161,44 @@ Editing a file, but don't have privileges to save.
 
     cmap w!! w !sudo tee %
 
+# Jumps
+
+Vim records the location before and after making a jump.
+
+-   `<C-o>` go back
+-   `<C-i>` go forward
+-   `:jumps` show jump list
+
+| Jump command                  | Effect                                     |
+| ----------------------------- | ------------------------------------------ |
+| `[count]G`                    | Jump to line                               |
+| `%`                           | Jump to matching parenthesis               |
+| `(` or `)`                    | Jump to prev/next sentence                 |
+| `{` or `}`                    | Jump to prev/next paragraph                |
+| `H` or `M` or `L`             | Jump to top/middle/bottom of screen        |
+| `gf`                          | Jump to file name under cursor             |
+| `<C-]>`                       | Jump to definition of keyword under cursor |
+| `'{mark}` or `backtick{mark}` | Jump to mark                               |
+
+# Registers
+
+Handy named memory slots, using `:registers` to list them.
+
+-   `""` the unnamed register, general dumping register
+-   `"0` the yank register
+
+When in insert mode use `<C-r><register>` to paste in a register content on the cursor position, such as `<C-r>"` for the unnamed register or `<C-r>0` for the yank register.
+
+# Macros
+
+To record, hit `q<register>`. For example to use the `a` register `qa`, followed by the sequence of actions, finalise recording with another `q`.
+
+To edit a macro, is easy, its just stored in the corresponding register. For example a macro recorded with `qa` is stored into the `a` register.
+
+-   Paste the macro into the buffer with `:put a` or `"ap`
+-   Edit it as needed
+-   Yank it back into the register `0"ay$`
+
 # Normalise line endings
 
 The classic `#!/bin/bash no such file or directory` error message. Shebang is busted likely due to encoding problems.
@@ -206,6 +248,11 @@ An [LSP](https://neovim.io/doc/user/lsp.html) (Language Server Protocol) provide
 The [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) plugin provides common configuration for many servers.
 
 Once the client plugin is done, install a [language server](https://microsoft.github.io/language-server-protocol/implementors/servers/).
+
+### golang
+
+-   Make sure `gopls` is installed and on the PATH `go install golang.org/x/tools/gopls@latest`
+-   Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
 
 ## telescope.nvim
 
