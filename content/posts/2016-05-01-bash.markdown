@@ -2,7 +2,7 @@
 layout: post
 title: "bash"
 date: "2016-05-01 01:01:01"
-lastmod: "2021-01-22 20:15:19"
+lastmod: "2021-11-19 18:37:01"
 comments: false
 categories:
     - linux
@@ -55,6 +55,8 @@ Bash is a Unix shell written by Brian Fox in 1989 for the GNU Project as a free 
     * [Rename Multiple Files](#rename-multiple-files)
     * [Run a command every time a file is modified](#run-a-command-every-time-a-file-is-modified)
     * [Keep a program running after leaving SSH session](#keep-a-program-running-after-leaving-ssh-session)
+    * [Simple menu and functions](#simple-menu-and-functions)
+    * [Complete example](#complete-example)
 * [Resources](#resources)
 
 <!-- vim-markdown-toc -->
@@ -62,6 +64,8 @@ Bash is a Unix shell written by Brian Fox in 1989 for the GNU Project as a free 
 Kudos to Denys Dovhan and his awesome [Bash handbook](https://github.com/denysdovhan/Bash-handbook). The most digestable, and enjoyable method I've found to groking bash. <3
 
 # Useful Shortcuts
+
+See `man readline`
 
 **Movement**
 
@@ -164,6 +168,12 @@ Some like to make their prompt stand out from the noise (e.g. by making it brigh
     export PS1="\[$(tput bold)\]\[$(tput setaf 2)\][\u@\h \W]\\$ \[$(tput sgr0)\]"
 
 ![Custom prompt string with PS1](/images/ps1.png "Custom prompt string with PS1")
+
+Or goes nuts and colorise each component:
+
+```
+export PS1="\[$(tput bold)\]\[$(tput setaf 1)\][\[$(tput setaf 3)\]\u\[$(tput setaf 2)\]@\[$(tput setaf 4)\]\h \[$(tput setaf 5)\]\W\[$(tput setaf 1)\]]\[$(tput setaf 7)\]\\$ \[$(tput sgr0)\]"
+```
 
 ### Positional arguments
 
@@ -673,22 +683,28 @@ bash, :, ., [, alias, bg, bind, break, builtin, caller, cd, command, compgen, co
 
 ## Top 6 largest things in the current directory
 
-    $ du -hxs * | sort -hr | head -6
-    234M    code
-    30M     cygwin
-    6.8M    datatsudio
-    5.0M    c-projects
-    4.9M    scripts
+```bash
+du -hxs * | sort -hr | head -6
+234M    code
+30M     cygwin
+6.8M    datatsudio
+5.0M    c-projects
+4.9M    scripts
+```
 
 ## Display the 23rd line of /etc/passwd
 
-    head -n 23 /etc/passwd | tail -n 1
-    sed -n ' 23 p ' /etc/passwd
-    awk ' NR == 23 { print $0 } ' < /etc/passwd
+```bash
+head -n 23 /etc/passwd | tail -n 1
+sed -n ' 23 p ' /etc/passwd
+awk ' NR == 23 { print $0 } ' < /etc/passwd
+```
 
 ## Filter the first column from process status
 
-    awk ' { print $1 } ' <(ps -aux)
+```bash
+awk ' { print $1 } ' <(ps -aux)
+```
 
 ## Delete Subversion scrap files
 
@@ -767,37 +783,177 @@ Given a bunch of files named in the form `game.of.thrones.s04e10.hdtv.x264.mp4`,
 
 Using `find`, locate all subdirectories, moving any contents they may have back into the parent directory. The `-exec` switch has its limitations, such as with logical `&&` operators, which requires a real shell (`sh`).
 
-    find . -name "Game*" -type d -exec sh -c 'cd "{}" && mv * ../' \;
+```bash
+find . -name "Game*" -type d -exec sh -c 'cd "{}" && mv * ../' \;
+```
 
 The subdirectories can be disposed of:
 
-    find . -name "Game*" -type d -exec rm -rf "{}" \;
+```bash
+find . -name "Game*" -type d -exec rm -rf "{}" \;
+```
 
 Now the renaming with `sed`. By leveraging capture groups (donuts) in `sed` (eg `\1`), can pick out match results of interest and jam them into the substitution result. While here takes advantage of the casing functionality by decorating the capture group with either a `\U` for uppercasing or `\L` for lower.
 
-    for f in *.*; do mv "$f" "GOT.`echo $f | sed -rn ' s/.*([sS][0-9]{2}[eE][0-9]{2}).*(\..{3})/\U\1\L\2/p '`"; done
+```bash
+for f in *.*; do mv "$f" "GOT.`echo $f | sed -rn ' s/.*([sS][0-9]{2}[eE][0-9]{2}).*(\..{3})/\U\1\L\2/p '`"; done
+```
 
 ## Run a command every time a file is modified
 
-    while inotifywait -e close_write report.tex
-    do
-      make
-    done
+```bash
+while inotifywait -e close_write report.tex
+do
+  make
+done
+```
 
 ## Keep a program running after leaving SSH session
 
 If no input is required:
 
-    nohup ./script.sh &
+```bash
+nohup ./script.sh &
+```
 
 Otherwise:
 
-    ./script.sh
-    <provide input as needed>
-    <Ctrl-Z>            # sleep the process
-    jobs -l             # figure out the job id
-    disown -h <jobid>   # disown the job
-    bg -h <jobid>       # continue running
+```bash
+./script.sh
+<provide input as needed>
+<Ctrl-Z>            # sleep the process
+jobs -l             # figure out the job id
+disown -h <jobid>   # disown the job
+bg -h <jobid>       # continue running
+```
+
+## Simple menu and functions
+
+```bash
+me="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
+u="$USER"
+stow=/usr/bin/stow
+
+menu()
+{
+	echo "usage:   " $me "[OPTION]"
+	echo " "
+	echo "init:    Install the basics (git/yay)"
+	echo "dots:    Get dots from github (into '~/dots' folder)"
+	echo "stow:    Restore home stow from dots repo"
+	echo "unstow:  Cleanup home stow from dots repo"
+	echo "apps:    Use 'yay' to install all programs"
+	echo "dwm:     Clones dwm repo and applies patches"
+	echo " "
+}
+
+init()
+{
+	cd /tmp/
+	curl -LO https://aur.archlinux.org/cgit/aur.git/snapshot/yay.tar.gz
+	tar xvzf yay.tar.gz
+	cd yay
+	makepkg -sci
+	sudo pacman -S --needed git
+}
+
+dwm()
+{
+	cd ~
+	rm -r dwm
+	git clone git://git.suckless.org/dwm
+	cd dwm
+	curl -LO https://dwm.suckless.org/patches/center/dwm-center-6.1.diff:
+}
+
+apps()
+{
+	test -f ~/dots/restore/applist && yay -S --needed - < ~/dots/restore/applist || echo "Do dots & stow first dude!"
+}
+
+dots()
+{
+	cd ~
+	git clone git@github.com:bm4cs/dots.git
+}
+
+stow()
+{
+	cd ~/dots/stow-home
+	for d in *; do $stow -t ~ $d; done
+
+	#Setup ROOT stow files
+	#cd ~/dots/stow_root; for d in *; do sudo stow -t / $d; done
+}
+
+unstow()
+{
+	cd ~/dots/stow-home
+	for d in *; do
+		$stow -D -t ~ $d || true
+	done
+}
+
+restow()
+{
+    if [ -n "$1" ]; then
+	    cd ~/dots/stow-home/
+        $stow -D -t ~ $1 || true
+	    $stow -t ~ $1
+    fi
+}
+
+
+
+if [ -n "$1" ]; then
+	$1 ${@:2}
+else
+	menu
+fi
+```
+
+## Complete example
+
+```bash
+dpkgArch="$(dpkg --print-architecture)" \
+  && case "${dpkgArch##*-}" in \
+    amd64) ARCH='x64';; \
+    ppc64el) ARCH='ppc64le';; \
+    s390x) ARCH='s390x';; \
+    arm64) ARCH='arm64';; \
+    armhf) ARCH='armv7l';; \
+    i386) ARCH='x86';; \
+    *) echo "unsupported architecture"; exit 1 ;; \
+  esac \
+  # gpg keys listed at https://github.com/nodejs/node#release-keys
+  && set -ex \
+  && for key in \
+    4ED778F539E3634C779C87C6D7062848A1AB005C \
+    94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
+    74F12602B6F1C4E913FAA37AD3A89613643B6201 \
+    71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
+    8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
+    C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+    C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
+    DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
+    A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
+    108F52B48DB57BB0CC439B2997B01419BD92F80A \
+    B9E2F5981AA6E0CD28160D9FF13993A75599653C \
+  ; do \
+      gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
+      gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
+  done \
+  && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
+  && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+  && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
+  && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
+  && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+  && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
+  && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
+  # smoke tests
+  && node --version \
+  && npm --version
+```
 
 # Resources
 

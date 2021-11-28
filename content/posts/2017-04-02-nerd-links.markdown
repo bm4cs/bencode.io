@@ -9,7 +9,7 @@ categories:
   - geek
 ---
 
-This is a list of valuable (to me) developer resources that I've managed to stumble across (hacker news, lobste.rs, cron.weekly, friends, university, etcetera).
+This is a list of valuable (to me) developer resources that I've managed to stumble across (hacker news, lobste.rs, cron.weekly, peers, university, etcetera).
 
 <!-- vim-markdown-toc GFM -->
 
@@ -21,6 +21,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Culture](#culture)
 - [Databases](#databases)
 - [Development](#development)
+- [Diagramming](#diagramming)
 - [dotfiles](#dotfiles)
 - [Git](#git)
 - [Golang](#golang)
@@ -44,6 +45,8 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 - [Communicating Sequential Processes](http://www.usingcsp.com/cspbook.pdf) Tony Hoare's seminal 1977 paper on concurrency and CSP
 - [Why Segment Went Back to a Monolith](https://www.infoq.com/news/2020/04/microservices-back-again/) microservices come with serious tradeoffs
+- [All software sucks](http://harmful.cat-v.org/software/) complexity is the bane of all software, simplicity is the most important quality
+
 
 # Awesome
 
@@ -95,6 +98,11 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [What To Code](https://what-to-code.com) inspiration and ideas
 - [Why the developers who use Rust love it so much](https://stackoverflow.blog/2020/06/05/why-the-developers-who-use-rust-love-it-so-much/)
 - [Smocker](https://smocker.dev/) simple HTTP mock server, uses YAML to define mocks and responses
+
+# Diagramming
+
+- [Excalidraw](https://excalidraw.com/) beautiful web based diagrams
+- [PlantText](https://www.planttext.com/) PlantUML (text) based diagram generator
 
 # dotfiles
 
@@ -205,6 +213,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 # Web
 
+- [How I built a modern website in 2021](https://kentcdodds.com/blog/how-i-built-a-modern-website-in-2021)
 - [Certbot](https://certbot.eff.org/) automatically use Let’s Encrypt certificates
 - [Ask HN: Is There Still a Place for Native Desktop Apps?](https://news.ycombinator.com/item?id=23211851)
 - [topngx](https://github.com/gsquire/topngx) parse and aggregrate statistics from NGINX access logs

@@ -4,17 +4,21 @@ title: "RHCSA"
 slug: "rhcsa"
 draft: false
 date: "2017-05-03 20:51:43"
-lastmod: "2020-12-06 21:38:09"
+lastmod: "2021-10-29 16:20:09"
 comments: false
 categories:
-  - linux
+    - linux
 tags:
-  - certification
-  - rhel
-  - redhat
+    - certification
+    - rhel
+    - redhat
 ---
 
-My preparation notes for the RHCSA 8 exam.
+My Red Hat Certified System Adminirator (RHCSA) 8 exam preparation, based on [Sander van Vugt's](https://www.sandervanvugt.com/) superb [video courses](https://www.sandervanvugt.com/red-hat-video-courses/).
+
+Update 2021-10-29: I cleared the exam.
+
+![RHCSA badge](/images/4UNONHPY4EHDU5PWQH6LGPCESQAEQU3CUPSQX2KSDXT6RW46LQ3T7ULZ55KZZ56SKO7EQ3ETTLYZQ4U5NQYTCNA62RUWOCM34WWBUYQ=.png)
 
 <!-- vim-markdown-toc GFM -->
 
@@ -85,7 +89,7 @@ My preparation notes for the RHCSA 8 exam.
     * [cron](#cron)
     * [at](#at)
     * [systemd Timers](#systemd-timers)
-    * [Managing temporary files](#managing-temporary-files)
+    * [tmpfiles.d](#tmpfilesd)
 * [Logging](#logging)
     * [Rsyslog](#rsyslog)
     * [Systemd Journal](#systemd-journal)
@@ -114,17 +118,25 @@ My preparation notes for the RHCSA 8 exam.
         * [Systemd targets](#systemd-targets)
     * [Essential troubleshooting](#essential-troubleshooting)
         * [Changing root password](#changing-root-password)
-    * [Bash scripting](#bash-scripting)
 * [Managing network services](#managing-network-services)
     * [SSH](#ssh-1)
-    * [httpd](#httpd)
+    * [httpd (apache)](#httpd-apache)
     * [SELinux](#selinux)
-    * [Network security](#network-security)
+        * [Context Labels](#context-labels)
+        * [Booleans](#booleans)
+        * [File context labels](#file-context-labels)
+        * [SELinux logs](#selinux-logs)
+        * [SELinux troubleshooting](#selinux-troubleshooting)
+    * [Firewalling with firewalld](#firewalling-with-firewalld)
     * [Automating installs](#automating-installs)
-    * [Configuring time services](#configuring-time-services)
-    * [Access remote file systems](#access-remote-file-systems)
+    * [Time services](#time-services)
+    * [Remote file systems](#remote-file-systems)
+        * [NFS](#nfs)
+        * [CIFS with Samba](#cifs-with-samba)
+    * [Automount](#automount)
     * [Containers](#containers)
-* [Rando cool](#rando-cool)
+        * [Autostarting non-root containers with systemd user units](#autostarting-non-root-containers-with-systemd-user-units)
+* [Linux Gems](#linux-gems)
 
 <!-- vim-markdown-toc -->
 
@@ -192,30 +204,30 @@ Find binaries and man pages for `ls`:
 
 ## Shell history
 
-- `history` dump history, by default the last 1000 commands
-- `ctrl+r` to search backwards through history for pattern
-- `history -c` clear history (in-memory only)
-- `history -w` write history
-- `!32` run history event 32 (again)
+-   `history` dump history, by default the last 1000 commands
+-   `ctrl+r` to search backwards through history for pattern
+-   `history -c` clear history (in-memory only)
+-   `history -w` write history
+-   `!32` run history event 32 (again)
 
 ## Globbing
 
 aka using wildcards see `man 7 glob`
 
-- `ls host*` zero or more chars
-- `ls ?ost` any single char
-- `ls [hm]ost` groups of chars
-- `ls [!hm]ost` negated groups of chars
-- `ls [0-9][0-9]script` multiple groups of restricted chars
+-   `ls host*` zero or more chars
+-   `ls ?ost` any single char
+-   `ls [hm]ost` groups of chars
+-   `ls [!hm]ost` negated groups of chars
+-   `ls [0-9][0-9]script` multiple groups of restricted chars
 
 ## I/O Redirection and Pipes
 
-- `<` stdin from a file or another programs stdout
-- `>` stdout to new file (overwrite if exists)
-- `>>` stdout to file (appending if exists)
-- `2>` stderr redirection
-- `2>&1` stderr to stdout (useful for piping stderr, as pipes only work with stdout)
-- `|` pipe stdout from one program to stdin of another (pipes only support stdout to stdin communication, i.e. not stderr)
+-   `<` stdin from a file or another programs stdout
+-   `>` stdout to new file (overwrite if exists)
+-   `>>` stdout to file (appending if exists)
+-   `2>` stderr redirection
+-   `2>&1` stderr to stdout (useful for piping stderr, as pipes only work with stdout)
+-   `|` pipe stdout from one program to stdin of another (pipes only support stdout to stdin communication, i.e. not stderr)
 
 # Essential File Management
 
@@ -225,12 +237,12 @@ See `man hier` and `man file-hierarchy`
 
 Big hitters:
 
-- Boot partition: `/boot/` and `/efi/`
-- System configuration: `/etc/`
-- Scripts and binaries: `/bin/`, `/sbin/`, `/usr/sbin/` now all link back to `/usr/bin/`
-- Shared libraries: `/lib/`, `/lib64/` link to `/usr/lib/` and `/usr/lib64/` respectively
-- Virtual kernel file system: `/proc/` such as `/proc/meminfo`
-- Persistent variable data: `/var/` such as `/var/cache/`, `/var/log/`, `/var/tmp`
+-   Boot partition: `/boot/` and `/efi/`
+-   System configuration: `/etc/`
+-   Scripts and binaries: `/bin/`, `/sbin/`, `/usr/sbin/` now all link back to `/usr/bin/`
+-   Shared libraries: `/lib/`, `/lib64/` link to `/usr/lib/` and `/usr/lib64/` respectively
+-   Virtual kernel file system: `/proc/` such as `/proc/meminfo`
+-   Persistent variable data: `/var/` such as `/var/cache/`, `/var/log/`, `/var/tmp`
 
 ## Finding Files
 
@@ -351,9 +363,9 @@ Hard links are links to a specific inode (shown with `ls -i`) on the file system
 
 In the `ls` long listing output, take note of the 2nd column, which represents the count of references to the same inode, which increases after creating a hard link. Some properties of hard links:
 
-- Hard links will always report the same metadata such as permission bits, modification timestamps, etc
-- inode reference counts will increase for each hard link.
-- Removal of the target file or hard link will not result in broken links, as they both physically reference the same inode.
+-   Hard links will always report the same metadata such as permission bits, modification timestamps, etc
+-   inode reference counts will increase for each hard link.
+-   Removal of the target file or hard link will not result in broken links, as they both physically reference the same inode.
 
 # Working with text
 
@@ -361,17 +373,17 @@ In the `ls` long listing output, take note of the 2nd column, which represents t
 
 See `man 7 regex`
 
-- `.` any single character
-- `?` one or more
-- `*` zero or more
+-   `.` any single character
+-   `?` one or more
+-   `*` zero or more
 
-- `cat` for concatenation, commonly used to dump contents to `stdout`
-- `tac` concatenation in reverse order
-- `cut` parses fields based on simple delimiter `cut -d : -f 1 /etc/passwd` cuts the first field in `/etc/passwd` based on a colon delimiter
-- `sort` can sort alphabetically or numerically e.g. `cut -d : -f 3 /etc/passwd | sort -n`
-- `head` first n lines
-- `tail` last n lines
-- `tr` translator e.g. lower to upper casing `cut -d : -f 1 /etc/passwd | tr [a-z] [A-Z]`
+-   `cat` for concatenation, commonly used to dump contents to `stdout`
+-   `tac` concatenation in reverse order
+-   `cut` parses fields based on simple delimiter `cut -d : -f 1 /etc/passwd` cuts the first field in `/etc/passwd` based on a colon delimiter
+-   `sort` can sort alphabetically or numerically e.g. `cut -d : -f 3 /etc/passwd | sort -n`
+-   `head` first n lines
+-   `tail` last n lines
+-   `tr` translator e.g. lower to upper casing `cut -d : -f 1 /etc/passwd | tr [a-z] [A-Z]`
 
 ## grep
 
@@ -381,13 +393,13 @@ The pinnacle of text processing, handed down by god himself.
 
 Noteworthy:
 
-- always place regex between single quotes to avoid ambiguity of globbing
-- use `-e` to specify multiple expressions e.g. `man -k password | grep -e '1' -e '8'`
-- `-B` will provide n lines of before context e.g. `-B 5` shows preceding 5 lines of each match
-- `-v` to inverse (e.g. things not comments `grep -v '^#'`)
-- `-i` case insensitive
-- `[^linux]` negate characters, this will match against any characters that are not 'l', 'i', 'n', 'u' or 'x'.
-- `-E` extended regular expression support
+-   always place regex between single quotes to avoid ambiguity of globbing
+-   use `-e` to specify multiple expressions e.g. `man -k password | grep -e '1' -e '8'`
+-   `-B` will provide n lines of before context e.g. `-B 5` shows preceding 5 lines of each match
+-   `-v` to inverse (e.g. things not comments `grep -v '^#'`)
+-   `-i` case insensitive
+-   `[^linux]` negate characters, this will match against any characters that are not 'l', 'i', 'n', 'u' or 'x'.
+-   `-E` extended regular expression support
 
 ## sed and awk
 
@@ -425,10 +437,10 @@ This interestly also applies to terminal emulators that are launched a graphical
 
 The shortcut Alt+F1-6 (or the `chvt` program) will jump you between TTY1 through to TTY6:
 
-- TTY1 graphical login
-- TTY2 graphical console
-- TTY3 graphical session
-- TTY4-6 non-graphical consoles
+-   TTY1 graphical login
+-   TTY2 graphical console
+-   TTY3 graphical session
+-   TTY4-6 non-graphical consoles
 
 ## Switch Users (su)
 
@@ -474,9 +486,9 @@ Broadly, there are users for services, humans and root.
 
 Conventions for UID (see `/etc/login.defs`):
 
-- < 201: privilaged users
-- 201 - 999: system accounts
-- 1000 - 60000: average joe users
+-   < 201: privilaged users
+-   201 - 999: system accounts
+-   1000 - 60000: average joe users
 
 Humans don't always need to interact directly with a Linux host, for example a web or email server. If this is the case, their default shell should be changed from `/bin/bash` to `/sbin/nologin`
 
@@ -484,10 +496,10 @@ Humans don't always need to interact directly with a Linux host, for example a w
 
 `useradd shnerg` will register a new local user account on the system. This involves:
 
-- create entry in `/etc/passwd`
-- create entry in `/etc/shadow`
-- create home directory `/home/shnerg`
-- create user specific bash initialisation scripts `.bash_profile`, `.bashrc` and `.bash_logout`
+-   create entry in `/etc/passwd`
+-   create entry in `/etc/shadow`
+-   create home directory `/home/shnerg`
+-   create user specific bash initialisation scripts `.bash_profile`, `.bashrc` and `.bash_logout`
 
 The `/etc/skel/` directory provides the skeleton scripts and files to be copied into new users home directories.
 
@@ -499,23 +511,23 @@ To remove a user and their home directory, use the `-r` option, and `-f` even if
 
 User objects are made up of many attributes, shown by `usermod --help`
 
-- `-c` an arbitrary annotation such as a role (`GECOS` field)
-- `-d` home dir path
-- `-e` point in time to disable the user
-- `-g -u` gid uid
-- `-G` groups
-- `-s` default shell such as `/bin/bash`, `/sbin/nologin`
-- `-R` location to `chroot` the user into, interesting!
-- `-L -U` lock unlock
+-   `-c` an arbitrary annotation such as a role (`GECOS` field)
+-   `-d` home dir path
+-   `-e` point in time to disable the user
+-   `-g -u` gid uid
+-   `-G` groups
+-   `-s` default shell such as `/bin/bash`, `/sbin/nologin`
+-   `-R` location to `chroot` the user into, interesting!
+-   `-L -U` lock unlock
 
 ## User configuration files
 
-- `/etc/default/useradd` default new user properties
-- `/etc/login.defs` more default new user properties (if conflicts, takes precedence)
-- `/etc/skel/` cloned to new user home directories
-- `/etc/passwd` user database, all properties of users are encoded here
-- `/etc/shadow` user password storage and properties, the format of an entry: `login:encrypted-password:password-changed-date:min-age:max-age:warning-days:inactive-days:user-expiry-date`. Use `passwd -S shnerg` to display password props for a user.
-- `/etc/group` all groups
+-   `/etc/default/useradd` default new user properties
+-   `/etc/login.defs` more default new user properties (if conflicts, takes precedence)
+-   `/etc/skel/` cloned to new user home directories
+-   `/etc/passwd` user database, all properties of users are encoded here
+-   `/etc/shadow` user password storage and properties, the format of an entry: `login:encrypted-password:password-changed-date:min-age:max-age:warning-days:inactive-days:user-expiry-date`. Use `passwd -S shnerg` to display password props for a user.
+-   `/etc/group` all groups
 
 ## Creating and managing groups
 
@@ -525,9 +537,9 @@ The most common property is the `gid`
 
 Ways to add users to a group:
 
-- `vi /etc/group`
-- `vigr` for vi with group validation
-- `usermod -aG shnerg people`
+-   `vi /etc/group`
+-   `vigr` for vi with group validation
+-   `usermod -aG shnerg people`
 
 Use `getent group finance` to validate a group exists, and `id <user>` to validate the group memberships the user has.
 
@@ -537,9 +549,9 @@ Some facinating (to me anyway) group management programs include `newgrp` to swi
 
 Programs to be across: `passwd`, `chage`
 
-- `passwd -S mike` displays all password related props
-- `echo password | passwd --stdin` to set password programmatically (by default will interactively prompt)
-- default password attributes are controlled by `/etc/login.defs`
+-   `passwd -S mike` displays all password related props
+-   `echo password | passwd --stdin` to set password programmatically (by default will interactively prompt)
+-   default password attributes are controlled by `/etc/login.defs`
 
 # Managing Permissions
 
@@ -553,8 +565,8 @@ note: Linux uses a simplistic _exit on match_ algorithm. If the user matches and
 
 ## Changing file ownership
 
-- `chown` change owner, can take the names of the login and group like so `chown anna:sales sales`. Either the user or group can be omitted to not change its existing value.
-- `chgrp` will change only the group ownership. Its redundant these days with the powers that `chown` has.
+-   `chown` change owner, can take the names of the login and group like so `chown anna:sales sales`. Either the user or group can be omitted to not change its existing value.
+-   `chgrp` will change only the group ownership. Its redundant these days with the powers that `chown` has.
 
 ## Managing basic permissions
 
@@ -620,16 +632,16 @@ This mask is applied to the system wide defaults `666` for files, and `777` for 
 
 Breaking down each bit:
 
-- The first `0` will not apply any mask to the special bits (suid/guid/sticky bit)
-- The second `0` will apply no mask to the _owner_
-- The third `2` will mask/strip out (think subtract) _write_ permission (2 in octal) for the _group_
-- The forth bit `2` will mask/strip out _write_ for _others_
+-   The first `0` will not apply any mask to the special bits (suid/guid/sticky bit)
+-   The second `0` will apply no mask to the _owner_
+-   The third `2` will mask/strip out (think subtract) _write_ permission (2 in octal) for the _group_
+-   The forth bit `2` will mask/strip out _write_ for _others_
 
 In practice `umask` values of `0`, `2` and `7` are used:
 
-- `0` means `6` for files, and `7` for directories
-- `2` means `4` for files and `5` for directories
-- `7` means `0` for files and `0` for directories
+-   `0` means `6` for files, and `7` for directories
+-   `2` means `4` for files and `5` for directories
+-   `7` means `0` for files and `0` for directories
 
 The base `/etc/bashrc` and `/etc/profile` bash environment bootstrapping files contain entries for setting up default `umask` values.
 
@@ -661,10 +673,10 @@ Can be set with `chmod`:
 
 Very useful for defining a group owner that gets inherited within a directory tree.
 
-- Imagine a `/data/sales/` dir.
-- If a user `mike` creates a file (or dir) within `/data/sales/` the user will be set to `mike`, and the group also set to `mike`.
-- In a group environment, such as `/data/sales/`, it would be more useful if the group was set to the `sales` group
-- The sgid special bit will propagate the group owner to new files or directories and is set with `chmod g+s /data/sales/` or `chmod 2770 /data/sales/`
+-   Imagine a `/data/sales/` dir.
+-   If a user `mike` creates a file (or dir) within `/data/sales/` the user will be set to `mike`, and the group also set to `mike`.
+-   In a group environment, such as `/data/sales/`, it would be more useful if the group was set to the `sales` group
+-   The sgid special bit will propagate the group owner to new files or directories and is set with `chmod g+s /data/sales/` or `chmod 2770 /data/sales/`
 
 ### Sticky bit
 
@@ -684,8 +696,8 @@ Several years later, in addition to the special bits, ACL (access control list) 
 
 ACLs offer a few benefits over the simple _UGO_ system:
 
-- more granular inheritable permission chains on specific directories
-- multiple owners
+-   more granular inheritable permission chains on specific directories
+-   multiple owners
 
 Scenario, under `/data/` exists `accounting/` (owned by root:accounting) and `sales/` (owned by root:sales).
 
@@ -695,13 +707,13 @@ This is not possible with the simple UGO model.
 
 For directories:
 
-- `setfacl -R -m g:sales:rx accounting` to set ACLs on existing files and directories
-- `setfacl -m d:g:sales:rx accounting` to set the default ACL on new objects that are created
-- `getfacl accounting` to view ACLs
+-   `setfacl -R -m g:sales:rx accounting` to set ACLs on existing files and directories
+-   `setfacl -m d:g:sales:rx accounting` to set the default ACL on new objects that are created
+-   `getfacl accounting` to view ACLs
 
 For files:
 
-- `setfacl -m u:george:r myfile`
+-   `setfacl -m u:george:r myfile`
 
 To remove ACLs involves using the dash `-`
 
@@ -713,19 +725,19 @@ For example `setfacl -m d:o::- secret-dir` will strip all ACLs for others. Inter
 
 ## Network device naming
 
-- BIOS naming based on hardware properties such as `em[1-N]` for embedded NICs, `p[slot_number]p[port_number]`
-- udev naming `ethX`
-- Physical naming similar to BIOS naming with more variations
-- Logical naming such as vlan or alias
-- To get classical `ethX` naming, use `biosdevname=0` and `net.ifnames=0` GRUB boot options
+-   BIOS naming based on hardware properties such as `em[1-N]` for embedded NICs, `p[slot_number]p[port_number]`
+-   udev naming `ethX`
+-   Physical naming similar to BIOS naming with more variations
+-   Logical naming such as vlan or alias
+-   To get classical `ethX` naming, use `biosdevname=0` and `net.ifnames=0` GRUB boot options
 
 ## Managing runtime network configuration with ip
 
 `ip` is useful for showing live networking state.
 
-`ip addr help`
-`ip addr add 10.0.0.10/24 dev enpls0`
-`ip link show`
+-   `ip addr help`
+-   `ip addr add 10.0.0.10/24 dev enpls0`
+-   `ip link show`
 
 ## Storing network configuration persistently
 
@@ -733,7 +745,7 @@ Persistent network configuration is stored in `/etc/sysconfig/network-scripts/`,
 
 The _Network Manager_ service is responsible for managing these network interface configs. An NM configuration is called a _connection_.
 
-Frontends to the core `NetworkManager` service, include `nmcli` and `nmtui`. They depend on the `NetworkManager` daemon to be running.
+`nmcli` and `nmtui` are frontends to the core `NetworkManager` daemon.
 
 ### nmcli
 
@@ -743,12 +755,12 @@ Bash tab completion rocks for CLI's like `nmcli`, check its installed with `rpm 
 
 Commonly used options:
 
-- `con-name` for the profile label
-- `ipv4.method` for static vs DHCP
-- `ipv4.addresses`
-- `ipv4.dns`
-- `ipv4.gateway`
-- `autoconnect`
+-   `con-name` for the profile label
+-   `ipv4.method` for static vs DHCP
+-   `ipv4.addresses`
+-   `ipv4.dns`
+-   `ipv4.gateway`
+-   `autoconnect`
 
 _Hot tip:_ always specify a CIDR style subnet mask, as the default is 32!
 
@@ -788,14 +800,14 @@ Using `nmcli` to set persistent routes (default gateway):
 
 Setting the hostname on RHEL is done with `hostnamectl`:
 
-- `hostnamectl status`
-- `hostnamectl set-hostname host14.bencode.net`
+-   `hostnamectl status`
+-   `hostnamectl set-hostname host14.bencode.net`
 
 # Managing Processes
 
-- In Linux everything is a process (including threads). Threads cannot be individually managed.
-- All processes are assigned a PID
-- Mother hening chores includes setting their scheduling priority and sending signals
+-   In Linux everything is a process (including threads). Threads cannot be individually managed.
+-   All processes are assigned a PID
+-   Mother hening chores includes setting their scheduling priority and sending signals
 
 ## Shell jobs
 
@@ -805,95 +817,95 @@ Normally when running a shell command interactively, it is blocking (synchronous
 
 Trailing the command with an ampersand `&`, will unhook `stdin` and `stdout`, assign it a job number, and let it continue processing.
 
-- Example `sleep 100 &` will output the assigned job number and pid e.g. `[3] 2970` = job 3, pid 2970
-- `jobs` will list all background jobs
-- `fg 3` will foreground job 3
-- To background an active shell process `Ctrl-Z` to stop the job, and simply `bg` to background it.
+-   Example `sleep 100 &` will output the assigned job number and pid e.g. `[3] 2970` = job 3, pid 2970
+-   `jobs` will list all background jobs
+-   `fg 3` will foreground job 3
+-   To background an active shell process `Ctrl-Z` to stop the job, and simply `bg` to background it.
 
 ## ps
 
 The way god reports on processes.
 
-- `ps` supports both BSD (naked options) and sys-v (hyphened options) styles, `ps -L` completely different meaning to `ps L`
-- `ps aux` overview of all processes
-- `ps -fax` process tree
-- `ps -fU benjamin` all processes owned by a user
-- `ps -f --forest -C sshd` show process tree only for the `sshd` process
-- `ps L` show all format specifiers available
-- `ps -eo pid,ppid,user,cmd` list processes using specific format specifiers
+-   `ps` supports both BSD (naked options) and sys-v (hyphened options) styles, `ps -L` completely different meaning to `ps L`
+-   `ps aux` overview of all processes
+-   `ps -fax` process tree
+-   `ps -fU benjamin` all processes owned by a user
+-   `ps -f --forest -C sshd` show process tree only for the `sshd` process
+-   `ps L` show all format specifiers available
+-   `ps -eo pid,ppid,user,cmd` list processes using specific format specifiers
 
 ## Memory usage
 
-- Linux tries to cache files for provide a fast experience. Often as a result, memory appears to over-saturated.
-- Swap provides a virtual (fake) memory address space, backing the memory by (much slower) disk if needed.
+-   Linux tries to cache files for provide a fast experience. Often as a result, memory appears to over-saturated.
+-   Swap provides a virtual (fake) memory address space, backing the memory by (much slower) disk if needed.
 
 Use `free` to report on the memory situation e.g. `free -m` show memory units in mebibytes:
 
-- `free` truly un-utilised memory
-- `available` memory be used by buffers or cache that can be liberated immediately
-- If `free` memory is low and swap `used`, indicates the server is under memory pressure and could use more RAM
+-   `free` truly un-utilised memory
+-   `available` memory be used by buffers or cache that can be liberated immediately
+-   If `free` memory is low and swap `used`, indicates the server is under memory pressure and could use more RAM
 
 ## CPU load
 
 Processes as placed into a _run queue_, which the kernel scheduler uses to allocate processes to CPU cores.
 
-- `uptime` to show load averages over 1, 5 and 15 minute spans
-- Load average is the average count of processes that are in a runnable or uninteruptable state.
-- `lscpu` for CPU meta, including number of CPU's, sockets, cores per socket and threads per core.
-- `uptime` load is not normalised by the number of CPU cores (i.e. `1` on single core = 100%, but on a 4 core CPU = 25% load)
+-   `uptime` to show load averages over 1, 5 and 15 minute spans
+-   Load average is the average count of processes that are in a runnable or uninteruptable state.
+-   `lscpu` for CPU meta, including number of CPU's, sockets, cores per socket and threads per core.
+-   `uptime` load is not normalised by the number of CPU cores (i.e. `1` on single core = 100%, but on a 4 core CPU = 25% load)
 
 ## System activity with top
 
 Keyboard options:
 
-- `f` select display fields
-- `M,P,T` sort on memory use, CPU or time
-- `W` save display settings
-- `1` show individual CPU cores
-- `k` to kill a PID
-- `r` to set nice level on a PID
+-   `f` select display fields
+-   `M,P,T` sort on memory use, CPU or time
+-   `W` save display settings
+-   `1` show individual CPU cores
+-   `k` to kill a PID
+-   `r` to set nice level on a PID
 
 Interpreting `top` by line:
 
-- 1 is just `uptime`
-- 2 is processes by categories: `stopped` = ctrl-z, `zombie` child processes that have lost their parent process and have become unmanagable.
-- 3 is CPU stats: `us` user space, `sy` system space, `ni` processes with changed niceness, `id` idle time, `wa` blocked on I/O, `hi` hardware interupts, `st` stolen time (zen virtualisation)
-- 4 for memory stats:
+-   1 is just `uptime`
+-   2 is processes by categories: `stopped` = ctrl-z, `zombie` child processes that have lost their parent process and have become unmanagable.
+-   3 is CPU stats: `us` user space, `sy` system space, `ni` processes with changed niceness, `id` idle time, `wa` blocked on I/O, `hi` hardware interupts, `st` stolen time (zen virtualisation)
+-   4 for memory stats:
 
 ## Sending signals to processes
 
 Signals are a way of communicating with processes, even if they're busily working away.
 
-- `man 7 signal` describes the classical signals such as `SIGHUP` (1), `SIGKILL` (9) and `SIGTERM` (15).
-- Signal handling very much depends on the program. Example, `nginx` will gracefully reparse config if it receives a `SIGHUP` with terminating active connections.
-- `kill` is used to send a signal to a PID
-- `killall` to send signals to all processes that match a search expression (e.g. `killall -SIGTERM 'dd'` to send SIGTERM to all `dd` processes)
-- `pkill` will send a signal based on a the text pattern of a several process attributes (e.g. `pkill -signal 15 -U bob` send SIGTERM to all of bob's processes, `pkill -signal 1 sshd` send SIGHUP to the `sshd` process).
+-   `man 7 signal` describes the classical signals such as `SIGHUP` (1), `SIGKILL` (9) and `SIGTERM` (15).
+-   Signal handling very much depends on the program. Example, `nginx` will gracefully reparse config if it receives a `SIGHUP` with terminating active connections.
+-   `kill` is used to send a signal to a PID
+-   `killall` to send signals to all processes that match a search expression (e.g. `killall -SIGTERM 'dd'` to send SIGTERM to all `dd` processes)
+-   `pkill` will send a signal based on a the text pattern of a several process attributes (e.g. `pkill -signal 15 -U bob` send SIGTERM to all of bob's processes, `pkill -signal 1 sshd` send SIGHUP to the `sshd` process).
 
 ## Priority and niceness
 
 In a nutshell, the amount of priority the process scheduler will give to a process.
 
-- Nice values range from -20 to 19 (the lower the more priority, the higher the nicer a process is consider toward other processes)
-- Users can make their processes nicer (lower scheduler priority), but not more aggressive (i.e. higher priority)
-- Use the `nice` and `renice` commands to alter the priority of non-realtime processes
-- `nice` will spawn new processes with a nice preset e.g. `nice -n -5 dd if=/dev/zero of=/dev/null`
-- `renice` will alter the niceness of an existing process e.g. `renice -n 10 -p 34627`
+-   Nice values range from -20 to 19 (the lower the more priority, the higher the nicer a process is consider toward other processes)
+-   Users can make their processes nicer (lower scheduler priority), but not more aggressive (i.e. higher priority)
+-   Use the `nice` and `renice` commands to alter the priority of non-realtime processes
+-   `nice` will spawn new processes with a nice preset e.g. `nice -n -5 dd if=/dev/zero of=/dev/null`
+-   `renice` will alter the niceness of an existing process e.g. `renice -n 10 -p 34627`
 
 In `top`:
 
-- the `PR` column is priority, the lower the higher priority. Priority `rt` or realtime is a special case, and is the supreme priority.
-- `NI` is nice level (-20 most aggressive, 19 nicest)
+-   the `PR` column is priority, the lower the higher priority. Priority `rt` or realtime is a special case, and is the supreme priority.
+-   `NI` is nice level (-20 most aggressive, 19 nicest)
 
 ## tuned profiles
 
 `tuned` is a system performance optimiser service.
 
-- Make sure its running `systemctl status tuned`
-- `tuned-adm` is the CLI
-- `tuned-adm list` show available profiles
-- `tuned-adm profile powersave` to set the powersave profile
-- `tuned-adm active` show current profile
+-   Make sure its running `systemctl status tuned`
+-   `tuned-adm` is the CLI
+-   `tuned-adm list` show available profiles
+-   `tuned-adm profile powersave` to set the powersave profile
+-   `tuned-adm active` show current profile
 
 # Managing Software
 
@@ -901,24 +913,24 @@ In `top`:
 
 RPM remains the package format of choice for hat-based distros. RPM facts:
 
-- its from the 90's
-- its an archive packed by `cpio` includes a manifest, and list of dependencies
-- they can include scripts
-- RHEL 8 has the concept of protected base packages that can't be removed (such as `vi`)
+-   its from the 90's
+-   its an archive packed by `cpio` includes a manifest, and list of dependencies
+-   they can include scripts
+-   RHEL 8 has the concept of protected base packages that can't be removed (such as `vi`)
 
 `yum` was built to be a friendly package frontend:
 
-- `yum search nmap`
-- `yum install nmap`
-- `yum remove`
-- `yum update` update all packages
-- `yum update kernel` update just the kernel package
-- `yum provides */sepolicy` a deeper search that scans files within each package
-- `yum info nmap` show the package manifest
-- `yum list all`
-- `yum list installed`
-- `yum history` list of recent package activity
-- `yum history undo 4` undo transaction 4 in the above history list
+-   `yum search nmap`
+-   `yum install nmap`
+-   `yum remove`
+-   `yum update` update all packages
+-   `yum update kernel` update just the kernel package
+-   `yum provides */sepolicy` a deeper search that scans files within each package
+-   `yum info nmap` show the package manifest
+-   `yum list all`
+-   `yum list installed`
+-   `yum history` list of recent package activity
+-   `yum history undo 4` undo transaction 4 in the above history list
 
 Cool tip `yumdownloader` (in the `yum-utils` package) will download RPM to file system for inspection.
 
@@ -928,19 +940,19 @@ With `yum`, the older `rpm` CLI is used less directly these days. However RPMs a
 
 This is useful for querying, such as the specific files installed as part of a package, and so on.
 
-- `rpm -qf /usr/bin/awk` which package installed this file?
-- `rpm -ql tmux` list each file installed by the `tmux` package
-- `rpm -qc openssh-server` list the configuration files for a package
-- `rpm -qp --scripts foo.rpm` review the scriptlets (pre-install, post-install) of a standalone RPM
+-   `rpm -qf /usr/bin/awk` which package installed this file?
+-   `rpm -ql tmux` list each file installed by the `tmux` package
+-   `rpm -qc openssh-server` list the configuration files for a package
+-   `rpm -qp --scripts foo.rpm` review the scriptlets (pre-install, post-install) of a standalone RPM
 
 ### yum Groups
 
 Chunks up software into broad categories.
 
-- `yum group list`
-- `yum group list hidden`
-- `yum group info "System Tools"`
-- `yum group install --with-optional "Directory Client"`
+-   `yum group list`
+-   `yum group list hidden`
+-   `yum group info "System Tools"`
+-   `yum group install --with-optional "Directory Client"`
 
 ## Repositories
 
@@ -968,27 +980,27 @@ To verify run `yum repolist`
 
 New in RHEL 8, appstreams separate user (i.e. application) packages from core system (i.e. base) packages.
 
-- _Application Streams_ come as either traditional RPMs or the new module format.
-- Modules (ex: php) themselves can in-turn contain streams (ex php:7.1, php:7.2).
-- Enabling a module stream (`php:7.1`) opens up access to its packages
-- Modules can have profiles (e.g. a minimal, devel)
-- Module streams support upgraded and downgrading between each other (`php:7.1` > `php:7.3` or `php:8.0` > `php:7.1`)
+-   _Application Streams_ come as either traditional RPMs or the new module format.
+-   Modules (ex: php) themselves can in-turn contain streams (ex php:7.1, php:7.2).
+-   Enabling a module stream (`php:7.1`) opens up access to its packages
+-   Modules can have profiles (e.g. a minimal, devel)
+-   Module streams support upgraded and downgrading between each other (`php:7.1` > `php:7.3` or `php:8.0` > `php:7.1`)
 
 Managed with `yum`:
 
-- `yum module list`
-- `yum module provides httpd` show the module that provides a paricular package
-- `yum module info php` specific module info
-- `yum module info --profile php` show the profiles of a specific module
-- `yum module list php` to list available modules
-- `yum module install php:7.3` or `yum install @php:7.3` will enable and install specific module stream
-- `yum module install php:7.3/devel` to install the module using a specific profile
-- `yum module enable php:7.1` enables the module stream, without installing
+-   `yum module list`
+-   `yum module provides httpd` show the module that provides a paricular package
+-   `yum module info php` specific module info
+-   `yum module info --profile php` show the profiles of a specific module
+-   `yum module list php` to list available modules
+-   `yum module install php:7.3` or `yum install @php:7.3` will enable and install specific module stream
+-   `yum module install php:7.3/devel` to install the module using a specific profile
+-   `yum module enable php:7.1` enables the module stream, without installing
 
 Updates between module streams just works:
 
-- `yum module install php:7.1`
-- some time later `yum module install php:7.3`
+-   `yum module install php:7.1`
+-   some time later `yum module install php:7.3`
 
 Beware `yum update` will use enabled module streams (e.g. `php:7.1` will not automatically be upgraded to `php:7.3`)
 
@@ -996,29 +1008,29 @@ Beware `yum update` will use enabled module streams (e.g. `php:7.1` will not aut
 
 The RHEL repositories require an active subscription.
 
-- `subscription-manager register`
-- `subscription-manager attach --auto`
+-   `subscription-manager register`
+-   `subscription-manager attach --auto`
 
 # Systemd
 
 The init system. The kernel hands over to it, when its ready to bootstrap user space.
 
-- Managed items are called units (services, mounts, timers, sockets etc)
-- `systemctl` is the management CLI
-- `systemctl -t help` list of supported unit types
-- `systemctl list-unit-files` list each unit, its definition file and status
-- `systemctl enabled vsftpd` enable (auto start) service
-- `systemctl start vsftpd` start the service process
+-   Managed items are called units (services, mounts, timers, sockets etc)
+-   `systemctl` is the management CLI
+-   `systemctl -t help` list of supported unit types
+-   `systemctl list-unit-files` list each unit, its definition file and status
+-   `systemctl enabled vsftpd` enable (auto start) service
+-   `systemctl start vsftpd` start the service process
 
 Modifying service configuration (see `man systemd.service`):
 
-- Default unit files: `/usr/lib/systemd/system/`
-- Custom unit files: `/etc/systemd/system/`
-- Runtime generated unit files: `/run/systemd/`
-- `systemctl cat rsyslog.service` dump unit configuration
-- `systemctl edit unit.service` will create overlay in `/etc/systemd/system`
-- `systemctl show` to dump available parameters that can be used in unit configs
-- `systemctl daemon-reload` after modifying unit files, often is necessary
+-   Default unit files: `/usr/lib/systemd/system/`
+-   Custom unit files: `/etc/systemd/system/`
+-   Runtime generated unit files: `/run/systemd/`
+-   `systemctl cat rsyslog.service` dump unit configuration
+-   `systemctl edit unit.service` will create overlay in `/etc/systemd/system`
+-   `systemctl show` to dump available parameters that can be used in unit configs
+-   `systemctl daemon-reload` after modifying unit files, often is necessary
 
 When editing an overlay, can just add the extra options as they will be additive to the existing base configuration:
 
@@ -1032,50 +1044,50 @@ When editing an overlay, can just add the extra options as they will be additive
 
 `cron`, the classical scheduling daemon.
 
-- has no `stdout`
-- `crontab -e` to create user specific job
-- `/etc/cron.d/` to create system wide job
-- `/etc/cron.{hourly,daily,weekly,monthly}` managed by `anacron`, for regular script execution
-- `/etc/crontab` (deprecated) was once used to configure jobs. `crontab` remains useful for specifying the environment for `cron` such as the `SHELL`.
+-   has no `stdout`
+-   `crontab -e` to create user specific job
+-   `/etc/cron.d/` to create system wide job
+-   `/etc/cron.{hourly,daily,weekly,monthly}` managed by `anacron`, for regular script execution
+-   `/etc/crontab` (deprecated) was once used to configure jobs. `crontab` remains useful for specifying the environment for `cron` such as the `SHELL`.
 
 `cron` time specification (`man 5 crontab`) example `*/10 4 11 12 1-5`:
 
-- `*/10` every 10 minutes
-- `4` only on hour 4
-- `11` only on day 11
-- `12` only on month 12
-- `1-5` only on day of week 1-5
+-   `*/10` every 10 minutes
+-   `4` only on hour 4
+-   `11` only on day 11
+-   `12` only on month 12
+-   `1-5` only on day of week 1-5
 
 Example, write `hello` to syslog on minute 57, hour 20:
 
-- `crontab -e`
-- `57 20 * * * logger hello`
+-   `crontab -e`
+-   `57 20 * * * logger hello`
 
 `anacron`, runs commands periodically.
 
-- Unlike `cron` doesn't assume the machine is running all day everyday.
-- Configured by `/etc/anacrontab`
+-   Unlike `cron` doesn't assume the machine is running all day everyday.
+-   Configured by `/etc/anacrontab`
 
 ## at
 
 `at` unlike `cron` is used for one-off jobs.
 
-- make sure `atd` daemon is running
-- provide its own interactive shell to take job specifications
-- `atq` to list `at` queue
-- `atrm` to remove `at` job
+-   make sure `atd` daemon is running
+-   provide its own interactive shell to take job specifications
+-   `atq` to list `at` queue
+-   `atrm` to remove `at` job
 
 Example:
 
-- `at teatime`
-- `logger have a cup of tea`
+-   `at teatime`
+-   `logger have a cup of tea`
 
 ## systemd Timers
 
 `cron` is still the gold standard, however this is still a viable option.
 
-- `man 5 systemd.timer` and `man 5 systemd.time` for time specification
-- `ls /usr/lib/systemd/system/*.timer` to list timers
+-   `man 5 systemd.timer` and `man 5 systemd.time` for time specification
+-   `ls /usr/lib/systemd/system/*.timer` to list timers
 
 ```
 [Unit]
@@ -1093,16 +1105,16 @@ RandomizedDelaySec=6000
 WantedBy=timers.target
 ```
 
-## Managing temporary files
+## tmpfiles.d
 
 A common way to manage (create, delete) temporary files. See `man tmpfiles.d`.
 
-- `/usr/lib/tmpfiles.d/` setting files
-- For example `/usr/lib/tmpfiles.d/tmp.conf` contain settings for automatic `tmp` files cleanup
-- `systemd-tmpfiles-clean.timer` unit can be configured to automatically clean up temporary files (by triggering `systemd-tmpfiles-clean.service` which in turn runs `systemd-tmpfiles --clean`).
-- If you want to make modifications, copy conf file from `/usr/lib/tmpfiles.d/` to `/etc/tmpfiles.d/` and edit it there.
-- Run `systemd-tmpfiles --clean /etc/tmpfiles.d/tmp.conf` manually to parse and test configuration changes.
-- To register a new custom tmpfiles configuration `systemd-tmpfiles --create /etc/tmpfiles.d/foo.conf`
+-   `/usr/lib/tmpfiles.d/` setting files
+-   For example `/usr/lib/tmpfiles.d/tmp.conf` contain settings for automatic `tmp` files cleanup
+-   `systemd-tmpfiles-clean.timer` unit can be configured to automatically clean up temporary files (by triggering `systemd-tmpfiles-clean.service` which in turn runs `systemd-tmpfiles --clean`).
+-   If you want to make modifications, copy conf file from `/usr/lib/tmpfiles.d/` to `/etc/tmpfiles.d/` and edit it there.
+-   Run `systemd-tmpfiles --clean /etc/tmpfiles.d/tmp.conf` manually to parse and test configuration changes.
+-   To register a new custom tmpfiles configuration `systemd-tmpfiles --create /etc/tmpfiles.d/foo.conf`
 
 # Logging
 
@@ -1112,12 +1124,12 @@ A common way to manage (create, delete) temporary files. See `man tmpfiles.d`.
 
 `rsyslogd` is the defacto syslogd used by most distros. It monitors configurable sources (e.g. `/dev/log`) and writes to configurable sinks (e.g. in `/var/log/`)
 
-- A daemon managed by the `rsyslogd.service` unit
-- Configured by `/etc/rsyslog.conf`
-- Snap-in configs in `/etc/rsyslog.d/`
-- Each logger rule line is made up of 3 elements; _facility_ (`{auth,authpriv,cron,daemon,kern,lpr,mail,mark,news,security,syslog,user,uucp,local{0-7}}`), _severity_ (`{debug,info,notice,warn,err,crit,alert,emerg,panic}`) and an _action_ (regular file, database table, remote machine, a tty, discard, and more).
-- For services that don't have a specific facilty, use `local{0-7}`
-- You can use the `logger` CLI to write messages to `rsyslogd` manually
+-   A daemon managed by the `rsyslogd.service` unit
+-   Configured by `/etc/rsyslog.conf`
+-   Snap-in configs in `/etc/rsyslog.d/`
+-   Each logger rule line is made up of 3 elements; _facility_ (`{auth,authpriv,cron,daemon,kern,lpr,mail,mark,news,security,syslog,user,uucp,local{0-7}}`), _severity_ (`{debug,info,notice,warn,err,crit,alert,emerg,panic}`) and an _action_ (regular file, database table, remote machine, a tty, discard, and more).
+-   For services that don't have a specific facilty, use `local{0-7}`
+-   You can use the `logger` CLI to write messages to `rsyslogd` manually
 
 Sample rules from `/etc/rsyslog.conf`:
 
@@ -1135,19 +1147,19 @@ Being `systemd`, it invented its own logger, called `journald`. By default `jour
 
 While `rsyslogd`, depending on it config, will likely perist `journald` logs to `/var/log/`.
 
-- By default writes journal to `/run/log/journal`, which is cleared across reboots.
-- It's possible to persist the systemd journal logs. `mkdir /var/log/journal/` and restart the `journald.service` unit.
-- Update `/etc/systemd/journald.conf`, set `Storage` to one of `{persistent,volatile,auto}` (auto will use `/var/log/journal/` only if it exists)
-- Journal logs are propagated to `rsyslogd` using the `imjournal` input module
-- The `journalctl` CLI is the frontend for querying journal logs.
-- Use tab completion to build out filters, such as `journalctl UNIT=dbus.service`
+-   By default writes journal to `/run/log/journal`, which is cleared across reboots.
+-   It's possible to persist the systemd journal logs. `mkdir /var/log/journal/` and restart the `journald.service` unit.
+-   Update `/etc/systemd/journald.conf`, set `Storage` to one of `{persistent,volatile,auto}` (auto will use `/var/log/journal/` only if it exists)
+-   Journal logs are propagated to `rsyslogd` using the `imjournal` input module
+-   The `journalctl` CLI is the frontend for querying journal logs.
+-   Use tab completion to build out filters, such as `journalctl UNIT=dbus.service`
 
 ## Logrotate
 
 Used to roll up (rotate) logs.
 
-- Its started through `cron.daily`
-- Configured by `/etc/logrorate.conf` or `/etc/logrotate.d/`
+-   Its started through `cron.daily`
+-   Configured by `/etc/logrorate.conf` or `/etc/logrotate.d/`
 
 # Managing Storage
 
@@ -1161,10 +1173,10 @@ _UEFI_ (Universal Extended Firmware Interface), uses GPT (GUID partition table),
 
 Useful commands:
 
-- `lsblk` lists out all block devices attached to a system
-- `parted` is the preferred partition management program
-- All block devices are represented in `/dev/` e.g. `/dev/vda1`
-- `/proc/partitions`
+-   `lsblk` lists out all block devices attached to a system
+-   `parted` is the preferred partition management program
+-   All block devices are represented in `/dev/` e.g. `/dev/vda1`
+-   `/proc/partitions`
 
 ## Creating partitions
 
@@ -1172,16 +1184,16 @@ Useful commands:
 
 `parted` is now the defacto utility to be used, however `fdisk` and `gdisk` remain available.
 
-- `parted /dev/sdb` to get started on a block device
-- `print` to list partition table
-- `mklabel msdos|gpt` to define the partition type (MBR or GPT)
-- `mkpart [part-type] name fs-type start end`
-  - `part-type` (optional) of primary, logical or extended only applies to MBR
-  - `name` a mandatory label
-  - `fs-type` an irrelevant file system piece of metadata (does NOT actually layer a file system onto the volume)
-  - `start end` the locations starting from the beginning of the block device to apply the partition
-- `udevadm settle` to flush changes
-- `cat /proc/partitions` to verify
+-   `parted /dev/sdb` to get started on a block device
+-   `print` to list partition table
+-   `mklabel msdos|gpt` to define the partition type (MBR or GPT)
+-   `mkpart [part-type] name fs-type start end`
+    -   `part-type` (optional) of primary, logical or extended only applies to MBR
+    -   `name` a mandatory label
+    -   `fs-type` an irrelevant file system piece of metadata (does NOT actually layer a file system onto the volume)
+    -   `start end` the locations starting from the beginning of the block device to apply the partition
+-   `udevadm settle` to flush changes
+-   `cat /proc/partitions` to verify
 
 ### MBR partitions with fdisk
 
@@ -1191,11 +1203,11 @@ If the block device is in use, `fdisk` will be unable to write the partition tab
 
 Logical partitions get named sequentially within the extended partition, in which they live. If a logical partition is removed, other higher logical partitions will decrement. For example:
 
-- `vdb4` is an extended
-- `vdb5` is logical
-- `vdb6` is logical
-- `vdb5` gets removed
-- `vdb6` becomes `vdb5` (breaking any fstab entries dependent on the block device name)
+-   `vdb4` is an extended
+-   `vdb5` is logical
+-   `vdb6` is logical
+-   `vdb5` gets removed
+-   `vdb6` becomes `vdb5` (breaking any fstab entries dependent on the block device name)
 
 ## File System Choices
 
@@ -1203,36 +1215,36 @@ Logical partitions get named sequentially within the extended partition, in whic
 
 The default.
 
-- Fast
-- CoW (copy on write) to guarantee data integrity; before writing a file to disk, the original is preserved elsewhere making it possible to revert to it's previous state
-- Size can be increased, but not decreased
-- `mkfs.xfs /dev/vdb2`
-- `xfs_admin` to manage properties of an XFS file system, such as defining a label
-- `xfsdump` for creating backups, including XFS specific attributes
-  - Example: `xfsdump -I 0 -f /backupfiles/data.xfsdump /data` creates a full backup of the contents of `/data`
-- `xfsrestore` to restore these backups:
-  - Example: `xfsrestore -f /backupfiles/data.xfsdump /data`
-- `xfsrepair` is used to repair broken XFS file systems
+-   Fast
+-   CoW (copy on write) to guarantee data integrity; before writing a file to disk, the original is preserved elsewhere making it possible to revert to it's previous state
+-   Size can be increased, but not decreased
+-   `mkfs.xfs /dev/vdb2`
+-   `xfs_admin` to manage properties of an XFS file system, such as defining a label
+-   `xfsdump` for creating backups, including XFS specific attributes
+    -   Example: `xfsdump -I 0 -f /backupfiles/data.xfsdump /data` creates a full backup of the contents of `/data`
+-   `xfsrestore` to restore these backups:
+    -   Example: `xfsrestore -f /backupfiles/data.xfsdump /data`
+-   `xfsrepair` is used to repair broken XFS file systems
 
 ### Ext4
 
 The old (v6 and before) default.
 
-- Backward compatible with Ext2
-- Uses a journal to guarantee data integrity
-- Size can be increased and decreased (after growing partitions with `parted`, use `resize2fs <device-name>`)
-- `mkfs.ext4 /dev/vdb3`
-- `tune2fs` to manage Ext4, like labelling
+-   Backward compatible with Ext2
+-   Uses a journal to guarantee data integrity
+-   Size can be increased and decreased (after growing partitions with `parted`, use `resize2fs <device-name>`)
+-   `mkfs.ext4 /dev/vdb3`
+-   `tune2fs` to manage Ext4, like labelling
 
 ## Mounting
 
 The act of attaching a block device to sub-branch within the `/` file system tree.
 
-- `/etc/fstab` (fs table) is used to persistently mount volumes
-- In the post systemd world, fstab nowdays is simply a frontend to _systemd mounts_ (using the `systemd-fstab-generator` code generator)
-- After modifying `fstab` ensure you refresh systemd with `systemctl daemon-reload`
-- To auto mount, unmounted volumes in fstab `mount -a`
-- When unmounting, you may get a _target is busy_ response. Use the awesome `lsof /mnt` to track down processes currently using the mountpoint.
+-   `/etc/fstab` (fs table) is used to persistently mount volumes
+-   In the post systemd world, fstab nowdays is simply a frontend to _systemd mounts_ (using the `systemd-fstab-generator` code generator)
+-   After modifying `fstab` ensure you refresh systemd with `systemctl daemon-reload`
+-   To auto mount, unmounted volumes in fstab `mount -a`
+-   When unmounting, you may get a _target is busy_ response. Use the awesome `lsof /mnt` to track down processes currently using the mountpoint.
 
 ### Persistent block device naming
 
@@ -1240,34 +1252,34 @@ Block device names, like `/dev/sdb` are not guaranteed to be reissued consistent
 
 Other identifiers include _UUID_, _labels_ and _device paths_, which are all represented under `/dev/disk/`.
 
-- `blkid` shows the UUID and LABEL id's assigned to each block device
-- To mount based on a UUID:
-  - Use `blkid` to find the uuid for the block device
-  - In `fstab` replace the block device name with `UUID=22c2d576-0ec2-4ded-8392-fb17a795fb42`
-- To mount based on a label:
-  - Use `tune2fs -L` or `xfs_admin -L` to set labels on Ext4 or XFS
-  - In `fstab` replace the block device name with `LABEL=foo`
+-   `blkid` shows the UUID and LABEL id's assigned to each block device
+-   To mount based on a UUID:
+    -   Use `blkid` to find the uuid for the block device
+    -   In `fstab` replace the block device name with `UUID=22c2d576-0ec2-4ded-8392-fb17a795fb42`
+-   To mount based on a label:
+    -   Use `tune2fs -L` or `xfs_admin -L` to set labels on Ext4 or XFS
+    -   In `fstab` replace the block device name with `LABEL=foo`
 
 ### systemd mounts
 
 systemd manages all persistent mounts, even those done using `fstab`
 
-- Hand crafting `.mount` files, allows you to directly define a systemd mount
-- This provides finer control over when a mount is required (unlike `fstab` which is simply done at startup)
-- `/usr/lib/systemd/system/tmp.mount` provides a great example (disabled by default)
-- Convention is for system RPM packages to use `/usr/lib/systemd/system/` and user defined mounts `/etc/systemd/system/`
-- The name of the `.mount` file is important! It must match the path of the mount point e.g. `foo.mount` mounts to `/foo`. `foo-bar.mount` mounts to `/foo/bar`
+-   Hand crafting `.mount` files, allows you to directly define a systemd mount
+-   This provides finer control over when a mount is required (unlike `fstab` which is simply done at startup)
+-   `/usr/lib/systemd/system/tmp.mount` provides a great example (disabled by default)
+-   Convention is for system RPM packages to use `/usr/lib/systemd/system/` and user defined mounts `/etc/systemd/system/`
+-   The name of the `.mount` file is important! It must match the path of the mount point e.g. `foo.mount` mounts to `/foo`. `foo-bar.mount` mounts to `/foo/bar`
 
 ## Swap
 
 RAM emulated on disk.
 
-- All Linux systems should have some swap space.
-- Can exist on a block device, including on a swap file
-- Using `parted` ensure to set the type to `linux-swap`, or type 82 in `fdisk`
-- Use `mkswap` to initialise the swap FS.
-- Activate it with `swapon`
-- Use `free -m` to show available swap space
+-   All Linux systems should have some swap space.
+-   Can exist on a block device, including on a swap file
+-   Using `parted` ensure to set the type to `linux-swap`, or type 82 in `fdisk`
+-   Use `mkswap` to initialise the swap FS.
+-   Activate it with `swapon`
+-   Use `free -m` to show available swap space
 
 # Advanced Storage
 
@@ -1281,92 +1293,92 @@ Device Mapper is the
 
 The LVM tango:
 
-- Create partitions as type lvm (`set n lvm on` in `parted`, or type `8e` in `fdisk`)
-- Create PV with `pvcreate /dev/sdb1`
-- Verify with `pvs`
-- Create VG with `vgcreate vgdata /dev/sdb1`
-- Verify with `vgs`
-- Create LV with `lvcreate -n lvdata -L 1G vgdata`
-- Verify with `lvs`
-- Apply a file system `mkfs.xfs /dev/vgdata/lvdata`
-- Register LV in `fstab` (no need for labels or uuid based mounting, as LVM is device independent)
+-   Create partitions as type lvm (`set n lvm on` in `parted`, or type `8e` in `fdisk`)
+-   Create PV with `pvcreate /dev/sdb1`
+-   Verify with `pvs`
+-   Create VG with `vgcreate vgdata /dev/sdb1`
+-   Verify with `vgs`
+-   Create LV with `lvcreate -n lvdata -L 1G vgdata`
+-   Verify with `lvs`
+-   Apply a file system `mkfs.xfs /dev/vgdata/lvdata`
+-   Register LV in `fstab` (no need for labels or uuid based mounting, as LVM is device independent)
 
 Growing LVM depends on how far down the LV/VG/PV stack the space shortage goes.
 
 Growth tango:
 
-- Is there enough space in the volume group with `vgs`
-- No? `vgextend`
-- Extend the logical volume with `lvextend -r -L +1G` to grow the volume file system its hosting
-- If you forget the `-r` switch its over to you based on what FS you're dealing with
-  - Ext4 use `e2resize`
-  - XFS use `xfs _growfs`
+-   Is there enough space in the volume group with `vgs`
+-   No? `vgextend`
+-   Extend the logical volume with `lvextend -r -L +1G` to grow the volume file system its hosting
+-   If you forget the `-r` switch its over to you based on what FS you're dealing with
+    -   Ext4 use `e2resize`
+    -   XFS use `xfs _growfs`
 
 ## Stratis
 
 Stratis is RedHat's solution to Btrfs and ZFS, implemented in user space, to better support cloud and containerised environments.
 
-- Built on top of raw block devices (including LVM). No partitions.
-- Features include; thin provisioning, snapshots, cache tier, programmatic API, monitoring and repair
-- Creates a `/dev/stratis/my-pool/` for each pool, full of links to actual devices
-- XFS is put on a volume on top of the pool
-- Each pool can contain one or more file systems
-- `df` doesnt work, as stratis volumes are thin provisioned
-- instead use the `stratis` related utilities, such as `stratis [blockdev|filesystem|pool]`
+-   Built on top of raw block devices (including LVM). No partitions.
+-   Features include; thin provisioning, snapshots, cache tier, programmatic API, monitoring and repair
+-   Creates a `/dev/stratis/my-pool/` for each pool, full of links to actual devices
+-   XFS is put on a volume on top of the pool
+-   Each pool can contain one or more file systems
+-   `df` doesnt work, as stratis volumes are thin provisioned
+-   instead use the `stratis` related utilities, such as `stratis [blockdev|filesystem|pool]`
 
 Creating a new pool:
 
-- `yum install stratis-cli stratisd`
-- `systemctl enable --now stratisd`
-- `wipefs -a /dev/vdb` to clear any existing partition tables that may exist
-- `stratis pool create mypool /dev/vdb` - partitions NOT supported, at least 1GiB
-- `stratis filesystem create mypool myfs1` plops on XFS
-- `stratis filesystem list mypool`
+-   `yum install stratis-cli stratisd`
+-   `systemctl enable --now stratisd`
+-   `wipefs -a /dev/vdb` to clear any existing partition tables that may exist
+-   `stratis pool create mypool /dev/vdb` - partitions NOT supported, at least 1GiB
+-   `stratis filesystem create mypool myfs1` plops on XFS
+-   `stratis filesystem list mypool`
 
 Mounting the pool:
 
-- `mkdir /myfs1`
-- `mount /dev/stratis/mypool/myfs1 /myfs1`
-- `stratis pool list`
-- `stratis filesystem list`
-- `stratis blockdev list mypool`
-- `blkid` to find UUID of stratis volume, then mount in `fstab` as normal
+-   `mkdir /myfs1`
+-   `mount /dev/stratis/mypool/myfs1 /myfs1`
+-   `stratis pool list`
+-   `stratis filesystem list`
+-   `stratis blockdev list mypool`
+-   `blkid` to find UUID of stratis volume, then mount in `fstab` as normal
 
 Snapshots:
 
-- An independent file system that can be mounted
-- Needs at least 0.5GiB to store the XFS journal
-- The snapshot is not linked to it origin in anyway
-- To create one `stratis filesystem snapshot mypool myfs1 myfs1-snapshot`
-- To revert to a snapshot:
-  - `umount /myfs1`
-  - `stratis filesystem destroy mypool myfs1`
-  - `stratis filesystem snapshot mypool myfs1-snapshot myfs1`
+-   An independent file system that can be mounted
+-   Needs at least 0.5GiB to store the XFS journal
+-   The snapshot is not linked to it origin in anyway
+-   To create one `stratis filesystem snapshot mypool myfs1 myfs1-snapshot`
+-   To revert to a snapshot:
+    -   `umount /myfs1`
+    -   `stratis filesystem destroy mypool myfs1`
+    -   `stratis filesystem snapshot mypool myfs1-snapshot myfs1`
 
 ## VDO
 
 Virtual Data Optimiser (VDO): focuses on storage data in the most efficient way, with the concept of deduplicated and compressed storage pools.
 
-- Used mainly in cloud and containerised environments.
-- Like stratis provides thin-provisioned storage.
-  - For VMs and containers, set the logical size 10x the physical size.
-  - For object storage, go 3x.
-- Must be at least 4GiB.
-- Can be created on a block device OR a partition.
-- `df` doesnt work here either :( instead use `vdostats --human-readable`
-- `yum install vdo kmod-kvdo`
-- `vdo create --name=vdo1 --device=/dev/vdb --vdoLogicalSize=1T`
-- `mkfs.xfs -K /dev/mapper/vdo1` -K (do NOT attempt to discard blocks) is handy speed up hack, when working with thin-provisioned storage
-- In `fstab` include the `x-systemd.requires=vdo.service`, and the `discard` mount options
-- Remember `/usr/share/doc/vdo/examples` has great systemd mount templates
+-   Used mainly in cloud and containerised environments.
+-   Like stratis provides thin-provisioned storage.
+    -   For VMs and containers, set the logical size 10x the physical size.
+    -   For object storage, go 3x.
+-   Must be at least 4GiB.
+-   Can be created on a block device OR a partition.
+-   `df` doesnt work here either :( instead use `vdostats --human-readable`
+-   `yum install vdo kmod-kvdo`
+-   `vdo create --name=vdo1 --device=/dev/vdb --vdoLogicalSize=1T`
+-   `mkfs.xfs -K /dev/mapper/vdo1` -K (do NOT attempt to discard blocks) is handy speed up hack, when working with thin-provisioned storage
+-   In `fstab` include the `x-systemd.requires=vdo.service`, and the `discard` mount options
+-   Remember `/usr/share/doc/vdo/examples` has great systemd mount templates
 
 Troubleshooting:
 
-- When creating may get the error `vdo: ERROR - Found existing signature on /dev/vdb at offset 512`. This is a safety check, telling you the volume looks to already be initialised, as possibly used. If its an old partition and you're happy to replace it, run `wipefs --all --force /dev/vdb`
+-   When creating may get the error `vdo: ERROR - Found existing signature on /dev/vdb at offset 512`. This is a safety check, telling you the volume looks to already be initialised, as possibly used. If its an old partition and you're happy to replace it, run `wipefs --all --force /dev/vdb`
 
 ## LUKS
 
-> The Linux Unified Key Setup (LUKS) is a disk encryption specification created by Clemens Fruhwirth in 2004. 
+> The Linux Unified Key Setup (LUKS) is a disk encryption specification created by Clemens Fruhwirth in 2004.
 
 LUKS is a standard on-disk format. This facilitates compatibility and interoperability between programs, and assures programs implement password management in a secure manner.
 
@@ -1398,13 +1410,12 @@ Module params can be edited under `/etc/modprobe.d/`
 
 The `/proc` directory provides a UI to the kernel.
 
-- Pid directories map to each running process, providing metadata about each
-- Status files such as `/proc/partitions`
-- Tunable kernel parameters are managed under `/proc/sys`. To temporarily update echo new value into the `/proc/sys` file of interest such as `echo 1 > /proc/sys/net/ipv4/ip_forward`. Once happy persist the configuration using `/etc/sysctl.conf`.
-- `sysctl -a` to dump all kernel tunables
+-   Pid directories map to each running process, providing metadata about each
+-   Status files such as `/proc/partitions`
+-   Tunable kernel parameters are managed under `/proc/sys`. To temporarily update echo new value into the `/proc/sys` file of interest such as `echo 1 > /proc/sys/net/ipv4/ip_forward`. Once happy persist the configuration using `/etc/sysctl.conf`.
+-   `sysctl -a` to dump all kernel tunables
 
 Install new kernel with `yum update kernel` or `yum install kernel` (both have the same effect).
-
 
 ## Boot procedure
 
@@ -1412,21 +1423,22 @@ Install new kernel with `yum update kernel` or `yum install kernel` (both have t
 
 GRUB2 runtime parameters, are editing before bootstrapping the system. When booting, the GRUB bootloader will display boot entries:
 
-- `e` to edit. The `linux` line is most interesting, responsible for booting the kernel. Options are tacked on the back of this line, and can be freely edited here. When ready boot the system with the desired parameters.
-  - `rhgb` redhat graphical boot
-  - `quiet` quiet boot
-- `c` for command interface. `help` for lits of supported commands. `esc` will return you out to boot menu.
+-   `e` to edit. The `linux` line is most interesting, responsible for booting the kernel. Options are tacked on the back of this line, and can be freely edited here. When ready boot the system with the desired parameters.
+    -   `rhgb` redhat graphical boot
+    -   `quiet` quiet boot
+-   `c` for command interface. `help` for lits of supported commands. `esc` will return you out to boot menu.
 
 To persist GRUB2 boot parameters:
 
 1. Edit the `/etc/default/grub` file.
 2. Compile changes to `grub.cfg` using either:
-  - For BIOS systems: `grub2-mkconfig -o /boot/grub2/grub.cfg`
-  - For UEFI systems: `grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg`
+
+-   For BIOS systems: `grub2-mkconfig -o /boot/grub2/grub.cfg`
+-   For UEFI systems: `grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg`
 
 ### Systemd targets
 
-A target is just a group of unit files. *Isolatable* targets define a desired final state, such as `emergency.target`, `rescue.target`, `multi-user.target` and `graphical.target`.
+A target is just a group of unit files. _Isolatable_ targets define a desired final state, such as `emergency.target`, `rescue.target`, `multi-user.target` and `graphical.target`.
 
 Disabling and enabling services, links them into their desired targets. This is dictated by their `WantedBy` setting within the unit file, as shown by `systemctl cat httpd`
 
@@ -1435,13 +1447,12 @@ Disabling and enabling services, links them into their desired targets. This is 
 WantedBy=multi-user.target
 ```
 
-The default target and their *wants* are defined in `/etc/systemd/system/`, as symlinks. This directory is just a big bag of symlinks.
-
+The default target and their _wants_ are defined in `/etc/systemd/system/`, as symlinks. This directory is just a big bag of symlinks.
 
 To boot into a specific target:
 
-- GRUB2 boot prompt `systemd.unit=rescue.target`
-- On a running system `systemctl isloate xxx.target`
+-   GRUB2 boot prompt `systemd.unit=rescue.target`
+-   On a running system `systemctl isolate xxx.target`
 
 `systemctl list-dependencies` visually lays out the hierarchy of targets and units.
 
@@ -1451,10 +1462,10 @@ To boot into a specific target:
 
 Depending how deep the problem is. Common solutions include:
 
-- Tweaking GRUB2 kernel args
-  - `rd.break` to pause in initramfs just after loading the kernel
-  - setting the init system to `init=/bin/bash`
-- Then setout to reduce the service footprint using `systemd.unit=emergency.target` and `systemd.unit=rescue.target`.
+-   Tweaking GRUB2 kernel args
+    -   `rd.break` to pause in initramfs just after loading the kernel
+    -   setting the init system to `init=/bin/bash`
+-   Then minimise the service footprint using `systemd.unit=emergency.target` and `systemd.unit=rescue.target`.
 
 ### Changing root password
 
@@ -1468,70 +1479,321 @@ touch /.autorelabel
 ^d ^d
 ```
 
-## Bash scripting
-
-Only the most basic skills needed.
-
 # Managing network services
 
 ## SSH
 
-- `ssh-keygen` creates a new keypair
-- `ssh-copy-id` copies public key to target host
-- `ssh-agent /bin/bash` caches private key passphrase in shell
-- `ssh-add` adds passphrase to cache
+-   `ssh-keygen` creates a new keypair
+-   `ssh-copy-id` copies public key to target host
+-   `ssh-agent /bin/bash` caches private key passphrase in shell
+-   `ssh-add` adds passphrase to cache
 
 Configuration:
 
-- server = `/etc/ssh/sshd_config`
-- client = `/etc/ssh/ssh_config`
+-   server = `/etc/ssh/sshd_config`
+-   client = `/etc/ssh/ssh_config`
 
 Key settings: Port, PermitRootLogin, AllowUsers, PubkeyAuthentication, PasswordAuthentication, X11Forwarding
 
 Remote file management:
 
-- `scp local-file user@remote-host:/path`
-- `sftp` FTP over SSH
-- `rsync`
-  - `-r` recurse entire tree
-  - `-l` sync symlinks
-  - `-p` preserve symlinks
-  - `-n` dry run
-  - `-a` archive mode (same as `-rlptgoD`)
-  - `-A` archive mode and syncs ACLs
-  - `-X` sync SELinux context labels
+-   `scp local-file user@remote-host:/path`
+-   `sftp` FTP over SSH
+-   `rsync`
+    -   `-r` recurse entire tree
+    -   `-l` sync symlinks
+    -   `-p` preserve symlinks
+    -   `-n` dry run
+    -   `-a` archive mode (same as `-rlptgoD`)
+    -   `-A` archive mode and syncs ACLs
+    -   `-X` sync SELinux context labels
 
+## httpd (apache)
 
-## httpd
+The original web server.
+
+Configured by `/etc/httpd/conf/httpd.conf` or as snap-in under `/etc/httpd/conf.d/`
+
+```
+yum install httpd
+systemctl enable --now httpd
+vim /var/www/html/index.html
+systemctl restart httpd
+```
 
 ## SELinux
 
-## Network security
+Fine grained kernel level access control. If its not explicitly allowed, deny it.
+
+-   Exam tip: NEVER disable SELinux
+-   Most GNU progs support a `-Z` switch to show selinux context labels (`ps auxZ` or `ls -lZ`)
+-   Enabling or disabling needs a reboot (being kernel based) using `/etc/sysconfig/selinux`
+-   When enabled either is in _Enforcing_ (i.e fully operational) or _Permissive_ (for troubleshooting only) mode
+-   Check current status with `sestatus` and `getenforce`
+-   Modes can be changed at runtime with `setenforce [enforcing|permissive]`
+-   Disabling will cause selinux to stop tracking file activity, as a result turning it back on will require a full _relabel_ to occur; i.e., all files are evaluated against active policies and labelled if needed
+
+### Context Labels
+
+-   A _context label_ is applied to every OS object `user_context:role_context:type`
+-   The `type` defines whats operations the object may perform
+-   The context type are used by policies, to define what _source object_ has access to what _target object_
+
+Tying this together, a look at the OpenSSH daemon:
+
+```
+# ps auxZ | grep sshd
+system_u:system_r:sshd_t:s0-s0:c0.c1023 root 1021 0.0  0.1  92292  2944 ?        Ss   Oct08   0:00 /usr/sbin/sshd -D
+
+# ls -lZ /etc/ssh/
+-rw-r--r--. 1 root root     system_u:object_r:etc_t:s0      577388 Apr 27  2020 moduli
+-rw-r--r--. 1 root root     system_u:object_r:etc_t:s0        1770 Apr 27  2020 ssh_config
+drwxr-xr-x. 2 root root     system_u:object_r:etc_t:s0          28 Apr 27  2020 ssh_config.d
+-rw-------. 1 root root     system_u:object_r:etc_t:s0        4291 Jun  8 21:34 sshd_config
+-rw-r-----. 1 root ssh_keys system_u:object_r:sshd_key_t:s0    492 Nov  1  2020 ssh_host_ecdsa_key
+-rw-r--r--. 1 root root     system_u:object_r:sshd_key_t:s0    162 Nov  1  2020 ssh_host_ecdsa_key.pub
+-rw-r-----. 1 root ssh_keys system_u:object_r:sshd_key_t:s0    387 Nov  1  2020 ssh_host_ed25519_key
+-rw-r--r--. 1 root root     system_u:object_r:sshd_key_t:s0     82 Nov  1  2020 ssh_host_ed25519_key.pub
+-rw-r-----. 1 root ssh_keys system_u:object_r:sshd_key_t:s0   2578 Nov  1  2020 ssh_host_rsa_key
+-rw-r--r--. 1 root root     system_u:object_r:sshd_key_t:s0    554 Nov  1  2020 ssh_host_rsa_key.pub
+```
+
+A policy allows the source object `sshd_t` access to target objects `sshd_key_t` and `etc_t`
+
+### Booleans
+
+-   Higher level concept for turning on/off complete set of functionlity
+-   `getsebool -a` list all
+-   To toggle a bool `setsebool -P httpd_enable_homedirs on`
+
+```
+# getsebool -a | grep http
+httpd_anon_write --> off
+httpd_builtin_scripting --> on
+httpd_can_check_spam --> off
+httpd_can_connect_ftp --> off
+httpd_can_connect_ldap --> off
+httpd_can_connect_mythtv --> off
+httpd_can_connect_zabbix --> off
+httpd_can_network_connect --> off
+httpd_can_network_connect_cobbler --> off
+httpd_can_network_connect_db --> off
+httpd_can_network_memcache --> off
+httpd_can_network_relay --> off
+httpd_can_sendmail --> off
+httpd_enable_homedirs --> off
+...
+```
+
+### File context labels
+
+Uses the general purpose `semanage` to define file, port and other object contexts.
+
+-   `semanage fcontext` writes a file context into the selinux policy for use.
+-   For file system based objects, tweaking a policy does not take affect immediately.
+-   Use `restorecon` to enforce a policy on the file system e.g. `restorecon -Rv /etc`
+-   Another option is to `touch /.autorelabel` and reboot
+
+### SELinux logs
+
+-   Default uses `auditd`, logs are not human friendly `grep AVC /var/log/audit/audit.log`
+-   AVC = access vector cache, and is a signature of selinux logs
+-   Nicer is `sealert` which parses raw audit log events, value adds and writes `/var/log/messages`
+-   Run `sealert <uuid>` to get advice on a known event
+-   Use `journalctl | grep sealert` to locate UUID
+
+### SELinux troubleshooting
+
+-   If a service is not working, always suspect selinux
+-   Check if its running `getenforce`
+-   Temporarily relax to permissive mode `setenforce 0`
+-   Re-test, if the service is operational, you know selinux is to blame
+-   `grep sealert /var/log/messages`
+
+## Firewalling with firewalld
+
+Components:
+
+-   _Service_ defines one or more ports, and optional supporting kernel modules
+-   _Zone_ is the default config a NIC can be assigned
+-   _Ports_ optional port level rules (stick with services when possible)
+
+The CLI:
+
+-   `firewall-cmd --list-all` show all rules
+-   `firewall-cmd --get-services`
+-   Use `--permanent` to persist config (TIP: this does not impact runtime, you need to run twice with and without)
+-   `firewall-cmd --reload` dump everything and re-read config
+-   `firewall-cmd --add-service ftp`
+
+The GUI:
+
+-   `yum install firewall-config`
 
 ## Automating installs
 
-## Configuring time services
+Kickstart is the classical solution. For more contemporary options see `cloud-init` or `vagrant`.
 
-## Access remote file systems
+-   Typically paired with a PXE boot server, KS pre-defines installation options (root password, network interfaces, timezone, etc)
+-   The core kickstart file is `/root/anaconda-ks.cfg`
+-   Client hosts need to obtain a target kickstart file somehow, and can be specified using the `ks=` boot param:
+    -   Network ex: `http://dasserver/ks.cfg`
+    -   Local mount ex: `file:///mnt/ks.cfg`
+-   PXE is the way to go but outside RHCSA scope.
+-   Boot params can be manually specified, by booting a client off installation media, selecting the install type and hitting `TAB`.
+
+## Time services
+
+-   The OS clock bases itself on the hardware clock; so its critcal the HW clock is correct
+-   `timedatectl` supersedes older CLI's `date` and `tzselect`
+-   `hwclock` CLI can manipulate both clocks
+-   NTP is a network protocol so synchronising time across computers, however not if the time delta is greater than 1000 seconds.
+-   In this case the hardware and system clocks need to be dealt first
+-   NTP is implemented with `cronyc` and `cronyd`, core configuation is `/etc/crony.conf`
+
+Examples:
+
+-   `timedatectl list-timezones`
+-   `timedatectl set-timezone America/Los_Angeles`
+-   `cronyc sources`
+-   `date -s 16:25` set system clock
+
+## Remote file systems
+
+### NFS
+
+Setup an NFS server (for testing):
+
+-   Run `nfs-server` daemon
+-   Creating share directory on file system ex: `/data`
+-   Edit `/etc/exports` config with `/data *(rw,no_root_squash)` - ONLY for testing
+-   Enable the `nfs`, `mountd` and `rpc-bind` services with firewalld (both runtime and permanently)
+
+Mounting NFS:
+
+-   Show exports with `showmount -e server.evilcorp.com`
+-   Mounting takes the form `server:/mount-path` ex: `mount server.evilcorp.com:/share /mnt`
+-   `fstab` options: `_netdev` flags with systemd functional networking is needed first
+
+### CIFS with Samba
+
+Setup an SMB server (for testing):
+
+-   Install `samba`
+-   Create directory to share `mkdir /samba`
+-   Create local user `useradd samba`
+-   Set linux ACLs for user on share directory `chown samba /samba && chmod 770 /samba`
+-   Setup a Windows account that maps to local Linux user `smbpasswd -a samba`
+-   Configure share in `/etc/samba/smb.conf`
+-   Start the `smb` service
+-   Register `samba` with `firewalld`
+-   On RHEL 8 I found SELinux issues with Samba, so as a HACK put it in permissive mode, [RTFM](https://wiki.samba.org/index.php/Troubleshooting_SELinux_on_a_Samba_AD_DC) but setting up an smb server is beyond RHCSA scope, kthxbai
+
+Mounting CIFS:
+
+-   Install client software `cifs-utils` and `samba-client`
+-   Discover shares with `smbclient -L //server.evilcorp.com` (press enter when prompted for `DOMAIN\root` password, to list anonymously)
+-   Mounting takes the form of `//server/share` ex: mount -o username=shnerg //server.evilcorp.com/share /mnt`
+-   Unlike NFS, samba needs an explicit user (mount option), which maps to the Windows NetBIOS user
+-   `fstab` options: `username=` and `password=` and `_netdev` (flags with systemd functional networking is needed first)
+
+## Automount
+
+Lazy load volumes when they are needed, not simply at boot-time with `fstab`.
+
+-   Install the `autofs` package
+-   `/etc/auto.master` defines the directory and mount options file ex: `/data /etc/auto.data`
+-   `/etc/auto.data` defines the sub-directory (within `/data`) and how to mount the thing ex: `files -rw nfs.evilcorp.com:/data/files`
+-   Start `autofs` service
+-   Automount when started will auto create `/misc` and `/net`, which it uses
+-   There are great examples in `/etc/auto.misc`
+-   Automount will auto unmount idle volumes
 
 ## Containers
 
+On 8 redhat ditched Docker for the CRI-O ecosystem, including `podman` (managing containers and images), `buildah` (making images) and `skopeo` (image signing and inspection).
 
+Running containers:
 
-# Rando cool
+-   Install `yum module install container-tools`
+-   Run using dockerhub `podman run -d nginx`
+-   Registries are processed in sequence from `/etc/containers/registries.conf`, and prioritise redhat official registries over dockerhub
+-   Specify registry `podman pull registry.access.redhat.com/ubi8/ubi:latest` (UBI = universal base image, which redhat uses as the basis for all its container based offerings)
+-   `podman run -d` detached mode to free up TTY
+-   `podman run -it` interactive TTY mode
+-   `crtl-p,ctrl-q` to detach from interactive
+-   `--rm` to blow away the writable layer auto created for every container instance, when it stops running
+-   `podman info` to show bound registries and more
 
-- `ctrl+l` = clear terminal
-- `ls -d` don't show contents of directories
-- `\ls` un-alias a command, by preceding it with a backslash `\`
-- `alias` to display evaluated bash aliases
-- `tar` command options are not prefixed with a hypen `-` (BSD compat)
-- `tac` is the inverse program of `cat`
-- `chvt` jumps between TTY e.g. `chvt 3`
-- `ssh-keygen` supports a number of ciphers, set using `[-t dsa | ecdsa | ed25519 | rsa]`, RSA by default
-- `yum history` full journal of package installs
-- `yumdownloader` is included in `yum-utils` lets you download packages to local file system
-- `run-parts` which comes as part of the `cron` ecosystem, is a script that runs all executables in a directory.
-- A sector is 512 bytes.
-- The act of creating a file system is referred to as _making_ as opposed to _formatting_ on Linux
-- `man test` for a quickref of bash evaluations possible
+Managing images:
 
+-   `podman search` across all registries
+-   `podman search --no-trunc registry.redhat.io/rhel8` searches a named registry using `rhel8` search string
+-   `--limit 5`
+-   `--filter stars=5`
+-   `--filter is-official=true`
+-   `skopeo` security inspects images before pulling `skopeo inspect docker://registry.redhat.io/ubi8/ubi`
+-   For local images (already pulled) use `podman`
+-   Some containers need root which can be run with `sudo podman`
+-   `podman images` and `podman rmi` to clean up images
+
+Managing containers:
+
+-   Non-privileged containers can only port map to non-priviliged ports on the host (i.e. > 1024)
+-   `podman port -a` shows all container port mappings
+-   Make sure to firewall the host `firewall-cmd --add-port=8000/tcp --permanent`
+-   `podman ps` show running containers
+-   `podman ps -a` include stopped state
+-   `podman stop <container>` SIGTERM and after 10s SIGKILL
+-   `podman kill <container>` SIGKILL
+-   `podman exec -it <container> /bin/bash` to shell in interactively
+-   `podman exec -l exec cat /etc/redhat-release` what container do you think this runs on? the last one?
+
+Host storage:
+
+-   Check user in container has access (ACL's) to host directory
+-   Set SELinux context type of this directory to `container_file_t` ex: `sudo semanage fcontext -a -t container_file_t "/dbfiles(/.*)?"`
+-   If the user owns directory the `:Z` option can be used ex: `podman run -d -v /web:/web:Z nginx`
+
+Troubleshooting:
+
+-   `podman logs <container-id>` to tail stdout
+-   `podman inspect` for the usage line
+
+### Autostarting non-root containers with systemd user units
+
+Systemd user unit files are perfect for running rootless containers.
+
+By default user units start when a user session is starts, not ideal for system daemons amirite? `loginctl enable-linger <user>` changes this behavior to start these service at boot time. `loginctl show-user <user>` shows linger info for a user.
+
+-   First create a service account user (i.e. not an interactive human user), that will manage containers
+-   Use `podman` to generate systemd user unit file for a given container ex: `podman generate systemd --name nginx-box --files`
+-   `--new` (ephemeral mode) systemd will create and destroy the container on service start/stop
+-   Put the user unit file in `~/.config/systemd/user` for the service account user
+-   `systemctl --user daemon-reload` reload user unit defintions
+-   `systemctl --user enable das-app.service` (linger must be enabled for the user)
+-   `systemctl --user start das-app.service`
+-   For root containers, run the above in `/etc/systemd/system`
+
+# Linux Gems
+
+-   `ctrl+l` = clear terminal
+-   `ls -d` don't show contents of directories
+-   `\ls` un-alias a command, by preceding it with a backslash `\`
+-   `alias` to display evaluated bash aliases
+-   `tar` command options are not prefixed with a hypen `-` (BSD compat)
+-   `tac` is the inverse program of `cat`
+-   `chvt` jumps between TTY e.g. `chvt 3`
+-   `ssh-keygen` supports a number of ciphers, set using `[-t dsa | ecdsa | ed25519 | rsa]`, RSA by default
+-   `yum history` full journal of package installs
+-   `yumdownloader` is included in `yum-utils` lets you download packages to local file system
+-   `run-parts` which comes as part of the `cron` ecosystem, is a script that runs all executables in a directory.
+-   A sector is 512 bytes.
+-   The act of creating a file system is referred to as _making_ as opposed to _formatting_ on Linux
+-   `man test` for a quickref of bash evaluations possible
+-   `cloud-init` is a multi-distribution method for cross-platform cloud instance initialisation, supporting all major public cloud providers, provisioning systems for private cloud infrastructure, and bare-metal installations.
+-   `timedatectl` supersedes legacy `date`
+-   `fstab` sports a `noauto` option for disabling entries
+-   Lazy load volumes with `automount` (unlike `fstab` which is at boot) which is AMAZING - when a read op on the file system to the autofs path happens (ex: `cd /files/nfs`), it hooks that event and pre-mounts it
+-   `script <file>` records an entire shell session to a file (useful for auditing or sharing a procedure)
+-   [FreeIPA](https://www.freeipa.org) is a full blown open source identity management solution

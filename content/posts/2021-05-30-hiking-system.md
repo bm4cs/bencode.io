@@ -18,9 +18,10 @@ tags:
     * [Inner pack](#inner-pack)
     * [Side pockets](#side-pockets)
     * [Front pocket](#front-pocket)
-* [Tips](#tips)
+* [Options](#options)
+* [Ditty bag](#ditty-bag)
 * [Food](#food)
-    * [Cold soak meals](#cold-soak-meals)
+    * [Cold soak meal recipes](#cold-soak-meal-recipes)
         * [Refried beans](#refried-beans)
         * [Pinto beans](#pinto-beans)
         * [Cous Cous](#cous-cous)
@@ -30,15 +31,16 @@ tags:
         * [Rice Bomb](#rice-bomb)
         * [Oatmeal](#oatmeal)
         * [Cereal](#cereal)
-* [Dope resources](#dope-resources)
+* [Useful resources](#useful-resources)
+* [Lessons learned](#lessons-learned)
+    * [April 2021](#april-2021)
+    * [November 2021](#november-2021)
 
 <!-- vim-markdown-toc -->
 
 Over the last year I have been experimenting with reducing the weight of my hiking pack when out on track.
 
-Reading [books](https://www.amazon.com.au/Ultralight-Backpackin-Tips-Mike-Clelland/dp/0762763841) on ultralight hiking, has left me with some great strategies for doing so.
-
-As a result has made hiking more enjoyable for me. Not only do I have more energy, I can walk further, my body doesn't feel broken at the end of a big day, meaning I can just enjoy the journey that much more.
+Reading [books](https://www.amazon.com.au/Ultralight-Backpackin-Tips-Mike-Clelland/dp/0762763841) on ultralight hiking, has me with some strategies for doing so.
 
 # Stacked packing system
 
@@ -77,29 +79,54 @@ Some benefits:
 3. Ditty bag.
 4. Empty 1L platypus bladder.
 
-# Tips
+# Options
 
-- In colder seasons don't scrimp on warm gear to save grams
-  - booties
-  - heavy quilt
-  - high R value sleeping pad
-  - gloves
-- A 1L nalgene bottle is great as a hot water bottle
-- Cook system is optional (see _cold soaking_ below)
-- Try a single hiking pole
+These mostly come down to weight trade-offs:
 
+-   Depending on weather forecast, consider taking out a freestanding tent.
+-   Don't bother with hiking boots, trail runners are king
+-   In colder seasons don't scrimp on warm gear to save grams
+    -   booties
+    -   heavy quilt
+    -   high R value sleeping pad
+    -   gloves
+-   A 1L nalgene bottle is great as a hot water bottle
+-   Cook system is optional (see _cold soaking_ below)
+-   Try a single hiking pole
+
+# Ditty bag
+
+All the utilities, bits and pieces.
+
+-   Toothpaste tablets (repackaged)
+-   Toothbrush
+-   Baby wipes (repackaged)
+-   Hydralite
+-   Band-aids
+-   Deoderant (repackaged)
+-   Mini swiss army knife
+-   Chapstick
+-   Shower gel (repackaged)
+-   Mosquito repellant (repackaged)
+-   Earbuds
+-   Sunscreen (repackaged)
+-   Water treatment tablets
+-   Telfast
+-   Patch repair kit for sleeping pad
+-   Needle + thread
+-   Feet tape
 
 # Food
 
 Things that have worked for me, over trial and error:
 
 -   Plan for at least 700 grams of food per day.
--   At least 4L of water per day.
--   Drink of much as possible at water sources.
+-   At least 3L of water per day.
+-   Drink as much water as possible directly from water sources, using the Katadyn BeFree or Sawyer Squeeze.
 
-## Cold soak meals
+## Cold soak meal recipes
 
-A method for rehydrating meals using just cold water, over a couple of hours. The plus side, not having to carry out a cook system (i.e. weight savings).
+A method for rehydrating meals using just cold water, over a couple of hours. The plus side, no need to bring a cook system, and they optionally work great with boiling water.
 
 ### Refried beans
 
@@ -164,7 +191,7 @@ A method for rehydrating meals using just cold water, over a couple of hours. Th
 -   Protein powder
 -   Dried fruit
 
-# Dope resources
+# Useful resources
 
 -   [Darwins 35L how to pack walkthrough](https://www.youtube.com/watch?v=4yt31hDdEuk)
 -   [DARWIN ONTHETRAIL pack list](https://darwinonthetrail.com/gear-list/)
@@ -175,3 +202,54 @@ A method for rehydrating meals using just cold water, over a couple of hours. Th
 -   [Jupiter gear list](http://www.jupiterhikes.com/gear/)
 -   [Terra Rosa Gear Australian company](https://terrarosagear.com/)
 -   [Food ideas](https://andrewskurka.com/week-of-backpacking-food-breakdown/)
+
+# Lessons learned
+
+## April 2021
+
+-   always use R value mat for cold earth
+-   heavier sleeping bag
+-   dromlite not great, take more bottles instead
+-   more training, to lessen leg pain
+-   look into getting done 1L platapus bladders
+-   fast flow chunk filter, carbon disks?
+-   stove, hot water is too good in the cold
+-   coffee, miso soup, noodles
+-   more hydralite
+-   befree how to clean, it blocked up badly
+-   get some lightweight fishing gear
+-   feet tape essential with trail runners
+-   normal woolen socks next time, not the injinji toe socks
+-   ditch the poo shovel
+-   bring fire lighting kit
+-   convertible pants
+-   warmer sleep system will reduce clothing weight
+-   one nalgene bottle, for hot water bottle
+-   700g of food per day next trip
+
+## November 2021
+
+-   pivot to a free standing tent when weather is poor
+-   fix thermarest neoair xlite air mattress leak
+-   aluminium foil wind shield for stove
+-   velcro pillow to air mattress
+-   experiment with potato bomb
+-   make coffee tea bags
+-   experiment making damper from raw flour
+-   use normal sunscreen (the sticks suck)
+-   small usb micro charger for bindi head lamp
+-   gossamer gear "the two" is terrible in heavy rain and strong wind
+-   didn't use list:
+    -   thermal top
+    -   water proof socks
+-   things that worked well:
+    -   trail runners in the rain
+    -   only needed one pair of socks
+    -   running shorts performed well in the wet drying quickly while walking
+-   things that didn't work well:
+    -   mont gortex jacket way too heavy
+    -   mont zero jacket too light and cold
+    -   gossamer gear the two tent was windy and wet inside and sand pegs kept blowing out
+    -   thermarest neoair xlite had a slow leak
+    -   lightweight stove setup used up all gas within 3 days due to lack of wind shield
+    -   loose blister tape gave me a blister on left heal

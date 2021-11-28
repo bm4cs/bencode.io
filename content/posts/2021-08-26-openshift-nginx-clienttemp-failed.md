@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "OpenShift NGINX 13: permission denied /var/cache/nginx/client_temp"
+title: "OpenShift NginX 13: permission denied /var/cache/nginx/client_temp"
 draft: false
 date: "2021-08-26 16:36:19"
 lastmod: "2021-08-28 16:36:22"

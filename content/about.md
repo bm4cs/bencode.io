@@ -1,6 +1,6 @@
 ---
 title: "About"
-date: 2019-04-15T20:48:38+10:00
+date: "2019-04-15"
 ---
 
 Hi I'm Ben.
@@ -9,7 +9,7 @@ Hi I'm Ben.
 
 This is one of my heros, Dennis Ritchie.
 
-I'm a...computer maniac, and programming addict. Linux or BSD systems only thanks.
+I'm a...computer maniac and programming addict. Linux or BSD systems only thanks.
 
     // 
     // Dear maintainer:
