@@ -19,9 +19,8 @@ tags:
 
 My end game to is to be doing OAuth/OIDC JWT tokens with my React app, which will delegate the authentication concerns to Keycloak. Keycloak will be responible for evaluating the client certifcate when performing authentication of the client.
 
-# Test setup
 
-## Step 1: Cook up certificates
+# Step 1: Cook up certificates
 
 On Windows, with need to create a self-signed root and client certificates.
 
@@ -46,7 +45,7 @@ New-SelfSignedCertificate -Type Custom -KeySpec Signature `
 
 These should now appear in the Windows Certificate Hive in `certmgr.msc`
 
-## Step 2: Configure Create React App (CRA) toolchain to use HTTPS
+# Step 2: Configure Create React App (CRA) toolchain to use HTTPS
 
 Given this style of authentication completely hinges on SSL/TLS, the local node server used by CRA needs to do `https`.
 
@@ -58,7 +57,7 @@ In Powershell:
 ($env:HTTPS = "true") -and (npm start)
 ```
 
-## Step 3: Configure Keycloak to use HTTPS
+# Step 3: Configure Keycloak to use HTTPS
 
 As per the [DockerHub docs](https://hub.docker.com/r/jboss/keycloak/), mount in `tls.crt` and `tls.key` into the `/etc/x509/https` directory.
 
