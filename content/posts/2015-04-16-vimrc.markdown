@@ -15,7 +15,7 @@ _Updated: 2021-11-24 21:06:08_
 
 I finally (2007) bit the bullet and commited to learning a real text editor. Having muddled on and off with `vi` since the late 90s, decided on Vim. Once you break through its initial, steep, learning curve its truly life changing. Level up and become a text surgeon today.
 
-Vim is incredibly customisable. Its important to take the time to craft your own [`vimrc`](https://github.com/bm4cs/dots/blob/master/stow-home/neovim/.config/nvim/init.vim). Type `:options` to understand the various levers you can pull to make Vim your editor. Almost 15 years later, I'm still constantly fine tuning things.
+Vim is incredibly customisable. Its important to take the time to craft your own [`vimrc`](https://raw.githubusercontent.com/bm4cs/dots/master/.config/nvim/init.vim). Type `:options` to understand the various levers you can pull to make Vim your editor. Almost 15 years later, I'm still constantly fine tuning things.
 
 <!-- vim-markdown-toc GFM -->
 
@@ -36,6 +36,7 @@ Vim is incredibly customisable. Its important to take the time to craft your own
     * [nnn.vim](#nnnvim)
     * [nvim-lspconfig](#nvim-lspconfig)
         * [golang](#golang)
+        * [rust](#rust)
     * [telescope.nvim](#telescopenvim)
     * [fugitive.vim](#fugitivevim)
     * [surround](#surround)
@@ -252,6 +253,12 @@ Once the client plugin is done, install a [language server](https://microsoft.gi
 ### golang
 
 -   Make sure `gopls` is installed and on the PATH `go install golang.org/x/tools/gopls@latest`
+-   Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
+
+### rust
+
+-   The LSP is called [rls](https://github.com/rust-lang/rls#setup)
+-   Install with `rustup component add rls rust-analysis rust-src`
 -   Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
 
 ## telescope.nvim
