@@ -136,6 +136,8 @@ Update 2021-10-29: I cleared the exam.
     * [Automount](#automount)
     * [Containers](#containers)
         * [Autostarting non-root containers with systemd user units](#autostarting-non-root-containers-with-systemd-user-units)
+* [Dont forget list](#dont-forget-list)
+* [Exam shakedown](#exam-shakedown)
 * [Linux Gems](#linux-gems)
 
 <!-- vim-markdown-toc -->
@@ -1774,6 +1776,69 @@ By default user units start when a user session is starts, not ideal for system 
 -   `systemctl --user enable das-app.service` (linger must be enabled for the user)
 -   `systemctl --user start das-app.service`
 -   For root containers, run the above in `/etc/systemd/system`
+
+# Dont forget list
+
+This is content you must know inside out.
+
+-   `history -c` clears in memory history
+-   `.bash_profile` is used for login shells (i.e. setting up fresh environments from scratch)
+-   `.bashrc` is used for subshells (i.e. dirty environments, spawned from parent shells)
+-   `mandb` to update the man database
+-   `date > outfile 2>&1` redirect stdout and stderr to a file
+-   `/etc/default/useradd` new user defaults
+-   `etc/login.defs` default password attributes
+-   `chmod X` sets the exec bit on directories only
+-   What is `umask`, `suid`, `sgid` and the sticky bit?
+-   File system ACL's (i.e. `setfacl`, `getfacl`)
+-   Niceness is from -20 to 19
+-   `tuned-adm` performance profile management
+-   Set the BaseOS and AppStream repos to RHEL install media `iso`
+-   rpm CLI queries
+-   When `yum search` doesn't find what you're looking for try `yum provides */sepolicy` to search for packages that contain a specific binary
+-   Know the root password reset procedure by heart (i.e. `rd.break`)
+-   To help troubleshoot a broken system, change the init system when booting from systemd to bash `init=/bin/bash`
+-   Know how to configure `journalctl` to persist logs
+-   `systemctl set-default <runlevel>`
+-   Know how to create a non-interactive user (i.e. `/sbin/nologin`)
+-   `/proc/sys` for kernel tunables
+-   Use wipefs to blank block devices
+-   What is default `ntpd` for RHEL? (hint: `chronyd`)
+-   systemd location for custom units?
+-   What optional `fstab` flags that operational networking is needed for the mount (e.g. such as an NFS mount)?
+-   `pinfo parted` to get GNU info help for `parted`
+-   Know how to `fstab` UUID and label based volumes
+-   systemd mounts - tip name of unit implicitly maps to path (e.g. `foo.mount` = `/foo`)
+-   Create swap space
+-   Change runlevel using systemd (i.e. `systemctl isolate`)
+
+Procedures to know by heart:
+
+-   root password reset by modifying GRUB2 boot loader
+-   formatting using `parted`
+-   LVM volume management
+-   auto boot containers using systemd
+-   extend volumes
+-   NFS exports and opening needed firewalld rules
+-   Setup `autofs` managed volume
+-   Setup encrypted LUKS volume
+-   Setup automatic NFS mount with systemd depends option
+-   renice a process
+-   Instruct systemd to launch into the rescue runlevel (i.e. `systemd.unit=rescue.target`)
+
+# Exam shakedown
+
+When you first launch into the exam environment, the order of exercises is random. You need to use your head about what is the most logical order to proceed in. Here is a runsheet:
+
+1. Ensure server boots and you have root access
+1. Setup networking
+1. Configure repositories
+1. Install and enable needed services
+1. Storage configuration
+1. Users and groups
+1. Permissions and ACL's
+1. SELinux
+1. The rest :)
 
 # Linux Gems
 
