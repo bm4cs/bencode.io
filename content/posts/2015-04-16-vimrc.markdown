@@ -3,7 +3,7 @@ layout: post
 title: "Vim"
 slug: "vim"
 date: "2007-04-16 21:50:01"
-lastmod: "2021-11-24 21:05:21"
+lastmod: "2022-01-23 22:04:38"
 comments: false
 categories:
     - dev
@@ -11,46 +11,27 @@ tags:
     - vim
 ---
 
-_Updated: 2021-11-24 21:06:08_
+_Updated: 2022-01-23_
 
 I finally (2007) bit the bullet and commited to learning a real text editor. Having muddled on and off with `vi` since the late 90s, decided on Vim. Once you break through its initial, steep, learning curve its truly life changing. Level up and become a text surgeon today.
 
 Vim is incredibly customisable. Its important to take the time to craft your own [`vimrc`](https://raw.githubusercontent.com/bm4cs/dots/master/.config/nvim/init.vim). Type `:options` to understand the various levers you can pull to make Vim your editor. Almost 15 years later, I'm still constantly fine tuning things.
 
-<!-- vim-markdown-toc GFM -->
-
-* [Help](#help)
-* [Operators](#operators)
-* [Object Selection](#object-selection)
-* [Windows](#windows)
-* [The Edit (e) Command](#the-edit-e-command)
-* [relativenumber](#relativenumber)
-* [Calculator](#calculator)
-* [Spell checking](#spell-checking)
-* [Sudo Save](#sudo-save)
-* [Jumps](#jumps)
-* [Registers](#registers)
-* [Macros](#macros)
-* [Normalise line endings](#normalise-line-endings)
-* [Plugins](#plugins)
-    * [nnn.vim](#nnnvim)
-    * [nvim-lspconfig](#nvim-lspconfig)
-        * [golang](#golang)
-        * [rust](#rust)
-    * [telescope.nvim](#telescopenvim)
-    * [fugitive.vim](#fugitivevim)
-    * [surround](#surround)
-    * [vim-markdown-toc](#vim-markdown-toc)
-    * [vim-easy-align](#vim-easy-align)
-    * [vim-commentary](#vim-commentary)
-    * [vim-easy-motion](#vim-easy-motion)
-    * [vim-better-whitespace](#vim-better-whitespace)
-    * [vim-prettier](#vim-prettier)
-    * [vim-css-color](#vim-css-color)
-* [Setup behind a proxy](#setup-behind-a-proxy)
-* [Resources](#resources)
-
-<!-- vim-markdown-toc -->
+-   [nnn.vim](#nnn.vim)
+-   [nvim-lspconfig](#nvim-lspconfig)
+    -   [golang](#golang)
+    -   [rust](#rust)
+-   [telescope.nvim](#telescope.nvim)
+-   [fugitive.vim](#fugitive.vim)
+-   [surround](#surround)
+-   [vim-markdown-toc](#vim-markdown-toc)
+-   [vim-easy-align](#vim-easy-align)
+-   [vim-commentary](#vim-commentary)
+-   [vim-easy-motion](#vim-easy-motion)
+-   [vim-better-whitespace](#vim-better-whitespace)
+-   [vim-prettier](#vim-prettier)
+-   [vim-css-color](#vim-css-color)
+-   [nvim-lsp](#nvim-lsp)
 
 # Help
 
@@ -360,14 +341,6 @@ Surround chunks of text with quotes or tags.
 -   `vipS<p>` surround paragraph with `<p></p>`
 -   `cs"'` change double quotes to single quotes
 
-## vim-markdown-toc
-
-Make a table of contents inferred from markdown heading tags.
-
--   `:GenTocGFM`
--   `:GenTocGitLab`
--   `:UpdateToc`
-
 ## vim-easy-align
 
 OCD much? This helps to line up code based on a particular symbol.
@@ -408,25 +381,59 @@ Utilities to highlight and remove redundant use of whitespace.
 
 Colorise hex codes in the buffer based on CSS standards.
 
+## nvim-lsp
+
+-   `<c-]>` definition
+-   `K` hover
+-   `gD` implementation
+-   `<c-k>` signature_help
+-   `1gD` type_definition
+-   `gr` references
+-   `g0` d()<CR>ocument_symbol
+-   `gW` workspace_symbol
+-   `gd` definition
+-   `ga` suggested code action
+
+For example if I git `ga` on a rust error, it will auto add the `use` statement for the trait I need:
+
+```
+Code actions:
+1: Line : Add `use std::str::FromStr;\n\n`
+Type number and <Enter> or click with the mouse (q or empty cancels):
+```
+
+## vim-markdown
+
+The goto markdown plugin, supports folds and generating table of contents based on headings.
+
+TODO: https://github.com/preservim/vim-markdown#basic-usage
+
+## tabular
+
+TODO: http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
+
+## vim-matchup
+
+TODO: https://github.com/andymass/vim-matchup
+
+## vim-sneak
+
+TODO: https://github.com/justinmk/vim-sneak
+
 # Setup behind a proxy
 
 Getting my Vim setup on a corporate network.
 
-TODO: Investigate containerising it.
+TODO: Investigate containerising my editor setup.
 
 -   `git config --global http.proxy http://proxy.evilcorp.com:8080`
 -   nnn.vim: nnn
--   prettier: node v10+
--   denite: python3, pip3 install --user pynvim
--   coc.nvim:
-    -   node v10+
-    -   [yarn](https://classic.yarnpkg.com/en/docs/install/#debian-stable)
-    -   `yarn config set proxy http://proxy.evilcorp.com:8080`
-    -   `yarn config set https-proxy http://proxy.evilcorp.com:8080`
+-   prettier: node.js
 
 # Resources
 
--   [Smash into Vim](https://airbladesoftware.com/peepcode-vim/) the awesome PeepCode screencast that help me break through the learning curve back in 2010.
--   [Vim Cheat Sheet](https://vim.rtorr.com/) good quick reference.
--   [A guide to modern Web Development with (Neo)vim](https://medium.freecodecamp.org/a-guide-to-modern-web-development-with-neo-vim-333f7efbf8e2) convinced me that coc and denite are really the two power plugins needed, integration with ripgrep and LSP (lang server protocol) for autocompletion is unreal.
--   [How I'm still not using GUIs in 2019: A guide to the terminal](https://lucasfcosta.com/2019/02/10/terminal-guide-2019.html) excitement around (neo)Vim, some good basic tips, I recommend using `coc` over `ycm` for autocompletion, which integrates with the VSCode autocomplete engine.
+-   [Smash into Vim](https://airbladesoftware.com/peepcode-vim/) the awesome PeepCode screen cast that helped me break through the learning curve back in the 2000's
+-   [Vim Cheat Sheet](https://vim.rtorr.com/) good quick reference
+-   [Jon Gjengset's vimrc](https://github.com/jonhoo/configs) a veteran rust developer
+-   [Luke Smith's vimrc](https://github.com/LukeSmithxyz/voidrice) a linguist and Linux enthusiast
+-   [HexDSL's vimrc](https://gitlab.com/hexdsl/dots) gamer and Linux enthusiast

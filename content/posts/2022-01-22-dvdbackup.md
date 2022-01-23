@@ -16,6 +16,12 @@ tags:
 
 This is how I like to backup my old physical DVD collection which I own legitimately. I don't condone piracy or theft.
 
+# Backup instructions
+
+1. Rip physical DVD media `makemkv`
+1. Transcode `mkv` to `m4v` container using _Fast 1080p30_ preset in handbrake. Passthrough UTF-8 subtitles if you like those.
+1. Copy to media backup server `rsync --protect-args -av --progress Season8 "shnerg@172.16.1.32:/data/TV/Penn & Teller Bullshit/"`
+
 # Software
 
 -   [MakeMKV](https://forum.makemkv.com/forum/viewtopic.php?f=3&t=224) transcoder that deals with proprietary (and usually encrypted) disc into a set of MKV files
@@ -73,9 +79,3 @@ make
 sudo make install
 rm -rf /tmp/ffmpeg
 ```
-
-# Backup instructions
-
-1. Rip physical DVD media `makemkv`
-1. Transcode `mkv` to `m4v` container using _Fast 1080p30_ preset in handbrake. Passthrough UTF-8 subtitles if you like those.
-1. Copy to media backup server `rsync --protect-args -av --progress Season8 "shnerg@172.16.1.32:/data/TV/Penn & Teller Bullshit/"`
