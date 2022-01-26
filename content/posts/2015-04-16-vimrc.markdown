@@ -24,7 +24,6 @@ Vim is incredibly customisable. Its important to take the time to craft your own
 -   [telescope.nvim](#telescope.nvim)
 -   [fugitive.vim](#fugitive.vim)
 -   [surround](#surround)
--   [vim-markdown-toc](#vim-markdown-toc)
 -   [vim-easy-align](#vim-easy-align)
 -   [vim-commentary](#vim-commentary)
 -   [vim-easy-motion](#vim-easy-motion)
@@ -32,6 +31,10 @@ Vim is incredibly customisable. Its important to take the time to craft your own
 -   [vim-prettier](#vim-prettier)
 -   [vim-css-color](#vim-css-color)
 -   [nvim-lsp](#nvim-lsp)
+-   [vim-markdown](#vim-markdown)
+-   [tabular](#tabular)
+-   [vim-matchup](#vim-matchup)
+-   [vim-sneak](#vim-sneak)
 
 # Help
 
@@ -406,7 +409,22 @@ Type number and <Enter> or click with the mouse (q or empty cancels):
 
 The goto markdown plugin, supports folds and generating table of contents based on headings.
 
-TODO: https://github.com/preservim/vim-markdown#basic-usage
+Folding:
+
+-   `zr` reduces fold level throughout the buffer
+-   `zR` opens all folds
+-   `zm` increases fold level throughout the buffer
+-   `zM` folds everything all the way
+-   `za` open a fold your cursor is on
+-   `zA` open a fold your cursor is on recursively
+-   `zc` close a fold your cursor is on
+-   `zC` close a fold your cursor is on recursively
+
+Commands:
+
+-   `:InsertToc`
+-   `:TableFormat`
+-   `:HeaderIncrease` and `:HeaderDecrease`
 
 ## tabular
 
