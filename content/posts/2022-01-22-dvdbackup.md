@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "DVD backups on GNU/Linux"
-draft: false
+draft: true
 slug: "dvdbaks"
 date: "2022-01-21 16:44:23"
 lastmod: "2022-01-21 16:44:26"

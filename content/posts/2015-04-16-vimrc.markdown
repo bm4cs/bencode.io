@@ -6,9 +6,12 @@ date: "2007-04-16 21:50:01"
 lastmod: "2022-01-23 22:04:38"
 comments: false
 categories:
-    - dev
+    - vim
 tags:
     - vim
+    - neovim
+    - text
+    - dev
 ---
 
 _Updated: 2022-01-23_
@@ -17,26 +20,42 @@ I finally (2007) bit the bullet and commited to learning a real text editor. Hav
 
 Vim is incredibly customisable. Its important to take the time to craft your own [`vimrc`](https://raw.githubusercontent.com/bm4cs/dots/master/.config/nvim/init.vim). Type `:options` to understand the various levers you can pull to make Vim your editor. Almost 15 years later, I'm still constantly fine tuning things.
 
--   [nnn.vim](#nnn.vim)
--   [nvim-lspconfig](#nvim-lspconfig)
-    -   [golang](#golang)
-    -   [rust](#rust)
--   [telescope.nvim](#telescope.nvim)
--   [fugitive.vim](#fugitive.vim)
--   [surround](#surround)
--   [vim-easy-align](#vim-easy-align)
--   [vim-commentary](#vim-commentary)
--   [vim-easy-motion](#vim-easy-motion)
--   [vim-better-whitespace](#vim-better-whitespace)
--   [vim-prettier](#vim-prettier)
--   [vim-css-color](#vim-css-color)
--   [nvim-lsp](#nvim-lsp)
--   [vim-markdown](#vim-markdown)
--   [tabular](#tabular)
--   [vim-matchup](#vim-matchup)
--   [vim-sneak](#vim-sneak)
+-   [Help](#help)
+-   [Operators](#operators)
+-   [Object Selection](#object-selection)
+-   [Windows](#windows)
+-   [The Edit (e) Command](<#the-edit-(e)-command>)
+-   [relativenumber](#relativenumber)
+-   [Calculator](#calculator)
+-   [Spell checking](#spell-checking)
+-   [Sudo Save](#sudo-save)
+-   [Jumps](#jumps)
+-   [Registers](#registers)
+-   [Macros](#macros)
+-   [Normalise line endings](#normalise-line-endings)
+-   [Plugins](#plugins)
+    -   [nnn.vim](#nnn.vim)
+    -   [nvim-lspconfig](#nvim-lspconfig)
+        -   [golang](#golang)
+        -   [rust](#rust)
+    -   [telescope.nvim](#telescope.nvim)
+    -   [fugitive.vim](#fugitive.vim)
+    -   [surround](#surround)
+    -   [vim-easy-align](#vim-easy-align)
+    -   [vim-commentary](#vim-commentary)
+    -   [vim-easy-motion](#vim-easy-motion)
+    -   [vim-better-whitespace](#vim-better-whitespace)
+    -   [vim-prettier](#vim-prettier)
+    -   [vim-css-color](#vim-css-color)
+    -   [nvim-lsp](#nvim-lsp)
+    -   [vim-markdown](#vim-markdown)
+    -   [tabular](#tabular)
+    -   [vim-matchup](#vim-matchup)
+    -   [vim-sneak](#vim-sneak)
+-   [Setup behind a proxy](#setup-behind-a-proxy)
+-   [Resources](#resources)
 
-# Help
+## Help
 
 Vim has brilliant built-in help. Its only one `:help` away, `:h operator` or `:h motion`.
 
@@ -45,7 +64,7 @@ Vim has brilliant built-in help. Its only one `:help` away, `:h operator` or `:h
 -   `:h v_cmd` visual mode _cmd_ help
 -   `:h c_cmd` command line _cmd_ help
 
-# Operators
+## Operators
 
 | Trigger | Effect                                              |
 | ------- | --------------------------------------------------- |
@@ -68,7 +87,7 @@ See `:h operator` for more. All of these support being combined with a motion (o
 -   g?ap - ROT13 encode paragraph
 -   gUgU - shout case entire line (factoid: when two operators are invoked in duplicate, applies to current line)
 
-# Object Selection
+## Object Selection
 
 Learning object selectors is one of the best ways of becoming more efficient with Vim. Commands that start with `i` select inner objects without white space, and thus always select less text than their `a` equivalents. When you discover these can be paired with _operators_ (discussed above), _life changing_, e.g. `daw` delete a word, `gUis` uppercase inner sentence, and so on.
 
@@ -93,7 +112,7 @@ Learning object selectors is one of the best ways of becoming more efficient wit
 | `a"` `a'` | quoted string including back ticks        |
 | `i"` `i'` | quoted string including back ticks        |
 
-# Windows
+## Windows
 
 Leverage the built-in windows manager, which can do splits to view multiple files at the same time.
 
@@ -104,11 +123,11 @@ Leverage the built-in windows manager, which can do splits to view multiple file
 -   `ctrl+w c` - close the current window.
 -   `ctrl+w r` - rotate windows clockwise (or counter clockwise).
 
-# The Edit (e) Command
+## The Edit (e) Command
 
 Vim's built-in edit command, will present you with a nice file system explorer, for example `:e .` to present the current working directory.
 
-# relativenumber
+## relativenumber
 
 Makes line numbering relative. So good! Makes it fast to figure out how many lines up or down you need to move, to get to the line you want. Example, `14j` to jump 14 lines down.
 
@@ -119,13 +138,13 @@ Makes line numbering relative. So good! Makes it fast to figure out how many lin
       2 ¬
       3 Vim has brilliant built-in help. Its only one `:help` away.
 
-# Calculator
+## Calculator
 
 By typing `<C>r=` in insert mode, can do quick calculations are spit the out into the buffer.
 
 For example, `<C>r=16*4<CR>` will output 128 where the cursor is currently located.
 
-# Spell checking
+## Spell checking
 
 Built in spell checker, enable with `:set spell`.
 
@@ -136,7 +155,7 @@ Built in spell checker, enable with `:set spell`.
 -   `zw` remove word from dictionary
 -   `zug` undo `zg` or `zw` for current word
 
-# Sudo Save
+## Sudo Save
 
 Editing a file, but don't have privileges to save.
 
@@ -146,7 +165,7 @@ Editing a file, but don't have privileges to save.
 
     cmap w!! w !sudo tee %
 
-# Jumps
+## Jumps
 
 Vim records the location before and after making a jump.
 
@@ -165,7 +184,7 @@ Vim records the location before and after making a jump.
 | `<C-]>`                       | Jump to definition of keyword under cursor |
 | `'{mark}` or `backtick{mark}` | Jump to mark                               |
 
-# Registers
+## Registers
 
 Handy named memory slots, using `:registers` to list them.
 
@@ -174,7 +193,7 @@ Handy named memory slots, using `:registers` to list them.
 
 When in insert mode use `<C-r><register>` to paste in a register content on the cursor position, such as `<C-r>"` for the unnamed register or `<C-r>0` for the yank register.
 
-# Macros
+## Macros
 
 To record, hit `q<register>`. For example to use the `a` register `qa`, followed by the sequence of actions, finalise recording with another `q`.
 
@@ -184,7 +203,7 @@ To edit a macro, is easy, its just stored in the corresponding register. For exa
 -   Edit it as needed
 -   Yank it back into the register `0"ay$`
 
-# Normalise line endings
+## Normalise line endings
 
 The classic `#!/bin/bash no such file or directory` error message. Shebang is busted likely due to encoding problems.
 
@@ -209,7 +228,7 @@ vim <your_file>
 :wq
 ```
 
-# Plugins
+## Plugins
 
 While core Vim functionality is like a rock, changing rarely, the plugin eco-system is where you can make Vim level up to doing tasks you commonly do with it. Consequently plugin selection can be quite personal based on specific langs one works with.
 
@@ -217,7 +236,7 @@ The Vim community seems obsessed with writing new plug-in managers, there's quit
 
 Coming from bloated power tool IDE's like awesome JetBrains tools, in order to be remotely productive, I need to be able to efficiency locate and jump between files within a large code base.
 
-## nnn.vim
+### nnn.vim
 
 My #1 fav.
 
@@ -226,7 +245,7 @@ Ditch NERDTree, and instead surface the awesome [nnn](https://github.com/jarun/n
 -   `<leader>n` start nnn in window
 -   `^G` discard selection
 
-## nvim-lspconfig
+### nvim-lspconfig
 
 An [LSP](https://neovim.io/doc/user/lsp.html) (Language Server Protocol) provides deep language specific knowledge, supporting functionality such as autocompletion, linting and syntax highlighting. It is editor agnostic and underpins other editors such as vscode.
 
@@ -234,18 +253,18 @@ The [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) plugin provides c
 
 Once the client plugin is done, install a [language server](https://microsoft.github.io/language-server-protocol/implementors/servers/).
 
-### golang
+#### golang
 
 -   Make sure `gopls` is installed and on the PATH `go install golang.org/x/tools/gopls@latest`
 -   Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
 
-### rust
+#### rust
 
 -   The LSP is called [rls](https://github.com/rust-lang/rls#setup)
 -   Install with `rustup component add rls rust-analysis rust-src`
 -   Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
 
-## telescope.nvim
+### telescope.nvim
 
 Brilliant fuzzy finder. Picker sources include a range of file pickers (e.g. git files, find files, live grep), Vim pickers (e.g. buffers, tags), LSP pickers (e.g. symbols, references, actions) and Git pickers (commits, branches).
 
@@ -282,7 +301,7 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 | `<C-q>`        | Send all items not filtered to quickfixlist (qflist) |
 | `<M-q>`        | Send all selected items to qflist                    |
 
-## fugitive.vim
+### fugitive.vim
 
 The crown jewel of Fugitive is `:Git` (or just `:G`), which calls any
 arbitrary Git command. If you know how to use Git at the command line, you
@@ -335,7 +354,7 @@ And more:
     the buffer. `:GRemove` does the same but leaves the (now empty) buffer
     open.
 
-## surround
+### surround
 
 Surround chunks of text with quotes or tags.
 
@@ -344,20 +363,20 @@ Surround chunks of text with quotes or tags.
 -   `vipS<p>` surround paragraph with `<p></p>`
 -   `cs"'` change double quotes to single quotes
 
-## vim-easy-align
+### vim-easy-align
 
 OCD much? This helps to line up code based on a particular symbol.
 
 -   `vipga=` visual select code block, align all `=` symbols by padding out
 
-## vim-commentary
+### vim-commentary
 
 Smart commenting based on the file type.
 
 -   `gcc` comment current line
 -   `gc<motion>` comment motion based selection e.g. `gcap` for paragraph selection
 
-## vim-easy-motion
+### vim-easy-motion
 
 Vim motioning on steroids! Creates micro jumps based on a search pattern you provide, and dims down the buffer with each highlight getting a unique id you can hit.
 
@@ -367,7 +386,7 @@ Vim motioning on steroids! Creates micro jumps based on a search pattern you pro
 -   `<leader><leader>n` jump to latest `/` or `?`
 -   `<leader><leader>s` search
 
-## vim-better-whitespace
+### vim-better-whitespace
 
 Utilities to highlight and remove redundant use of whitespace.
 
@@ -376,15 +395,15 @@ Utilities to highlight and remove redundant use of whitespace.
 -   `ToggleWhitespace`
 -   `:StripWhitespace`
 
-## vim-prettier
+### vim-prettier
 
 -   `<leader>p` run the current buffer through prettier
 
-## vim-css-color
+### vim-css-color
 
 Colorise hex codes in the buffer based on CSS standards.
 
-## nvim-lsp
+### nvim-lsp
 
 -   `<c-]>` definition
 -   `K` hover
@@ -405,7 +424,7 @@ Code actions:
 Type number and <Enter> or click with the mouse (q or empty cancels):
 ```
 
-## vim-markdown
+### vim-markdown
 
 The goto markdown plugin, supports folds and generating table of contents based on headings.
 
@@ -426,19 +445,19 @@ Commands:
 -   `:TableFormat`
 -   `:HeaderIncrease` and `:HeaderDecrease`
 
-## tabular
+### tabular
 
 TODO: http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
 
-## vim-matchup
+### vim-matchup
 
 TODO: https://github.com/andymass/vim-matchup
 
-## vim-sneak
+### vim-sneak
 
 TODO: https://github.com/justinmk/vim-sneak
 
-# Setup behind a proxy
+## Setup behind a proxy
 
 Getting my Vim setup on a corporate network.
 
@@ -448,7 +467,7 @@ TODO: Investigate containerising my editor setup.
 -   nnn.vim: nnn
 -   prettier: node.js
 
-# Resources
+## Resources
 
 -   [Smash into Vim](https://airbladesoftware.com/peepcode-vim/) the awesome PeepCode screen cast that helped me break through the learning curve back in the 2000's
 -   [Vim Cheat Sheet](https://vim.rtorr.com/) good quick reference
