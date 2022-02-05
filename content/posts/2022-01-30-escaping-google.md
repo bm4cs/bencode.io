@@ -14,7 +14,7 @@ tags:
 
 # Google
 
-After years of frustration in the Google platform, specifically _G Suite_ (also known as _Google Apps_ or _Google Workspace_), it all recently came to a head for me after I received a couple of Google Nest cameras as gifts last Christmas.
+After years of frustration in the Google platform, specifically _G Suite_ (also known as _Google Apps_ or _Google Workspace_) it all recently came to a head for me after I received a couple of Google Nest cameras as gifts last Christmas.
 
 Having been a strong Google proponent since the late 90's, when Google was a cool startup bucking the trend with their famous _do not be evil_ mission, Googles brand within the technical community rose to dizzying heights. Ever since the Google brand has always had a strong influence on me and I have happily recommended their products to people I care about.
 
@@ -66,13 +66,14 @@ TODO: put diagram here
 Some of my biggest fears shutting down my Google account:
 
 -   GMail, contacts and calendar: 15 years worth of footprint!
+-   OAuth linked accounts: Any sites that I linked my Google account with and used for authentication would now be lost (e.g. StackOverflow).
 -   Drive: A deep investment. A complex graph of shared items with peers. Throw it all away.
 -   Docs and Sheets: Possibly some of my most valuable data, many shared with my close network.
 -   YouTube: What would become of my uploaded content? My subscriptions? My premium movie and TV purchases? Would it all be lost? It turns out YES, even with the likes of `youtube-dl` due to DRM...what a burn.
 -   Photos: Too many memories of my special people, some that are no longer alive today.
 -   Android: What apps do I even have installed. Would my premium apps be lost? It turns out YES, Google don't even allow transfer of ownership to another account. Ouch!
 -   G.Pay: Transaction and purchase history?
--   Hangouts: Valuable chats and group discussions I'm a member of?
+-   Hangouts: Valuable chats and group discussions I'm currently a member of?
 -   Nest smart home devices: All now just paper weights. HOLY S#&T!?
 -   Keep: Valuable little notes
 -   Maps: Would all my reviews become read-only or lost forever?
@@ -105,12 +106,12 @@ Some strategies for me moving forward:
 -   Rule 4: Always use open platforms over evil ones
 -   Rule 5: Minimise attack surface and possible future damages by putting too many eggs in any one basket
 -   Rule 6: Diversify across as many cloud providers for different services as possible (i.e. beware drinking too much cool-aid on any single platform). That way, when one screws you its just one compartment of your digital life. Examples:
-    - Replace *Mail*, *Calendar* and *Contacts* with Fastmail
-    - Replace *Drive* with Dropbox
-    - Replace *Docs* and *Sheets* with CryptPad
-    - Replace *Photos* with ...
-    - Replace *Hangouts* with ...
+    - Replace *Mail*, *Calendar* and *Contacts* with Fastmail (because Android doesn't use CalDAV and CardDAV for calender and contact management, you'll need to fork out for a little app called `DAVx5` to translate open standards to Androids proprietary format)
+    - Replace *Drive* with Microsoft OneDrive
+    - Replace *Docs* and *Sheets* with Microsoft OneDrive and 365
+    - Replace *Photos* with Plex local storage on my LAN
     - Replace *Pixel 4A* with iPhone
+    - Replace *YouTube* with local offline `youtube-dl` rips
 -   Rule 7: Have strict non-negotiable boundaries between cloud providers. Examples:
     -   Never buy a movie on YouTube always on Vimeo (if its not available on Vimeo or an open platform, I don't watch it, period)
     -   Never consume music on any platform other than Spotify
