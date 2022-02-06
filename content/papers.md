@@ -3,7 +3,7 @@ title: "Papers"
 date: "2021-10-31"
 ---
 
-# Papers
+A collection of some of my academic papers about low-level computer topics.
 
 ## Wireless
 

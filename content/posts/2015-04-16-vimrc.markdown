@@ -64,6 +64,11 @@ Vim has brilliant built-in help. Its only one `:help` away, `:h operator` or `:h
 -   `:h v_cmd` visual mode _cmd_ help
 -   `:h c_cmd` command line _cmd_ help
 
+## Basics
+
+- `:enew` new buffer
+- `:edit!` revert buffer to reflect file on disk
+
 ## Operators
 
 | Trigger | Effect                                              |
@@ -197,11 +202,33 @@ When in insert mode use `<C-r><register>` to paste in a register content on the 
 
 To record, hit `q<register>`. For example to use the `a` register `qa`, followed by the sequence of actions, finalise recording with another `q`.
 
+To see the contents of a register `:reg a`
+
+To append to an existing macro, capitalise its register (e.g. for reg `a` use `A`). `qA` starts recording in append mode.
+
 To edit a macro, is easy, its just stored in the corresponding register. For example a macro recorded with `qa` is stored into the `a` register.
 
 -   Paste the macro into the buffer with `:put a` or `"ap`
 -   Edit it as needed
 -   Yank it back into the register `0"ay$`
+
+## Macros over a collection of files
+
+```
+:cd ~/code/ruby_mod     "set context
+:args *.rb              "set target file list
+:args                   "show list
+:first                  "jump to first item in list
+:last                   "jump to last item in list
+:next                   "jump to next item
+:prev                   "jump to previous item
+qa                      "record macro
+:argdo normal @a        "apply macro a to all files in list
+:wall                   "save all files in buffer list
+:argdo write            "only save files in arglist
+```
+
+
 
 ## Normalise line endings
 
