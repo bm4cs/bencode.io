@@ -11,7 +11,7 @@ I've been professionally crafting software since the early 2000's. Mostly in ent
 
 Academically I hold 2 university degrees (with a 3rd ETA this year) in this space and a decent pile of certifications. One of the most satisfying things I've done as a software engineer is [nand2tetris](https://www.nand2tetris.org/) by the Hebrew University of Jerusalem, which involves building a CPU and general purpose 16-bit computer literally from the NAND gates up to the OS. Thanks to [Ben Eater](https://eater.net/8bit/) I soon followed this up by making my own physical 8-bit CPU out of hundreds of TTL logic gates and breadboards. This pilgrimage has led me into the wonderful world of low-level topics including OS internals, binary reversing and exploit development which I'm actively studying at university.
 
-I live and breath my craft as a software maker. I code in my free time. I invest in the best equipment, tools and training I can afford, much as a passionate cabinet maker invests in only the best chisels. I think about it when I'm asleep. I re-read essential books (Mythical Man Month, Pragmatic Programmer, Peopleware, Code Complete, Joel on Software, Domain Driven Design) about how further the depth of my craft. I can't relate to developers that consider it " 9-5 job", that commonly after few years start chasing management positions. After visiting Japan in 2014 I was relieved to discover a culture that embraces taking one's craft seriously. At a Soba noodle bar I visited was shocked to discover the family had been making Soba noodles for over 5 generations. Depth, focus and complete commitment to a craft is the norm in Japan, for example as can be seen in the documentary [Jiro Dreams of Sushi](https://www.imdb.com/title/tt1772925/). My Japan trip helped me realise its okay to embrace my craft. I strongly reject "opportunities" that attempt to weaken my focus as a software engineer, such as management positions or roles that might help me "climb the food chain".
+I live and breath my craft as a software maker. I code in my free time. I invest in the best equipment, tools and training I can afford, much as a passionate cabinet maker invests in only the best chisels. I think about it when I'm asleep. I re-read essential books (Mythical Man Month, Pragmatic Programmer, Peopleware, Code Complete, Joel on Software, Domain Driven Design) about how further the depth of my craft. I can't relate to developers that consider it "just a 9-5 job", that only after a few years start chasing management positions. After visiting Japan in 2014 I was relieved to discover a culture that embraces taking one's craft seriously. At a Soba noodle bar I was shocked to discover the family business had been making Soba noodles for over 5 generations. Depth, focus and complete commitment to a craft is the norm in Japan, as can be seen in the documentary [Jiro Dreams of Sushi](https://www.imdb.com/title/tt1772925/). My Japan trip helped me realise its okay to embrace my craft. I reject "opportunities" that attempt to weaken my focus as a software engineer, such as management positions or roles that might help me climb the corporate ladder.
 
 ## My Tools (chisels)
 
@@ -40,8 +40,8 @@ Some examples of tools and equipment I consider worth every cent:
 
 ## Other ways to find me
 
-- [Email](mailto:ben@bencode.io)
-- [GitHub](https://github.com/bm4cs)
-- [LinkedIn](https://www.linkedin.com/in/bm4cs)
-- [Keybase](https://keybase.io/bm4cs)
-- [Twitter](https://twitter.com/bm4cs)
+-   [Email](mailto:ben@bencode.io)
+-   [GitHub](https://github.com/bm4cs)
+-   [LinkedIn](https://www.linkedin.com/in/bm4cs)
+-   [Keybase](https://keybase.io/bm4cs)
+-   [Twitter](https://twitter.com/bm4cs)
