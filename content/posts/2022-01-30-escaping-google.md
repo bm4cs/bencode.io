@@ -116,9 +116,7 @@ Some strategies for me moving forward:
     -   Never buy a movie on YouTube always on Vimeo (if its not available on Vimeo or an open platform, I don't watch it, period)
     -   Never consume music on any platform other than Spotify
 -   Rule 8: Regularly export and backup my data
--   Rule 9: Eliminate and avoid use of anything Google, even seemingly small things. This will take time and deliberate effort. Examples:
+-   Rule 9: Limit use of Google where possible. Some things are hard examples:
     - Chrome
     - Chromecast
-    - Nest IoT devices
-    - Search
     - Android

@@ -33,7 +33,7 @@ pygmentsStyle = "native"
 	themeColor = "green"
 	fullWidthTheme = false
 	centerTheme = true
-	favicon = "icons/android-chrome-512x512.png"
+	favicon = "/android-chrome-512x512.png"
 
 [params.twitter]
     creator = "bm4cs"
