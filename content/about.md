@@ -37,6 +37,8 @@ Some examples of tools and equipment I consider worth every cent:
 -   [Code Complete: A practical handbook of software construction](https://www.microsoftpressstore.com/store/code-complete-9780735619678) by Steve McConnell
 -   [Joel on Software](https://www.joelonsoftware.com/buy-the-books/) by Joel Spolsky
 -   [Domain Driven Design: Tackling Complexity in the Heart of Software](https://www.goodreads.com/book/show/179133.Domain_Driven_Design) by Eric Evans
+-   [Refactoring](https://martinfowler.com/books/refactoring.html) by Martin Fowler
+-   [Designing Data Intensive Applications](https://dataintensive.net/) by Martin Kleppman
 
 ## Other ways to find me
 
