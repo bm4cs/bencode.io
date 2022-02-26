@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "neomutt on fastmail (2022 edition)"
+title: "neomutt setup on fastmail (2022 edition)"
 slug: "mutt"
-date: "2015-08-18 21:03:40T10:00"
-lastmod: "2022-02-26 15:44:24T11:00"
+date: "2012-08-18 21:03:40+10:00"
+lastmod: "2022-02-26 15:44:24+11:00"
 comments: false
 categories:
     - linux
@@ -17,31 +17,43 @@ tags:
     - linux
 ---
 
+-   [Intro](#intro)
+-   [Getting started with mutt](#getting-started-with-mutt)
+-   [My 2022 setup](#my-2022-setup)
+-   [Key Bindings](#key-bindings)
+-   [GPG crypto](#gpg-crypto)
+-   [Address book integration](#address-book-integration)
+-   [pam-gnupg](#pam-gnupg)
+
+## Intro
+
 If you haven't heard of [neomutt](https://neomutt.org/) you're missing out.
 
 > Mutt is a small but very powerful text-based mail client for Unix operating systems.
 
 `neomutt` is a command line mail reader (MUA). It's a contemporary fork of the original `mutt` with added features, patch sets and fixes.
 
-I started using the excellent terminal based mail client `mutt` recently, and its simplicity is totally refreshing. Using `mutt` it quickly becomes apparent how much useless baggage many modern (i.e. lazy) mail clients (e.g. Thunderbird, Outlook) actually bog you down with, not to mention the harrowing way they actually encode mail. Its taken me years to understand this:
+I started using the excellent terminal based mail client `mutt` in 2012 and I found its simplicity refreshing. Using `mutt` it quickly becomes apparent how much useless baggage many modern graphical mail clients (e.g. thunderbird, outlook, etc) actually bog you down with, not to mention the harrowing way they actually encode mail. Its taken me years to understand this:
 
 > All mail clients suck. This one just sucks less.
 
-Mutt is suprising feature packed. Supporting things like IMAP and threading out of the box.
-
-As for most well designed software, its UNIX design philosophy becomes apparent, where it does its one thing well and allows other complimentary programs to bolster it. Such as periodic IMAP polling using `cron`. Like `git` mailboxes are local fully fleged copies, making it possible to email while on a flight perhaps or without mobile data reception.
+Mutt is suprising feature packed and extensible. As is the case with most well designed software, its UNIX design philosophy becomes apparent, where it does its one thing well and allows other complimentary programs to bolster it. Such as periodic IMAP polling using `cron` and `isync`. In the same way `git` revolutionised VCS by being distributed-first, mailboxes are local fully fleged copies, making it possible to work with your email while on a flight perhaps or without mobile data reception.
 
 Like all worth while things there is a little initial pain involved. You're going to need to understand how to craft a `.muttrc` to make mutt, your mutt.
 
-If you're starting out of your `mutt` journey for the first time, I highly recommend checking out the [mutt-wizard](https://github.com/LukeSmithxyz/mutt-wizard) project started by [Luke Smith's](https://lukesmith.xyz/). Luke is a smart unit with a PhD in linguistics. His [configuration files](https://github.com/LukeSmithxyz/voidrice) are a wealth of knowledge. I have also learned a great deal from [HexDSL](https://hexdsl.com/) and his [dots](https://gitlab.com/hexdsl/dots/) repo.
+## Getting started with mutt
+
+If you're starting out of your `mutt` journey for the first time, I highly recommend checking out the [mutt-wizard](https://github.com/LukeSmithxyz/mutt-wizard) project started by [Luke Smith](https://lukesmith.xyz/). Luke is a smart unit with a PhD in linguistics. His [configuration files](https://github.com/LukeSmithxyz/voidrice) are a wealth of knowledge. I have also learned a great deal from [HexDSL](https://hexdsl.com/) and his [dots](https://gitlab.com/hexdsl/dots/) repo.
+
+## My 2022 setup
 
 My current (2022) terminal based mail setup is a composition of the following:
 
--   [fastmail](https://www.fastmail.com/) as my paid mail provider, exceptional value for money, so happy after being on gmail since 2005
+-   [fastmail](https://www.fastmail.com/) as of 2022 is my paid for mail provider, exceptional value for money, so happy after being on gmail since 2005
 -   `neomutt` as my MUA
 -   `isync` using IMAP downloads and syncs mail locally, run by `cron` periodically `*/15 8-21 * * * mbsync -a`
 -   `msmtp` to send outgoing email using SMTP
--   `pass` to safely encrypt credentials in my publically viewable [dot files](https://github.com/bm4cs/dots/)
+-   `pass` to safely encrypt credentials in my publicly viewable [dot files](https://github.com/bm4cs/dots/)
 -   `pam-gnupg` a PAM module that hands over your login password to `gpg-agent`, i.e., automatically log into GPG once logged into your system, see [doco](https://github.com/cruegge/pam-gnupg) for setup. On Debian I manually built it as described [below](#pam-gnupg)
 -   `lynx` to view HTML encoded emails (gross)
 -   `abook` command line based address book, using tab in the recipient field within `neomutt` will auto-suggest
@@ -60,7 +72,7 @@ My 2022 [muttrc](https://github.com/bm4cs/dots/blob/master/.config/neomutt/neomu
 -   helpful regex highlights
 -   contacts integration with `abook`
 
-# Key Bindings
+## Key Bindings
 
 Forgotten your key binds, just hit `?` in `neomutt`.
 
@@ -134,7 +146,7 @@ ALT k           attach a PGP public key
 f               specify an 'Fcc' mailbox i.e. sent folder
 ```
 
-# GPG crypto
+## GPG crypto
 
 Handy for encrypting, decrypting, creating and validating digital signatures, all conveniently within `mutt`:
 
@@ -144,29 +156,55 @@ Handy for encrypting, decrypting, creating and validating digital signatures, al
 1. After composing mail in mutt, but before sending, hit `p` to bring up gpg options (such as encrypt, sign, both)
 1. When reading mail, mutt will try to automatically decrypt and verify signatures destined to you
 
-# Address book integration
+## Address book integration
 
 `abook` is a stand-alone TUI program dedicated to contact management. Contacts are stored in a plain text, human-readable database. How refreshing!
 
-I prefer to manually maintain my abook database:
+A thank you to [José María Mateos](https://rinzewind.org/blog-en/2018/how-to-sync-fastmails-carddav-to-use-with-mutt-abook.html) who pointed out fastmail have a REST API for pulling your contacts back as a single vcard:
 
-1. Export contacts using [contacts.google.com](https://contacts.google.com/) web UI in vCard format. This outputs a `contacts.vcf`
-1. In the `~/.abook` directory, run [adr_conv3.py](https://github.com/gavcos/Abook-Contact-Importer/blob/master/adr_conv3.py), which by default reads in `contacts.vcf` and outputs into a file called `addressbook`
+```
+https://carddav.fastmail.com/dav/addressbooks/user/<username@domain.tld>/default
+```
+
+Here is a bash script to glue it up and place the output at `~/.abook/addressbook`:
+
+```bash
+#!/bin/bash
+
+tmpfile=$(mktemp)
+destfile=$(mktemp)
+
+wget -q https://carddav.fastmail.com/dav/addressbooks/user/ben@bencode.io/Default \
+    --user ben@bencode.io \
+    --password $(pass show fastmail | head -n 1) \
+    -O $tmpfile
+
+abook --convert \
+    --informat vcard \
+    --infile $tmpfile \
+    --outformat abook \
+    --outfile $destfile
+
+rm $tmpfile
+chmod 600 $destfile
+mv $destfile ~/.abook/addressbook
+```
+
 1. Start `abook` which brings a TUI (text user interface) up, you should see all your contacts neatly organised.
 1. In `mutt`, compose a new mail, enter part of the name of a known contact (e.g. 'Tom') and hit TAB to query your `abook` database.
-1. Profit!
+1. Schedule the above script `fastmail-abook-sync` in `cron` to run periodically `0 19 * * * fastmail-abook-sync`
 
-# pam-gnupg
+## pam-gnupg
 
-This is needed to automatically schedule `isync` to run using `cron`. Given `pass` (a `gpg` frontend) is being used to securely bind credentials into the various config files, `pass` will interatively prompt for the `gpg` passphrase to your secret key. Interative user prompting doesn't work too well with `cron`.
+This is needed to automatically schedule `isync` to run using `cron`. Given `pass` (a `gpg` frontend) is being used to securely bind credentials into the various config files, `pass` will interactively prompt for the `gpg` passphrase to your secret key. Interactive user prompting doesn't work too well with `cron` after all.
 
 Luckily [pam-gnupg](https://github.com/cruegge/pam-gnupg) solves this:
 
 > A PAM module that hands over your login password to gpg-agent, which can be useful if you are using a GnuPG-based password manager like pass.
 
-All `pam-gnupg` does is to send the password as entered to `gpg-agent`. Therefore its important that your user account password is the same as the passphrase on your GPG key.
+In essence, all `pam-gnupg` does is to send the password as entered in the login prompt to `gpg-agent`. Therefore its important that your user account password is the same as the passphrase on your GPG key.
 
-This isn't a widely used piece of software (e.g., doesn't exist in the big repos for distros like Debian). Time to brush off `automake` and `gcc`:
+As this isn't a widely used piece of software (e.g., doesn't exist in the big repos for distros like Debian). Time to dust off `automake` and `gcc`:
 
 ```shell
 sudo apt install libpam0g-dev     # install pam development headers
@@ -177,11 +215,46 @@ make
 sudo make install
 ```
 
-On Debian as `root` edit `/etc/pam.d/common-session` (`system-local-login` on Arch) adding the following block to the end:
+On Debian as `root` edit `/etc/pam.d/login` (`system-local-login` on Arch) adding the following block to the end:
 
 ```
 auth     optional  pam_gnupg.so store-only
 session  optional  pam_gnupg.so
 ```
 
+Create `~/.gnupg/gpg-agent.conf` with the following:
 
+```
+allow-preset-passphrase
+max-cache-ttl 86400
+```
+
+Create `~/.pam-gnupg` adding the 40 character `gpg` keygrip identifier of the encryption subkey you want to set the password for:
+
+```
+$ gpg -K --with-keygrip
+sec   rsa2048 2018-11-16 [SC]
+      9AB5DD43C5E5FD40475FA6DA0D776275F7F5B2E7
+      Keygrip = 6F4ABB77A88E922406BCE6627AFEEE2363914B76
+uid           [ultimate] Chris Ruegge <mail@cxcs.de>
+ssb   rsa2048 2018-11-16 [E]
+      Keygrip = FBDEAD7B0C484CDC85F1CF70352833EB0C921D58
+
+$ echo FBDEAD7B0C484CDC85F1CF70352833EB0C921D58 > ~/.pam-gnupg
+```
+
+Finally make sure the user account password is identical to the gpg passphrase. I chose to update my gpg passphrase:
+
+```
+$ gpg --list-keys
+pub   4096R/9AABBCD8 2013-10-04
+uid                  Home Nas Server (Home Nas Server Backup)
+sub   4096R/149D60C7 2013-10-04
+
+$ gpg --edit-key 9AABBCD8
+
+gpg> passwd
+gpg> save
+```
+
+Time to test it out, `sudo reboot` and login. If you carefully followed the above steps you will now be able to run `pass show fastmail` without any additional password prompting. More usefully this means `cron` can now `mbsync` for you.
