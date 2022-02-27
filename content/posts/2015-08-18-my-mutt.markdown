@@ -12,46 +12,48 @@ tags:
     - neomutt
     - mail
     - isync
+    - msmtp
     - pass
     - abook
+    - gpg
+    - pam-gnupg
     - linux
 ---
 
 -   [Intro](#intro)
 -   [Getting started with mutt](#getting-started-with-mutt)
--   [My 2022 setup](#my-2022-setup)
--   [Key Bindings](#key-bindings)
+-   [2022 setup](#2022-setup)
 -   [GPG crypto](#gpg-crypto)
 -   [Address book integration](#address-book-integration)
 -   [pam-gnupg](#pam-gnupg)
 
 ## Intro
 
-If you haven't heard of [neomutt](https://neomutt.org/) you're missing out.
+If you haven't heard of `mutt` you're missing out.
 
-> Mutt is a small but very powerful text-based mail client for Unix operating systems.
+> Mutt is a small but very powerful text-based mail client for UNIX operating systems
 
-`neomutt` is a command line mail reader (MUA). It's a contemporary fork of the original `mutt` with added features, patch sets and fixes.
+It's a command line based mail reader (MUA). The [neomutt](https://github.com/neomutt/neomutt) project is a contemporary fork of the original `mutt` with added features, patch sets and fixes.
 
-I started using the excellent terminal based mail client `mutt` in 2012 and I found its simplicity refreshing. Using `mutt` it quickly becomes apparent how much useless baggage many modern graphical mail clients (e.g. thunderbird, outlook, etc) actually bog you down with, not to mention the harrowing way they actually encode mail. Its taken me years to understand this:
+I started seriusly using `mutt` as my full-time mail client in 2012. I found its simplicity refreshing, it quickly becomes apparent how much useless baggage many modern graphical mail clients (e.g., thunderbird, outlook, etc) actually bog you down with, not to mention the harrowing way they actually encode mail. Its taken me a long time to appreciate this:
 
 > All mail clients suck. This one just sucks less.
 
-Mutt is suprising feature packed and extensible. As is the case with most well designed software, its UNIX design philosophy becomes apparent, where it does its one thing well and allows other complimentary programs to bolster it. Such as periodic IMAP polling using `cron` and `isync`. In the same way `git` revolutionised VCS by being distributed-first, mailboxes are local fully fleged copies, making it possible to work with your email while on a flight perhaps or without mobile data reception.
+`mutt` is minimal however surprisingly extensible. As is the case with most well designed software, its UNIX design roots becomes apparent; do one thing well while allowing other complimentary programs to bolster it. Such as periodic IMAP polling using `cron` and `isync`, or address book integration using `abook`, or cryptography support using `gpg`. In the same way `git` revolutionised VCS by being distributed-first, `mutt` when paired with `isync`, mailboxes are local fully fledged copies, making it possible to work with your email in a disconnected fashion. This is powerful; you can still compose emails while offline (e.g., on a flight or on the road), search over all your email whenever you like with `nomuch` and just sleep better at night knowing your email is backed up on your own hardware.
 
-Like all worth while things there is a little initial pain involved. You're going to need to understand how to craft a `.muttrc` to make mutt, your mutt.
+Like all worthy endeavours there is effort and time involved. You're going to need to understand how to craft a `neomuttrc`. The [docs](https://neomutt.org/guide/) are dense and the number of configuration levers you can pull can seem overwhelming.
 
 ## Getting started with mutt
 
-If you're starting out of your `mutt` journey for the first time, I highly recommend checking out the [mutt-wizard](https://github.com/LukeSmithxyz/mutt-wizard) project started by [Luke Smith](https://lukesmith.xyz/). Luke is a smart unit with a PhD in linguistics. His [configuration files](https://github.com/LukeSmithxyz/voidrice) are a wealth of knowledge. I have also learned a great deal from [HexDSL](https://hexdsl.com/) and his [dots](https://gitlab.com/hexdsl/dots/) repo.
+If you're starting out of your `mutt` journey for the first time, I highly recommend checking out the [mutt-wizard](https://github.com/LukeSmithxyz/mutt-wizard) project started by [Luke Smith](https://lukesmith.xyz/). Luke is a smart unit with a PhD in linguistics. His [configuration files](https://github.com/LukeSmithxyz/voidrice) are also a wealth of knowledge. I've learned a great deal from [HexDSL](https://hexdsl.com/) and his [dots](https://gitlab.com/hexdsl/dots/) repo.
 
-## My 2022 setup
+## 2022 setup
 
-My current (2022) terminal based mail setup is a composition of the following:
+My current (2022) terminal based mail setup is a mash-up of:
 
--   [fastmail](https://www.fastmail.com/) as of 2022 is my paid for mail provider, exceptional value for money, so happy after being on gmail since 2005
+-   [fastmail](https://www.fastmail.com/) as of 2022 is my paid for mail/contacts/calendar provider. Exceptional value for money, privacy controls and features technical users (like me) care deeply about. I'm so happy after being on gmail since 2005
 -   `neomutt` as my MUA
--   `isync` using IMAP downloads and syncs mail locally, run by `cron` periodically `*/15 8-21 * * * mbsync -a`
+-   `isync` IMAP downloads and syncs mail locally, run by `cron` periodically `*/30 * * * * mbsync -a`. See my [.mbsyncrc](https://raw.githubusercontent.com/bm4cs/dots/master/.mbsyncrc) for a working fastmail setup
 -   `msmtp` to send outgoing email using SMTP
 -   `pass` to safely encrypt credentials in my publicly viewable [dot files](https://github.com/bm4cs/dots/)
 -   `pam-gnupg` a PAM module that hands over your login password to `gpg-agent`, i.e., automatically log into GPG once logged into your system, see [doco](https://github.com/cruegge/pam-gnupg) for setup. On Debian I manually built it as described [below](#pam-gnupg)
@@ -60,7 +62,7 @@ My current (2022) terminal based mail setup is a composition of the following:
 -   `notmuch` index and search mail, `ctrl-f` in `mutt` will trigger this. Run `notmuch setup` if you don't have a `~/.notmuch-config` yet
 -   `gpg` for crypto
 
-My 2022 [muttrc](https://github.com/bm4cs/dots/blob/master/.config/neomutt/neomuttrc) integrates with the above and customises `neovim` further:
+My 2022 [neomuttrc](https://raw.githubusercontent.com/bm4cs/dots/master/.config/neomutt/neomuttrhttps://raw.githubusercontent.com/bm4cs/dots/master/.config/neomutt/neomuttrcc) integrates with the above and customises `neovim` further:
 
 -   `vim` keys where possible
 -   `neovim` as default editor
@@ -72,85 +74,11 @@ My 2022 [muttrc](https://github.com/bm4cs/dots/blob/master/.config/neomutt/neomu
 -   helpful regex highlights
 -   contacts integration with `abook`
 
-## Key Bindings
-
-Forgotten your key binds, just hit `?` in `neomutt`.
-
-Here are some common (famous) `mutt` key bindings, thanks to [zeth](http://files.zeth.net/mutt.txt):
-
-```
-==========================================================================
-                             MUTT COMMANDS
-==========================================================================
-
-q      (x)      exit the current menu (abort without saving)
-^g              cancel current action
-?               list all keybindings for the current menu
-
-==========================================================================
-                             INDEX (browsing mailbox)
-==========================================================================
-
-^n     ^p       next/prev thread
-m               compose a new message
-d      (D)      delete the current message (matching a pattern)
-u      (U)      undelete-message (matching a pattern)
-C      (ALT C)  copy the current message to another mailbox (decode first)
-s      (ALT s)  save-message (decode first)
-r      (g)  (L) reply to sender (all recipients) (reply to mailing list)
-f      (b)      forward message (bounce)
-/      (ALT /)  search  (search-reverse)
-c               change to a different mailbox/folder
-F      (N)      mark as important (new)
-l               show messages matching a pattern
-o      (O)      change the current sort method (reverse sort)
-t      (ALT t)  toggle the tag on a message (entire message thread)
-T      (^t)     tag messages matching a pattern (untag)
-v               view-attachments
-<Return>        display-message
-<Tab>           jump to the next new message
-@               show the author's full e-mail address
-$               save changes to mailbox
-^l              clear and redraw the screen
-ALT k           mail a PGP public key to someone
-
-
-==========================================================================
-                             PAGER (reading an email)
-==========================================================================
-
-<Return>        go down one line
-<Space>  (-)    display the next page/message (previous)
-^        ($)    jump to the top (bottom) of the message
-/   (ALT /) (n) search for a regular expression (search backwards) (next match)
-\               toggle search pattern coloring
-S        (T)    skip beyond quoted text (toggle display of quoted text)
-
-
-==========================================================================
-                             COMPOSER (new email send options)
-==========================================================================
-
-y    (P)   (w)  send the message  (postpone)  (write to folder)
-i               check spelling, if available
-a    (A)   (D)  attach a file  (attach message)  (detach)
-d               edit description on attachment
-t      (ALT f)  edit the To field (From field)
-c      (b)      edit the Cc field (Bcc field)
-s               edit the Subject
-r               edit the Reply-To field
-p               select PGP options
-ALT k           attach a PGP public key
-^k              import a PGP public key (from attachment)
-^f              wipe PGP passphrase from memory
-f               specify an 'Fcc' mailbox i.e. sent folder
-```
-
 ## GPG crypto
 
-Handy for encrypting, decrypting, creating and validating digital signatures, all conveniently within `mutt`:
+Integrates `gpg`. Handy for encrypting, decrypting, creating and validating digital signatures all conveniently within `mutt`:
 
-1. Install `gpg`.
+1. Install `gpg`
 1. Copy `/usr/share/doc/neomutt/samples/gpg.rc` to `~/.config/neomutt/`
 1. Set the default key, by grabbing the last 8 hex digits from the fingerprint of your public key, by running `gpg --list-keys`
 1. After composing mail in mutt, but before sending, hit `p` to bring up gpg options (such as encrypt, sign, both)
@@ -160,7 +88,7 @@ Handy for encrypting, decrypting, creating and validating digital signatures, al
 
 `abook` is a stand-alone TUI program dedicated to contact management. Contacts are stored in a plain text, human-readable database. How refreshing!
 
-A thank you to [José María Mateos](https://rinzewind.org/blog-en/2018/how-to-sync-fastmails-carddav-to-use-with-mutt-abook.html) who pointed out fastmail have a REST API for pulling your contacts back as a single vcard:
+A thank you to [José María Mateos](https://rinzewind.org/blog-en/2018/how-to-sync-fastmails-carddav-to-use-with-mutt-abook.html) who pointed out fastmail have a REST API for pulling your contacts back as a single vcard dump:
 
 ```
 https://carddav.fastmail.com/dav/addressbooks/user/<username@domain.tld>/default
