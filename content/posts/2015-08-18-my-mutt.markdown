@@ -35,17 +35,17 @@ If you haven't heard of `mutt` you're missing out.
 
 It's a command line based mail reader (MUA). The [neomutt](https://github.com/neomutt/neomutt) project is a contemporary fork of the original `mutt` with added features, patch sets and fixes.
 
-I started seriusly using `mutt` as my full-time mail client in 2012. I found its simplicity refreshing, it quickly becomes apparent how much useless baggage many modern graphical mail clients (e.g., thunderbird, outlook, etc) actually bog you down with, not to mention the harrowing way they actually encode mail. Its taken me a long time to appreciate this:
+I started seriously using `mutt` as my full-time mail client in 2012. I found its simplicity refreshing. It quickly became apparent how much useless baggage modern graphical mail clients (e.g., thunderbird, outlook, etc) actually bog you down with, not to mention the harrowing way they actually encode mail. Its taken me a long time to appreciate this:
 
 > All mail clients suck. This one just sucks less.
 
-`mutt` is minimal however surprisingly extensible. As is the case with most well designed software, its UNIX design roots becomes apparent; do one thing well while allowing other complimentary programs to bolster it. Such as periodic IMAP polling using `cron` and `isync`, or address book integration using `abook`, or cryptography support using `gpg`. In the same way `git` revolutionised VCS by being distributed-first, `mutt` when paired with `isync`, mailboxes are local fully fledged copies, making it possible to work with your email in a disconnected fashion. This is powerful; you can still compose emails while offline (e.g., on a flight or on the road), search over all your email whenever you like with `nomuch` and just sleep better at night knowing your email is backed up on your own hardware.
+`mutt` is minimal however surprisingly extensible. As is the case with most well designed software, its UNIX design roots becomes apparent; do one thing well while allowing other complimentary programs to bolster it. Such as periodic IMAP polling using `cron` and `isync`, or address book integration using `abook`, or cryptography support using `gpg`. In the same way `git` revolutionised VCS by being distributed-first, `mutt` when paired with `isync`, mailboxes are local fully fledged copies, making it possible to work with your email in a disconnected fashion. This is powerful; you can still compose emails while offline (e.g., on a flight or on the road), search over all your email whenever you like with `notmuch` and just sleep better at night knowing your email is backed up on your own hardware.
 
 Like all worthy endeavours there is effort and time involved. You're going to need to understand how to craft a `neomuttrc`. The [docs](https://neomutt.org/guide/) are dense and the number of configuration levers you can pull can seem overwhelming.
 
 ## Getting started with mutt
 
-If you're starting out of your `mutt` journey for the first time, I highly recommend checking out the [mutt-wizard](https://github.com/LukeSmithxyz/mutt-wizard) project started by [Luke Smith](https://lukesmith.xyz/). Luke is a smart unit with a PhD in linguistics. His [configuration files](https://github.com/LukeSmithxyz/voidrice) are also a wealth of knowledge. I've learned a great deal from [HexDSL](https://hexdsl.com/) and his [dots](https://gitlab.com/hexdsl/dots/) repo.
+If you're starting out on your `mutt` journey for the first time, I highly recommend checking out the [mutt-wizard](https://github.com/LukeSmithxyz/mutt-wizard) project started by [Luke Smith](https://lukesmith.xyz/). Luke is a smart unit with a PhD in linguistics. His [configuration files](https://github.com/LukeSmithxyz/voidrice) are also a wealth of knowledge. I can also highly recommend checking out [HexDSL](https://hexdsl.com/) and his [dots](https://gitlab.com/hexdsl/dots) repo, from which I have learned so much.
 
 ## 2022 setup
 
