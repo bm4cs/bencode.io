@@ -23,6 +23,7 @@ tags:
 -   [Intro](#intro)
 -   [Getting started with mutt](#getting-started-with-mutt)
 -   [2022 setup](#2022-setup)
+-   [cron](#cron)
 -   [GPG crypto](#gpg-crypto)
 -   [Address book integration](#address-book-integration)
 -   [pam-gnupg](#pam-gnupg)
@@ -76,6 +77,15 @@ My 2022 [neomuttrc](https://raw.githubusercontent.com/bm4cs/dots/master/.config/
 -   logical key binds (`gi` go to inbox, `Mi` move to inbox, `Ci` copy to inbox) possible targets `i` inbox, `a` archive, `s` sent, `d` drafts, `t` trash.
 -   helpful regex highlights
 -   contacts integration with `abook`
+
+## cron
+
+To neatly glue this together in the background:
+
+```crontab
+*/15 * * * * mbsync -a && notmuch new
+0 */3 * * * fastmail-abook-sync
+```
 
 ## GPG crypto
 
