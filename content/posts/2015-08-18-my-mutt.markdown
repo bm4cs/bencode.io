@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "neomutt setup on fastmail (2022 edition)"
+title: "NeoMutt setup (2022 edition)"
 slug: "mutt"
 date: "2012-08-18 21:03:40+10:00"
 lastmod: "2022-02-26 15:44:24+11:00"
@@ -59,7 +59,10 @@ My current (2022) terminal based mail setup is a mash-up of:
 -   `pam-gnupg` a PAM module that hands over your login password to `gpg-agent`, i.e., automatically log into GPG once logged into your system, see [doco](https://github.com/cruegge/pam-gnupg) for setup. On Debian I manually built it as described [below](#pam-gnupg)
 -   `lynx` to view HTML encoded emails (gross)
 -   `abook` command line based address book, using tab in the recipient field within `neomutt` will auto-suggest
--   `notmuch` index and search mail, `ctrl-f` in `mutt` will trigger this. Run `notmuch setup` if you don't have a `~/.notmuch-config` yet
+-   `notmuch` index and search mail, `ctrl-f` in `mutt` will trigger this. Run `notmuch setup` if you don't have a `~/.notmuch-config` yet. Search examples:
+    -   `from:will@example.com AND to:john@example.com OR to:jane@example.com`
+    -   `date:”2015-09-01″..”2015-09-02″`
+    -   `budget AND FY14 OR FY15 AND date:”2015-09-01″..”2015-09-02″`
 -   `gpg` for crypto
 
 My 2022 [neomuttrc](https://raw.githubusercontent.com/bm4cs/dots/master/.config/neomutt/neomuttrhttps://raw.githubusercontent.com/bm4cs/dots/master/.config/neomutt/neomuttrcc) integrates with the above and customises `neovim` further:
