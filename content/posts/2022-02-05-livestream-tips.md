@@ -3,8 +3,8 @@ layout: post
 draft: true
 title: "Livestream tips"
 slug: "livestream"
-date: "2022-02-05 21:59:47T11:00"
-lastmod: "2022-02-05 21:59:54T11:00"
+date: "2022-02-05 21:59:47+11:00"
+lastmod: "2022-02-05 21:59:54+11:00"
 comments: false
 categories:
     - streaming
