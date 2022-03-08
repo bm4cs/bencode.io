@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Vim (2022 edition)"
+title: "Neovim setup (2022 edition)"
 slug: "vim"
 date: "2007-04-16 21:50:01"
 lastmod: "2022-01-23 22:04:38"
@@ -8,10 +8,10 @@ comments: false
 categories:
     - vim
 tags:
-    - vim
     - neovim
-    - text
-    - dev
+    - vim
+    - texteditor
+    - vimlife
 ---
 
 _Updated: 2022-01-23_
@@ -21,6 +21,7 @@ I finally (2007) bit the bullet and commited to learning a real text editor. Hav
 Vim is incredibly customisable. Its important to take the time to craft your own [`vimrc`](https://raw.githubusercontent.com/bm4cs/dots/master/.config/nvim/init.vim). Type `:options` to understand the various levers you can pull to make Vim your editor. Almost 15 years later, I'm still constantly fine tuning things.
 
 -   [Help](#help)
+-   [Basics](#basics)
 -   [Operators](#operators)
 -   [Object Selection](#object-selection)
 -   [Windows](#windows)
@@ -32,8 +33,9 @@ Vim is incredibly customisable. Its important to take the time to craft your own
 -   [Jumps](#jumps)
 -   [Registers](#registers)
 -   [Macros](#macros)
+-   [Macros over a collection of files](#macros-over-a-collection-of-files)
 -   [Normalise line endings](#normalise-line-endings)
--   [Plugins](#plugins)
+-   [Plugins I am loving of as 2022](#plugins-i-am-loving-of-as-2022)
     -   [nnn.vim](#nnn.vim)
     -   [nvim-lspconfig](#nvim-lspconfig)
         -   [golang](#golang)
@@ -52,7 +54,7 @@ Vim is incredibly customisable. Its important to take the time to craft your own
     -   [tabular](#tabular)
     -   [vim-matchup](#vim-matchup)
     -   [vim-sneak](#vim-sneak)
--   [Setup behind a proxy](#setup-behind-a-proxy)
+-   [Getting my setup behind a corporate proxy](#getting-my-setup-behind-a-corporate-proxy)
 -   [Resources](#resources)
 
 ## Help
@@ -66,8 +68,8 @@ Vim has brilliant built-in help. Its only one `:help` away, `:h operator` or `:h
 
 ## Basics
 
-- `:enew` new buffer
-- `:edit!` revert buffer to reflect file on disk
+-   `:enew` new buffer
+-   `:edit!` revert buffer to reflect file on disk
 
 ## Operators
 
@@ -228,8 +230,6 @@ qa                      "record macro
 :argdo write            "only save files in arglist
 ```
 
-
-
 ## Normalise line endings
 
 The classic `#!/bin/bash no such file or directory` error message. Shebang is busted likely due to encoding problems.
@@ -255,7 +255,7 @@ vim <your_file>
 :wq
 ```
 
-## Plugins
+## Plugins I am loving of as 2022
 
 While core Vim functionality is like a rock, changing rarely, the plugin eco-system is where you can make Vim level up to doing tasks you commonly do with it. Consequently plugin selection can be quite personal based on specific langs one works with.
 
@@ -484,15 +484,9 @@ TODO: https://github.com/andymass/vim-matchup
 
 TODO: https://github.com/justinmk/vim-sneak
 
-## Setup behind a proxy
+## Getting my setup behind a corporate proxy
 
-Getting my Vim setup on a corporate network.
-
-TODO: Investigate containerising my editor setup.
-
--   `git config --global http.proxy http://proxy.evilcorp.com:8080`
--   nnn.vim: nnn
--   prettier: node.js
+TODO: Containerise everything including transitive dependencies
 
 ## Resources
 
