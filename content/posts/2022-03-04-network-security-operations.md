@@ -1,10 +1,10 @@
 ---
 layout: post
 draft: false
-title: "Network Security Operations (SecOps)"
-slug: "secops"
+title: "Cyber Defence Operations"
+slug: "blueteam"
 date: "2022-03-04 17:41:11+11:00"
-lastmod: "2022-03-04 17:41:16+11:00"
+lastmod: "2022-03-08 11:26:25+11:00"
 comments: false
 categories:
     - cyber
@@ -25,7 +25,24 @@ Semester 1 2022 has snuck up on me again. This semester as part of the UNSW and 
 
 The unit looks terrific. 11 weeks of jam packed, fascinating topics around industry methodologies for threat and vulnerability modelling, to actual working practical knowledge including building a SIEM with Splunk, network packet tracing en mass and taking a scientific approach to finding anomalies and potential threat signatures by exploiting ML across the many data points that will be captured. Here's the modules:
 
-TODO: InsertToc
+-   [Network Security Operations](#network-security-operations)
+    -   [Cyber Defence Foundations Gems](#cyber-defence-foundations-gems)
+    -   [Cyber Defence Foundations Papers](#cyber-defence-foundations-papers)
+    -   [Cisco IOS](#cisco-ios)
+-   [Threat Modelling](#threat-modelling)
+    -   [Threat Modelling Gems](#threat-modelling-gems)
+    -   [Threat Modelling Papers](#threat-modelling-papers)
+-   [Vulnerability Assessment](#vulnerability-assessment)
+    -   [Vulnerability Assessment Gems](#vulnerability-assessment-gems)
+    -   [Vulnerability Assessment Papers](#vulnerability-assessment-papers)
+-   [Host and Network Security Monitoring](#host-and-network-security-monitoring)
+-   [Data Collection and Analysis](#data-collection-and-analysis)
+-   [Signature based defence](#signature-based-defence)
+-   [Machine Learning for Cyber Defence](#machine-learning-for-cyber-defence)
+-   [Machine Learning based Intrusion Detection](#machine-learning-based-intrusion-detection)
+-   [Incident Response 1](#incident-response-1)
+-   [Incident Response 2](#incident-response-2)
+-   [SOC Insights](#soc-insights)
 
 ## Network Security Operations
 
@@ -79,10 +96,11 @@ A forest from the trees overview of the broad field of SecOps:
 -   [SBIR: Cyber Vulnerabilities and Mitigations in the Radio Frequency Domain](https://www.sbir.gov/node/1208173): Great paper from the American governments Small Business Innovation Research incubator.
 -   [DeepSig Inc: Wireless Threat Detection and Analytics](https://www.deepsig.ai/threat-warning-analytics): OmniSIG Sensor makes it possible to rapidly detect emitters across a wide range of bands and emitter types while on small or mobile platforms or while deployed on radio infrastructure devices making it an ideal enabler for coverage mapping, usage mapping, interference hunting, unauthorized emitter hunting, cyber-threat detection, and other mobile mapping applications
 
-#### Cyber Defence Foundations Great Papers
+#### Cyber Defence Foundations Papers
 
--   TODO
--   TODO
+-   [Novokhrestov, A., Konev, A., Shelupanov, A. and Buymov, A., 2020, March. Computer network threat modelling. In Journal of Physics Conference Series (Vol. 1488, p. 012002)](/papers/security/defensive/Novokhrestov_2020_ComputerNetworkThreatModelling.pdf)
+-   [Bakhshi, Z., Balador, A. and Mustafa, J., 2018, April. Industrial IoT security threats and concerns by considering Cisco and Microsoft IoT reference models. In 2018 IEEE Wireless Communications and Networking Conference Workshops (WCNCW) (pp. 173-178). IEEE.](/papers/security/defensive/Bakhshi_2018_IndustrialInternetOfThingsSecurityThreatsByConsideringCiscoAndMicrosoftReferenceModels.pdf)
+-   [Qian, K., Parizi, R.M. and Lo, D., 2018, December. OWASP Risk Analysis Driven Security Requirements Specification for Secure Android Mobile Software Development. In 2018 IEEE Conference on Dependable and Secure Computing (DSC) (pp. 1-2). IEEE.](/papers/security/defensive/Qian_2018_OWASPRiskAnalysisDrivenSecurityRequirementsForSecureAndroidMobileSoftware.pdf)
 
 #### Cisco IOS
 
@@ -174,10 +192,10 @@ Security Violation Count   : 1
 -   [Microsoft Threat Modeling Tool](https://docs.microsoft.com/en-us/azure/security/develop/threat-modeling-tool) allows software architects to identify and mitigate potential security issues early, when they are relatively easy and cost-effective to resolve. It was designed with non-security experts in mind, making threat modeling easier for all developers by providing clear guidance on creating and analysing threat models.
 -   [MITRE StixViz](https://github.com/STIXProject/stix-viz) an open-source threat modelling and visualisation tool by MITRE Corporation, visualises Structured Threat Information eXpression (STIX) documents as a node-link tree with the root at the top of the XML structure.
 
-#### Threat Modelling Great Papers
+#### Threat Modelling Papers
 
--   TODO
--   TODO
+-   [Moustafa, N., Adi, E., Turnbull, B., & Hu, J. (2018). A new threat intelligence scheme for safeguarding industry 4.0 systems. IEEE Access, 6, 32910-32924.](/papers/security/defensive/Moustafa_2018_ANewThreatIntelligenceSchemeForSafeguardingIndustry4Systems.pdf)
+-   [Al-Hawawreh, M., Moustafa, N., Garg, S., & Hossain, M. S. (2020). Deep Learning-enabled Threat Intelligence Scheme in the Internet of Things Networks. IEEE Transactions on Network Science and Engineering.](/papers/security/defensive/Al-Hawawreh_2020_DeepLearningEnabledThreatIntelligenceSchemeInTheInternetOfThingsNetworks.pdf)
 
 ## Vulnerability Assessment
 
@@ -233,31 +251,43 @@ Basic tools of the trade in this realm:
 
 -   [Damn Vulnerable Web App](https://github.com/digininja/DVWA) a PHP/MySQL web application that is damn vulnerable. Its main goal is to be an aid for security professionals to test their skills and tools in a legal environment, help web developers better understand the processes of securing web applications and to aid both students & teachers to learn about web application security in a controlled class room environment.
 -   [OWASP Risk Rating Methodology](https://owasp.org/www-community/OWASP_Risk_Rating_Methodology)
-- [NIST 800-30 - Guide for Conducting Risk Assessments](https://csrc.nist.gov/publications/detail/sp/800-30/rev-1/final)
-- [Government of Canada - Harmonized TRA Methodology](https://cyber.gc.ca/en/guidance/harmonized-tra-methodology-tra-1)
-- [Mozilla Risk Assessment Summary](https://infosec.mozilla.org/guidelines/assessing_security_risk)
-- [Mozilla Rpaid Risk Assessment (RRA)](https://infosec.mozilla.org/guidelines/risk/rapid_risk_assessment.html)
+-   [NIST 800-30 - Guide for Conducting Risk Assessments](https://csrc.nist.gov/publications/detail/sp/800-30/rev-1/final)
+-   [Government of Canada - Harmonized TRA Methodology](https://cyber.gc.ca/en/guidance/harmonized-tra-methodology-tra-1)
+-   [Mozilla Risk Assessment Summary](https://infosec.mozilla.org/guidelines/assessing_security_risk)
+-   [Mozilla Rpaid Risk Assessment (RRA)](https://infosec.mozilla.org/guidelines/risk/rapid_risk_assessment.html)
 
 #### Vulnerability Assessment Papers
 
+-   [Easttom, Chuck. "Vulnerability Assessment and Management." In The NICE Cyber Security Framework, pp. 241-258. Springer, Cham, 2020.](/papers/security/defensive/Easttom_2020_NICECyberSecurityFramework_VulnerabilityAssessmentAndManagement.pdf)
+
 ## Host and Network Security Monitoring
 
-PCAPs. Splunk.
+Coming soon.
 
 ## Data Collection and Analysis
 
-AI and ML.
+Coming soon.
 
 ## Signature based defence
 
-AI and ML.
+Coming soon.
 
 ## Machine Learning for Cyber Defence
 
+Coming soon.
+
 ## Machine Learning based Intrusion Detection
+
+Coming soon.
 
 ## Incident Response 1
 
+Coming soon.
+
 ## Incident Response 2
 
+Coming soon.
+
 ## SOC Insights
+
+Coming soon.
