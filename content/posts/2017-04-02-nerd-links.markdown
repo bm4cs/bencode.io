@@ -1,219 +1,218 @@
 ---
 layout: post
 title: "Nerd Gems 💎"
-slug: "links"
-date: "2017-04-02 13:38:10"
-lastmod: "2021-08-27 22:31:08"
+slug: "gems"
+date: "2017-04-02 13:38:10+11:00"
+lastmod: "2022-03-07 12:52:58+11:00"
 comments: false
 categories:
-  - geek
+    - geek
 ---
+
+*Updated: 2022-03-07*
 
 This is a list of valuable (to me) developer resources that I've managed to stumble across (hacker news, lobste.rs, cron.weekly, peers, university, etcetera).
 
-<!-- vim-markdown-toc GFM -->
+-   [Architecture](#architecture)
+-   [Awesome](#awesome)
+-   [C](#c)
+-   [Cloud](#cloud)
+-   [Containers](#containers)
+-   [Culture](#culture)
+-   [Databases](#databases)
+-   [Development](#development)
+-   [Diagramming](#diagramming)
+-   [dotfiles](#dotfiles)
+-   [Git](#git)
+-   [Golang](#golang)
+-   [Hardware](#hardware)
+-   [Jobs](#jobs)
+-   [Linux](#linux)
+-   [Monitoring](#monitoring)
+-   [Networking](#networking)
+-   [Open source](#open-source)
+-   [Security](#security)
+-   [Serialization](#serialization)
+-   [Shell](#shell)
+-   [systemd](#systemd)
+-   [Text wrangling](#text-wrangling)
+-   [Vim](#vim)
+-   [Web](#web)
 
-- [Architecture](#architecture)
-- [Awesome](#awesome)
-- [C](#c)
-- [Cloud](#cloud)
-- [Containers](#containers)
-- [Culture](#culture)
-- [Databases](#databases)
-- [Development](#development)
-- [Diagramming](#diagramming)
-- [dotfiles](#dotfiles)
-- [Git](#git)
-- [Golang](#golang)
-- [Hardware](#hardware)
-- [Jobs](#jobs)
-- [Linux](#linux)
-- [Monitoring](#monitoring)
-- [Networking](#networking)
-- [Open source](#open-source)
-- [Security](#security)
-- [Serialization](#serialization)
-- [Shell](#shell)
-- [systemd](#systemd)
-- [Text wrangling](#text-wrangling)
-- [Vim](#vim)
-- [Web](#web)
+## Architecture
 
-<!-- vim-markdown-toc -->
+-   [Communicating Sequential Processes](http://www.usingcsp.com/cspbook.pdf) Tony Hoare's seminal 1977 paper on concurrency and CSP
+-   [Why Segment Went Back to a Monolith](https://www.infoq.com/news/2020/04/microservices-back-again/) microservices come with serious tradeoffs
+-   [All software sucks](http://harmful.cat-v.org/software/) complexity is the bane of all software, simplicity is the most important quality
 
-# Architecture
+## Awesome
 
-- [Communicating Sequential Processes](http://www.usingcsp.com/cspbook.pdf) Tony Hoare's seminal 1977 paper on concurrency and CSP
-- [Why Segment Went Back to a Monolith](https://www.infoq.com/news/2020/04/microservices-back-again/) microservices come with serious tradeoffs
-- [All software sucks](http://harmful.cat-v.org/software/) complexity is the bane of all software, simplicity is the most important quality
+-   [awesome-baremetal](https://github.com/alexellis/awesome-baremetal)
+-   [awesome-kubernetes](https://github.com/ramitsurana/awesome-kubernetes)
 
+## C
 
-# Awesome
+-   [Easy Makefile](https://github.com/mortie/easy-makefile/) a Makefile boilerplate to hit the ground running
 
-- [awesome-baremetal](https://github.com/alexellis/awesome-baremetal)
-- [awesome-kubernetes](https://github.com/ramitsurana/awesome-kubernetes)
+## Cloud
 
-# C
+-   [mcm](https://zombiezen.github.io/mcm/) Minimal Configuration Manager
+-   [Packer](https://www.hashicorp.com/blog/packer-1-0/) a tool for building images for cloud platforms, virtual machines, containers and more from a single source configuration.
+-   [CloudBoost](https://www.cloudboost.io/) a complete serverless platform for your app.
+-   [The Google Cloud Developer's Cheat Sheet](https://github.com/gregsramblings/google-cloud-4-words) every product in the Google Cloud family described in under 4 words
+-   [Ask HN: Is Your Company Sticking to On-Premise Servers? Why?](https://news.ycombinator.com/item?id=23089999)
+-   [Using AWS CodeBuild to Execute Administrative Tasks](https://aws.amazon.com/blogs/devops/using-aws-codebuild-to-execute-administrative-tasks/)
 
-- [Easy Makefile](https://github.com/mortie/easy-makefile/) a Makefile boilerplate to hit the ground running
+## Containers
 
-# Cloud
+-   [OKD: The Community Distribution of Kubernetes that powers OpenShift](https://github.com/openshift/okd/)
+-   [The Docker Handbook](https://www.freecodecamp.org/news/the-docker-handbook/)
+-   [25 Basic Docker Commands for Beginners](https://codeopolis.com/posts/25-basic-docker-commands-for-beginners/)
+-   [Setting the Record Straight: containers vs. Zones vs. Jails vs. VMs]()
+-   [Docker Security Best Practices](https://blog.sqreen.io/docker-security/) tools and methods to help secure Docker
+-   [Kubernetes Workshop](http://www.zoobab.com/kubernetes-workshop) tons of details for getting started
+-   [10 Most Common Mistakes When Using Kubernetes](https://blog.pipetail.io/posts/2020-05-04-most-common-mistakes-k8s/)
+-   [lens](https://github.com/lensapp/lens/) kube IDE
+-   [kubeseal](https://crypt.codemancers.com/posts/2020-04-27-encrypting-and-storing-kubernetes-secrets-in-git/) how to safely store secrets in `git` if you want to use them in k8s
+-   [Container Technologies at Coinbase](https://blog.coinbase.com/container-technologies-at-coinbase-d4ae118dcb6c) great history on how the industry got to containers, an why kubernetes isn't used
+-   [A Practical Introduction to Container Security](https://cloudberry.engineering/article/practical-introduction-container-security/)
+-   [Webtop](https://docs.linuxserver.io/images/docker-webtop) full desktop environments in officially supported flavors accessible via any modern web browser
 
-- [mcm](https://zombiezen.github.io/mcm/) Minimal Configuration Manager
-- [Packer](https://www.hashicorp.com/blog/packer-1-0/) a tool for building images for cloud platforms, virtual machines, containers and more from a single source configuration.
-- [CloudBoost](https://www.cloudboost.io/) a complete serverless platform for your app.
-- [The Google Cloud Developer's Cheat Sheet](https://github.com/gregsramblings/google-cloud-4-words) every product in the Google Cloud family described in <=4 words
-- [Ask HN: Is Your Company Sticking to On-Premise Servers? Why?](https://news.ycombinator.com/item?id=23089999)
-- [Using AWS CodeBuild to Execute Administrative Tasks](https://aws.amazon.com/blogs/devops/using-aws-codebuild-to-execute-administrative-tasks/)
+## Culture
 
-# Containers
+-   [You Are Not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) if you’re using a technology that originated at a large company, but your use case is very different, it’s unlikely that you arrived there deliberately; no, it’s more likely you got there through a ritualistic belief that imitating the giants would bring the same riches.
+-   [GitLab's Guide to All-Remote](https://about.gitlab.com/company/culture/all-remote/guide/) the remote manifesto, tips and tricks and remote resources
+-   [Why we at $FAMOUS_COMPANY Switched to $HYPED_TECHNOLOGY](https://saagarjha.com/blog/2020/05/10/why-we-at-famous-company-switched-to-hyped-technology/)
+-   [Habbits of High-Functioning Software Teams](https://deniseyu.io/2020/05/23/habits-of-high-performing-teams.html) characteristics and habits of the highest-performing dev teams
 
-- [OKD: The Community Distribution of Kubernetes that powers OpenShift](https://github.com/openshift/okd/)
-- [The Docker Handbook](https://www.freecodecamp.org/news/the-docker-handbook/)
-- [25 Basic Docker Commands for Beginners](https://codeopolis.com/posts/25-basic-docker-commands-for-beginners/)
-- [Setting the Record Straight: containers vs. Zones vs. Jails vs. VMs]()
-- [Docker Security Best Practices](https://blog.sqreen.io/docker-security/) tools and methods to help secure Docker
-- [Kubernetes Workshop](http://www.zoobab.com/kubernetes-workshop) tons of details for getting started
-- [10 Most Common Mistakes When Using Kubernetes](https://blog.pipetail.io/posts/2020-05-04-most-common-mistakes-k8s/)
-- [lens](https://github.com/lensapp/lens/) kube IDE
-- [kubeseal](https://crypt.codemancers.com/posts/2020-04-27-encrypting-and-storing-kubernetes-secrets-in-git/) how to safely store secrets in `git` if you want to use them in k8s
-- [Container Technologies at Coinbase](https://blog.coinbase.com/container-technologies-at-coinbase-d4ae118dcb6c) great history on how the industry got to containers, an why kubernetes isn't used
-- [A Practical Introduction to Container Security](https://cloudberry.engineering/article/practical-introduction-container-security/)
-- [Webtop](https://docs.linuxserver.io/images/docker-webtop) full desktop environments in officially supported flavors accessible via any modern web browser
+## Databases
 
-# Culture
+-   [Things I Wished More Developers Knew About Databases](https://medium.com/@rakyll/things-i-wished-more-developers-knew-about-databases-2d0178464f78)
+-   [SQL Coding Standards](http://wiki.c2.com/?AntiPatternsCatalog)
 
-- [You Are Not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) if you’re using a technology that originated at a large company, but your use case is very different, it’s unlikely that you arrived there deliberately; no, it’s more likely you got there through a ritualistic belief that imitating the giants would bring the same riches.
-- [GitLab's Guide to All-Remote](https://about.gitlab.com/company/culture/all-remote/guide/) the remote manifesto, tips and tricks and remote resources
-- [Why we at $FAMOUS_COMPANY Switched to $HYPED_TECHNOLOGY](https://saagarjha.com/blog/2020/05/10/why-we-at-famous-company-switched-to-hyped-technology/)
-- [Habbits of High-Functioning Software Teams](https://deniseyu.io/2020/05/23/habits-of-high-performing-teams.html) characteristics and habits of the highest-performing dev teams
+## Development
 
-# Databases
+-   [What To Code](https://what-to-code.com) inspiration and ideas
+-   [Why the developers who use Rust love it so much](https://stackoverflow.blog/2020/06/05/why-the-developers-who-use-rust-love-it-so-much/)
+-   [Smocker](https://smocker.dev/) simple HTTP mock server, uses YAML to define mocks and responses
 
-- [Things I Wished More Developers Knew About Databases](https://medium.com/@rakyll/things-i-wished-more-developers-knew-about-databases-2d0178464f78)
-- [SQL Coding Standards](http://wiki.c2.com/?AntiPatternsCatalog)
+## Diagramming
 
-# Development
+-   [Excalidraw](https://excalidraw.com/) beautiful web based diagrams
+-   [PlantText](https://www.planttext.com/) PlantUML (text) based diagram generator
 
-- [What To Code](https://what-to-code.com) inspiration and ideas
-- [Why the developers who use Rust love it so much](https://stackoverflow.blog/2020/06/05/why-the-developers-who-use-rust-love-it-so-much/)
-- [Smocker](https://smocker.dev/) simple HTTP mock server, uses YAML to define mocks and responses
+## dotfiles
 
-# Diagramming
+-   [HexDSL](https://git.hexdsl.co.uk/HexDSL/dots)
+-   [LukeSmithxyz](https://github.com/LukeSmithxyz/voidrice)
+-   [uoou](https://gitlab.com/uoou)
 
-- [Excalidraw](https://excalidraw.com/) beautiful web based diagrams
-- [PlantText](https://www.planttext.com/) PlantUML (text) based diagram generator
+## Git
 
-# dotfiles
+-   [Better Git configuration](https://blog.scottnonnenberg.com/better-git-configuration) links and resources on configuring & using git
+-   [Automate Repetitive Tasks with Custom git Commands](https://gitbetter.substack.com/p/automate-repetitive-tasks-with-custom) how to write custom git commands
 
-- [HexDSL](https://git.hexdsl.co.uk/HexDSL/dots)
-- [LukeSmithxyz](https://github.com/LukeSmithxyz/voidrice)
-- [uoou](https://gitlab.com/uoou)
+## Golang
 
-# Git
+-   [Everyday Golang](https://gumroad.com/l/everyday-golang)
+-   [Containerize Your Go Developer Environment – Part 1](https://www.docker.com/blog/containerize-your-go-developer-environment-part-1/)
+-   [Communicating Between Python and Go with gRPC](https://www.ardanlabs.com/blog/2020/06/python-go-grpc.html)
+-   [GoFakeIt: A Random Fake Data Generator](https://github.com/brianvoe/gofakeit) over 120 functions for generating things like names, emails, locations, user agents, ...
+-   [Exploring the Container Packages (list, ring, and heap)](https://therebelsource.com/blog/exploring-container-package-in-go-list-ring-and-heap/9zTBiMaaYg)
+-   [LearnGo: A Large Collection of Go Examples, Exercises, and Quizzes](https://github.com/inancgumus/learngo)
+-   [Writing Go CLIs With Just Enough Architecture](https://blog.carlmjohnson.net/post/2020/go-cli-how-to-and-advice/)
+-   [A Go RabbitMQ Beginners' Tutorial](https://www.youtube.com/watch?v=pAXp6o-zWS4)
+-   [Getting Hands-On with io_uring from Go](https://developers.mattermost.com/blog/hands-on-iouring-go/)
+-   [RobotGo: Native Cross-Platform GUI Automation](https://github.com/go-vgo/robotgo) control the pointer, keyboard, read the screen, to automate many computer-based jobs
+-   [Diving Into Go by Building a CLI Application](https://eryb.space/2020/05/27/diving-into-go-by-building-a-cli-application.html)
+-   [Immutability Patterns in Go](https://rauljordan.com/2020/05/25/immutability-patterns-in-go.html)
+-   [Writing An Interpreter In Go](https://interpreterbook.com/)
 
-- [Better Git configuration](https://blog.scottnonnenberg.com/better-git-configuration) links and resources on configuring & using git
-- [Automate Repetitive Tasks with Custom git Commands](https://gitbetter.substack.com/p/automate-repetitive-tasks-with-custom) how to write custom git commands
+## Hardware
 
-# Golang
+-   [Backblaze hard drive stats](https://www.backblaze.com/blog/backblaze-hard-drive-stats-q1-2020/)
 
-- [Everyday Golang](https://gumroad.com/l/everyday-golang)
-- [Containerize Your Go Developer Environment – Part 1](https://www.docker.com/blog/containerize-your-go-developer-environment-part-1/)
-- [Communicating Between Python and Go with gRPC](https://www.ardanlabs.com/blog/2020/06/python-go-grpc.html)
-- [GoFakeIt: A Random Fake Data Generator](https://github.com/brianvoe/gofakeit) over 120 functions for generating things like names, emails, locations, user agents, ...
-- [Exploring the Container Packages (list, ring, and heap)](https://therebelsource.com/blog/exploring-container-package-in-go-list-ring-and-heap/9zTBiMaaYg)
-- [LearnGo: A Large Collection of Go Examples, Exercises, and Quizzes](https://github.com/inancgumus/learngo)
-- [Writing Go CLIs With Just Enough Architecture](https://blog.carlmjohnson.net/post/2020/go-cli-how-to-and-advice/)
-- [A Go RabbitMQ Beginners' Tutorial](https://www.youtube.com/watch?v=pAXp6o-zWS4)
-- [Getting Hands-On with io_uring from Go](https://developers.mattermost.com/blog/hands-on-iouring-go/)
-- [RobotGo: Native Cross-Platform GUI Automation](https://github.com/go-vgo/robotgo) control the pointer, keyboard, read the screen, to automate many computer-based jobs
-- [Diving Into Go by Building a CLI Application](https://eryb.space/2020/05/27/diving-into-go-by-building-a-cli-application.html)
-- [Immutability Patterns in Go](https://rauljordan.com/2020/05/25/immutability-patterns-in-go.html)
-- [Writing An Interpreter In Go](https://interpreterbook.com/)
+## Jobs
 
-# Hardware
+-   [Inspired corp](inspiredcorp.com.au)
 
-- [Backblaze hard drive stats](https://www.backblaze.com/blog/backblaze-hard-drive-stats-q1-2020/)
+## Linux
 
-# Jobs
+-   [An In-Depth Guide to iptables](https://www.booleanworld.com/depth-guide-iptables-linux-firewall/) covers pretty much every angle of iptables, from basic rules to NAT'ing to protocols and interfaces.
+-   [mdadm Cheat Sheet](http://www.ducea.com/2009/03/08/mdadm-cheat-sheet/) practical commands when running software raid on Linux
+-   [Async IO on Linux: select, poll, and epoll](https://jvns.ca/blog/2017/06/03/async-io-on-linux--select--poll--and-epoll/) thorough write-up on 'select', 'poll' and 'epoll' system calls, and how to measure them.
+-   [The first 5 things to do when your Linux server keels over](https://insights.hpe.com/articles/the-first-5-things-to-do-when-your-linux-server-keels-over-1705.html) including hardware troubleshooting, checking the running state of applications
+-   [How io_uring and eBPF Will Revolutionize Programming in Linux](https://thenewstack.io/how-io_uring-and-ebpf-will-revolutionize-programming-in-linux/) well explained history of Linux syscalls and their limitations, and how `io_uring` is a game changer by allowing async I/O via a pub/sub model
+-   [bashtop](https://github.com/aristocratos/bashtop) gamified TUI resource monitor that shows usage and stats for processor, memory, disks, network and processes
+-   [Time on Unix](https://venam.nixers.net/blog/unix/2020/05/02/time-on-unix.html) how time and localization works on Unix
+-   [Tmux for mere mortals](https://zserge.com/posts/tmux/) good defaults, modifying the keybindings to boost usability
+-   [Tips for cleaning up a Linux server](https://ma.ttias.be/clean-up-linux-server-using-these-simple-tips/) low hanging disk space fruit, like removing old kernels, pruning unused Docker space, clearing logs
+-   [Shell productivity tips and tricks](https://blog.balthazar-rouberol.com/shell-productivity-tips-and-tricks) faster command line tips
 
-- [Inspired corp](inspiredcorp.com.au)
+## Monitoring
 
-# Linux
+-   [Zabbix](https://www.zabbix.com)
+-   [whatfiles](https://github.com/spieglt/whatfiles) logs the files programs CRUD, also traces new processes
+-   [logtop](https://www.cyberciti.biz/faq/linux-unix-logtop-realtime-log-line-rate-analyser/) reads stdin, can sort on any field and is updated in realtime
 
-- [An In-Depth Guide to iptables](https://www.booleanworld.com/depth-guide-iptables-linux-firewall/) covers pretty much every angle of iptables, from basic rules to NAT'ing to protocols and interfaces.
-- [mdadm Cheat Sheet](http://www.ducea.com/2009/03/08/mdadm-cheat-sheet/) practical commands when running software raid on Linux
-- [Async IO on Linux: select, poll, and epoll](https://jvns.ca/blog/2017/06/03/async-io-on-linux--select--poll--and-epoll/) thorough write-up on 'select', 'poll' and 'epoll' system calls, and how to measure them.
-- [The first 5 things to do when your Linux server keels over](https://insights.hpe.com/articles/the-first-5-things-to-do-when-your-linux-server-keels-over-1705.html) including hardware troubleshooting, checking the running state of applications
-- [How io_uring and eBPF Will Revolutionize Programming in Linux](https://thenewstack.io/how-io_uring-and-ebpf-will-revolutionize-programming-in-linux/) well explained history of Linux syscalls and their limitations, and how `io_uring` is a game changer by allowing async I/O via a pub/sub model
-- [bashtop](https://github.com/aristocratos/bashtop) gamified TUI resource monitor that shows usage and stats for processor, memory, disks, network and processes
-- [Time on Unix](https://venam.nixers.net/blog/unix/2020/05/02/time-on-unix.html) how time and localization works on Unix
-- [Tmux for mere mortals](https://zserge.com/posts/tmux/) good defaults, modifying the keybindings to boost usability
-- [Tips for cleaning up a Linux server](https://ma.ttias.be/clean-up-linux-server-using-these-simple-tips/) low hanging disk space fruit, like removing old kernels, pruning unused Docker space, clearing logs
-- [Shell productivity tips and tricks](https://blog.balthazar-rouberol.com/shell-productivity-tips-and-tricks) faster command line tips
+## Networking
 
-# Monitoring
+-   [59 Linux Networking commands and scripts](https://haydenjames.io/linux-networking-commands-scripts/) the ultimate network tools goto list.
+-   [Introduction to tcpdump and wireshark](https://www.linux.com/blog/learn/chapter/linux-security/2017/2/linux-security-fundamentals-part-5-introduction-tcpdump-and-wireshark)
+-   [hping3](https://linux.die.net/man/8/hping3) send arbitary TCP/IP packets to network hosts
+-   [Setting up a Linux mail server](https://likegeeks.com/linux-mail-server/)
+-   [linker∙d](https://linkerd.io/) dynamic linker for microservices, taking care of the communication work needed to interact with distributed services, including routing, load balancing, and retrying.
+-   [Manually Throttle the Bandwidth of a Linux Network Interface](http://mark.koli.ch/slowdown-throttle-bandwidth-linux-network-interface) introduction to the `tc` tool for bandwidth shaping.
+-   [connbeat](https://github.com/raboof/connbeat) agent that monitors TCP connection metadata and ships the data to Kafka or Elasticsearch, or an HTTP endpoint
+-   [The Ultimate PCAP](https://weberblog.net/the-ultimate-pcap/) all protocols in a single PCAP
+-   [What Every Developer Should Know About TCP](https://robertovitillo.com/what-every-developer-should-know-about-tcp/)
+-   [SSH Tips & Tricks](https://smallstep.com/blog/ssh-tricks-and-tips/) 2FA, securely forwarding agents, quitting from stuck sessions and using `mosh` or `tmux`
+-   [High Availability Load Balancers with Maglev](https://blog.cloudflare.com/high-availability-load-balancers-with-maglev/) CloudFlare on their load balancing stack, BGP, Maglev connection scheduling, IPVS, UDP encapsulation for faster delivery
 
-- [Zabbix](https://www.zabbix.com)
-- [whatfiles](https://github.com/spieglt/whatfiles) logs the files programs CRUD, also traces new processes
-- [logtop](https://www.cyberciti.biz/faq/linux-unix-logtop-realtime-log-line-rate-analyser/) reads stdin, can sort on any field and is updated in realtime
+## Open source
 
-# Networking
+-   [Google Open Source](https://opensource.google.com/projects/explore/featured) 2000+ OSS projects managed by Google
+-   [NSA on GitHub](https://nationalsecurityagency.github.io)
 
-- [59 Linux Networking commands and scripts](https://haydenjames.io/linux-networking-commands-scripts/) the ultimate network tools goto list.
-- [Introduction to tcpdump and wireshark](https://www.linux.com/blog/learn/chapter/linux-security/2017/2/linux-security-fundamentals-part-5-introduction-tcpdump-and-wireshark)
-- [hping3](https://linux.die.net/man/8/hping3) send arbitary TCP/IP packets to network hosts
-- [Setting up a Linux mail server](https://likegeeks.com/linux-mail-server/)
-- [linker∙d](https://linkerd.io/) dynamic linker for microservices, taking care of the communication work needed to interact with distributed services, including routing, load balancing, and retrying.
-- [Manually Throttle the Bandwidth of a Linux Network Interface](http://mark.koli.ch/slowdown-throttle-bandwidth-linux-network-interface) introduction to the `tc` tool for bandwidth shaping.
-- [connbeat](https://github.com/raboof/connbeat) agent that monitors TCP connection metadata and ships the data to Kafka or Elasticsearch, or an HTTP endpoint
-- [The Ultimate PCAP](https://weberblog.net/the-ultimate-pcap/) all protocols in a single PCAP
-- [What Every Developer Should Know About TCP](https://robertovitillo.com/what-every-developer-should-know-about-tcp/)
-- [SSH Tips & Tricks](https://smallstep.com/blog/ssh-tricks-and-tips/) 2FA, securely forwarding agents, quitting from stuck sessions and using `mosh` or `tmux`
-- [High Availability Load Balancers with Maglev](https://blog.cloudflare.com/high-availability-load-balancers-with-maglev/) CloudFlare on their load balancing stack, BGP, Maglev connection scheduling, IPVS, UDP encapsulation for faster delivery
+## Security
 
-# Open source
+- [The Ultimate List of SANS Cheat Sheets](https://www.sans.org/blog/the-ultimate-list-of-sans-cheat-sheets/) when it comes to quality cyber-security training and certs SANS is world leading. They have an amazing collection of thoughtful and useful cheat sheets from topics such as *Writing Tips for IT Professionals*, *Windows to Unix Cheat Sheet*, to using pieces of software such as `nmap`, `netcat`, `burb`. Its a treasure trove!
+- [Lenny Zeltser's IT and Information Security Cheat Sheets](https://zeltser.com/cheat-sheets/) speaking of thoughtful cheat sheets, lots of wisdom here
+-   [Linux reverse engineering 101](https://github.com/michalmalik/linux-re-101) collection of resources for linux reverse engineering.
+-   [Explain like I'm 5: Kerberos](http://www.roguelynn.com/words/explain-like-im-5-kerberos)
+-   [OAuth 2.0 Security Best Current Practices](https://tools.ietf.org/html/draft-ietf-oauth-security-topics-15)
+-   [SSHHeatmap](https://github.com/meesaltena/SSHHeatmap) script that generates a heatmap of IP's that made failed SSH login attempts using `/var/log/auth.log`
 
-- [Google Open Source](https://opensource.google.com/projects/explore/featured) 2000+ OSS projects managed by Google
-- [NSA on GitHub](https://nationalsecurityagency.github.io)
+## Serialization
 
-# Security
+-   [Illustrated jq tutorial](https://mosermichael.github.io/jq-illustrated/dir/content.html) jq is a lightweight and flexible command-line JSON processor
+-   [Cap'n Proto](https://capnproto.org/)
+-   [Google Protocol Buffers](https://github.com/google/protobuf)
 
-- [Linux reverse engineering 101](https://github.com/michalmalik/linux-re-101) collection of resources for linux reverse engineering.
-- [Explain like I'm 5: Kerberos](http://www.roguelynn.com/words/explain-like-im-5-kerberos)
-- [OAuth 2.0 Security Best Current Practices](https://tools.ietf.org/html/draft-ietf-oauth-security-topics-15)
-- [SSHHeatmap](https://github.com/meesaltena/SSHHeatmap) script that generates a heatmap of IP's that made failed SSH login attempts using `/var/log/auth.log`
+## Shell
 
-# Serialization
+-   [Makeself](https://makeself.io/) a self-extracting archiving tool for Unix systems, in 100% shell script
+-   [5 Types Of ZSH Aliases You Should Know](https://thorsten-hans.com/5-types-of-zsh-aliases) alias suffixes & global aliases, plus other neat tricks
 
-- [Illustrated jq tutorial](https://mosermichael.github.io/jq-illustrated/dir/content.html) jq is a lightweight and flexible command-line JSON processor
-- [Cap'n Proto](https://capnproto.org/)
-- [Google Protocol Buffers](https://github.com/google/protobuf)
+## systemd
 
-# Shell
+-   [Why I Prefer systemd Timers Over Cron](https://trstringer.com/systemd-timer-vs-cronjob/)
+-   [journal-triggerd](https://github.com/jjk-jacky/journal-triggerd) runs trigger on systemd's journal messages
+-   [How to automatically execute shell script at startup boot on systemd](https://linuxconfig.org/how-to-automatically-execute-shell-script-at-startup-boot-on-systemd-linux)
 
-- [Makeself](https://makeself.io/) a self-extracting archiving tool for Unix systems, in 100% shell script
-- [5 Types Of ZSH Aliases You Should Know](https://thorsten-hans.com/5-types-of-zsh-aliases) alias suffixes & global aliases, plus other neat tricks
+## Text wrangling
 
-# systemd
+-   [desed](https://github.com/SoptikHa2/desed) beautiful TUI that provides users with comfortable interface and practical debugger, used to step through complex sed scripts
+-   [sed One Liners](http://www.pement.org/sed/sed1line.txt) huge collection of useful sed examples
+-   [xsv](https://github.com/BurntSushi/xsv) CLI for indexing, slicing, analyzing, splitting and joining CSV files
 
-- [Why I Prefer systemd Timers Over Cron](https://trstringer.com/systemd-timer-vs-cronjob/)
-- [journal-triggerd](https://github.com/jjk-jacky/journal-triggerd) runs trigger on systemd's journal messages
-- [How to automatically execute shell script at startup boot on systemd](https://linuxconfig.org/how-to-automatically-execute-shell-script-at-startup-boot-on-systemd-linux)
+## Vim
 
-# Text wrangling
+-   [An Introduction to Vim for SysAdmins](https://www.linux.com/learn/intro-to-linux/2017/2/vim-sysadmins)
 
-- [desed](https://github.com/SoptikHa2/desed) beautiful TUI that provides users with comfortable interface and practical debugger, used to step through complex sed scripts
-- [sed One Liners](http://www.pement.org/sed/sed1line.txt) huge collection of useful sed examples
-- [xsv](https://github.com/BurntSushi/xsv) CLI for indexing, slicing, analyzing, splitting and joining CSV files
+## Web
 
-# Vim
-
-- [An Introduction to Vim for SysAdmins](https://www.linux.com/learn/intro-to-linux/2017/2/vim-sysadmins)
-
-# Web
-
-- [How I built a modern website in 2021](https://kentcdodds.com/blog/how-i-built-a-modern-website-in-2021)
-- [Certbot](https://certbot.eff.org/) automatically use Let’s Encrypt certificates
-- [Ask HN: Is There Still a Place for Native Desktop Apps?](https://news.ycombinator.com/item?id=23211851)
-- [topngx](https://github.com/gsquire/topngx) parse and aggregrate statistics from NGINX access logs
+-   [How I built a modern website in 2021](https://kentcdodds.com/blog/how-i-built-a-modern-website-in-2021)
+-   [Certbot](https://certbot.eff.org/) automatically use Let’s Encrypt certificates
+-   [Ask HN: Is There Still a Place for Native Desktop Apps?](https://news.ycombinator.com/item?id=23211851)
+-   [topngx](https://github.com/gsquire/topngx) parse and aggregrate statistics from NGINX access logs

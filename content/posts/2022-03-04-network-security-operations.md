@@ -12,6 +12,8 @@ tags:
     - cyber
     - defensive
     - blueteam
+    - threatmodels
+    - vulnerabilities
     - university
     - networking
     - cisco
@@ -23,70 +25,64 @@ Semester 1 2022 has snuck up on me again. This semester as part of the UNSW and 
 
 The unit looks terrific. 11 weeks of jam packed, fascinating topics around industry methodologies for threat and vulnerability modelling, to actual working practical knowledge including building a SIEM with Splunk, network packet tracing en mass and taking a scientific approach to finding anomalies and potential threat signatures by exploiting ML across the many data points that will be captured. Here's the modules:
 
-* [Cyber Defence Foundations](#cyber-defence-foundations)
-* [Threat Modelling](#threat-modelling)
-* [Vulnerability Assessment](#vulnerability-assessment)
-* [Host and Network Security Monitoring](#host-and-network-security-monitoring)
-* [Data Collection and Analysis](#data-collection-and-analysis)
-* [Signature based defence](#signature-based-defence)
-* [Machine Learning for Cyber Defence](#machine-learning-for-cyber-defence)
-* [Machine Learning based Intrusion Detection](#machine-learning-based-intrusion-detection)
-* [Incident Response 1](#incident-response-1)
-* [Incident Response 2](#incident-response-2)
-* [SOC Insights](#soc-insights)
+TODO: InsertToc
 
+## Network Security Operations
 
-## Cyber Defence Foundations
+TODO
 
-Summary:
-
-- The OSI network model is touched on (every single unit seems to do this). Waqas higlights that the physical layer is where most of the innovation is taking place, requiring deep domain knowledge in RF, electrical engineering, etc. The upper layers have been done to death.
-- DeepSig is a world leading AI based RF detection company, with great resources such as YouTube channels.
-- Common network segregation techniques; *Zones* to constrict access to groups of resources (data, applications), *Subnets* constrict based on IP routing, and [VLANs](https://www.youtube.com/watch?v=fRuBHSf3Hac) constrict the Ethernet ports on a network switch that can exchange layer 2 frames.
-- Common network attacks; MAC flooding, VTP attacks, VLAN hopping
-
-#### Network Security Operations (SecOps)
+-   The OSI network model is touched on (every single unit seems to do this). Waqas higlights that the physical layer is where most of the innovation is taking place, requiring deep domain knowledge in RF, electrical engineering, etc. The upper layers have been done to death.
+-   [DeepSig](https://www.deepsig.ai/) is a world leading AI based wireless and RF signal detection company, with great resources such as YouTube channels.
+-   Common network segregation techniques; _Zones_ to constrict access to groups of resources (data, applications), _Subnets_ constrict based on IP routing, and [VLANs](https://www.youtube.com/watch?v=fRuBHSf3Hac) constrict the Ethernet ports on a network switch that can exchange layer 2 frames.
+-   Common network attacks; MAC flooding, VTP attacks, VLAN hopping
 
 A forest from the trees overview of the broad field of SecOps:
 
-- Collect
-    - Network-based
-        - IDS
-        - Logs
-    - Host-based
-        - Logs
-        - IDS
-- Detect
-    - Anomaly
-        - Machine learning (ML)
-        - HoneyNet
-        - Honeytokens
-    - Reputation
-        - Signature
-        - IDS rules
-        - IOCs
-- Protect
-    - Prevent
-        - Whitelisting, patching
-        - Architecture
-        - Pen testing
-    - Limit impact
-        - Privilege restriction and zoning
-        - Backups
-- Respond
-    - Investigate
-        - Validation
-        - Correlation
-    - Remediate
+-   Collect
+    -   Network-based
+        -   IDS
+        -   Logs
+    -   Host-based
+        -   Logs
+        -   IDS
+-   Detect
+    -   Anomaly
+        -   Machine learning (ML)
+        -   HoneyNet
+        -   Honeytokens
+    -   Reputation
+        -   Signature
+        -   IDS rules
+        -   IOCs
+-   Protect
+    -   Prevent
+        -   Whitelisting, patching
+        -   Architecture
+        -   Pen testing
+    -   Limit impact
+        -   Privilege restriction and zoning
+        -   Backups
+-   Respond
+    -   Investigate
+        -   Validation
+        -   Correlation
+    -   Remediate
 
-#### Gems
+#### Cyber Defence Foundations Gems
 
-- Cisco Packet Tracer on Windows. Actually mind blowing. A full blown network designer and emulator, including end point devices (NICs, operating systems), routers, switches, wireless devices, WAN emulation and more. You can cable between each device (e.g., copper crossover, copper straight-through, etc), bring up cisco shells on the routers and switches for advanced router configurations and setup fine grained subnets, IPs, VLANs, you name it. You can then jump on the end point hosts (e.g., windows or linux machines), start a shell up and trying exploring the route tables, ARP, `ping`, like you're on a full blown OS. For years I've wondered how networking people learn and play around with physical like networking techniques without having to setup physical devices. This is it! Insanely cool.
-- [Cyber Ben-Gurion University of the Negev: Air Gap Research by Dr Mordechai Guri](https://cyber.bgu.ac.il/air-gap/): An Israel uni that is publishing some incredible research in the field of signal detection and intelligence, in the space of air-gapping (a common technique employed by highly secure organisations). Great videos on PowerHammer (power line based signals), MOSQUITO (acoustic speaker to speaker communication between air gapped computers), ODINI (leaking data from a Faraday cage) and many more.
-- [SWAN: Secure Wireless Agile Networks](https://www.swan-partnership.ac.uk/research-challenges/): A cool company based in the UK, that is pushing the boundaries of what is currently accepted the norm in terms of RF based network systems. They are sponsoring a number of PhD opportunities.
-- [SBIR: Cyber Vulnerabilities and Mitigations in the Radio Frequency Domain](https://www.sbir.gov/node/1208173): Great paper from the American governments Small Business Innovation Research incubator.
-- [DeepSig Inc: Wireless Threat Detection and Analytics](https://www.deepsig.ai/threat-warning-analytics): OmniSIG Sensor makes it possible to rapidly detect emitters across a wide range of bands and emitter types while on small or mobile platforms or while deployed on radio infrastructure devices making it an ideal enabler for coverage mapping, usage mapping, interference hunting, unauthorized emitter hunting, cyber-threat detection, and other mobile mapping applications
+-   Cisco Packet Tracer on Windows. Actually mind blowing. A full blown network designer and emulator, including end point devices (NICs, operating systems), routers, switches, wireless devices, WAN emulation and more. You can cable between each device (e.g., copper crossover, copper straight-through, etc), bring up cisco shells on the routers and switches for advanced router configurations and setup fine grained subnets, IPs, VLANs, you name it. You can then jump on the end point hosts (e.g., windows or linux machines), start a shell up and trying exploring the route tables, ARP, `ping`, like you're on a full blown OS. For years I've wondered how networking people learn and play around with physical like networking techniques without having to setup physical devices. This is it! Insanely cool.
+-   [Ettercap](https://www.ettercap-project.org/) is an amazing program for fooling around with common network protocols and services. Here we used it to perform a MITM attack by pretending to be a DHCP server (spoofing).
+-   ARP poisoning with `arpspoof`. Enough said: `arpspoof -i eth0 -t 10.1.1.12 10.1.1.228` (`-t` being the target host to ARP poison). Dump the ARP tables on the various targets e.g., on windows `arp -a`. Quite an effective MITM technique for siphoning frames between hosts, assuming you forward everything on so it appears legitimate.
+-   [Cyber Ben-Gurion University of the Negev: Air Gap Research by Dr Mordechai Guri](https://cyber.bgu.ac.il/air-gap/): An Israel uni that is publishing some incredible research in the field of signal detection and intelligence, in the space of air-gapping (a common technique employed by highly secure organisations). Great videos on PowerHammer (power line based signals), MOSQUITO (acoustic speaker to speaker communication between air gapped computers), ODINI (leaking data from a Faraday cage) and many more.
+-   [tyranid/ExampleChatApplication](https://github.com/tyranid/ExampleChatApplication) a simple example command line chat application written for .NET to learn network protocol analysis, great for messing around with packet analysers like `tcpdump` or `wireshark`
+-   [SWAN: Secure Wireless Agile Networks](https://www.swan-partnership.ac.uk/research-challenges/): A cool company based in the UK, that is pushing the boundaries of what is currently accepted the norm in terms of RF based network systems. They are sponsoring a number of PhD opportunities.
+-   [SBIR: Cyber Vulnerabilities and Mitigations in the Radio Frequency Domain](https://www.sbir.gov/node/1208173): Great paper from the American governments Small Business Innovation Research incubator.
+-   [DeepSig Inc: Wireless Threat Detection and Analytics](https://www.deepsig.ai/threat-warning-analytics): OmniSIG Sensor makes it possible to rapidly detect emitters across a wide range of bands and emitter types while on small or mobile platforms or while deployed on radio infrastructure devices making it an ideal enabler for coverage mapping, usage mapping, interference hunting, unauthorized emitter hunting, cyber-threat detection, and other mobile mapping applications
 
+#### Cyber Defence Foundations Great Papers
+
+-   TODO
+-   TODO
 
 #### Cisco IOS
 
@@ -132,7 +128,7 @@ Security Violation Count   : 0
 Before any packets have flowed through the switch, can see it hasn't learned any MACs yet:
 
 ```
-Switch#show mac-address-table 
+Switch#show mac-address-table
 Mac Address Table
 ------------------------------------------
 Vlan    Mac Address      Type        Ports
@@ -143,7 +139,7 @@ Vlan    Mac Address      Type        Ports
 After pushing some ICMP echo packets (`ping`) from the connected client computer through the switch to the router, can see it learns the MAC of the client (`0009.7c41.3c61`) that is connected to the specific Ethernet jack on the switch:
 
 ```
-Switch#show mac-address-table 
+Switch#show mac-address-table
 Mac Address Table
 ------------------------------------------
 Vlan    Mac Address      Type        Ports
@@ -172,14 +168,81 @@ Security Violation Count   : 1
 
 ## Threat Modelling
 
+#### Threat Modelling Gems
+
+-   [OWSAP Threat Dragon](https://threatdragon.github.io/) an open-source threat modelling tool from OWASP. In a nutshell creates threat model diagrams as part of a secure SDLC. Model an applications architecture visually, the stores, actors, processes, data flows and trust boundaries. Record possible threats and the decided mitigations. Visually models the threat model components and threat surfaces. Generates reports. Supports the [STRIDE](http://TODO), [CIA]() and [LINDDUN]() methodologies.
+-   [Microsoft Threat Modeling Tool](https://docs.microsoft.com/en-us/azure/security/develop/threat-modeling-tool) allows software architects to identify and mitigate potential security issues early, when they are relatively easy and cost-effective to resolve. It was designed with non-security experts in mind, making threat modeling easier for all developers by providing clear guidance on creating and analysing threat models.
+-   [MITRE StixViz](https://github.com/STIXProject/stix-viz) an open-source threat modelling and visualisation tool by MITRE Corporation, visualises Structured Threat Information eXpression (STIX) documents as a node-link tree with the root at the top of the XML structure.
+
+#### Threat Modelling Great Papers
+
+-   TODO
+-   TODO
 
 ## Vulnerability Assessment
 
+Identification of the vulnerabilities that exist in a computing system, triages and ranks based on risk and recommends remediation that balances constraints (e.g., environment, design, cost, return on investment).
+
+1. Vulnerability Identification; two broad categories known and unknown
+2. Analysis
+3. Risk assessment
+4. Remediation
+
+In terms of the [MITRE ATT&CK framework](https://attack.mitre.org/) vulnerability assessment falls into stage 1, the Reconnaissance stage:
+
+1. Reconnaissance
+1. Resource Development
+1. Initial Access
+1. Execution
+1. Persistence
+1. Privilege Escalation
+1. Defense Evasion
+1. Credential Access
+1. Discovery
+1. Lateral Movement
+1. Collection
+1. Command and Control
+1. Exfiltration
+1. Impact
+
+Types of scanning:
+
+-   Basic audit scans; such as in Australia the Information Security Manual (ISM), ISO 27001, PCI DSS
+-   Managed security scans; automated software based solutions
+-   In-depth scans; pen testing
+
+Other noteworthy:
+
+-   Hunt teams are a recent movement, in which dedicated specialist team embedded within an organisation leverage data science, ML, big data to proactively and creatively look for anamoloies and threat signatures. As threats are
+-   Classification of vulnerabilities; host, network, application, active or passive, in-house vs outsourced, internal vs external
+
+Basic tools of the trade in this realm:
+
+-   `nmap` basics. Again most units in this degree include this.
+    -   `nmap -sP` ICMP echo scan, failing hosts are picked up in ARP table
+    -   `nmap -sU` layer 4 UDP scan (port knock)
+    -   `nmap -sS` layer 4 TCP SYN scan (port knock)
+    -   `nmap -sV` tries to service fingerprint based on known signatures
+-   [Tenable Nessus](https://www.tenable.com/products/nessus) a closed-source vulnerability scanner by tenable. They are a world leader in this space for a reason, amazing.
+-   [Burb Suite](https://portswigger.net/burp) the leading web security and penetration testing toolkit. Great features such as a MITM proxy that you can configure your browsers to tunnel traffic through.
+-   [OWASP ZAP](https://www.zaproxy.org/) the famous ZAP (Zed Attack Proxy) tool by OWASP. The world’s most widely used web app scanner. Free and open source. Actively maintained by a dedicated international team of volunteers.
+-   [Nikto]() or closed-source version [Netsparker]()
+-   [skipfish](https://www.kali.org/tools/skipfish/)
+
+#### Vulnerability Assessment Gems
+
+-   [Damn Vulnerable Web App](https://github.com/digininja/DVWA) a PHP/MySQL web application that is damn vulnerable. Its main goal is to be an aid for security professionals to test their skills and tools in a legal environment, help web developers better understand the processes of securing web applications and to aid both students & teachers to learn about web application security in a controlled class room environment.
+-   [OWASP Risk Rating Methodology](https://owasp.org/www-community/OWASP_Risk_Rating_Methodology)
+- [NIST 800-30 - Guide for Conducting Risk Assessments](https://csrc.nist.gov/publications/detail/sp/800-30/rev-1/final)
+- [Government of Canada - Harmonized TRA Methodology](https://cyber.gc.ca/en/guidance/harmonized-tra-methodology-tra-1)
+- [Mozilla Risk Assessment Summary](https://infosec.mozilla.org/guidelines/assessing_security_risk)
+- [Mozilla Rpaid Risk Assessment (RRA)](https://infosec.mozilla.org/guidelines/risk/rapid_risk_assessment.html)
+
+#### Vulnerability Assessment Papers
 
 ## Host and Network Security Monitoring
 
 PCAPs. Splunk.
-
 
 ## Data Collection and Analysis
 
@@ -191,16 +254,10 @@ AI and ML.
 
 ## Machine Learning for Cyber Defence
 
-
 ## Machine Learning based Intrusion Detection
-
 
 ## Incident Response 1
 
-
 ## Incident Response 2
 
-
 ## SOC Insights
-
-
