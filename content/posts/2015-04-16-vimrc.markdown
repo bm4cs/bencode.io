@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Vim"
+title: "Vim (2022 edition)"
 slug: "vim"
 date: "2007-04-16 21:50:01"
 lastmod: "2022-01-23 22:04:38"

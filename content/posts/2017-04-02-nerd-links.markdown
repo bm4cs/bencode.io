@@ -9,7 +9,7 @@ categories:
     - geek
 ---
 
-*Updated: 2022-03-07*
+_Updated: 2022-03-07_
 
 This is a list of valuable (to me) developer resources that I've managed to stumble across (hacker news, lobste.rs, cron.weekly, peers, university, etcetera).
 
@@ -176,8 +176,8 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Security
 
-- [The Ultimate List of SANS Cheat Sheets](https://www.sans.org/blog/the-ultimate-list-of-sans-cheat-sheets/) when it comes to quality cyber-security training and certs SANS is world leading. They have an amazing collection of thoughtful and useful cheat sheets from topics such as *Writing Tips for IT Professionals*, *Windows to Unix Cheat Sheet*, to using pieces of software such as `nmap`, `netcat`, `burb`. Its a treasure trove!
-- [Lenny Zeltser's IT and Information Security Cheat Sheets](https://zeltser.com/cheat-sheets/) speaking of thoughtful cheat sheets, lots of wisdom here
+-   [The Ultimate List of SANS Cheat Sheets](https://www.sans.org/blog/the-ultimate-list-of-sans-cheat-sheets/) when it comes to quality cyber-security training and certs SANS is world leading. They have an amazing collection of thoughtful and useful cheat sheets from topics such as _Writing Tips for IT Professionals_, _Windows to Unix Cheat Sheet_, to using pieces of software such as `nmap`, `netcat`, `burb`. Its a treasure trove!
+-   [Lenny Zeltser's IT and Information Security Cheat Sheets](https://zeltser.com/cheat-sheets/) speaking of thoughtful cheat sheets, lots of wisdom here
 -   [Linux reverse engineering 101](https://github.com/michalmalik/linux-re-101) collection of resources for linux reverse engineering.
 -   [Explain like I'm 5: Kerberos](http://www.roguelynn.com/words/explain-like-im-5-kerberos)
 -   [OAuth 2.0 Security Best Current Practices](https://tools.ietf.org/html/draft-ietf-oauth-security-topics-15)
@@ -202,6 +202,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Text wrangling
 
+-   [CyberChef](https://gchq.github.io/CyberChef/) the ultimate open-source (by GCHQ) text wrangler you'll ever need, life changing
 -   [desed](https://github.com/SoptikHa2/desed) beautiful TUI that provides users with comfortable interface and practical debugger, used to step through complex sed scripts
 -   [sed One Liners](http://www.pement.org/sed/sed1line.txt) huge collection of useful sed examples
 -   [xsv](https://github.com/BurntSushi/xsv) CLI for indexing, slicing, analyzing, splitting and joining CSV files
