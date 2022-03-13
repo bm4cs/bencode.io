@@ -41,6 +41,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Architecture
 
+-   [.NET Microservices: Architecture for Containerized .NET Applications](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/) a fantastic resource for working with the modern .NET stack (post 2022)
 -   [Communicating Sequential Processes](http://www.usingcsp.com/cspbook.pdf) Tony Hoare's seminal 1977 paper on concurrency and CSP
 -   [Why Segment Went Back to a Monolith](https://www.infoq.com/news/2020/04/microservices-back-again/) microservices come with serious tradeoffs
 -   [All software sucks](http://harmful.cat-v.org/software/) complexity is the bane of all software, simplicity is the most important quality

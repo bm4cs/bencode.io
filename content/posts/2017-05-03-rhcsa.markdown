@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "RHCSA"
+title: "Red Hat Certified System Administrator 8 (RHCSA)"
 slug: "rhcsa"
 draft: false
 date: "2017-05-03 20:51:43"
@@ -12,6 +12,7 @@ tags:
     - certification
     - rhel
     - redhat
+    - linux
 ---
 
 My Red Hat Certified System Adminirator (RHCSA) 8 exam preparation, based on [Sander van Vugt's](https://www.sandervanvugt.com/) superb [video courses](https://www.sandervanvugt.com/red-hat-video-courses/).
