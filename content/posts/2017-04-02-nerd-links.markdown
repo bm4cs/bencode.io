@@ -79,6 +79,12 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 -   [A Practical Introduction to Container Security](https://cloudberry.engineering/article/practical-introduction-container-security/)
 -   [Webtop](https://docs.linuxserver.io/images/docker-webtop) full desktop environments in officially supported flavors accessible via any modern web browser
 
+## Cheat sheets
+
+-   [Linux Commands - A practical reference](http://www.pixelbeat.org/cmdline.html) an amazing cheat sheet, quick reference
+-   [The Ultimate List of SANS Cheat Sheets](https://www.sans.org/blog/the-ultimate-list-of-sans-cheat-sheets/) when it comes to quality cyber-security training and certs SANS is world leading. They have an amazing collection of thoughtful and useful cheat sheets from topics such as _Writing Tips for IT Professionals_, _Windows to Unix Cheat Sheet_, to using pieces of software such as `nmap`, `netcat`, `burb`. Its a treasure trove!
+-   [Lenny Zeltser's IT and Information Security Cheat Sheets](https://zeltser.com/cheat-sheets/) speaking of thoughtful cheat sheets, lots of wisdom here
+
 ## Culture
 
 -   [You Are Not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) if you’re using a technology that originated at a large company, but your use case is very different, it’s unlikely that you arrived there deliberately; no, it’s more likely you got there through a ritualistic belief that imitating the giants would bring the same riches.
@@ -90,12 +96,12 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 -   [Things I Wished More Developers Knew About Databases](https://medium.com/@rakyll/things-i-wished-more-developers-knew-about-databases-2d0178464f78)
 -   [SQL Coding Standards](http://wiki.c2.com/?AntiPatternsCatalog)
+-   [PostgreSQL Course: A Curious Moon](https://bigmachine.io/products/a-curious-moon/) learn PostgreSQL the way the pros do: on the job and under pressure. You'll assume the role of interim DBA at aerospace startup Red:4, exploring data from the Cassini mission!
 
 ## Development
 
 -   [What To Code](https://what-to-code.com) inspiration and ideas
 -   [Why the developers who use Rust love it so much](https://stackoverflow.blog/2020/06/05/why-the-developers-who-use-rust-love-it-so-much/)
--   [Smocker](https://smocker.dev/) simple HTTP mock server, uses YAML to define mocks and responses
 
 ## Diagramming
 
@@ -107,6 +113,13 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 -   [HexDSL](https://git.hexdsl.co.uk/HexDSL/dots)
 -   [LukeSmithxyz](https://github.com/LukeSmithxyz/voidrice)
 -   [uoou](https://gitlab.com/uoou)
+
+## Encoding and Serialization
+
+-   [The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)](https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/)
+-   [Illustrated jq tutorial](https://mosermichael.github.io/jq-illustrated/dir/content.html) jq is a lightweight and flexible command-line JSON processor
+-   [Cap'n Proto](https://capnproto.org/)
+-   [Google Protocol Buffers](https://github.com/google/protobuf)
 
 ## Git
 
@@ -129,6 +142,10 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 -   [Immutability Patterns in Go](https://rauljordan.com/2020/05/25/immutability-patterns-in-go.html)
 -   [Writing An Interpreter In Go](https://interpreterbook.com/)
 
+## gRPC
+
+-   [gRPC - Best Practices](https://kreya.app/blog/grpc-best-practices/)
+
 ## Hardware
 
 -   [Backblaze hard drive stats](https://www.backblaze.com/blog/backblaze-hard-drive-stats-q1-2020/)
@@ -139,6 +156,9 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Linux
 
+-   [Linux Commands - A practical reference](http://www.pixelbeat.org/cmdline.html) an amazing cheat sheet, quick reference
+-   [16 Linux server monitoring commands you really need to know](https://insights.hpe.com/articles/16-linux-server-monitoring-commands-you-really-need-to-know-1703.html)
+-   [Best 15 Unix Command Line Tools](https://www.edumobile.org/linux/best-15-unix-command-line-tools/)
 -   [An In-Depth Guide to iptables](https://www.booleanworld.com/depth-guide-iptables-linux-firewall/) covers pretty much every angle of iptables, from basic rules to NAT'ing to protocols and interfaces.
 -   [mdadm Cheat Sheet](http://www.ducea.com/2009/03/08/mdadm-cheat-sheet/) practical commands when running software raid on Linux
 -   [Async IO on Linux: select, poll, and epoll](https://jvns.ca/blog/2017/06/03/async-io-on-linux--select--poll--and-epoll/) thorough write-up on 'select', 'poll' and 'epoll' system calls, and how to measure them.
@@ -169,11 +189,20 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 -   [What Every Developer Should Know About TCP](https://robertovitillo.com/what-every-developer-should-know-about-tcp/)
 -   [SSH Tips & Tricks](https://smallstep.com/blog/ssh-tricks-and-tips/) 2FA, securely forwarding agents, quitting from stuck sessions and using `mosh` or `tmux`
 -   [High Availability Load Balancers with Maglev](https://blog.cloudflare.com/high-availability-load-balancers-with-maglev/) CloudFlare on their load balancing stack, BGP, Maglev connection scheduling, IPVS, UDP encapsulation for faster delivery
+-   [Networking for Game Programmers: UDP vs TCP](https://gafferongames.com/post/udp_vs_tcp/)
 
 ## Open source
 
 -   [Google Open Source](https://opensource.google.com/projects/explore/featured) 2000+ OSS projects managed by Google
 -   [NSA on GitHub](https://nationalsecurityagency.github.io)
+
+## Papers
+
+-   Coming soon
+
+## Python
+
+-   [Python Design Patterns](https://python-patterns.guide/)
 
 ## Security
 
@@ -184,16 +213,11 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 -   [OAuth 2.0 Security Best Current Practices](https://tools.ietf.org/html/draft-ietf-oauth-security-topics-15)
 -   [SSHHeatmap](https://github.com/meesaltena/SSHHeatmap) script that generates a heatmap of IP's that made failed SSH login attempts using `/var/log/auth.log`
 
-## Serialization
-
--   [Illustrated jq tutorial](https://mosermichael.github.io/jq-illustrated/dir/content.html) jq is a lightweight and flexible command-line JSON processor
--   [Cap'n Proto](https://capnproto.org/)
--   [Google Protocol Buffers](https://github.com/google/protobuf)
-
 ## Shell
 
 -   [Makeself](https://makeself.io/) a self-extracting archiving tool for Unix systems, in 100% shell script
 -   [5 Types Of ZSH Aliases You Should Know](https://thorsten-hans.com/5-types-of-zsh-aliases) alias suffixes & global aliases, plus other neat tricks
+-   [Bash aliases you can’t live without](https://opensource.com/article/19/7/bash-aliases)
 
 ## systemd
 
@@ -208,9 +232,29 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 -   [sed One Liners](http://www.pement.org/sed/sed1line.txt) huge collection of useful sed examples
 -   [xsv](https://github.com/BurntSushi/xsv) CLI for indexing, slicing, analyzing, splitting and joining CSV files
 
-## Vim
+## Talks
 
--   [An Introduction to Vim for SysAdmins](https://www.linux.com/learn/intro-to-linux/2017/2/vim-sysadmins)
+-   [Rich Hickey on Simple Made Easy]()
+-   [Mike Acton on Data-orientated Design]()
+-   [Jonathan Blow on Programming Aesthetics learned from making independent games]()
+-   [Eskil Steenberg on How I program in C]()
+-   [Rich Hickey on Hammock Driven Development]()
+-   [Brian Will on Why OOP is Bad]()
+-   [Abner Coimbre on What Programming is Never About]()
+-   [Scott Meyers on CPU Caches and Why You Care]()
+-   [Jeff and Casey Show on The Evils of Non-native Programming]()
+-   [Jeff and Casey’s Guide to Becoming a Bigger Programmer]()
+-   [Hadi Hariri on The Silver Bullet Syndrome]()
+-   [Bryan Cantrill on Fork Yeah! The Rise and Development if illumos]()
+-   [Rob Pike on Concurrency Is Not Parallelism]()
+-   [James Mickens on JavaScript]()
+-   [Liz Rice on Containers From Scratch]()
+-   [James Mickens on Why Do Keynote Speakers Keep Suggesting That Improving Security Is Possible?]()
+
+## Testing
+
+-   [Smocker](https://smocker.dev/) simple HTTP mock server, uses YAML to define mocks and responses
+-   [MockServer](https://www.mock-server.com/) for any system you integrate with via HTTP or HTTPS MockServer can be used as: a mock configured to return specific responses for different requests, a proxy recording and optionally modifying requests and responses or as both a proxy for some requests and a mock for other requests at the same time
 
 ## Web
 
