@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Escaping Google Workspaces (Google Apps or G Suite)"
+title: "Migrating off Google Workspaces (Google Apps or G Suite)"
 draft: false
 slug: "google"
 date: "2022-01-30 15:42:47+10:00"
@@ -12,7 +12,7 @@ tags:
     - google
 ---
 
-# Google
+# Google Workspace (formally Google Apps, formally G Suite)
 
 After years of frustration in the Google platform, specifically _G Suite_ (also known as _Google Apps_ or _Google Workspace_) it all recently came to a head for me after I received a couple of Google Nest cameras as gifts last Christmas.
 
