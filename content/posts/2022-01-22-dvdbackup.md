@@ -1,8 +1,8 @@
 ---
 layout: post
 title: "DVD backups on GNU/Linux"
-draft: true
-slug: "dvdbaks"
+draft: false
+slug: "dvds"
 date: "2022-01-21 16:44:23"
 lastmod: "2022-01-21 16:44:26"
 comments: false
@@ -14,7 +14,7 @@ tags:
     - linux
 ---
 
-This is how I like to backup my old physical DVD collection which I own legitimately. I don't condone piracy or theft.
+This is how I like to create digital copies (i.e., backups) of my physical DVD collection, which I own legitimately. I don't condone piracy or theft.
 
 # Backup instructions
 

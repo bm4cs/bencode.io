@@ -262,7 +262,15 @@ Basic tools of the trade in this realm:
 
 ## Host and Network Security Monitoring
 
-Coming soon.
+#### Host and Network Security Gems
+
+- `iptables` firewall organises its rule policies as a set of tables that hold chains, that hold rules.
+- Common tables include `filter`, `nat` and `mangle`
+- Common chains are `INPUT` for packets inbound to host, `OUTPUT` opposite of `INBOUND`, `FORWARD` packets destined for anohter NIC on host, `PREROUTING` for packet manipulation
+- To list the rule chains on the `filter` table: `iptables -t filter -L -n`
+- Port forward port everything on 8080 to port 80: `iptables -t nat -A PREROUTING -d 10.1.1.131 -p tcp --dport 8080 -j DNAT --to 10.1.1.131:80`
+- [pfSense](https://www.pfsense.org/) is an insanely powerful network router and firewall based on FreeBSD. It offers a neat web UI. Notable features include traffic shaping, VPNs using IPsec or PPTP, captive portal, stateful firewall, network address translation, 802.1q support for VLANs and dynamic DNS.
+
 
 ## Data Collection and Analysis
 
