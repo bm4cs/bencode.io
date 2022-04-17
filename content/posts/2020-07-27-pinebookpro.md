@@ -13,11 +13,11 @@ tags:
     - arch
 ---
 
-_Updated 2022-04-11: Installed a minimal version of Manjaro, a flavour of Arch_
+_Updated 2022-04-11: Installed a minimal version of Manjaro, a SLICK flavour of Arch_
 
 The [pinebook pro](https://www.pine64.org/pinebook-pro/) is a beautiful 64-bit ARM based laptop, that reminds me of the form factor of a modern macbook air, shipping with a premium magnesium alloy shell, 64GB eMMC and a 10,000 mAH battery. All this for $200.
 
-As a NIX machine, I decided to stick with Manjaro but I have dreams to put OpenBSD on it.
+As a NIX machine, I've found Manjaro to be delightful. I have dreams of one day installing OpenBSD.
 
 1. On another Linux box download and prep a microSD card with an ARM Linux distro. Tne [PINE64 NOOB wiki](https://wiki.pine64.org/wiki/NOOB#Setting_Up_Your_Single_Board_Computer_-_What_do_You_Need_to_Get_Started) spell everything out nicely. 
 1. Pick you distro, for simplicity I'm sticking with the [Manjaro ARM with no desktop](https://wiki.pine64.org/wiki/Pinebook_Pro_Software_Release#Manjaro_ARM_with_no_desktop) pre-baked image that is known to work well with the pinebook pro hardware.

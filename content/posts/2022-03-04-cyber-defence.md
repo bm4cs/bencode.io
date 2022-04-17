@@ -25,26 +25,39 @@ Semester 1 2022 has snuck up on me again. This semester as part of the UNSW and 
 
 The unit looks terrific. 11 weeks of jam packed, fascinating topics around industry methodologies for threat and vulnerability modelling, to actual working practical knowledge including building a SIEM with Splunk, network packet tracing en mass and taking a scientific approach to finding anomalies and potential threat signatures by exploiting ML across the many data points that will be captured. Here's the modules:
 
--   [Network Security Operations](#network-security-operations)
-    -   [Cyber Defence Foundations Gems](#cyber-defence-foundations-gems)
-    -   [Cyber Defence Foundations Papers](#cyber-defence-foundations-papers)
-    -   [Cisco IOS](#cisco-ios)
--   [Threat Modelling](#threat-modelling)
-    -   [Threat Modelling Gems](#threat-modelling-gems)
-    -   [Threat Modelling Papers](#threat-modelling-papers)
--   [Vulnerability Assessment](#vulnerability-assessment)
-    -   [Vulnerability Assessment Gems](#vulnerability-assessment-gems)
-    -   [Vulnerability Assessment Papers](#vulnerability-assessment-papers)
--   [Host and Network Security Monitoring](#host-and-network-security-monitoring)
--   [Data Collection and Analysis](#data-collection-and-analysis)
--   [Signature based defence](#signature-based-defence)
--   [Machine Learning for Cyber Defence](#machine-learning-for-cyber-defence)
--   [Machine Learning based Intrusion Detection](#machine-learning-based-intrusion-detection)
+-   [1 Cyber Defence Foundations](#1-cyber-defence-foundations)
+    -   [1.1 Cyber Defence Foundations Gems](#1.1-cyber-defence-foundations-gems)
+    -   [1.2 Cyber Defence Foundations Papers](#1.2-cyber-defence-foundations-papers)
+    -   [1.3 Cisco IOS](#1.3-cisco-ios)
+-   [2 Threat Modelling](#2-threat-modelling)
+    -   [2.1 Threat Modelling Gems](#2.1-threat-modelling-gems)
+    -   [2.2 Threat Modelling Papers](#2.2-threat-modelling-papers)
+-   [3 Vulnerability Assessment](#3-vulnerability-assessment)
+    -   [3.1 Vulnerability Assessment Gems](#3.1-vulnerability-assessment-gems)
+    -   [3.2 Vulnerability Assessment Papers](#3.2-vulnerability-assessment-papers)
+-   [4 Host and Network Security Monitoring](#4-host-and-network-security-monitoring)
+    -   [4.1 Host and Network Security Gems](#4.1-host-and-network-security-gems)
+    -   [4.2 Host and Network Security Papers](#4.2-host-and-network-security-papers)
+-   [5 Data Collection and Analysis](#5-data-collection-and-analysis)
+    -   [5.1 Data Collection and Analysis Gems](#5.1-data-collection-and-analysis-gems)
+    -   [5.2 Data Collection and Analysis Papers](#5.2-data-collection-and-analysis-papers)
+-   [6 Signature based defence](#6-signature-based-defence)
+    -   [6.1 Signature based defence Gems](#6.1-signature-based-defence-gems)
+    -   [6.2 Signature based defence Papers](#6.2-signature-based-defence-papers)
+-   [7 Machine Learning for Collection and Detection](#7-machine-learning-for-collection-and-detection)
+    -   [7.1 Machine Learning for Collection and Detection Gems](#7.1-machine-learning-for-collection-and-detection-gems)
+        -   [Creating custom Snort rules](#creating-custom-snort-rules)
+        -   [Crafting packets with scapy](#crafting-packets-with-scapy)
+        -   [Using Security Onions MySQL DB of raw events](#using-security-onions-mysql-db-of-raw-events)
+    -   [7.2 Machine Learning for Collection and Detection Papers](#7.2-machine-learning-for-collection-and-detection-papers)
+-   [8 Machine Learning based Intrusion Detection](#8-machine-learning-based-intrusion-detection)
+    -   [8.1 Machine Learning based Intrusion Detection Gems](#8.1-machine-learning-based-intrusion-detection-gems)
+    -   [8.2 Machine Learning based Intrusion Detection Papers](#8.2-machine-learning-based-intrusion-detection-papers)
 -   [Incident Response 1](#incident-response-1)
 -   [Incident Response 2](#incident-response-2)
 -   [SOC Insights](#soc-insights)
 
-## Network Security Operations
+## 1 Cyber Defence Foundations
 
 TODO
 
@@ -55,37 +68,36 @@ TODO
 
 A forest from the trees overview of the broad field of SecOps:
 
--   Collect
-    -   Network-based
-        -   IDS
-        -   Logs
-    -   Host-based
-        -   Logs
-        -   IDS
--   Detect
-    -   Anomaly
-        -   Machine learning (ML)
-        -   HoneyNet
-        -   Honeytokens
-    -   Reputation
-        -   Signature
-        -   IDS rules
-        -   IOCs
--   Protect
-    -   Prevent
-        -   Whitelisting, patching
-        -   Architecture
-        -   Pen testing
-    -   Limit impact
-        -   Privilege restriction and zoning
-        -   Backups
--   Respond
-    -   Investigate
-        -   Validation
-        -   Correlation
-    -   Remediate
+-   [1 Cyber Defence Foundations](#1-cyber-defence-foundations)
+    -   [1.1 Cyber Defence Foundations Gems](#1.1-cyber-defence-foundations-gems)
+    -   [1.2 Cyber Defence Foundations Papers](#1.2-cyber-defence-foundations-papers)
+    -   [1.3 Cisco IOS](#1.3-cisco-ios)
+-   [2 Threat Modelling](#2-threat-modelling)
+    -   [2.1 Threat Modelling Gems](#2.1-threat-modelling-gems)
+    -   [2.2 Threat Modelling Papers](#2.2-threat-modelling-papers)
+-   [3 Vulnerability Assessment](#3-vulnerability-assessment)
+    -   [3.1 Vulnerability Assessment Gems](#3.1-vulnerability-assessment-gems)
+    -   [3.2 Vulnerability Assessment Papers](#3.2-vulnerability-assessment-papers)
+-   [4 Host and Network Security Monitoring](#4-host-and-network-security-monitoring)
+    -   [4.1 Host and Network Security Gems](#4.1-host-and-network-security-gems)
+    -   [4.2 Host and Network Security Papers](#4.2-host-and-network-security-papers)
+-   [5 Data Collection and Analysis](#5-data-collection-and-analysis)
+    -   [5.1 Data Collection and Analysis Gems](#5.1-data-collection-and-analysis-gems)
+    -   [5.2 Data Collection and Analysis Papers](#5.2-data-collection-and-analysis-papers)
+-   [6 Signature based defence](#6-signature-based-defence)
+    -   [6.1 Signature based defence Gems](#6.1-signature-based-defence-gems)
+    -   [6.2 Signature based defence Papers](#6.2-signature-based-defence-papers)
+-   [7 Machine Learning for Cyber Defence](#7-machine-learning-for-cyber-defence)
+    -   [7.1 Machine Learning for Cyber Defence Gems](#7.1-machine-learning-for-cyber-defence-gems)
+    -   [7.2 Machine Learning for Cyber Defence Papers](#7.2-machine-learning-for-cyber-defence-papers)
+-   [Machine Learning based Intrusion Detection](#machine-learning-based-intrusion-detection)
+-   [Machine Learning based Intrusion Detection gems](#machine-learning-based-intrusion-detection-gems)
+-   [Machine Learning based Intrusion Detection papers](#machine-learning-based-intrusion-detection-papers)
+-   [Incident Response 1](#incident-response-1)
+-   [Incident Response 2](#incident-response-2)
+-   [SOC Insights](#soc-insights)
 
-#### Cyber Defence Foundations Gems
+#### 1.1 Cyber Defence Foundations Gems
 
 -   Cisco Packet Tracer on Windows. Actually mind blowing. A full blown network designer and emulator, including end point devices (NICs, operating systems), routers, switches, wireless devices, WAN emulation and more. You can cable between each device (e.g., copper crossover, copper straight-through, etc), bring up cisco shells on the routers and switches for advanced router configurations and setup fine grained subnets, IPs, VLANs, you name it. You can then jump on the end point hosts (e.g., windows or linux machines), start a shell up and trying exploring the route tables, ARP, `ping`, like you're on a full blown OS. For years I've wondered how networking people learn and play around with physical like networking techniques without having to setup physical devices. This is it! Insanely cool.
 -   [Ettercap](https://www.ettercap-project.org/) is an amazing program for fooling around with common network protocols and services. Here we used it to perform a MITM attack by pretending to be a DHCP server (spoofing).
@@ -96,13 +108,13 @@ A forest from the trees overview of the broad field of SecOps:
 -   [SBIR: Cyber Vulnerabilities and Mitigations in the Radio Frequency Domain](https://www.sbir.gov/node/1208173): Great paper from the American governments Small Business Innovation Research incubator.
 -   [DeepSig Inc: Wireless Threat Detection and Analytics](https://www.deepsig.ai/threat-warning-analytics): OmniSIG Sensor makes it possible to rapidly detect emitters across a wide range of bands and emitter types while on small or mobile platforms or while deployed on radio infrastructure devices making it an ideal enabler for coverage mapping, usage mapping, interference hunting, unauthorized emitter hunting, cyber-threat detection, and other mobile mapping applications
 
-#### Cyber Defence Foundations Papers
+#### 1.2 Cyber Defence Foundations Papers
 
 -   [Novokhrestov, A., Konev, A., Shelupanov, A. and Buymov, A., 2020, March. Computer network threat modelling. In Journal of Physics Conference Series (Vol. 1488, p. 012002)](/papers/security/defensive/Novokhrestov_2020_ComputerNetworkThreatModelling.pdf)
 -   [Bakhshi, Z., Balador, A. and Mustafa, J., 2018, April. Industrial IoT security threats and concerns by considering Cisco and Microsoft IoT reference models. In 2018 IEEE Wireless Communications and Networking Conference Workshops (WCNCW) (pp. 173-178). IEEE.](/papers/security/defensive/Bakhshi_2018_IndustrialInternetOfThingsSecurityThreatsByConsideringCiscoAndMicrosoftReferenceModels.pdf)
 -   [Qian, K., Parizi, R.M. and Lo, D., 2018, December. OWASP Risk Analysis Driven Security Requirements Specification for Secure Android Mobile Software Development. In 2018 IEEE Conference on Dependable and Secure Computing (DSC) (pp. 1-2). IEEE.](/papers/security/defensive/Qian_2018_OWASPRiskAnalysisDrivenSecurityRequirementsForSecureAndroidMobileSoftware.pdf)
 
-#### Cisco IOS
+#### 1.3 Cisco IOS
 
 Getting to play with the internals of Cisco routers and switches has been a blast. These devices run Cisco's IOS (Internetwork OS). As a user of IOS get to use a high-level shell when on the devices. For example, here I configure a specific Ethernet port on a [Cisco Catalyst Ws-C2960-24TT switch](https://www.cisco.com/c/en/us/support/switches/catalyst-2960-series-switches/series.html) to prevent MAC address flooding by configuring the specific port to learn the connected clients MAC (sticky) and enforce it:
 
@@ -184,20 +196,20 @@ Last Source Address:Vlan   : 00E0.8FEB.D146:1
 Security Violation Count   : 1
 ```
 
-## Threat Modelling
+## 2 Threat Modelling
 
-#### Threat Modelling Gems
+#### 2.1 Threat Modelling Gems
 
 -   [OWSAP Threat Dragon](https://threatdragon.github.io/) an open-source threat modelling tool from OWASP. In a nutshell creates threat model diagrams as part of a secure SDLC. Model an applications architecture visually, the stores, actors, processes, data flows and trust boundaries. Record possible threats and the decided mitigations. Visually models the threat model components and threat surfaces. Generates reports. Supports the [STRIDE](http://TODO), [CIA]() and [LINDDUN]() methodologies.
 -   [Microsoft Threat Modeling Tool](https://docs.microsoft.com/en-us/azure/security/develop/threat-modeling-tool) allows software architects to identify and mitigate potential security issues early, when they are relatively easy and cost-effective to resolve. It was designed with non-security experts in mind, making threat modeling easier for all developers by providing clear guidance on creating and analysing threat models.
 -   [MITRE StixViz](https://github.com/STIXProject/stix-viz) an open-source threat modelling and visualisation tool by MITRE Corporation, visualises Structured Threat Information eXpression (STIX) documents as a node-link tree with the root at the top of the XML structure.
 
-#### Threat Modelling Papers
+#### 2.2 Threat Modelling Papers
 
 -   [Moustafa, N., Adi, E., Turnbull, B., & Hu, J. (2018). A new threat intelligence scheme for safeguarding industry 4.0 systems. IEEE Access, 6, 32910-32924.](/papers/security/defensive/Moustafa_2018_ANewThreatIntelligenceSchemeForSafeguardingIndustry4Systems.pdf)
 -   [Al-Hawawreh, M., Moustafa, N., Garg, S., & Hossain, M. S. (2020). Deep Learning-enabled Threat Intelligence Scheme in the Internet of Things Networks. IEEE Transactions on Network Science and Engineering.](/papers/security/defensive/Al-Hawawreh_2020_DeepLearningEnabledThreatIntelligenceSchemeInTheInternetOfThingsNetworks.pdf)
 
-## Vulnerability Assessment
+## 3 Vulnerability Assessment
 
 Identification of the vulnerabilities that exist in a computing system, triages and ranks based on risk and recommends remediation that balances constraints (e.g., environment, design, cost, return on investment).
 
@@ -247,7 +259,7 @@ Basic tools of the trade in this realm:
 -   [Nikto]() or closed-source version [Netsparker]()
 -   [skipfish](https://www.kali.org/tools/skipfish/)
 
-#### Vulnerability Assessment Gems
+#### 3.1 Vulnerability Assessment Gems
 
 -   [Damn Vulnerable Web App](https://github.com/digininja/DVWA) a PHP/MySQL web application that is damn vulnerable. Its main goal is to be an aid for security professionals to test their skills and tools in a legal environment, help web developers better understand the processes of securing web applications and to aid both students & teachers to learn about web application security in a controlled class room environment.
 -   [OWASP Risk Rating Methodology](https://owasp.org/www-community/OWASP_Risk_Rating_Methodology)
@@ -256,37 +268,250 @@ Basic tools of the trade in this realm:
 -   [Mozilla Risk Assessment Summary](https://infosec.mozilla.org/guidelines/assessing_security_risk)
 -   [Mozilla Rpaid Risk Assessment (RRA)](https://infosec.mozilla.org/guidelines/risk/rapid_risk_assessment.html)
 
-#### Vulnerability Assessment Papers
+#### 3.2 Vulnerability Assessment Papers
 
 -   [Easttom, Chuck. "Vulnerability Assessment and Management." In The NICE Cyber Security Framework, pp. 241-258. Springer, Cham, 2020.](/papers/security/defensive/Easttom_2020_NICECyberSecurityFramework_VulnerabilityAssessmentAndManagement.pdf)
 
-## Host and Network Security Monitoring
+## 4 Host and Network Security Monitoring
 
-#### Host and Network Security Gems
+TODO: week 4 lecture
 
-- `iptables` firewall organises its rule policies as a set of tables that hold chains, that hold rules.
-- Common tables include `filter`, `nat` and `mangle`
-- Common chains are `INPUT` for packets inbound to host, `OUTPUT` opposite of `INBOUND`, `FORWARD` packets destined for anohter NIC on host, `PREROUTING` for packet manipulation
-- To list the rule chains on the `filter` table: `iptables -t filter -L -n`
-- Port forward port everything on 8080 to port 80: `iptables -t nat -A PREROUTING -d 10.1.1.131 -p tcp --dport 8080 -j DNAT --to 10.1.1.131:80`
-- [pfSense](https://www.pfsense.org/) is an insanely powerful network router and firewall based on FreeBSD. It offers a neat web UI. Notable features include traffic shaping, VPNs using IPsec or PPTP, captive portal, stateful firewall, network address translation, 802.1q support for VLANs and dynamic DNS.
+#### 4.1 Host and Network Security Gems
+
+-   `iptables` firewall organises its rule policies as a set of tables that hold chains, that hold rules.
+-   Common tables include `filter`, `nat` and `mangle`
+-   Common chains are `INPUT` for packets inbound to host, `OUTPUT` opposite of `INBOUND`, `FORWARD` packets destined for anohter NIC on host, `PREROUTING` for packet manipulation
+-   To list the rule chains on the `filter` table: `iptables -t filter -L -n`
+-   Port forward port everything on 8080 to port 80: `iptables -t nat -A PREROUTING -d 10.1.1.131 -p tcp --dport 8080 -j DNAT --to 10.1.1.131:80`
+-   [pfSense](https://www.pfsense.org/) is an insanely powerful network router and firewall based on FreeBSD. It offers a neat web UI. Notable features include traffic shaping, VPNs using IPsec or PPTP, captive portal, stateful firewall, network address translation, 802.1q support for VLANs and dynamic DNS.
+
+#### 4.2 Host and Network Security Papers
+
+-   [Ganin, A.A., Quach, P., Panwar, M., Collier, Z.A., Keisler, J.M., Marchese, D. and Linkov, I., 2020. Multicriteria decision framework for cybersecurity risk assessment and management. Risk Analysis, 40(1), pp.183-199.](#TODO)
+-   [Humayun, M., Niazi, M., Jhanjhi, N.Z., Alshayeb, M. and Mahmood, S., 2020. Cyber security threats and vulnerabilities: a systematic mapping study. Arabian Journal for Science and Engineering, 45(4), pp.3171-3189.](#TODO)
+
+## 5 Data Collection and Analysis
+
+TODO: week 5 lecture
+
+#### 5.1 Data Collection and Analysis Gems
+
+-   Splunk is the defacto player in the SIEM space. Tasks such as real-time file system monitoring of hosts, log collection and centralisation, crafting rule sets for attack vectors you want to keep an eye on and getting proactive alerts when trip wires are set off.
+-   Some concrete data sources Splunk Enterprise supports; local event logs, remote event logs, files and directories, HTTP event collector, TCP/UDP, local performance monitoring, remote performance monitoring, registry monitoring, active directory monitoring, local windows host monitoring (i.e., perflogs), windows network monitoring, windows print monitoring, scripts, powershell v3 parameter inputs.
+-   Splunk Forwarders are akin to agents that run out on the fleet of hosts, they can collate logs and metrics about the host, and firehose this data back to the central splunk cluster. Nothing rocket science going on here.
+
+#### 5.2 Data Collection and Analysis Papers
+
+-   [Sekharan, S.S. and Kandasamy, K., 2017, March. Profiling SIEM tools and correlation engines for security analytics. In 2017 International Conference on Wireless Communications, Signal Processing and Networking (WiSPNET) (pp. 717-721). IEEE](#TODO)
+-   [Majeed, A., ur Rasool, R., Ahmad, F., Alam, M. and Javaid, N., 2019. Near-miss situation based visual analysis of SIEM rules for real time network security monitoring. Journal of Ambient Intelligence and Humanized Computing, pp.1509-1526](#TODO)
+
+## 6 Signature based defence
+
+TODO: week 6 lecture
+
+#### 6.1 Signature based defence Gems
+
+-   Splunk can easily play the role of a HIDS (host IDS) or NIDS (network IDS), identifying common hacks such as DoS, brute force account/password guessing, SQL injection and cross site scripting (XSS) attempts on web apps, DHCP spoofing, ARP poisoning, `nmap` scan and ping sweeps, and plenty more.
+-   `hping3` is a nice little NIX-based packet flooder
+-   For example to stress an `ftpd` running on default 21: `hping3 -c 500 -d 120 -S -w 64 -p 21 --flood --rand-source 10.1.1.12` [read more here](https://www.blackmoreops.com/2015/04/21/denial-of-service-attack-dos-using-hping3-with-spoofed-ip-in-kali-linux/)
+-   In splunk this can be observed by searching on all port 21 inbound packets detected for running this query: _21 and inbound_. From here its simple to create an alert off the back of the query pattern; e.g., trigger an alert when more than 100 per minute port 21 inbound packets are detected.
+-   `hydra` is the goto NIX-based brute forcer. You feed it a list of logins and a list of passwords and it will fire each permutation at the target.
+-   `hydra –L ~/logins.txt –P ~/passwords.txt ftp://10.1.1.12`
+-   Splunk by parsing the logs of the `ftpd` (such as IIS) can be configured to trigger an alert when a certain threshold of `USER` and `PASS` log entries are seen in a time window. In the Splunk web UI its a piece of cake; Search and Reporting > Wack _PASS_ into the omnibox search field > Save As > Alert
+-   Handy common SQL injection detection search patterns are `%' OR '' = ''` and `'' OR 1=1/* ''`
+-   In the Splunk web UI its simple; Search and Reporting > Wack _OR 1 and OR_ into the omnibox search field > Save As > Alert. The noteworth twist on the splunk alert here, is that a single SQL injection attempt must be reported immediately (i.e., don't try to aggregate these events, as just one is harmful). In Splunk this is achieved by setting the _Trigger alert when_ type as _Per-Result_ and setting it to _1_.
+-   Cross site scripting (XSS) happens when a web app persists unsanitised or unencoded user inputs (i.e., suprisingly common) giving attackers a convenient method of injecting markup and javascript, which in turn get rendered out raw to other users.
+-   Splunk queries on the web apps custom logs using patterns such as _script_ to detect `<script>` tags are effective. This does however assume that user provided inputs are logged by the web app.
+
+#### 6.2 Signature based defence Papers
+
+-   [Haider, W., Moustafa, N., Keshk, M., Fernandez, A., Choo, K.K.R. and Wahab, A., 2020. FGMC-HADS: Fuzzy Gaussian mixture-based correntropy models for detecting zero-day attacks from linux systems. Computers & Security, 96, p.101906.](#TODO)
+-   [Wang, Yu, et al. "A fog-based privacy-preserving approach for distributed signature-based intrusion detection." Journal of Parallel and Distributed Computing 122 (2018): 26-35.](#TODO)
+
+## 7 Machine Learning for Collection and Detection
+
+TODO: summarise week 7 lecture
+
+#### 7.1 Machine Learning for Collection and Detection Gems
+
+-   [Security Onion](https://securityonionsolutions.com/software/) (SO) is a complete distribution open source security tools, in much the same way Kali is. However, unlike Kali which targets offensive security tools, SO focuses on defensive tools; particularly around network monitoring collection, detection and analysis.
+-   Useful SO commands; `nsm` to list available network security monitoring tools, `so-status`, `so-start`
+-   [Sguil](https://bammv.github.io/sguil/index.html) (pronounced squeal) is a storage back-end and graphical front-end designed for network security analysts. The GUI (made in tcl/tk) provides access to realtime events, session data, and raw packet captures off the raw network interfaces available. At a network level it offers two interfaces; the management network interface for remote interfacing administratively and the monitoring network interface for sniffing packets on the network promiscuously. Important to note that squil is for managing alert events, the actual detection work is performed by Snort.
+-   [Squert](http://www.squertproject.org/) is a web frontend to Sguil. Similar to Elastic's Kibana it can quickly aggregate and weight huge amounts of time series events, making it intuitive to pose questions of the data.
+-   [Snort](https://www.snort.org/) an open-source Network Intrusion Detection System (NIDS) that detects packets that match a configurable rule set and generates alerts.
+-   [Zeek](https://zeek.org/) (formally bro) is not an active security device, like a firewall or intrusion prevention system. Rather, Zeek sits on a “sensor,” a hardware, software, virtual, or cloud platform that quietly and unobtrusively observes network traffic. Zeek interprets what it sees and creates compact, high-fidelity transaction logs, file content, and fully customized output, suitable for manual review on disk or in a more analyst-friendly tool like a security and information event management (SIEM) system.
+-   [Scapy](https://scapy.net/) is a neat (Python based) TUI for generating different kinds of packets and throwing them at a host. In other words it's a packet generator.
+-   Security Onion ships with a bunch of common malicious activity PCAP's (`/opt/samples/mta`) which is useful for validating, such as `2014-12-07-Neutrino-EK-traffic.pcap` (a common exploit kit)
+-   Speaking of Elastic, the SecurityOnion distribution also packages a fully setup Elastic stack, pre-configured to tip all the raw Zeek/OSSEC (HIDS) and Snort/Suricata (NIDS) data. I'm a big fan of the elastic stack.
+
+Sguil showing sniffed ICMP echo, RDP and nmap port scan:
+
+![Sguil showing sniffed ICMP RDP and nmap port scan](/images/blueteam-sguil-showing-sniffed-ping-rdp-and-nmap-scan.png)
+
+The Squert web UI detailed event view:
+
+![Squert event view](/images/blueteam-squert-webui-event-view.png)
+
+The Squert web UI aggregate view:
+
+![Squert summary view](/images/blueteam-squert-webui-summary-view.png)
+
+##### 7.1.1 Creating custom Snort rules
+
+First up a simple class based rule. The following will detect any ICMP echo (ping) requests sent out from a specific Windows Server host called `DMZ-Corporate`. Things to note:
+
+-   You can assign any packets that match this rule to an alert class such as _attempted recon_
+
+```sh
+echo 'alert icmp 192.168.0.228 any -> any any (msg:"ICMP from Target DMZ-Corporate (1337 h4x07 warning)"; sid:1000000; classtype:attempted-recon;)' > /etc/nsm/rules/local.rules
+rule-update
+```
+
+Once apply any pings that come out of the old Windows box should be sniffed and shown in Sguil like so:
+
+![Sguil showing custom ICMP echo request Snort rule](/images/blueteam-sguil-showing-custom-icmp-snort-rule.png)
+
+Now for a content based rule, that will dig into the guts of a packet.
+
+```sh
+echo 'alert tcp any any -> any 1337 (msg:"New 0 day exploit"; content:"UniqueString1234"; flow:to_server; nocase; sid:1000001; classtype:client-side-exploit; rev:1;)' > /etc/nsm/rules/local.rules
+rule-update
+```
+
+Now throw a TCP packet with a data payload that contains `UniqueString1234` at port 1337 on any host (see notes on `scapy` below), Sguil will now detect and pick it up.
+
+##### 7.1.2. Crafting packets with scapy
+
+Scapy is just a beautiful little TUI. It interactively walks you through the crafting and transmission of a network packet by providing an object model you can whip together and has brilliant tab completion. After firing it up on a TTY you'll be thrown into it's interactive shell, like this:
+
+```sh
+>>> ip = IP()
+>>> ip.dst = "10.1.1.228"
+>>> tcp = TCP()
+>>> tcp.dport = 1337
+>>> payload = "UniqueString1234"
+>>> send(ip/tcp/payload)
+.
+Sent 1 packets.
+```
+
+##### 7.1.3 Using Security Onions MySQL DB of raw events
+
+It's just a vanilla mysql database called `securityonion_db`. Nice and simple!
+
+```
+sudo mysql --defaults-file=/etc/mysql/debian.cnf -D securityonion_db
+mysql> USE securityonion_db;
+mysql> SHOW TABLES;
+```
+
+Using SQL you can now throw whatever questions you have at the data.
+
+What are the 20 most common types of security events? `SELECT COUNT(*) AS tally, signature, signature_id FROM event WHERE status=0 GROUP BY signature ORDER BY tally DESC LIMIT 20;`
+
+What are the 20 most recent types of security events? `SELECT COUNT(*) AS tally, signature, signature_id, timestamp FROM event WHERE status=0 GROUP BY signature ORDER BY timestamp DESC LIMIT 20;`
+
+#### 7.2 Machine Learning for Collection and Detection Papers
+
+-   [A holistic review of network anomaly detection systems: A comprehensive survey (2019)](#TODO)
+-   [Security and Privacy for Artificial Intelligence: Opportunities and Challenges (2021)](#TODO)
+
+## 8 Machine Learning based Intrusion Detection
+
+Here will explore data pre-processing techniques for developing machine learning (ML) algorithms to discover attack events based on behavioural analysis. Unlike predefined static rules driven software such as OSSIM, firewalls and all of the Security Onion packaged tools.
+
+- A huge part of ML goes into data engineering the raw data. That is, preparing and normalising the data is a consistent and tidy way in which a meaningful ML model can be built upon.
+
+#### 8.1 Machine Learning based Intrusion Detection Gems
+
+- When it comes to data science Python amirite?
+- `numpy` provides a powerful N-dimensional array object and many useful linear algebra, Fourier transform, and random number capabilities
+- `scipy` provides many user-friendly and efficient numerical routines such as routines for numerical integration and optimisation
+- `pandas` provides fast, flexible, and expressive data structures designed to make working with "relational" or "labeled" data both easy and intuitive. It aims to be the fundamental high-level building block for doing practical, real world data analysis
+- `matplotlib` is a comprehensive library for creating static, animated, and interactive visualisations
+- `seaborn` built on-top of `matplotlib`, aims to make visualization a central part of exploring and understanding data. Its dataset-oriented plotting functions operate on dataframes and arrays containing whole datasets and internally perform the necessary semantic mappings and statistical aggregations to produce informative plots
+
+##### 8.1.1 Using scikit-learn to mop up data (imputation)
 
 
-## Data Collection and Analysis
 
-Coming soon.
+##### 8.1.2 Data pre-processing (munging) for ML using Python
 
-## Signature based defence
+```py
+import numpy as np
+import scipy as sp
+import pandas as pd
+import matplotlib as mpl
+import seaborn as sns
 
-Coming soon.
+#
+# Read and parse external data (so SLICK)
+# 
+df = pd.read_csv("~/network_data.csv")
+df.head(3)              # show first 3 in pandas data frame (default is 5)
 
-## Machine Learning for Cyber Defence
+#
+# Get help
+# 
+help(pd.read_csv)       # get help on the pandas read_csv function
 
-Coming soon.
+#
+# Explore the data frame
+# 
+df['proto'].dtype       # string is object
+df['saddr'].dtype       # float64
+df.dtypes               # show the types for each columns
+df.columns              # show the labels for each column
+df.shape                # show count of rows and columns ex: (2000, 10)
+df.describe()           # show stats the data such as count, mean, std, percentiles
+print(df)               # show data frame as tabular text and output
 
-## Machine Learning based Intrusion Detection
+#
+# Group by aggregation (GROUP BY)
+# 
+df_label = df.groupby(['label'])      # group by the values in the label column
+df_label.mean()                       # calc the mean for each column against the label
+#
+#           dttl	    shops	    sload	        srate	    dtcpb
+# label					
+# attack	66.932271	20.409031	297635.130502	619.888445	2.097451e+09
+# normal	100.825911	0.052632	7794.605662	    9.111258	1.729420e+08
 
-Coming soon.
+
+#
+# Filtering data (WHERE)
+#
+df_sub = df[ df['dttl'] > 7.1 ]       # basic condition on a column
+df_sub.head(5)                        # first 5 rows
+df[df.isnull().any(axis=1)].head()    # select rows with least one null value (in any column)
+
+
+#
+# Slicing (SELECT col1, col2 and WHERE)
+# 
+df[['proto','dttl']]                  # select by column names
+df[10:20]                             # select * columns only for rows 10-20
+df_sub.loc[1:10,['proto','label']]    # or do both; only rows 1-10 and 2 specific columns
+df.iloc[:, 0]                         # first column
+df.iloc[:, -1]                        # last column 
+df.iloc[0:7]                          # first 7 rows 
+df.iloc[:, 0:2]                       # first 2 columns
+
+#
+# Find and replace
+#
+df_zeros = df.fillna(0)                          # globally replace nulls with 0
+df_zeros[df_zeros.isnull().any(axis=1)].head()   # validate nulls are gone
+
+
+
+```
+
+
+#### 8.2 Machine Learning based Intrusion Detection Papers
+
+-   [A review of intrusion detection systems using machine and deep learning in internet of things: Challenges, solutions and future directions (2020)](#TODO)
+-   [DAD: A Distributed Anomaly Detection system using ensemble one-class statistical learning in edge networks (2021)](#TODO)
 
 ## Incident Response 1
 
