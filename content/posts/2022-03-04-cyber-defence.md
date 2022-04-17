@@ -4,7 +4,7 @@ draft: false
 title: "Cyber Defence Operations"
 slug: "blueteam"
 date: "2022-03-04 17:41:11+11:00"
-lastmod: "2022-03-08 11:26:25+11:00"
+lastmod: "2022-04-17 20:35:19+11:00"
 comments: false
 categories:
     - cyber
@@ -420,24 +420,35 @@ What are the 20 most recent types of security events? `SELECT COUNT(*) AS tally,
 
 Here will explore data pre-processing techniques for developing machine learning (ML) algorithms to discover attack events based on behavioural analysis. Unlike predefined static rules driven software such as OSSIM, firewalls and all of the Security Onion packaged tools.
 
-- A huge part of ML goes into data engineering the raw data. That is, preparing and normalising the data is a consistent and tidy way in which a meaningful ML model can be built upon.
+-   A huge part of ML goes into data engineering the raw data. That is, preparing and normalising the data is a consistent and tidy way in which a meaningful ML model can be built upon. Python (and support data science libs) is a powerful option in this space.
+-   Feature conversion is about shaping the raw data. Popular strategies are a simple _Label Encoder_ or a _One Hot Encoder_ (aka dummy coding).
+-   _Label Encoding_ transforms non-numerical (ordinal) values into, well...numerical values! Values always are between 0 and n. A protocol attribute for example (tcp, udp, snmp) could encode as (0, 1, 2)
+-   _Label Encoding_ depending on the type of model, may decrease performance, as all the data is now represented similarly. 0 signifies the protocol type of tcp, but 0 may be using to signify something else in another field. This lack of representation uniqueness across fields can imped some model types.
+-   _One Hot Encoding_ breaks out (pivots) values into discrete columns (or features). I like to think of one hot encoding as just a simple bitmap of all the features. For example, the protocol feature which contains (tcp, udp snmp) in _One Hot Encoding_ would result in a new column for each value; that is a column for tcp (protocol_tcp), for udp (protocol_udp) and snmp (protocol_snmp). Each containing only simple boolean (bits).
+-   _One Hot Encoding_ clearly could result is a HUGE number of features.
 
 #### 8.1 Machine Learning based Intrusion Detection Gems
 
-- When it comes to data science Python amirite?
-- `numpy` provides a powerful N-dimensional array object and many useful linear algebra, Fourier transform, and random number capabilities
-- `scipy` provides many user-friendly and efficient numerical routines such as routines for numerical integration and optimisation
-- `pandas` provides fast, flexible, and expressive data structures designed to make working with "relational" or "labeled" data both easy and intuitive. It aims to be the fundamental high-level building block for doing practical, real world data analysis
-- `matplotlib` is a comprehensive library for creating static, animated, and interactive visualisations
-- `seaborn` built on-top of `matplotlib`, aims to make visualization a central part of exploring and understanding data. Its dataset-oriented plotting functions operate on dataframes and arrays containing whole datasets and internally perform the necessary semantic mappings and statistical aggregations to produce informative plots
+-   When it comes to data science, Python with the following infamous libraries, #amirite
+    -   `numpy` provides a powerful N-dimensional array object and many useful linear algebra, Fourier transform, and random number capabilities
+    -   `scipy` provides many user-friendly and efficient numerical routines such as routines for numerical integration and optimisation
+    -   `pandas` provides fast, flexible, and expressive data structures designed to make working with "relational" or "labeled" data both easy and intuitive. It aims to be the fundamental high-level building block for doing practical, real world data analysis
+    -   `scikit-learn` wraps up a number of machine learning models, built on top of SciPy
+    -   `matplotlib` is a comprehensive library for creating static, animated, and interactive visualisations
+    -   `seaborn` built on-top of `matplotlib`, aims to make visualization a central part of exploring and understanding data. Its dataset-oriented plotting functions operate on dataframes and arrays containing whole datasets and internally perform the necessary semantic mappings and statistical aggregations to produce informative plots
+-   [Argus](http://argus.tcp4me.com/) is a system and network monitor that includes a web front-end and a MySQL database. Unlike real-time network monitors, Argus is handy for performing retrospective analysis of activity by using a remote MySQL database. First start Argus `sudo argus -P 561 -d` and then start tracing traffic: `./rasqlinsert -M cache -m none -S 10.1.1.10:561 -w mysql://root:admin@10.1.1.12/network_data/tb_data -s +ltime +seq +dur +mean +stddev +smac +dmac +sum +min +max +soui +doui +sco +dco +spkts +dpkts +sbytes +dbytes +rate +srate +drate`
 
 ##### 8.1.1 Using scikit-learn to mop up data (imputation)
 
+In the real world, data is often quite scrappy, missing values and so on.
 
+> A basic strategy to use incomplete datasets is to discard entire rows and/or columns containing missing values. However, this comes at the price of losing data which may be valuable (even though incomplete). A better strategy is to impute the missing values, i.e., to infer them from the known part of the data.
 
-##### 8.1.2 Data pre-processing (munging) for ML using Python
+[Imputation](https://scikit-learn.org/stable/modules/impute.html) is about using a more intelligent model to scavenge the pieces of data that are still valuable.
 
-```py
+##### 8.1.2 Data pre-processing (munging) basics for ML using Python
+
+```python
 import numpy as np
 import scipy as sp
 import pandas as pd
@@ -446,18 +457,18 @@ import seaborn as sns
 
 #
 # Read and parse external data (so SLICK)
-# 
+#
 df = pd.read_csv("~/network_data.csv")
 df.head(3)              # show first 3 in pandas data frame (default is 5)
 
 #
 # Get help
-# 
+#
 help(pd.read_csv)       # get help on the pandas read_csv function
 
 #
 # Explore the data frame
-# 
+#
 df['proto'].dtype       # string is object
 df['saddr'].dtype       # float64
 df.dtypes               # show the types for each columns
@@ -465,15 +476,16 @@ df.columns              # show the labels for each column
 df.shape                # show count of rows and columns ex: (2000, 10)
 df.describe()           # show stats the data such as count, mean, std, percentiles
 print(df)               # show data frame as tabular text and output
+df.method()             # explore methods available on the data frame
 
 #
 # Group by aggregation (GROUP BY)
-# 
+#
 df_label = df.groupby(['label'])      # group by the values in the label column
 df_label.mean()                       # calc the mean for each column against the label
 #
 #           dttl	    shops	    sload	        srate	    dtcpb
-# label					
+# label
 # attack	66.932271	20.409031	297635.130502	619.888445	2.097451e+09
 # normal	100.825911	0.052632	7794.605662	    9.111258	1.729420e+08
 
@@ -488,13 +500,13 @@ df[df.isnull().any(axis=1)].head()    # select rows with least one null value (i
 
 #
 # Slicing (SELECT col1, col2 and WHERE)
-# 
+#
 df[['proto','dttl']]                  # select by column names
 df[10:20]                             # select * columns only for rows 10-20
 df_sub.loc[1:10,['proto','label']]    # or do both; only rows 1-10 and 2 specific columns
 df.iloc[:, 0]                         # first column
-df.iloc[:, -1]                        # last column 
-df.iloc[0:7]                          # first 7 rows 
+df.iloc[:, -1]                        # last column
+df.iloc[0:7]                          # first 7 rows
 df.iloc[:, 0:2]                       # first 2 columns
 
 #
@@ -502,11 +514,78 @@ df.iloc[:, 0:2]                       # first 2 columns
 #
 df_zeros = df.fillna(0)                          # globally replace nulls with 0
 df_zeros[df_zeros.isnull().any(axis=1)].head()   # validate nulls are gone
-
-
-
+df_zeros.method()                                # explore methods available on the data frame
 ```
 
+##### 8.1.3 Label Encoding using Python and scikitlearn
+
+```python
+from sklearn.preprocessing import LabelEncoder
+
+df_zeros = df.fillna(0)                                      # globally replace nulls with 0
+obj_df = df_zeros.select_dtypes(include=['object']).copy()   # only select string (in python, strings are objects)
+
+# mutate the existing data frame with sklearn
+sk_encoder = LabelEncoder()
+df_zeros['proto'] = sk_encoder.fit_transform(df_zeros['proto'].astype('str'))
+df_zeros['saddr'] = sk_encoder.fit_transform(df_zeros['saddr'].astype('str'))
+df_zeros['daddr'] = sk_encoder.fit_transform(df_zeros['daddr'].astype('str'))
+df_zeros['state'] = sk_encoder.fit_transform(df_zeros['state'].astype('str'))
+df_zeros['label'] = sk_encoder.fit_transform(df_zeros['label'].astype('str'))
+
+df_zeros.head(10)
+
+#
+# Everything is now be numerically classified (i.e, label encoded) - AWESOME!
+#
+# 	proto	saddr	daddr	state	dttl	shops	        sload	srate	dtcpb	label
+# 0	0	    2	    13	    2	    0.0	0.0	4.718540e+02	0.983029	0.0	0
+# 1	4	    1	    18	    0	    16.0	0.0	0.000000e+00	0.000000	0.0	1
+# 2	0	    1	    17	    2	    0.0	0.0	5.282374e+02	1.100495	0.0	1
+# 3	2	    11	    123	    7	    0.0	0.0	5.648498e+04	78.451370	0.0	1
+# 4	1	    1	    0	    2	    0.0	0.0	0.000000e+00	0.000000	0.0	1
+# 5	1	    1	    0	    2	    0.0	0.0	0.000000e+00	0.000000	0.0	1
+# 6	1	    1	    0	    2	    0.0	0.0	0.000000e+00	0.000000	0.0	1
+# 7	1	    1	    0	    2	    0.0	0.0	0.000000e+00	0.000000	0.0	1
+# 8	4	    1	    107	    2	    0.0	0.0	1.445783e+06	1807.229004	0.0	1
+# 9	4	    11	    128	    2	    0.0	0.0	2.067480e+06	2153.625244	0.0	1
+```
+
+##### 8.1.4 One Hot Encoding using Python and pandas
+
+```python
+import pandas as pd
+
+df_dummies=pd.get_dummies(df)
+df_dummies.shape                # (5, 161) - 161 columns!
+
+#
+# All values are now broken out into bitmap columns - AWESOME!
+#
+```
+
+##### 8.1.5 A Decision Tree Classifier ML model in action using scikit-learn
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn . tree import DecisionTreeClassifier
+
+df = pd. read_csv ('~/network_data_numbers.csv')
+y = df['label']. values
+x = df.drop('label', axis=1).values
+
+# divide data into training and testing sets
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1)
+
+model = DecisionTreeClassifier()
+model.fit(x_train, y_train)                                   # train the model
+y_pred = model.predict(x_test)                                # prediction using the testing phase
+print("accuracy", accuracy_score(y_pred, y_test))             # measure performance using accuracy 
+print("confusion matrix", confusion_matrix(y_pred, y_test))   # measure performance confusion matrix
+```
 
 #### 8.2 Machine Learning based Intrusion Detection Papers
 
