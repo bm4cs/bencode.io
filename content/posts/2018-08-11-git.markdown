@@ -5,24 +5,21 @@ date: "2018-08-11 18:43:19"
 lastmod: "2020-11-10 19:41:09"
 comments: false
 categories:
-    - git
+     - git
 ---
-
-<!-- vim-markdown-toc GFM -->
 
 * [Aliases](#aliases)
 * [Rebase vs Merge](#rebase-vs-merge)
-    * [Merge](#merge)
-    * [Rebase](#rebase)
-        * [Interactive rebasing (-i)](#interactive-rebasing--i)
+  * [Merge](#merge)
+  * [Rebase](#rebase)
+    * [Interactive rebasing (-i)](#interactive-rebasing-(-i))
 * [Submodules](#submodules)
 * [Detached Head](#detached-head)
 * [Patches](#patches)
-* [Branch name in Bash prompt (PS1)](#branch-name-in-bash-prompt-ps1)
+* [Branch name in Bash prompt (PS1)](#branch-name-in-bash-prompt-(ps1))
+* [Discover large commits in history](#discover-large-commits-in-history)
 
-<!-- vim-markdown-toc -->
-
-# Aliases
+## Aliases
 
 From my [.gitconfig](https://github.com/bm4cs/dotfiles/blob/master/git/gitconfig).
 
@@ -87,11 +84,11 @@ From my [.gitconfig](https://github.com/bm4cs/dotfiles/blob/master/git/gitconfig
         commitstoday = !git log --author=\"`git config user.name`\" --since=\"6am\"
         rank = shortlog -sn --no-merges
 
-# Rebase vs Merge
+## Rebase vs Merge
 
 The purpose of both is to integrate changes from one branch into another.
 
-## Merge
+### Merge
 
 Merges create a new _merge commit_ onto the target branch, which ties the two branches together, including any new patches and/or conflict resolutions. For example:
 
@@ -101,7 +98,7 @@ Creates a branch new merge commit in the feature branch.
 
 Pros/cons: Original branches are not changed, but does mean history can become quite polluted with merge commits, especially if the upstream branch is very active.
 
-## Rebase
+### Rebase
 
 My preferred method is rebase. In essence rebase is about lifting up your branch, and recreating the base on which is sits. One would rebase the _feature_ branch onto _master_.
 
@@ -114,7 +111,7 @@ Pros/cons: Much cleaner history (i.e. you don't have to unpack random merge comm
 
 > Never use rebase it on public branches.
 
-### Interactive rebasing (-i)
+#### Interactive rebasing (-i)
 
 So very useful. Presents the journal of commits, with the proposed commands (e.g. `pick`, `fixup`) to be used to deal with each commit.
 
@@ -135,7 +132,7 @@ By changing the `pick` command or reordering entries, can make history look howe
 
 The result will be two commits, commit 2 will be squashed into the commit 1, and commit 3.
 
-# Submodules
+## Submodules
 
 Embeds another Git repo within a Git repo. One handy use case is relatively referencing some common source, which is managed independently in its own Git repo. The submodule can be _pinned_ to a particular branch by creating a `.gitmodules` file.
 
@@ -146,20 +143,20 @@ Embeds another Git repo within a Git repo. One handy use case is relatively refe
 
 In each branch of the parent repo (the one that includes the submodule/s), you could commit slightly different versions of the `.gitmodules` so that branch of the submodule lines up. For example, you may want the `develop` branch of the parent repo, to use the `develop` branch of the submodule. However when in the `master` branch of the parent repo, you'd like the `master` branch of the submodule to be used.
 
-# Detached Head
+## Detached Head
 
 Every now and then I end up with a detached head. WTF is a detached head again? It happens when you checkout a specific commit, instead of a branch. The `HEAD` pointer will stick to the specific commit, and no longer automatically point to the latest commit in the working branch. If you don't realise the HEAD is detached, and get to work and make a bunch of changes, these changes can easily get lost as the correct commit/branch accounting is thrown out.
 
 My favourite remedial action, is to stash the changes, then properly chechout the branch (not a commit!), pop the stash, stage and commit.
 
-# Patches
+## Patches
 
 Sometimes instead of managing things as a commit, its nice to be able to email or share changes as a patch. Git makes this incredibly easy:
 
     git diff > mypatch.patch
     git apply mypatch.patch
 
-# Branch name in Bash prompt (PS1)
+## Branch name in Bash prompt (PS1)
 
 ```bash
 brname () {
@@ -171,4 +168,17 @@ brname () {
   fi
 }
 PS1="\u@\h:\w\$(brname)$ "
+```
+
+## Discover large commits in history
+
+[Source](https://stackoverflow.com/questions/10622179/how-to-find-identify-large-commits-in-git-history)
+
+```sh
+git rev-list --objects --all |
+git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' |
+sed -n 's/^blob //p' |
+sort --numeric-sort --key=2 |
+cut -c 1-12,41- |
+$(command -v gnumfmt || echo numfmt) --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest
 ```

@@ -28,15 +28,11 @@ I have started to sprinkle in other talks that have deeply impacted the way I th
 -   [Rich Hickey on Hammock Driven Development](#rich-hickey-on-hammock-driven-development)
 -   [Brian Will on Why OOP is Bad](#brian-will-on-why-oop-is-bad)
 -   [Abner Coimbre on What Programming is Never About](#abner-coimbre-on-what-programming-is-never-about)
--   [Scott Meyers on CPU Caches and Why You Care](#scott-meyers-on-cpu-caches-and-why-you-care)
 -   [Jeff and Casey Show on The Evils of Non-native Programming](#jeff-and-casey-show-on-the-evils-of-non-native-programming)
 -   [Jeff and Casey’s Guide to Becoming a Bigger Programmer](#jeff-and-casey’s-guide-to-becoming-a-bigger-programmer)
 -   [Hadi Hariri on The Silver Bullet Syndrome](#hadi-hariri-on-the-silver-bullet-syndrome)
 -   [Bryan Cantrill on Fork Yeah! The Rise and Development if illumos](#bryan-cantrill-on-fork-yeah!-the-rise-and-development-if-illumos)
 -   [Rob Pike on Concurrency Is Not Parallelism](#rob-pike-on-concurrency-is-not-parallelism)
--   [James Mickens on JavaScript](#james-mickens-on-javascript)
--   [Liz Rice on Containers From Scratch](#liz-rice-on-containers-from-scratch)
--   [James Mickens on Why Do Keynote Speakers Keep Suggesting That Improving Security Is Possible?](#james-mickens-on-why-do-keynote-speakers-keep-suggesting-that-improving-security-is-possible?)
 
 ## Rich Hickey on Simple Made Easy
 
