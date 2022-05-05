@@ -16,57 +16,47 @@ tags:
     - bsd
 ---
 
--   [Philosophy](#philosophy)
--   [Resources](#resources)
--   [Basic Types](#basic-types)
-    -   [Integer Types](#integer-types)
-    -   [Real and Complex Floating Types](#real-and-complex-floating-types)
-    -   [void](#void)
--   [Memory Access Operators](#memory-access-operators)
--   [Strings](#strings)
+_Update: 2022-04-26_: Overhauling to be simplier and bsd/clang friendly.
+
+-   [Rules of engagement](#rules-of-engagement)
+    -   [Style](#style)
+-   [The language](#the-language)
+    -   [Basic Types](#basic-types)
+        -   [Integer Types](#integer-types)
+        -   [Real and Complex Floating Types](#real-and-complex-floating-types)
+        -   [void](#void)
+    -   [Memory Access Operators](#memory-access-operators)
+    -   [Strings](#strings)
 -   [The Pre Processor](#the-pre-processor)
     -   [Macros](#macros)
--   [Vtables](#vtables)
-    -   [C standard library](#c-standard-library)
-    -   [C POSIX library](#c-posix-library)
-    -   [Unit Testing](#unit-testing)
+-   [Patterns](#patterns)
+    -   [vtables](#vtables)
+        -   [person_s.h](#person_s.h)
+        -   [print_vtable.h](#print_vtable.h)
+        -   [print_vtable.c](#print_vtable.c)
+        -   [main.c](#main.c)
+    -   [Libraries](#libraries)
+        -   [C standard library](#c-standard-library)
+        -   [C POSIX library](#c-posix-library)
+        -   [Unit Testing](#unit-testing)
+    -   [Sample C code](#sample-c-code)
 
-## Philosophy
+## Rules of engagement
 
-Rob Pike's 5 Rules of Programming [Source](http://users.ece.utexas.edu/~adnan/pike.html)
-
-1. You can't tell where a program is going to spend its time. Bottlenecks occur in surprising places, so don't try to second guess and put in a speed hack until you've proven that's where the bottleneck is.
-2. Measure. Don't tune for speed until you've measured, and even then don't unless one part of the code overwhelms the rest.
-3. Fancy algorithms are slow when n is small, and n is usually small. Fancy algorithms have big constants. Until you know that n is frequently going to be big, don't get fancy. (Even if n does get big, use Rule 2 first)
-4. Fancy algorithms are buggier than simple ones, and they're much harder to implement. Use simple algorithms as well as simple data structures.
-5. Data dominates. If you've chosen the right data structures and organized things well, the algorithms will almost always be self-evident. Data structures, not algorithms, are central to programming.
-
-Pike's rules 1 and 2 restate Tony Hoare's famous maxim
-
-> Premature optimization is the root of all evil
-
-Ken Thompson rephrased Pike's rules 3 and 4 as
-
-> When in doubt, use brute force
-
-Rule 5 was previously stated by Fred Brooks in The Mythical Man-Month
-
-> write stupid code that uses smart objects
-
-## Resources
-
+-   [How I program C by Eskil Steenberg](https://www.youtube.com/watch?v=443UNeGrFoM)
+-   [Notes on Programming in C by Rob Pike](http://doc.cat-v.org/bell_labs/pikestyle)
 -   [The Ten Commandments for C Programmers by Henry Spencer](http://doc.cat-v.org/henry_spencer/ten-commandments)
--   [Notes on Programming in C by Rob Pike](http://www.lysator.liu.se/c/pikestyle.html)
--   [The Art of UNIX Programming by Eric Raymond](http://www.catb.org/esr/writings/taoup/)
--   [An Introduction to GCC](http://www.network-theory.co.uk/gcc/intro/)
--   [Inside the C Standard Library](https://begriffs.com/posts/2019-01-19-inside-c-standard-lib.html)
--   [Linux Device Drivers](https://lwn.net/Kernel/LDD3/)
 
-# Grammar
+### Style
 
-## Basic Types
+-   [suckless](https://suckless.org/coding_style/)
+-   FreeBSD `man 9 style`
 
-### Integer Types
+## The language
+
+### Basic Types
+
+#### Integer Types
 
 C99 with `stdbool.h` introduced boolean type `_Bool` (1 byte), and macros `true` (1) and `false` (0).
 
@@ -87,7 +77,7 @@ C99 with `stdbool.h` introduced boolean type `_Bool` (1 byte), and macros `true`
 
 Interestingly the specific storage size for `int` is not defined. A compilers given implementation bit widths are defined in `limits.h`.
 
-### Real and Complex Floating Types
+#### Real and Complex Floating Types
 
 Most compilers honour the IEEE 754-1985 standard.
 
@@ -97,7 +87,7 @@ Most compilers honour the IEEE 754-1985 standard.
 | `double`      | 8               | 15                  |
 | `long double` | 10              | 19                  |
 
-### void
+#### void
 
 Represents no value, and is widely used in three scenarios:
 
@@ -105,7 +95,7 @@ Represents no value, and is widely used in three scenarios:
 2. Prototypes of functions that have no parameters, e.g. `int rand(void)`
 3. Pointers to void i.e. `void *` (typeless pointers)
 
-## Memory Access Operators
+### Memory Access Operators
 
 The **address of** operator, `&`, yields the address of its subject, thus `&foo` is a pointer to `foo`.
 
@@ -134,7 +124,7 @@ plabel = &label;
 plabel->name = "Bill Joy";
 {% endhighlight %}
 
-## Strings
+### Strings
 
 ## The Pre Processor
 
@@ -142,13 +132,14 @@ plabel->name = "Bill Joy";
 
 This following macro is called variadic. When the macro is invoked, all the tokens in its argument list after the last named argument, including any commas, become the variable argument. This sequence of tokens replaces the identifier `__VA_ARGS__` in the macro body wherever it appears.
 
-{% highlight c %}
+```c
 #define stopif(assertion, action, ...) {
-if (assertion) {
-fprintf(error_log ? error_log : stderr, **VA_ARGS**);
-fprintf(error_log ? error_log : stderr, "\n");
-action;
-} }
+    if (assertion) {
+        fprintf(error_log ? error_log : stderr, **VA_ARGS**);
+        fprintf(error_log ? error_log : stderr, "\n");
+        action;
+    }
+}
 
 //usage
 stopif(!isnan(inv_total), goto nanval, "Invoice amount was NaN");
@@ -157,29 +148,29 @@ stopif(!foo, return -1, "wtf dude, foo must not be NULL");
 nanval:
 free(fooheap);
 return NAN;
-{% endhighlight %}
+```
 
 Another one. The macro `print_log` acts as the public API, encapsulating internal grunt function `_print_log`:
 
-{% highlight c %}
+```c
 #define print_log(level, ...) do {
-time_t \_clk = time(NULL);
-\_print_log(level, **FILE**, **func**, ctime(&\_clk), **LINE**, **VA_ARGS**);
+    time_t \_clk = time(NULL);
+    \_print_log(level, **FILE**, **func**, ctime(&\_clk), **LINE**, **VA_ARGS**);
 } while (0)
 
 extern void \_print*log(int, char *, const char \_, char*, int, char *, ...);
 
 //usage
 print_log(LOG_WARNING, "where be a wookie when you need one");
-{% endhighlight %}
+```
 
-# Patterns
+## Patterns
 
-## vtables
+### vtables
 
 Virtual tables are a technique for adding functions outside of an objects struct. Using a hash table as the vtable data structure, the key, something unique to the object and the specific function (in case you want to store multiple functions in the vtable for the same object), and the value, the actual function.
 
-### person_s.h
+#### person_s.h
 
 ```c
 typedef struct person_s {
@@ -192,7 +183,7 @@ typedef struct person_s {
 
 The object, a person. The `print` function pointer here is souly used as the hash key. It's unique to both the object, and the specific operation of printing. It never points to an actual function.
 
-### print_vtable.h
+#### print_vtable.h
 
 ```c
 extern HashTable *funcs_hash;
@@ -201,24 +192,24 @@ typedef void (_print_fn_type)(struct person_s_);
 
 void check_print_fn(print_fn_type pf);
 
-#define printfn_vtable_add(object, fn) { \
+##define printfn_vtable_add(object, fn) { \
  check_print_fn(fn); \
  hash_table_insert(funcs_hash, (object)->print, fn); \
 }
 
-void print_person_frontend(struct person_s \*in);
+void print_person_frontend(struct person_s *in);
 ```
 
 Declares hash table, a macro to add functions to the hash table (this exists only to add static type checking on the function passed, by first trying to pass it into `check_print_fn`), and the "frontend" function signature (for consumers of the API) that takes in a person and will query the vtable for the function to invoke.
 
-### print_vtable.c
+#### print_vtable.c
 
 ```c
 HashTable *funcs_hash;
 
 void check_print_fn(print_fn_type pf) { }
 
-void print_person_frontend(struct person_s \*in) {
+void print_person_frontend(struct person_s *in) {
     if (!funcs_hash) {
         funcs_hash = hash_table_new(g_direct_hash, g_direct_equal);
     }
@@ -234,10 +225,10 @@ void print_person_frontend(struct person_s \*in) {
 }
 ```
 
-### main.c
+#### main.c
 
 ```c
-static void print_person_backend(struct person_s \*in) {
+static void print_person_backend(struct person_s *in) {
     printf("\nName: %s\n", in->name);
     for (int i=0; i < in->len; i++)
     printf("- Book author for: %s\n", in->books[i]);
@@ -279,7 +270,7 @@ Name: Rob Pike
 -  Book author for: The Practice of Programming - 1999
 ```
 
-## Libraries
+### Libraries
 
 The [C standard library](https://en.wikipedia.org/wiki/C_standard_library) and the [C POSIX library](https://en.wikipedia.org/wiki/C_POSIX_library) both offer a standardised, resuable slabs of macros, type definitions and functions for tasks such as string handling, mathematical computations, input/output processing, memory management, and several common operating system services. A set of common building blocks.
 
@@ -287,7 +278,7 @@ POSIX being a superset of the C standard library. If C and POSIX is ever in conf
 
 [The GNU C Library](https://www.gnu.org/software/libc/manual/)
 
-### C standard library
+#### C standard library
 
 | Header            | Description                                                                                                                                   |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -321,7 +312,7 @@ POSIX being a superset of the C standard library. If C and POSIX is ever in conf
 | `<wchar.h>`       | Defines wide string handling functions.                                                                                                       |
 | `<wctype.h>`      | Defines set of functions used to classify wide characters by their types or to convert between upper and lower case.                          |
 
-### C POSIX library
+#### C POSIX library
 
 | Header             | Description                                                                           |
 | ------------------ | ------------------------------------------------------------------------------------- |
@@ -408,18 +399,12 @@ POSIX being a superset of the C standard library. If C and POSIX is ever in conf
 | `<wctype.h>`       | Wide-Character Classification and Mapping Utilities, see C character classification   |
 | `<wordexp.h>`      | Word-expansion like the shell would perform                                           |
 
-### Unit Testing
+#### Unit Testing
 
 -   [Unity Project](http://www.throwtheswitch.org/unity/) - Unity is most obviously about assertions. Assertions are statements of what we expect to be true about our embedded system.
 -   [GLib Testing](https://developer.gnome.org/glib/stable/glib-Testing.html)
 
-## Style
-
--   [Linux kernel coding style](https://www.kernel.org/doc/Documentation/CodingStyle)
--   [GNU Coding Standards](https://www.gnu.org/prep/standards/standards.html)
--   [FreeBSD](https://www.freebsd.org/cgi/man.cgi?query=style&sektion=9)
-
-## Sample C code
+### Sample C code
 
 -   [Trending C GitHub Repos](https://github.com/trending/c)
 -   [GitHub C repos](https://github.com/search?l=c&q=stars%3A%3E1&s=updated&type=Repositories)

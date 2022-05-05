@@ -1,51 +1,53 @@
 ---
 layout: post
-title: "GNU/Linux Commands"
-date: "2017-02-18 21:06:01"
+title: "Linux cheatsheet"
+slug: "linuxcheat"
+date: "2017-02-18 21:06:01+11:00"
+lastmod: "2021-09-26 14:36:34+11:00"
 comments: false
 categories:
-  - linux
+    - linux
 ---
 
-A survey of the standard and high quality programs that feature in most Unix based distributions, with the GNU variants being my favourite. The [bash]({% post_url 2016-05-01-bash %}) shell is a great way of interfacing and orchestrating these beautifully crafted programs. As a starting point, I've listed each program offered by the [GNU Core Utilities](https://www.gnu.org/software/coreutils/coreutils.html) and [util-linux](https://en.wikipedia.org/wiki/Util-linux) umbrella projects; considered the de facto standard on most distributions.
+A survey of the standard and high quality programs that feature in most Unix based distributions, with the GNU variants being my favourite. The `bash` shell is a great way of interfacing and orchestrating these beautifully crafted programs. As a starting point, I've listed each program offered by the [GNU Core Utilities](https://www.gnu.org/software/coreutils/coreutils.html) and [util-linux](https://en.wikipedia.org/wiki/Util-linux) umbrella projects; considered the de facto standard on most distributions.
 
-- [Quick Reference](#quick-reference)
-  - [General](#general)
-  - [System Information](#system-information)
-  - [Directory Navigation](#directory-navigation)
-  - [File Searching](#file-searching)
-  - [Archiving and Compression](#archiving-and-compression)
-  - [Networking](#networking)
-  - [Text Manipulation](#text-manipulation)
-  - [Set Operations](#set-operations)
-  - [Windows Networking](#windows-networking)
-  - [Monitoring and Debugging](#monitoring-and-debugging)
-  - [Disk Space](#disk-space)
-  - [CD/DVD](#cddvd)
-  - [Locales](#locales)
-  - [Dates and Times](#dates-and-times)
-  - [Images](#images)
-- [Finding Documentation](#finding-documentation)
-  - [Manual Pages](#manual-pages)
-  - [Appropriate Commands](#appropriate-commands)
-  - [whatis](#whatis)
-  - [GNU Info Entry](#gnu-info-entry)
-  - [/usr/share/doc Documentation](#usrsharedoc-documentation)
-  - [RPM bundled documentation](#rpm-bundled-documentation)
-- [Examples](#examples)
-  - [grep](#grep)
-  - [cut](#cut)
-  - [sort](#sort)
-  - [tr](#tr)
-  - [wc](#wc)
-  - [tar](#tar)
-  - [rsync](#rsync)
-  - [sed](#sed)
-  - [awk](#awk)
-  - [ssh (Secure Shell)](#ssh-secure-shell)
-  - [wget](#wget)
-- [BFL of Common Programs](#bfl-of-common-programs)
-- [Resources](#resources)
+-   [Quick Reference](#quick-reference)
+    -   [General](#general)
+    -   [System Information](#system-information)
+    -   [Directory Navigation](#directory-navigation)
+    -   [File Searching](#file-searching)
+    -   [Archiving and Compression](#archiving-and-compression)
+    -   [Networking](#networking)
+    -   [Text Manipulation](#text-manipulation)
+    -   [Set Operations](#set-operations)
+    -   [Windows Networking](#windows-networking)
+    -   [Monitoring and Debugging](#monitoring-and-debugging)
+    -   [Disk Space](#disk-space)
+    -   [CD/DVD](#cddvd)
+    -   [Locales](#locales)
+    -   [Dates and Times](#dates-and-times)
+    -   [Images](#images)
+-   [Finding Documentation](#finding-documentation)
+    -   [Manual Pages](#manual-pages)
+    -   [Appropriate Commands](#appropriate-commands)
+    -   [whatis](#whatis)
+    -   [GNU Info Entry](#gnu-info-entry)
+    -   [/usr/share/doc Documentation](#usrsharedoc-documentation)
+    -   [RPM bundled documentation](#rpm-bundled-documentation)
+-   [Examples](#examples)
+    -   [grep](#grep)
+    -   [cut](#cut)
+    -   [sort](#sort)
+    -   [tr](#tr)
+    -   [wc](#wc)
+    -   [tar](#tar)
+    -   [rsync](#rsync)
+    -   [sed](#sed)
+    -   [awk](#awk)
+    -   [ssh (Secure Shell)](#ssh-secure-shell)
+    -   [wget](#wget)
+-   [BFL of Common Programs](#bfl-of-common-programs)
+-   [Resources](#resources)
 
 # Quick Reference
 
@@ -54,11 +56,11 @@ A survey of the standard and high quality programs that feature in most Unix bas
 | Command                                        | What is does                                                                   |
 | ---------------------------------------------- | ------------------------------------------------------------------------------ |
 | `apropos compress`                             | Show commands that relate to a keyword                                         |
-| `man -t ascii | ps2pdf - > ascii.pdf`          | Make a PDF of a man page                                                       |
+| `man -t ascii \| ps2pdf - > ascii.pdf`         | Make a PDF of a man page                                                       |
 | `which command`                                | Full path of command                                                           |
 | `time command`                                 | Show execution time of a given command                                         |
 | `time cat`                                     | Start stopwatch, ^d to stop                                                    |
-| `cat file.txt | xclip -selection clipboard`    | Copy to clipboard                                                              |
+| `cat file.txt \| xclip -selection clipboard`   | Copy to clipboard                                                              |
 | `nohup ./script.sh &`                          | Keep program running after leaving SSH session (see bash post if input needed) |
 | `timeout 20s ./script.sh`                      | Run script.sh for 20 seconds only                                              |
 | `while true; do timeout 30m ./script.sh; done` | Restart a program every 30 minutes                                             |
@@ -74,10 +76,10 @@ A survey of the standard and high quality programs that feature in most Unix bas
 | `grep "model name" /proc/cpuinfo`                | Show CPU(s) info                                          |
 | `lspci -tv`                                      | Show PCI info                                             |
 | `lsusb -tv`                                      | Show USB info                                             |
-| `mount | column -t`                              | List mounted filesystems on the system (and align output) |
+| `mount \| column -t`                             | List mounted filesystems on the system (and align output) |
 | `grep -F capacity: /proc/acpi/battery/BAT0/info` | Show state of cells in laptop battery                     |
-| `dmidecode -q | less`                            | Display SMBIOS/DMI information                            |
-| `smartctl -A /dev/sda | grep Power_On_Hours`     | How long has this disk (system) been powered on in total  |
+| `dmidecode -q \| less`                           | Display SMBIOS/DMI information                            |
+| `smartctl -A /dev/sda \| grep Power_On_Hours`    | How long has this disk (system) been powered on in total  |
 | `hdparm -i /dev/sda`                             | Show info about disk sda                                  |
 | `hdparm -tT /dev/sda`                            | Do a read speed test on disk sda                          |
 | `badblocks -s /dev/sda`                          | Test for unreadable blocks on disk sda                    |
@@ -93,41 +95,41 @@ A survey of the standard and high quality programs that feature in most Unix bas
 
 ## File Searching
 
-| Command                                                                       | What is does                                                                  |
-| ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `alias l='ls -l --color=auto'`                                                | Quick listing                                                                 |
-| `ls -lrt`                                                                     | List long by date                                                             |
-| `ls -lS`                                                                      | List long by size                                                             |
-| `ls /usr/bin | pr -T9 -W$COLUMNS`                                             | Print in 9 columns to width of terminal                                       |
-| `find -name '*.[ch] | xargs grep -E 'foo'`                                    | Search for 'foo' in all `.c` and `.h` files in cwd and below                  |
-| `find -type f -print0 | xargs -r0 grep -F 'example'`                          | Search all regular files for 'example'                                        |
-| `find -maxdepth 1 -type f | xargs grep -F 'example'`                          | As above, but don't recurse                                                   |
-| `find -maxdepth 1 -type d | while read dir; do echo $dir; echo somecmd; done` | Wash each result over multiple commands                                       |
-| `find -type f ! -perm -444`                                                   | Find files not readable by all                                                |
-| `find -type d ! -perm -111`                                                   | Find dirs not accessable by all                                               |
-| `find . -size 30c`                                                            | By file size (30 bytes)                                                       |
-| `find . -name "*.gz" -delete`                                                 | Delete all gz files                                                           |
-| `locate -r 'file[^/]*\.txt`                                                   | Search cached index for names                                                 |
-| `look <keyword>`                                                              | Search English dictionary with a given prefix keyword                         |
-| `grep --color reference /usr/share/dict/words`                                | Highlight occurances of regex against English dictionary                      |
-| `readlink -f file.txt`                                                        | Full path of file                                                             |
-| `namei -l /bin/bash`                                                          | Drills through directories and links showing permission mask all the way down |
+| Command                                                                        | What is does                                                                  |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `alias l='ls -l --color=auto'`                                                 | Quick listing                                                                 |
+| `ls -lrt`                                                                      | List long by date                                                             |
+| `ls -lS`                                                                       | List long by size                                                             |
+| `ls /usr/bin \| pr -T9 -W$COLUMNS`                                             | Print in 9 columns to width of terminal                                       |
+| `find -name '*.[ch] \| xargs grep -E 'foo'`                                    | Search for 'foo' in all `.c` and `.h` files in cwd and below                  |
+| `find -type f -print0 \| xargs -r0 grep -F 'example'`                          | Search all regular files for 'example'                                        |
+| `find -maxdepth 1 -type f \| xargs grep -F 'example'`                          | As above, but don't recurse                                                   |
+| `find -maxdepth 1 -type d \| while read dir; do echo $dir; echo somecmd; done` | Wash each result over multiple commands                                       |
+| `find -type f ! -perm -444`                                                    | Find files not readable by all                                                |
+| `find -type d ! -perm -111`                                                    | Find dirs not accessable by all                                               |
+| `find . -size 30c`                                                             | By file size (30 bytes)                                                       |
+| `find . -name "*.gz" -delete`                                                  | Delete all gz files                                                           |
+| `locate -r 'file[^/]*\.txt`                                                    | Search cached index for names                                                 |
+| `look <keyword>`                                                               | Search English dictionary with a given prefix keyword                         |
+| `grep --color reference /usr/share/dict/words`                                 | Highlight occurances of regex against English dictionary                      |
+| `readlink -f file.txt`                                                         | Full path of file                                                             |
+| `namei -l /bin/bash`                                                           | Drills through directories and links showing permission mask all the way down |
 
 ## Archiving and Compression
 
 | Command                                                                       | What is does                                                |
 | ----------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `gpg -c file`                                                                 | Encrypt file                                                |
-| `gpg file.gpg`                                                                | Decrypt file                                                |
-| `tar -c dir/ | bzip2 > dir.tar.bz2`                                           | Make compressed archive of dir                              |
-| `bzip2 -dc dir.tar.bz2 | tar -x`                                              | Extract archive                                             |
-| `tar -c dir/ | gzip | gpg -c | ssh user@remote 'dd of=dir.tar.gz.gpg'`        | Make encrypted archive of `dir` on remote machine           |
-| `find dir/ -name '*.txt' | tar -c --files-from=- | bzip2 > dir_txt.tar.bz2`   | Make archive of subset of `dir` and below                   |
-| `find dir/ -name '*.txt' | xargs cp -a --target-directory=dir_txt/ --parents` | Make copy of subset of `dir` and below                      |
-| `( tar -c /dir/to/copy ) | ( cd /where/to/ && tar -x -p )`                    | Copy (with permissions) copy/ dir to /where/to/ dir         |
-| `( cd /dir/to/copy && tar -c . ) | ( cd /where/to/ && tar -x -p )`            | Copy (with permissions) contents of copy/ dir to /where/to/ |
-| `( tar -c /dir/to/copy ) | ssh -C user@remote 'cd /where/to/ && tar -x -p'`   | Copy (with permissions) copy/ dir to remote:/where/to/ dir  |
-| `dd bs=1M if=/dev/sda | gzip | ssh user@remote 'dd of=sda.gz'`                | Backup harddisk to remote machine                           |
+| gpg -c file                                                                   | Encrypt file                                                |
+| gpg file.gpg                                                                  | Decrypt file                                                |
+| tar -c dir/ \| bzip2 > dir.tar.bz2                                            | Make compressed archive of dir                              |
+| bzip2 -dc dir.tar.bz2 \| tar -x                                               | Extract archive                                             |
+| tar -c dir/ \| gzip \| gpg -c \| ssh user@remote 'dd of=dir.tar.gz.gpg'       | Make encrypted archive of `dir` on remote machine           |
+| find dir/ -name '\*.txt' \| tar -c --files-from=- \| bzip2 > dir_txt.tar.bz2  | Make archive of subset of `dir` and below                   |
+| find dir/ -name '\*.txt' \| xargs cp -a --target-directory=dir_txt/ --parents | Make copy of subset of `dir` and below                      |
+| ( tar -c /dir/to/copy ) \| ( cd /where/to/ && tar -x -p )                     | Copy (with permissions) copy/ dir to /where/to/ dir         |
+| ( cd /dir/to/copy && tar -c . ) \| ( cd /where/to/ && tar -x -p )             | Copy (with permissions) contents of copy/ dir to /where/to/ |
+| ( tar -c /dir/to/copy ) \| ssh -C user@remote 'cd /where/to/ && tar -x -p'    | Copy (with permissions) copy/ dir to remote:/where/to/ dir  |
+| dd bs=1M if=/dev/sda \| gzip \| ssh user@remote 'dd of=sda.gz'                | Backup harddisk to remote machine                           |
 
 ## Networking
 
@@ -154,48 +156,48 @@ A survey of the standard and high quality programs that feature in most Unix bas
 
 ## Text Manipulation
 
-| Command                                             | What is does                                         |
-| --------------------------------------------------- | ---------------------------------------------------- |
-| `sed 's/string1/string2/g'`                         | Replace string1 with string2                         |
-| `sed 's/\(.*\)1/\12/g'`                             | Modify anystring1 to anystring2                      |
-| `sed '/^ *#/d; /^ *$/d'`                            | Remove comments and blank lines                      |
-| `sed ':a; /\\$/N; s/\\\n//; ta'`                    | Concatenate lines with trailing \                    |
-| `sed 's/[ \t]*$//'`                                 | Remove trailing spaces from lines                    |
-| `seq 10 | sed "s/^/ /; s/ *\(.\{7,\}\)/\1/"`        | Right align numbers                                  |
-| `seq 10 | sed p | paste - -`                        | Duplicate a column                                   |
-| `sed -n '1000{p;q}'`                                | Print 1000th line                                    |
-| `sed -n '10,20p;20q'`                               | Print lines 10 to 20                                 |
-| `sed -n 's/.*<title>\(.*\)<\/title>.*/\1/ip;T;q'`   | Extract title from HTML web page                     |
-| `sed -i 42d ~/.ssh/known_hosts`                     | Delete a particular line                             |
-| `sort -t. -k1,1n -k2,2n -k3,3n -k4,4n`              | Sort IPV4 ip addresses                               |
-| `echo 'Test' | tr '[:lower:]' '[:upper:]'`          | Case conversion                                      |
-| `tr -dc '[:print:]' < /dev/urandom`                 | Filter non printable characters                      |
-| `tr -s '[:blank:]' '\t' </proc/diskstats | cut -f4` | cut fields separated by blanks                       |
-| `history | wc -l`                                   | Count lines                                          |
-| `seq 10 | paste -s -d ' '`                          | Concatenate and separate line items to a single line |
-| `sort -u file1 file2`                               | Union of unsorted files                              |
-| `sort file1 file2 | uniq -d`                        | Intersection of unsorted files                       |
-| `sort file1 file1 file2 | uniq -u`                  | Difference of unsorted files                         |
-| `sort file1 file2 | uniq -u`                        | Symmetric Difference of unsorted files               |
-| `join -t'\0' -a1 -a2 file1 file2`                   | Union of sorted files                                |
-| `join -t'\0' file1 file2`                           | Intersection of sorted files                         |
-| `join -t'\0' -v2 file1 file2`                       | Difference of sorted files                           |
-| `join -t'\0' -v1 -v2 file1 file2`                   | Symmetric Difference of sorted files                 |
-| `shuf file1`                                        | Randomise lines in a file                            |
-| `comm file1 file2`                                  | Combine lines from two sorted files                  |
+| Command                                              | What is does                                         |
+| ---------------------------------------------------- | ---------------------------------------------------- |
+| `sed 's/string1/string2/g'`                          | Replace string1 with string2                         |
+| `sed 's/\(.*\)1/\12/g'`                              | Modify anystring1 to anystring2                      |
+| `sed '/^ *#/d; /^ *$/d'`                             | Remove comments and blank lines                      |
+| `sed ':a; /\\$/N; s/\\\n//; ta'`                     | Concatenate lines with trailing \                    |
+| `sed 's/[ \t]*$//'`                                  | Remove trailing spaces from lines                    |
+| `seq 10 \| sed "s/^/ /; s/ *\(.\{7,\}\)/\1/"`        | Right align numbers                                  |
+| `seq 10 \| sed p \| paste - -`                       | Duplicate a column                                   |
+| `sed -n '1000{p;q}'`                                 | Print 1000th line                                    |
+| `sed -n '10,20p;20q'`                                | Print lines 10 to 20                                 |
+| `sed -n 's/.*<title>\(.*\)<\/title>.*/\1/ip;T;q'`    | Extract title from HTML web page                     |
+| `sed -i 42d ~/.ssh/known_hosts`                      | Delete a particular line                             |
+| `sort -t. -k1,1n -k2,2n -k3,3n -k4,4n`               | Sort IPV4 ip addresses                               |
+| `echo 'Test' \| tr '[:lower:]' '[:upper:]'`          | Case conversion                                      |
+| `tr -dc '[:print:]' < /dev/urandom`                  | Filter non printable characters                      |
+| `tr -s '[:blank:]' '\t' </proc/diskstats \| cut -f4` | cut fields separated by blanks                       |
+| `history \| wc -l`                                   | Count lines                                          |
+| `seq 10 \| paste -s -d ' '`                          | Concatenate and separate line items to a single line |
+| `sort -u file1 file2`                                | Union of unsorted files                              |
+| `sort file1 file2 \| uniq -d`                        | Intersection of unsorted files                       |
+| `sort file1 file1 file2 \| uniq -u`                  | Difference of unsorted files                         |
+| `sort file1 file2 \| uniq -u`                        | Symmetric Difference of unsorted files               |
+| `join -t'\0' -a1 -a2 file1 file2`                    | Union of sorted files                                |
+| `join -t'\0' file1 file2`                            | Intersection of sorted files                         |
+| `join -t'\0' -v2 file1 file2`                        | Difference of sorted files                           |
+| `join -t'\0' -v1 -v2 file1 file2`                    | Symmetric Difference of sorted files                 |
+| `shuf file1`                                         | Randomise lines in a file                            |
+| `comm file1 file2`                                   | Combine lines from two sorted files                  |
 
 ## Set Operations
 
-| Command                            | What is does                           |
-| ---------------------------------- | -------------------------------------- |
-| `sort -u file1 file2`              | Union of unsorted files                |
-| `sort file1 file2 | uniq -d`       | Intersection of unsorted files         |
-| `sort file1 file1 file2 | uniq -u` | Difference of unsorted files           |
-| `sort file1 file2 | uniq -u`       | Symmetric Difference of unsorted files |
-| `join -t'\0' -a1 -a2 file1 file2`  | Union of sorted files                  |
-| `join -t'\0' file1 file2`          | Intersection of sorted files           |
-| `join -t'\0' -v2 file1 file2`      | Difference of sorted files             |
-| `join -t'\0' -v1 -v2 file1 file2`  | Symmetric Difference of sorted files   |
+| Command                             | What is does                           |
+| ----------------------------------- | -------------------------------------- |
+| `sort -u file1 file2`               | Union of unsorted files                |
+| `sort file1 file2 \| uniq -d`       | Intersection of unsorted files         |
+| `sort file1 file1 file2 \| uniq -u` | Difference of unsorted files           |
+| `sort file1 file2 \| uniq -u`       | Symmetric Difference of unsorted files |
+| `join -t'\0' -a1 -a2 file1 file2`   | Union of sorted files                  |
+| `join -t'\0' file1 file2`           | Intersection of sorted files           |
+| `join -t'\0' -v2 file1 file2`       | Difference of sorted files             |
+| `join -t'\0' -v1 -v2 file1 file2`   | Symmetric Difference of sorted files   |
 
 ## Windows Networking
 
@@ -205,89 +207,89 @@ A survey of the standard and high quality programs that feature in most Unix bas
 | `nmblookup -A 1.2.3.4`                                             | Find the windows (netbios) name associated with ip address |
 | `smbclient -L windows_box`                                         | List shares on windows machine or samba server             |
 | `mount -t smbfs -o fmask=666,guest //windows_box/share /mnt/share` | Mount a windows share                                      |
-| `echo 'message' | smbclient -M windows_box`                        | Send popup to windows machine                              |
+| `echo 'message' \| smbclient -M windows_box`                       | Send popup to windows machine                              |
 
 ## Monitoring and Debugging
 
-| Command                                                                   | What is does                                                 |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `tail -f /var/log/messages`                                               | Monitor messages in a log file                               |
-| `strace -c ls >/dev/null`                                                 | Summarise/profile system calls made by command               |
-| `strace -f -e open ls >/dev/null`                                         | List system calls made by command                            |
-| `strace -f -e trace=write -e write=1,2 ls >/dev/null`                     | Monitor what's written to stdout and stderr                  |
-| `ltrace -f -e getenv ls >/dev/null`                                       | List library calls made by command                           |
-| `lsof -p $$`                                                              | List paths that process id has open                          |
-| `lsof ~`                                                                  | List processes that have specified path open                 |
-| `tcpdump not port 22`                                                     | Show network traffic except ssh. See also tcpdump_not_me     |
-| `ps -e -o pid,args --forest`                                              | List processes in a hierarchy                                |
-| `ps -e -o pcpu,cpu,nice,state,cputime,args --sort pcpu | sed '/^ 0.0 /d'` | List processes by % cpu usage                                |
-| `ps -e -orss=,args= | sort -b -k1,1n | pr -TW$COLUMNS`                    | List processes by mem (KB) usage. See also ps_mem.py         |
-| `ps -C firefox-bin -L -o pid,tid,pcpu,state`                              | List all threads for a particular process                    |
-| `ps -p 1,$$ -o etime=`                                                    | List elapsed wall time for particular process IDs            |
-| `watch -n.1 pstree -Uacp $$`                                              | Display a changing process subtree                           |
-| `last reboot`                                                             | Show system reboot history                                   |
-| `free -m`                                                                 | Show amount of (remaining) RAM (-m displays in MB)           |
-| `watch -n.1 'cat /proc/interrupts'`                                       | Watch changeable data continuously                           |
-| `udevadm monitor`                                                         | Monitor udev events to help configure rules                  |
-| `ulimit -Sv 1000`                                                         | Limit memory usage for following commands to 1MiB            |
-| `fuser -k 8000/tcp`                                                       | Kill the program using port 8000                             |
-| `lsof -p 123,789 -u 1234,abe`                                             | All files used by PID 123 or 789, or by user abe or UID 1234 |
-| `kill -HUP $(lsof -t /home/foo/file)`                                     | SIGHUP the processes using /home/foo/file                    |
-| `cat /dev/urandom | base64 | pv -lbri2 > /dev/null`                       | Monitor progress of output                                   |
+| Command                                                                    | What is does                                                 |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `tail -f /var/log/messages`                                                | Monitor messages in a log file                               |
+| `strace -c ls >/dev/null`                                                  | Summarise/profile system calls made by command               |
+| `strace -f -e open ls >/dev/null`                                          | List system calls made by command                            |
+| `strace -f -e trace=write -e write=1,2 ls >/dev/null`                      | Monitor what's written to stdout and stderr                  |
+| `ltrace -f -e getenv ls >/dev/null`                                        | List library calls made by command                           |
+| `lsof -p $$`                                                               | List paths that process id has open                          |
+| `lsof ~`                                                                   | List processes that have specified path open                 |
+| `tcpdump not port 22`                                                      | Show network traffic except ssh. See also tcpdump_not_me     |
+| `ps -e -o pid,args --forest`                                               | List processes in a hierarchy                                |
+| `ps -e -o pcpu,cpu,nice,state,cputime,args --sort pcpu \| sed '/^ 0.0 /d'` | List processes by % cpu usage                                |
+| `ps -e -orss=,args= \| sort -b -k1,1n \| pr -TW$COLUMNS`                   | List processes by mem (KB) usage. See also ps_mem.py         |
+| `ps -C firefox-bin -L -o pid,tid,pcpu,state`                               | List all threads for a particular process                    |
+| `ps -p 1,$$ -o etime=`                                                     | List elapsed wall time for particular process IDs            |
+| `watch -n.1 pstree -Uacp $$`                                               | Display a changing process subtree                           |
+| `last reboot`                                                              | Show system reboot history                                   |
+| `free -m`                                                                  | Show amount of (remaining) RAM (-m displays in MB)           |
+| `watch -n.1 'cat /proc/interrupts'`                                        | Watch changeable data continuously                           |
+| `udevadm monitor`                                                          | Monitor udev events to help configure rules                  |
+| `ulimit -Sv 1000`                                                          | Limit memory usage for following commands to 1MiB            |
+| `fuser -k 8000/tcp`                                                        | Kill the program using port 8000                             |
+| `lsof -p 123,789 -u 1234,abe`                                              | All files used by PID 123 or 789, or by user abe or UID 1234 |
+| `kill -HUP $(lsof -t /home/foo/file)`                                      | SIGHUP the processes using /home/foo/file                    |
+| `cat /dev/urandom \| base64 \| pv -lbri2 > /dev/null`                      | Monitor progress of output                                   |
 
 ## Disk Space
 
-| Command                                                               | What is does                                                |
-| --------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `ls -lSr`                                                             | Show files by size, biggest last                            |
-| `du -s * | sort -k1,1rn | head`                                       | Show top disk uses in current dir                           |
-| `du -hs /home/* | sort -k1,1h`                                        | Sort paths by easy to interpret disk usage                  |
-| `df -h`                                                               | Show free space on mounted filesystems                      |
-| `df -i`                                                               | Show free inodes on mounted filesystems                     |
-| `fdisk -l`                                                            | Show disks partitions sizes and types (run as root)         |
-| `rpm -q -a --qf '%10{SIZE}\t%{NAME}\n' | sort -k1,1n`                 | List all packages by installed size (Bytes) on rpm distros  |
-| `dpkg-query -W -f='${Installed-Size;10}\t${Package}\n' | sort -k1,1n` | List all packages by installed size (KBytes) on deb distros |
-| `dd bs=1 seek=2TB if=/dev/null of=ext3.test`                          | Create a large test file (taking no space)                  |
-| `> file`                                                              | truncate data of file or create an empty file               |
+| Command                                                                | What is does                                                |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `ls -lSr`                                                              | Show files by size, biggest last                            |
+| `du -s * \| sort -k1,1rn \| head`                                      | Show top disk uses in current dir                           |
+| `du -hs /home/* \| sort -k1,1h`                                        | Sort paths by easy to interpret disk usage                  |
+| `df -h`                                                                | Show free space on mounted filesystems                      |
+| `df -i`                                                                | Show free inodes on mounted filesystems                     |
+| `fdisk -l`                                                             | Show disks partitions sizes and types (run as root)         |
+| `rpm -q -a --qf '%10{SIZE}\t%{NAME}\n' \| sort -k1,1n`                 | List all packages by installed size (Bytes) on rpm distros  |
+| `dpkg-query -W -f='${Installed-Size;10}\t${Package}\n' \| sort -k1,1n` | List all packages by installed size (KBytes) on deb distros |
+| `dd bs=1 seek=2TB if=/dev/null of=ext3.test`                           | Create a large test file (taking no space)                  |
+| `> file`                                                               | truncate data of file or create an empty file               |
 
 ## CD/DVD
 
-| Command                                                                                                                     | What is does                                           |
-| --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `gzip < /dev/cdrom > cdrom.iso.gz`                                                                                          | Save copy of data cdrom                                |
-| `mkisofs -V LABEL -r dir | gzip > cdrom.iso.gz`                                                                             | Create cdrom image from contents of dir                |
-| `mount -o loop cdrom.iso /mnt/dir`                                                                                          | Mount the cdrom image at /mnt/dir (read only)          |
-| `wodim dev=/dev/cdrom blank=fast`                                                                                           | Clear a CDRW                                           |
-| `gzip -dc cdrom.iso.gz | wodim -tao dev=/dev/cdrom -v -data -`                                                              | Burn cdrom image                                       |
-| `cdparanoia -B`                                                                                                             | Rip audio tracks from CD to wav files in current dir   |
-| `wodim -v dev=/dev/sr0 -audio -pad *.wav`                                                                                   | Make audio CD from all wavs in current dir             |
-| `oggenc --tracknum=$track track.cdda.wav -o track.ogg`                                                                      | Make ogg file from wav file                            |
-| `for i in *.mp3; do mpg123 --rate 44100 --stereo --buffer 3072 --resync -w "$(basename $i .mp3).wav" $i; done`              | Decode mp3 files to 16-bit, stereo, 44.1 kHz waves     |
-| ` for i in *.mp3; do lame --decode $i ``basename $i .mp3``.wav; done ` | Decode mp3 files to 16-bit, stereo, 44.1 kHz waves |
-| `normalize -m *.wav`                                                                                                        | Normalise levels in wavs, mix mode is loud as possible |
+| Command                                                                                                        | What is does                                           |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `gzip < /dev/cdrom > cdrom.iso.gz`                                                                             | Save copy of data cdrom                                |
+| `mkisofs -V LABEL -r dir \| gzip > cdrom.iso.gz`                                                               | Create cdrom image from contents of dir                |
+| `mount -o loop cdrom.iso /mnt/dir`                                                                             | Mount the cdrom image at /mnt/dir (read only)          |
+| `wodim dev=/dev/cdrom blank=fast`                                                                              | Clear a CDRW                                           |
+| `gzip -dc cdrom.iso.gz \| wodim -tao dev=/dev/cdrom -v -data -`                                                | Burn cdrom image                                       |
+| `cdparanoia -B`                                                                                                | Rip audio tracks from CD to wav files in current dir   |
+| `wodim -v dev=/dev/sr0 -audio -pad *.wav`                                                                      | Make audio CD from all wavs in current dir             |
+| `oggenc --tracknum=$track track.cdda.wav -o track.ogg`                                                         | Make ogg file from wav file                            |
+| `for i in *.mp3; do mpg123 --rate 44100 --stereo --buffer 3072 --resync -w "$(basename $i .mp3).wav" $i; done` | Decode mp3 files to 16-bit, stereo, 44.1 kHz waves     |
+| ` for i in *.mp3; do lame --decode $i ``basename $i .mp3``.wav; done `                                         | Decode mp3 files to 16-bit, stereo, 44.1 kHz waves     |
+| `normalize -m *.wav`                                                                                           | Normalise levels in wavs, mix mode is loud as possible |
 
 ## Locales
 
-| Command                                                           | What is does                                               |
-| ----------------------------------------------------------------- | ---------------------------------------------------------- |
-| `printf "%'d\n" 1234`                                             | Print number with thousands grouping appropriate to locale |
-| `BLOCK_SIZE=\'1 ls -l`                                            | Use locale thousands grouping in ls. See also l            |
-| `echo "I live in`locale territory`"`                              | Extract info from locale database                          |
-| `LANG=en_IE.utf8 locale int_prefix`                               | Lookup locale info for specific country. See also ccodes   |
-| `locale -kc $(locale | sed -n 's/\(LC_.\{4,\}\)=.*/\1/p') | less` | List fields available in locale database                   |
+| Command                                                             | What is does                                               |
+| ------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `printf "%'d\n" 1234`                                               | Print number with thousands grouping appropriate to locale |
+| `BLOCK_SIZE=\'1 ls -l`                                              | Use locale thousands grouping in ls. See also l            |
+| `echo "I live in$(locale territory)"`                               | Extract info from locale database                          |
+| `LANG=en_IE.utf8 locale int_prefix`                                 | Lookup locale info for specific country. See also ccodes   |
+| `locale -kc $(locale \| sed -n 's/\(LC_.\{4,\}\)=.*/\1/p') \| less` | List fields available in locale database                   |
 
 ## Dates and Times
 
-| Command                                                  | What is does                                                  |
-| -------------------------------------------------------- | ------------------------------------------------------------- |
-| `cal -3`                                                 | Display a calendar                                            |
-| `cal 9 1752`                                             | Display a calendar for a particular month year                |
-| `date -d fri`                                            | What date is it this friday                                   |
-| `[ $(date -d '12:00 today +1 day' +%d) = '01' ] || exit` | exit a script unless it's the last day of the month           |
-| `date --date='25 Dec' +%A`                               | What day does xmas fall on, this year                         |
-| `date --date='@2147483647'`                              | Convert seconds since the epoch (1970-01-01 UTC) to date      |
-| `TZ='America/Los_Angeles' date`                          | What time is it on west coast of US (use tzselect to find TZ) |
-| `date --date='TZ="America/Los_Angeles" 09:00 next Fri'`  | What's the local time for 9AM next Friday on west coast US    |
+| Command                                                    | What is does                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------- |
+| `cal -3`                                                   | Display a calendar                                            |
+| `cal 9 1752`                                               | Display a calendar for a particular month year                |
+| `date -d fri`                                              | What date is it this friday                                   |
+| `[ $(date -d '12:00 today +1 day' +%d) = '01' ] \|\| exit` | exit a script unless it's the last day of the month           |
+| `date --date='25 Dec' +%A`                                 | What day does xmas fall on, this year                         |
+| `date --date='@2147483647'`                                | Convert seconds since the epoch (1970-01-01 UTC) to date      |
+| `TZ='America/Los_Angeles' date`                            | What time is it on west coast of US (use tzselect to find TZ) |
+| `date --date='TZ="America/Los_Angeles" 09:00 next Fri'`    | What's the local time for 9AM next Friday on west coast US    |
 
 ## Images
 
@@ -301,16 +303,16 @@ Most of these rely on the imagemagick cli programs.
 
 The infamous manual (man) page documentation system. Man pages are organised by the following sections:
 
-| Section | Name                                     | Description                                                                                                                         |
-| ------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 1       | User commands (Programs)                 | Commands that can be executed by the user from within a shell.                                                                      |
-| 2       | System calls                             | Functions which wrap operations performed by the kernel.                                                                            |
-| 3       | Library calls                            | Library functions excluding the system call wrappers (Most of the libc functions).                                                  |
-| 4       | Special files (devices)                  | Files found in `/dev` which allow to access to devices through the kernel.                                                          |
-| 5       | File formats and configuration files     | Various human-readable file formats and configuration files.                                                                        |
-| 6       | Games                                    | Games and funny little programs available on the system.                                                                            |
-| 7       | Overview, conventions, and miscellaneous | Various topics, conventions and protocols, character set standards, the standard filesystem layout, and miscellaneous other things. |
-| 8       | System management commands               | Commands like `mount(8)`, many of which only root can execute.                                                                      |
+| Section | Name                                     | Description                                                                                              |
+| ------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| 1       | User commands (Programs)                 | Commands that can be executed by the user from within a shell.                                           |
+| 2       | System calls                             | Functions which wrap operations performed by the kernel.                                                 |
+| 3       | Library calls                            | Library functions excluding the system call wrappers (Most of the libc functions).                       |
+| 4       | Special files (devices)                  | Files found in `/dev` which allow to access to devices through the kernel.                               |
+| 5       | File formats and configuration files     | Various human-readable file formats and configuration files.                                             |
+| 6       | Games                                    | Games and funny little programs available on the system.                                                 |
+| 7       | Overview, conventions, and miscellaneous | Various topics, conventions and protocols, character set standards, the standard filesystem layout, etc. |
+| 8       | System management commands               | Commands like `mount(8)`, many of which only root can execute.                                           |
 
 An explicit section can be requested. For the man page relating to the file format of `/etc/passwd`
 
@@ -365,14 +367,14 @@ A purpose built documentation system from GNU, `info` features hyperlinks (prefi
 
 Some keys for driving info:
 
-- `n` next node
-- `p` previous node
-- `u` parent node
-- `t` top node
-- `home` `end` `pgup` `pgdn` scroll content
-- `l` go back
-- `q` quit
-- `H` keyboard shortcuts cheatsheet
+-   `n` next node
+-   `p` previous node
+-   `u` parent node
+-   `t` top node
+-   `home` `end` `pgup` `pgdn` scroll content
+-   `l` go back
+-   `q` quit
+-   `H` keyboard shortcuts cheatsheet
 
 Searching info:
 
@@ -403,13 +405,13 @@ A gold mine of documents and sample configuration files. Usually for distributio
 
 Useful modes:
 
-- `-r` or `-R` for recursive
-- `-n` show line number
-- `-w` match the whole word
-- `-v` invert match (i.e. blacklist)
-- `-l` just give the file name of matching files
-- `-i` case insensative
-- `-P` Perl style regular expressions
+-   `-r` or `-R` for recursive
+-   `-n` show line number
+-   `-w` match the whole word
+-   `-v` invert match (i.e. blacklist)
+-   `-l` just give the file name of matching files
+-   `-i` case insensative
+-   `-P` Perl style regular expressions
 
 Recursively search all files from the current directory, containing _Romero_, including the line number where they are found:
 
@@ -486,11 +488,11 @@ By default will sort in dictionary order.
 
 Useful sort modes:
 
-- `-h` human numeric (e.g. 2K 3G)
-- `-n` numeric
-- `-r` reverse
-- `-R` random
-- `-u` unique
+-   `-h` human numeric (e.g. 2K 3G)
+-   `-n` numeric
+-   `-r` reverse
+-   `-R` random
+-   `-u` unique
 
 ## tr
 
@@ -522,10 +524,10 @@ By default will show counts of lines, words and bytes.
 
 Useful counts:
 
-- `-l`, `--lines` newlines
-- `-w`, `--words` words
-- `-c`, `--bytes` bytes
-- `-m`, `--chars` characters
+-   `-l`, `--lines` newlines
+-   `-w`, `--words` words
+-   `-c`, `--bytes` bytes
+-   `-m`, `--chars` characters
 
 Just show the number of lines:
 
@@ -545,15 +547,15 @@ Create an archive of all of the `/etc` directory:
 
     tar -cvf etcy.tar /etc 2> /dev/null
 
-- `-c` create mode
-- `-v` verbose list each file that gets processed
-- `-f` the tar file being delt with
+-   `-c` create mode
+-   `-v` verbose list each file that gets processed
+-   `-f` the tar file being delt with
 
 Same, with compression:
 
     tar -czf etcy.tar.gz /etc 2> /dev/null
 
-- `-z` (gzip) or `-j` (bzip2) compression
+-   `-z` (gzip) or `-j` (bzip2) compression
 
 Example compression sizes:
 
@@ -598,20 +600,20 @@ In its simplist form, copy a file locally:
 
 Some optional switches:
 
-- `-v` verbose
-- `-h` human friendly (`29,242,419 bytes` becomes `29.24M`)
-- `--progress` show progress during transfer
-- `-z` compression
+-   `-v` verbose
+-   `-h` human friendly (`29,242,419 bytes` becomes `29.24M`)
+-   `--progress` show progress during transfer
+-   `-z` compression
 
 Put a file onto a remote server:
 
     rsync etcy.tar iris.local:/home/ben/
 
-- `-a` archive mode for presevation of symlinks, devices, attributes, permissions.
-- `-u` update mode, skips files that are newer on the target
-- `-b` backup
-- `-e` remote shell to use (e.g. `-e ssh`)
-- `--delete` remove files/dirs in the destination, that arent in the source
+-   `-a` archive mode for presevation of symlinks, devices, attributes, permissions.
+-   `-u` update mode, skips files that are newer on the target
+-   `-b` backup
+-   `-e` remote shell to use (e.g. `-e ssh`)
+-   `--delete` remove files/dirs in the destination, that arent in the source
 
 Complete example:
 
@@ -652,12 +654,8 @@ For a deeper survey of awk see my [post]({% post_url 2016-01-17-awk %}).
 ## ssh (Secure Shell)
 
 `ssh $USER@$HOST command` | Run command on $HOST as $USER
-`ssh -f -Y $USER@$HOSTNAME xeyes` | Run GUI command on $HOSTNAME as $USER
-`scp -p -r $USER@$HOST: file dir/` | Copy with permissions to $USER's home directory on $HOST
-`scp -c arcfour $USER@$LANHOST: bigfile` | Use faster crypto for local LAN
-`ssh -g -L 8080:localhost:80 root@$HOST` | Forward connections to $HOSTNAME:8080 out to $HOST:80
-`ssh -R 1434:imap:143 root@$HOST` | Forward connections from \$HOST:1434 in to imap:143
-`ssh-copy-id $USER@$HOST` | Install public key for $USER@$HOST for password-less log in
+`ssh -f -Y $USER@$HOSTNAME xeyes`| Run GUI command on $HOSTNAME as $USER`scp -p -r $USER@$HOST: file dir/`| Copy with permissions to $USER's home directory on $HOST`scp -c arcfour $USER@$LANHOST: bigfile`| Use faster crypto for local LAN`ssh -g -L 8080:localhost:80 root@$HOST` | Forward connections to $HOSTNAME:8080 out to $HOST:80
+`ssh -R 1434:imap:143 root@$HOST`| Forward connections from \$HOST:1434 in to imap:143`ssh-copy-id $USER@$HOST` | Install public key for $USER@$HOST for password-less log in
 
 ## wget
 
@@ -906,5 +904,5 @@ An overview of common programs that generally exist on _nix_ based systems.
 
 # Resources
 
-- [The Linux Command Line](https://nostarch.com/tlcl)
-- [Pádraig Brady's Reference Guide](http://www.pixelbeat.org/cmdline.html)
+-   [The Linux Command Line](https://nostarch.com/tlcl)
+-   [Pádraig Brady's Reference Guide](http://www.pixelbeat.org/cmdline.html)
