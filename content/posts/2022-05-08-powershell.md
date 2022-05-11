@@ -1,7 +1,7 @@
 ---
 layout: post
 draft: false
-title: "PowerShell (in 2022)"
+title: "PowerShell cheat sheet"
 slug: "powershell"
 date: "2022-05-08 16:35:04+11:00"
 lastmod: "2022-05-08 16:35:04+11:00"
