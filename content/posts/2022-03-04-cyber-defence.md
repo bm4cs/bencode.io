@@ -25,37 +25,42 @@ Semester 1 2022 has snuck up on me again. This semester as part of the UNSW and 
 
 The unit looks terrific. 11 weeks of jam packed, fascinating topics around industry methodologies for threat and vulnerability modelling, to actual working practical knowledge including building a SIEM with Splunk, network packet tracing en mass and taking a scientific approach to finding anomalies and potential threat signatures by exploiting ML across the many data points that will be captured. Here's the modules:
 
--   [1 Cyber Defence Foundations](#1-cyber-defence-foundations)
-    -   [1.1 Cyber Defence Foundations Gems](#1.1-cyber-defence-foundations-gems)
-    -   [1.2 Cyber Defence Foundations Papers](#1.2-cyber-defence-foundations-papers)
-    -   [1.3 Cisco IOS](#1.3-cisco-ios)
--   [2 Threat Modelling](#2-threat-modelling)
-    -   [2.1 Threat Modelling Gems](#2.1-threat-modelling-gems)
-    -   [2.2 Threat Modelling Papers](#2.2-threat-modelling-papers)
--   [3 Vulnerability Assessment](#3-vulnerability-assessment)
-    -   [3.1 Vulnerability Assessment Gems](#3.1-vulnerability-assessment-gems)
-    -   [3.2 Vulnerability Assessment Papers](#3.2-vulnerability-assessment-papers)
--   [4 Host and Network Security Monitoring](#4-host-and-network-security-monitoring)
-    -   [4.1 Host and Network Security Gems](#4.1-host-and-network-security-gems)
-    -   [4.2 Host and Network Security Papers](#4.2-host-and-network-security-papers)
--   [5 Data Collection and Analysis](#5-data-collection-and-analysis)
-    -   [5.1 Data Collection and Analysis Gems](#5.1-data-collection-and-analysis-gems)
-    -   [5.2 Data Collection and Analysis Papers](#5.2-data-collection-and-analysis-papers)
--   [6 Signature based defence](#6-signature-based-defence)
-    -   [6.1 Signature based defence Gems](#6.1-signature-based-defence-gems)
-    -   [6.2 Signature based defence Papers](#6.2-signature-based-defence-papers)
--   [7 Machine Learning for Collection and Detection](#7-machine-learning-for-collection-and-detection)
-    -   [7.1 Machine Learning for Collection and Detection Gems](#7.1-machine-learning-for-collection-and-detection-gems)
-        -   [Creating custom Snort rules](#creating-custom-snort-rules)
-        -   [Crafting packets with scapy](#crafting-packets-with-scapy)
-        -   [Using Security Onions MySQL DB of raw events](#using-security-onions-mysql-db-of-raw-events)
-    -   [7.2 Machine Learning for Collection and Detection Papers](#7.2-machine-learning-for-collection-and-detection-papers)
--   [8 Machine Learning based Intrusion Detection](#8-machine-learning-based-intrusion-detection)
-    -   [8.1 Machine Learning based Intrusion Detection Gems](#8.1-machine-learning-based-intrusion-detection-gems)
-    -   [8.2 Machine Learning based Intrusion Detection Papers](#8.2-machine-learning-based-intrusion-detection-papers)
--   [Incident Response 1](#incident-response-1)
--   [Incident Response 2](#incident-response-2)
--   [SOC Insights](#soc-insights)
+- [1 Cyber Defence Foundations](#1-cyber-defence-foundations)
+    - [1.1 Cyber Defence Foundations Gems](#11-cyber-defence-foundations-gems)
+    - [1.2 Cyber Defence Foundations Papers](#12-cyber-defence-foundations-papers)
+    - [1.3 Cisco IOS](#13-cisco-ios)
+- [2 Threat Modelling](#2-threat-modelling)
+    - [2.1 Threat Modelling Gems](#21-threat-modelling-gems)
+    - [2.2 Threat Modelling Papers](#22-threat-modelling-papers)
+- [3 Vulnerability Assessment](#3-vulnerability-assessment)
+    - [3.1 Vulnerability Assessment Gems](#31-vulnerability-assessment-gems)
+    - [3.2 Vulnerability Assessment Papers](#32-vulnerability-assessment-papers)
+- [4 Host and Network Security Monitoring](#4-host-and-network-security-monitoring)
+    - [4.1 Host and Network Security Gems](#41-host-and-network-security-gems)
+    - [4.2 Host and Network Security Papers](#42-host-and-network-security-papers)
+- [5 Data Collection and Analysis](#5-data-collection-and-analysis)
+    - [5.1 Data Collection and Analysis Gems](#51-data-collection-and-analysis-gems)
+    - [5.2 Data Collection and Analysis Papers](#52-data-collection-and-analysis-papers)
+- [6 Signature based defence](#6-signature-based-defence)
+    - [6.1 Signature based defence Gems](#61-signature-based-defence-gems)
+    - [6.2 Signature based defence Papers](#62-signature-based-defence-papers)
+- [7 Machine Learning for Collection and Detection](#7-machine-learning-for-collection-and-detection)
+    - [7.1 Machine Learning for Collection and Detection Gems](#71-machine-learning-for-collection-and-detection-gems)
+      - [7.1.1 Creating custom Snort rules](#711-creating-custom-snort-rules)
+      - [7.1.2. Crafting packets with scapy](#712-crafting-packets-with-scapy)
+      - [7.1.3 Using Security Onions MySQL DB of raw events](#713-using-security-onions-mysql-db-of-raw-events)
+    - [7.2 Machine Learning for Collection and Detection Papers](#72-machine-learning-for-collection-and-detection-papers)
+- [8 Machine Learning based Intrusion Detection](#8-machine-learning-based-intrusion-detection)
+    - [8.1 Machine Learning based Intrusion Detection Gems](#81-machine-learning-based-intrusion-detection-gems)
+      - [8.1.1 Using scikit-learn to mop up data (imputation)](#811-using-scikit-learn-to-mop-up-data-imputation)
+      - [8.1.2 Data pre-processing (munging) basics for ML using Python](#812-data-pre-processing-munging-basics-for-ml-using-python)
+      - [8.1.3 Label Encoding using Python and scikitlearn](#813-label-encoding-using-python-and-scikitlearn)
+      - [8.1.4 One Hot Encoding using Python and pandas](#814-one-hot-encoding-using-python-and-pandas)
+      - [8.1.5 A Decision Tree Classifier ML model in action using scikit-learn](#815-a-decision-tree-classifier-ml-model-in-action-using-scikit-learn)
+    - [8.2 Machine Learning based Intrusion Detection Papers](#82-machine-learning-based-intrusion-detection-papers)
+- [9 Incident Response](#9-incident-response)
+    - [9.2 Incident Response Gems](#92-incident-response-gems)
+    - [9.2 Incident Response Papers](#92-incident-response-papers)
 
 ## 1 Cyber Defence Foundations
 
@@ -68,34 +73,42 @@ TODO
 
 A forest from the trees overview of the broad field of SecOps:
 
--   [1 Cyber Defence Foundations](#1-cyber-defence-foundations)
-    -   [1.1 Cyber Defence Foundations Gems](#1.1-cyber-defence-foundations-gems)
-    -   [1.2 Cyber Defence Foundations Papers](#1.2-cyber-defence-foundations-papers)
-    -   [1.3 Cisco IOS](#1.3-cisco-ios)
--   [2 Threat Modelling](#2-threat-modelling)
-    -   [2.1 Threat Modelling Gems](#2.1-threat-modelling-gems)
-    -   [2.2 Threat Modelling Papers](#2.2-threat-modelling-papers)
--   [3 Vulnerability Assessment](#3-vulnerability-assessment)
-    -   [3.1 Vulnerability Assessment Gems](#3.1-vulnerability-assessment-gems)
-    -   [3.2 Vulnerability Assessment Papers](#3.2-vulnerability-assessment-papers)
--   [4 Host and Network Security Monitoring](#4-host-and-network-security-monitoring)
-    -   [4.1 Host and Network Security Gems](#4.1-host-and-network-security-gems)
-    -   [4.2 Host and Network Security Papers](#4.2-host-and-network-security-papers)
--   [5 Data Collection and Analysis](#5-data-collection-and-analysis)
-    -   [5.1 Data Collection and Analysis Gems](#5.1-data-collection-and-analysis-gems)
-    -   [5.2 Data Collection and Analysis Papers](#5.2-data-collection-and-analysis-papers)
--   [6 Signature based defence](#6-signature-based-defence)
-    -   [6.1 Signature based defence Gems](#6.1-signature-based-defence-gems)
-    -   [6.2 Signature based defence Papers](#6.2-signature-based-defence-papers)
--   [7 Machine Learning for Cyber Defence](#7-machine-learning-for-cyber-defence)
-    -   [7.1 Machine Learning for Cyber Defence Gems](#7.1-machine-learning-for-cyber-defence-gems)
-    -   [7.2 Machine Learning for Cyber Defence Papers](#7.2-machine-learning-for-cyber-defence-papers)
--   [Machine Learning based Intrusion Detection](#machine-learning-based-intrusion-detection)
--   [Machine Learning based Intrusion Detection gems](#machine-learning-based-intrusion-detection-gems)
--   [Machine Learning based Intrusion Detection papers](#machine-learning-based-intrusion-detection-papers)
--   [Incident Response 1](#incident-response-1)
--   [Incident Response 2](#incident-response-2)
--   [SOC Insights](#soc-insights)
+- [1 Cyber Defence Foundations](#1-cyber-defence-foundations)
+    - [1.1 Cyber Defence Foundations Gems](#11-cyber-defence-foundations-gems)
+    - [1.2 Cyber Defence Foundations Papers](#12-cyber-defence-foundations-papers)
+    - [1.3 Cisco IOS](#13-cisco-ios)
+- [2 Threat Modelling](#2-threat-modelling)
+    - [2.1 Threat Modelling Gems](#21-threat-modelling-gems)
+    - [2.2 Threat Modelling Papers](#22-threat-modelling-papers)
+- [3 Vulnerability Assessment](#3-vulnerability-assessment)
+    - [3.1 Vulnerability Assessment Gems](#31-vulnerability-assessment-gems)
+    - [3.2 Vulnerability Assessment Papers](#32-vulnerability-assessment-papers)
+- [4 Host and Network Security Monitoring](#4-host-and-network-security-monitoring)
+    - [4.1 Host and Network Security Gems](#41-host-and-network-security-gems)
+    - [4.2 Host and Network Security Papers](#42-host-and-network-security-papers)
+- [5 Data Collection and Analysis](#5-data-collection-and-analysis)
+    - [5.1 Data Collection and Analysis Gems](#51-data-collection-and-analysis-gems)
+    - [5.2 Data Collection and Analysis Papers](#52-data-collection-and-analysis-papers)
+- [6 Signature based defence](#6-signature-based-defence)
+    - [6.1 Signature based defence Gems](#61-signature-based-defence-gems)
+    - [6.2 Signature based defence Papers](#62-signature-based-defence-papers)
+- [7 Machine Learning for Collection and Detection](#7-machine-learning-for-collection-and-detection)
+    - [7.1 Machine Learning for Collection and Detection Gems](#71-machine-learning-for-collection-and-detection-gems)
+      - [7.1.1 Creating custom Snort rules](#711-creating-custom-snort-rules)
+      - [7.1.2. Crafting packets with scapy](#712-crafting-packets-with-scapy)
+      - [7.1.3 Using Security Onions MySQL DB of raw events](#713-using-security-onions-mysql-db-of-raw-events)
+    - [7.2 Machine Learning for Collection and Detection Papers](#72-machine-learning-for-collection-and-detection-papers)
+- [8 Machine Learning based Intrusion Detection](#8-machine-learning-based-intrusion-detection)
+    - [8.1 Machine Learning based Intrusion Detection Gems](#81-machine-learning-based-intrusion-detection-gems)
+      - [8.1.1 Using scikit-learn to mop up data (imputation)](#811-using-scikit-learn-to-mop-up-data-imputation)
+      - [8.1.2 Data pre-processing (munging) basics for ML using Python](#812-data-pre-processing-munging-basics-for-ml-using-python)
+      - [8.1.3 Label Encoding using Python and scikitlearn](#813-label-encoding-using-python-and-scikitlearn)
+      - [8.1.4 One Hot Encoding using Python and pandas](#814-one-hot-encoding-using-python-and-pandas)
+      - [8.1.5 A Decision Tree Classifier ML model in action using scikit-learn](#815-a-decision-tree-classifier-ml-model-in-action-using-scikit-learn)
+    - [8.2 Machine Learning based Intrusion Detection Papers](#82-machine-learning-based-intrusion-detection-papers)
+- [9 Incident Response](#9-incident-response)
+    - [9.2 Incident Response Gems](#92-incident-response-gems)
+    - [9.2 Incident Response Papers](#92-incident-response-papers)
 
 #### 1.1 Cyber Defence Foundations Gems
 
@@ -317,6 +330,7 @@ TODO: week 6 lecture
 -   In splunk this can be observed by searching on all port 21 inbound packets detected for running this query: _21 and inbound_. From here its simple to create an alert off the back of the query pattern; e.g., trigger an alert when more than 100 per minute port 21 inbound packets are detected.
 -   `hydra` is the goto NIX-based brute forcer. You feed it a list of logins and a list of passwords and it will fire each permutation at the target.
 -   `hydra –L ~/logins.txt –P ~/passwords.txt ftp://10.1.1.12`
+-   `hydra -L /usr/share/wordlist/fasttrack.txt -P /usr/share/wordlist/fasttrack.txt 192.168.0.12 ftp`
 -   Splunk by parsing the logs of the `ftpd` (such as IIS) can be configured to trigger an alert when a certain threshold of `USER` and `PASS` log entries are seen in a time window. In the Splunk web UI its a piece of cake; Search and Reporting > Wack _PASS_ into the omnibox search field > Save As > Alert
 -   Handy common SQL injection detection search patterns are `%' OR '' = ''` and `'' OR 1=1/* ''`
 -   In the Splunk web UI its simple; Search and Reporting > Wack _OR 1 and OR_ into the omnibox search field > Save As > Alert. The noteworth twist on the splunk alert here, is that a single SQL injection attempt must be reported immediately (i.e., don't try to aggregate these events, as just one is harmful). In Splunk this is achieved by setting the _Trigger alert when_ type as _Per-Result_ and setting it to _1_.
@@ -592,14 +606,16 @@ print("confusion matrix", confusion_matrix(y_pred, y_test))   # measure performa
 -   [A review of intrusion detection systems using machine and deep learning in internet of things: Challenges, solutions and future directions (2020)](#TODO)
 -   [DAD: A Distributed Anomaly Detection system using ensemble one-class statistical learning in edge networks (2021)](#TODO)
 
-## Incident Response 1
+## 9 Incident Response
 
-Coming soon.
 
-## Incident Response 2
+#### 9.2 Incident Response Gems
 
-Coming soon.
+- [OSSEC](https://www.ossec.net/) is an open-source host-based intrusion detection system (IDS); log analysis, integrity checking, Windows registry monitoring, rootkit detection, time-based alerting and active response. It is made up of a backend with strong suite of CLIs, a web frontend and agents.
+- [OSSIM](https://cybersecurity.att.com/products/ossim) provides a unified web UI overlay of the many security signals and tools.
+    - Dynamically build up inventory you wish to protect on your network (Environment | Assets and Groups)
+    - Host level packet captures (Environment | Traffic Captures)
+    - Ships with many great rule sets (detecting cleartext FTP logins, eventlog clearing, account creation, failed login attempts)
 
-## SOC Insights
 
-Coming soon.
+#### 9.2 Incident Response Papers
