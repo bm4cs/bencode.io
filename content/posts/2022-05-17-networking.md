@@ -19,6 +19,15 @@ tags:
   - [Layer 3 (Network)](#layer-3-network)
     - [Layer 3 (Network) Protocols](#layer-3-network-protocols)
   - [Layer 4 (Transport)](#layer-4-transport)
+    - [Layer 4 (Transport) Protocols](#layer-4-transport-protocols)
+  - [Layer 7 (Application)](#layer-7-application)
+    - [Layer 7 (Application) Protocols](#layer-7-application-protocols)
+- [Network Simulators](#network-simulators)
+  - [Cisco Packet Tracer](#cisco-packet-tracer)
+  - [Boson NetSim](#boson-netsim)
+  - [VIRL](#virl)
+  - [GNS3](#gns3)
+  - [EVE-NG](#eve-ng)
 
 ## Overview
 
@@ -97,3 +106,90 @@ Subnets use routers to inter-link them. But how do routers, which may in-turn be
 | OSPF  | Open Shortest Path First                   | Routes based on link state route (LSR) (used inside a data center)   |
 
 ### Layer 4 (Transport)
+
+Thankfully layer 3 provides the foundations for devices to communicate on a network.
+
+Unfortunately we're not done.
+
+When you think about a computer or device connected to a network, it is not uncommon for it to be running multiple processes that each in-turn wish to interact with the network. A given computer might run a web browser and SSH client simultanously.
+
+- While layer 3 (IP) allows machine level packet exchange to take place, it is too crude for multiplexing this traffic between processes.
+- Enter layer 4 which bolsters layer 3 (IP) with additional powers.
+- Three key missing pieces are added on-top of IP; a _protocol field_ and two 16-bit _port fields_ for a source and destination port.
+- 16-bit = 64K ports are possible
+- [IANA](https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml) (Internet Assigned Numbers Authority) have estalbished common usages for particular port numbers.
+- The source IP, dest IP, protocol, source port and dest port is known colloquially as the _5 tuple_
+- The _5 tuple_ in essence defines the logical connection
+- Sockets were an early layer 4 abstraction born in UNIX
+
+TCP (tansmission control protocol):
+
+- Provides the concept of a connection. A durable session is which data can flow.
+- Establishing a TCP connection is infamously known as a _3-way handshake_ (`SYN`, `SYN-ACK`, `ACK`)
+- On both the client and server accounting is established to facilitate re-ordering, acknowledging, throttle, re-transmit, timeouts
+
+UDP (user datagram protocol):
+
+- While TCP adds great functionality such as connection establishment, flow control etc.
+- This comes at a cost and is trade-off that must be made.
+- Do the features TCP provides outweight the performance costs it must pay?
+- UDP strips down most of the functionality provided by TCP, providing minimal layer 4 communication between processes.
+- Given how entrenched TCP is throughout the infrastructure that makes up the Internet, there is now a movement to evolve TCP by building protocols on-top of UDP.
+- Google for example have been experimenting with [SPDY](https://en.wikipedia.org/wiki/SPDY) and [QUIC](https://en.wikipedia.org/wiki/QUIC)
+- SPDY (a pre-cursor for HTTP/2) reduces latency between the browser and server by applying compression (less data), multiplexing (less connections) and prioritisation (less waiting).
+
+#### Layer 4 (Transport) Protocols
+
+| TLA  | Un-TLA                         | Description                                    |
+| ---- | ------------------------------ | ---------------------------------------------- |
+| QUIC | Quick UDP Internet Connections | An optimised TCP implementation based on UDP   |
+| SPDY | _Speedy_                       | The precursor to HTTP/2.                       |
+| TCP  | Transmission Control Protocol  | A connection-oriented transport protocol.      |
+| UDP  | User Datagram Protocol         | A connection-less, minimal transport protocol. |
+
+### Layer 7 (Application)
+
+TCP connections at scale, don't scale.
+
+- At Google scale, even the seemingly simple TCP 3-way handshake can be harmful.
+- But given how entrenched the Internet infrastructure and its protocols are, it is simply not feasible to redesign TCP.
+- Google, well aware of this problem, came up with a great idea.
+- Why not build a _new TCP_ on-top of the unencumbered UDP; the [SPDY](https://en.wikipedia.org/wiki/SPDY) and [QUIC](https://en.wikipedia.org/wiki/QUIC) proposals were born.
+- SPDY (a pre-cursor for HTTP/2) reduces latency between the browser and server by applying compression (less data), multiplexing (less connections) and prioritisation (less waiting).
+
+- HTTP/2 adds connection multiplexing; allowing multiple streams of data to traverse over a single connection. HTTP/2 overcomes [HOL](https://en.wikipedia.org/wiki/Head-of-line_blocking) at the layer 7, but still suffers from it as layer 4.
+- HTTP/3 overcomes [HOL](https://en.wikipedia.org/wiki/Head-of-line_blocking) at layer 7 and layer 4 by using QUIC instead of TCP.
+
+#### Layer 7 (Application) Protocols
+
+| TLA  | Un-TLA                         | Description                                  |
+| ---- | ------------------------------ | -------------------------------------------- |
+| QUIC | Quick UDP Internet Connections | An optimised TCP implementation based on UDP |
+
+## Network Simulators
+
+To learn if you want to avoid cabling actual devices.
+
+### Cisco Packet Tracer
+
+asdf
+
+### Boson NetSim
+
+sdfg
+
+### VIRL
+
+sdfg
+
+### GNS3
+
+> Join the world's largest community of network professionals who rely on GNS3 to build better networks, share ideas and make connections.
+
+[GNS3](https://www.gns3.com/)
+
+### EVE-NG
+
+> EVE - The Emulated Virtual Environment For Network, Security and DevOps Professionals
+
+[EVE-NG](https://www.eve-ng.net/)
