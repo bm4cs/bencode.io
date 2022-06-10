@@ -22,7 +22,12 @@ tags:
     - [Layer 4 (Transport) Protocols](#layer-4-transport-protocols)
   - [Layer 7 (Application)](#layer-7-application)
     - [Layer 7 (Application) Protocols](#layer-7-application-protocols)
-- [Network Simulators](#network-simulators)
+  - [Cloud Physical Networking](#cloud-physical-networking)
+    - [The magic layer 2 scale sauce](#the-magic-layer-2-scale-sauce)
+  - [Networking inside NT](#networking-inside-nt)
+  - [Hyper-V Networking](#hyper-v-networking)
+- [Network Emulators](#network-emulators)
+  - [MiniNet](#mininet)
   - [Cisco Packet Tracer](#cisco-packet-tracer)
   - [Boson NetSim](#boson-netsim)
   - [VIRL](#virl)
@@ -154,11 +159,13 @@ TCP connections at scale, don't scale.
 - At Google scale, even the seemingly simple TCP 3-way handshake can be harmful.
 - But given how entrenched the Internet infrastructure and its protocols are, it is simply not feasible to redesign TCP.
 - Google, well aware of this problem, came up with a great idea.
-- Why not build a _new TCP_ on-top of the unencumbered UDP; the [SPDY](https://en.wikipedia.org/wiki/SPDY) and [QUIC](https://en.wikipedia.org/wiki/QUIC) proposals were born.
+- Why not build a _new TCP_ on-top of the unencumbered UDP? The [SPDY](https://en.wikipedia.org/wiki/SPDY) and [QUIC](https://en.wikipedia.org/wiki/QUIC) proposals were born.
 - SPDY (a pre-cursor for HTTP/2) reduces latency between the browser and server by applying compression (less data), multiplexing (less connections) and prioritisation (less waiting).
-
 - HTTP/2 adds connection multiplexing; allowing multiple streams of data to traverse over a single connection. HTTP/2 overcomes [HOL](https://en.wikipedia.org/wiki/Head-of-line_blocking) at the layer 7, but still suffers from it as layer 4.
 - HTTP/3 overcomes [HOL](https://en.wikipedia.org/wiki/Head-of-line_blocking) at layer 7 and layer 4 by using QUIC instead of TCP.
+- In line with pressure to reduce RTT (round-trip time) connection overheads caused by handshakes, TLS 1.3 proposed design changes to TLS, inline with the QUIC and HTTP/3 movements.
+- RTT (round trip time) is a useful unit of measurement in the reduction goal; being the complete time from request to receipt of response. Zero RTT (0-RTT) being the holy grail, with no preample connection establishment concerns.
+- [QUIC](https://en.wikipedia.org/wiki/QUIC) in combination with HTTP/3, has effectively replaced TCP by offering (1) reliability, (2) flow control and per stream (3) prioritisation, (4) zero-RTT and (5) no head-of-line (HOL) blocking.
 
 #### Layer 7 (Application) Protocols
 
@@ -166,30 +173,81 @@ TCP connections at scale, don't scale.
 | ---- | ------------------------------ | -------------------------------------------- |
 | QUIC | Quick UDP Internet Connections | An optimised TCP implementation based on UDP |
 
-## Network Simulators
+### Cloud Physical Networking
+
+Data centers with lots of servers = the cloud amirite.
+
+- A rack houses lots of servers (aka blades or nodes).
+- The nodes in a rack interface with the world via a network router located within the rack (aka the _Top of Rack_ (ToR) or _T0_ router)
+- The T0 (ToR) routers are in-turn daisy-chained (using copper) with another layer of routers known as the _T1_ or _leaf routers_.
+- The T0-to-T1 layer can only scale so far, e.g., there are only so many physical ports, latency requirements, so on. When a threshold of T0-and-T1 interconnections occur, this unit of nodes/T0s and T1 is clumped up. This clumping is known as a _cluster_.
+- T0-to-T1 flows are efficiently distributed by leveraging ECMP (Equal Cost Multi Path).
+- This T0-to-T1 _cluster_ can in-turn be inter-connected to yet another layer of swtiches, known as the T2 or _spine router_. This hierarchical scale model could in-theory go on and on.
+- In practice the _spine routers_ (T2) within a physical region are daisy-chained via a _regional hubs_ (RH) and _regional aggregators_ (RA).
+- Regions are in-turn interconnected via a WAN/SWAN network.
+- Within a region, latency guarantees exist (X-ms inter-region and Y-ms within an availability-zone) by ensuring a fixed maximum diameter path between nodes.
+- 2m nodes, 90k racks, 5k clusters, 250 DCs, 60 regions
+
+#### The magic layer 2 scale sauce
+
+- Layer 2 (data link) has inherent scalability problems (e.g., loops/STP, broadcasting) which traditional networks can tolerate. However, at hyper-scale simply does not work.
+- Now what? Give up?
+- Layer 2 communication must be sandboxed to small units.
+- Layer 2 traffic is constrained to within the rack (i.e., the T0/ToR) and propagates no further.
+- All communication from T0 and up is IP based (layer 3) routing.
+- The magic of this design stems from the ToR/T0 router that lives within each rack. The ToR acts as a swtich to the nodes within its rack, but as a layer 3 router to everything above. Pretty cool right!
+
+
+
+
+### Networking inside NT
+
+The NT OS provides a number of abstractions.
+
+1. The kernel `ntoskrnl.exe` interfaces and orchestrates with hardware, providing process governance etc.
+2. TCP/IP layer implements RFCs and necessary glue to kernel to achieve them
+3. AFD layer provides user-space application primitives
+
+NDIS (network device interface specification) links the various layers together and provides a low level API for building network device drivers on top of. Can be thought of as a shim.
+
+
+
+
+### Hyper-V Networking
+
+
+Place marker: Rec6 00:04:14
+
+
+
+
+
+## Network Emulators
 
 To learn if you want to avoid cabling actual devices.
 
+### MiniNet
+
 ### Cisco Packet Tracer
 
-asdf
+[Get it](https://skillsforall.com/resources/lab-downloads)
 
 ### Boson NetSim
 
-sdfg
+TODO
 
 ### VIRL
 
-sdfg
+TODO
 
 ### GNS3
 
 > Join the world's largest community of network professionals who rely on GNS3 to build better networks, share ideas and make connections.
 
-[GNS3](https://www.gns3.com/)
+[Get it](https://www.gns3.com/)
 
 ### EVE-NG
 
 > EVE - The Emulated Virtual Environment For Network, Security and DevOps Professionals
 
-[EVE-NG](https://www.eve-ng.net/)
+[Get it](https://www.eve-ng.net/)
