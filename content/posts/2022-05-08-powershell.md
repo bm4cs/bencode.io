@@ -219,18 +219,18 @@ Remove-Item -Path testing.txt # Delete a file
 
 ```powershell
 $Person = @{
-  FirstName = 'Trevor'
-  LastName = 'Sullivan'
+  FirstName = 'Dennis'
+  LastName = 'Ritchie'
   Likes = @(
-    'Bacon',
-    'Beer',
-    'Software'
+    'C',
+    'UNIX',
+    'PDP-11'
   )
-}                                                           # Create a PowerShell HashTable
+}
 
-$Person.FirstName                                           # Retrieve an item from a HashTable
-$Person.Likes[-1] # Returns the last item in the "Likes" array, in the $Person HashTable (software)
-$Person.Age = 50 # Add a new property to a HashTable
+$Person.FirstName
+$Person.Likes[-1]
+$Person.Age = 50
 ```
 
 ## Windows Management Instrumentation (WMI)
