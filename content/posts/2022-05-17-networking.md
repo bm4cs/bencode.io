@@ -122,13 +122,29 @@ When you think about a computer or device connected to a network, it is not unco
 - The _5 tuple_ in essence defines the logical connection
 - Sockets were an early layer 4 abstraction born in UNIX
 
-TCP (tansmission control protocol):
+#### TCP (tansmission control protocol):
 
 - Provides the concept of a connection. A durable session is which data can flow.
 - Establishing a TCP connection is infamously known as a _3-way handshake_ (`SYN`, `SYN-ACK`, `ACK`)
-- On both the client and server accounting is established to facilitate re-ordering, acknowledging, throttle, re-transmit, timeouts
+- On both the client and server accounting is established to facilitate re-ordering, acknowledging, congestion control and throttling, re-transmission, timeouts
 
-UDP (user datagram protocol):
+At its core TCP fundamentals to know well (kudos [Chris Greer](https://www.youtube.com/watch?v=xdQ9sgpkrX8)):
+
+9:00 into https://www.youtube.com/watch?v=xdQ9sgpkrX8
+
+- TCP handshake and options
+- TCP windows
+- TCP retranmissions
+- Selective acknowledgements
+
+TCP tricks for performance issues:
+
+- Creating a TCP profile, colors
+- Filter expressions in wireshark
+- Spotting delays in TCP streams
+
+
+#### UDP (user datagram protocol):
 
 - While TCP adds great functionality such as connection establishment, flow control etc.
 - This comes at a cost and is trade-off that must be made.
@@ -166,30 +182,20 @@ TCP connections at scale, don't scale.
 | ---- | ------------------------------ | -------------------------------------------- |
 | QUIC | Quick UDP Internet Connections | An optimised TCP implementation based on UDP |
 
-## Network Simulators
+## Network Tools and Simulators
 
 To learn if you want to avoid cabling actual devices.
 
-### Cisco Packet Tracer
+- Cisco Packet Tracer
+- Boson NetSim
+- VIRL
+- GNS3
+- EVE-NG
 
-asdf
 
-### Boson NetSim
 
-sdfg
+## Resources
 
-### VIRL
+- [CCNA Exam](https://www.cisco.com/c/dam/en_us/training-events/le31/le46/cln/marketing/exam-topics/200-301-CCNA.pdf)
 
-sdfg
-
-### GNS3
-
-> Join the world's largest community of network professionals who rely on GNS3 to build better networks, share ideas and make connections.
-
-[GNS3](https://www.gns3.com/)
-
-### EVE-NG
-
-> EVE - The Emulated Virtual Environment For Network, Security and DevOps Professionals
-
-[EVE-NG](https://www.eve-ng.net/)
+https://learning.oreilly.com/videos/ccna-200-301/9780136582700/9780136582700-CCVC_1_1_8/
