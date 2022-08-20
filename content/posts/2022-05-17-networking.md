@@ -197,5 +197,7 @@ To learn if you want to avoid cabling actual devices.
 ## Resources
 
 - [CCNA Exam](https://www.cisco.com/c/dam/en_us/training-events/le31/le46/cln/marketing/exam-topics/200-301-CCNA.pdf)
+- [Packet Tracer](https://skillsforall.com/resources/lab-downloads)
 
 https://learning.oreilly.com/videos/ccna-200-301/9780136582700/9780136582700-CCVC_1_1_8/
+
