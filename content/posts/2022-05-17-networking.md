@@ -14,22 +14,48 @@ tags:
 ---
 
 - [Overview](#overview)
+- [The OSI Layers](#the-osi-layers)
   - [Layer 2 (Link)](#layer-2-link)
     - [Layer 2 (Link) Protocols](#layer-2-link-protocols)
   - [Layer 3 (Network)](#layer-3-network)
     - [Layer 3 (Network) Protocols](#layer-3-network-protocols)
   - [Layer 4 (Transport)](#layer-4-transport)
+    - [TCP (tansmission control protocol):](#tcp-tansmission-control-protocol)
+    - [UDP (user datagram protocol):](#udp-user-datagram-protocol)
     - [Layer 4 (Transport) Protocols](#layer-4-transport-protocols)
   - [Layer 7 (Application)](#layer-7-application)
     - [Layer 7 (Application) Protocols](#layer-7-application-protocols)
-- [Network Simulators](#network-simulators)
-  - [Cisco Packet Tracer](#cisco-packet-tracer)
-  - [Boson NetSim](#boson-netsim)
-  - [VIRL](#virl)
-  - [GNS3](#gns3)
-  - [EVE-NG](#eve-ng)
+- [Network Tools and Simulators](#network-tools-and-simulators)
+- [Resources](#resources)
 
 ## Overview
+
+The Open Systems Interconnection (OSI) model is an ISO standard, for generalising how computers communicate. It comprises of 7 layers (PDNTSPA - Please Do Not Throw Sausage Pizza Away):
+
+| Layer | Name         | Includes                                                                                |
+| ----- | ------------ | --------------------------------------------------------------------------------------- |
+| 7     | Application  |                                                                                         |
+| 6     | Presentation | Data normalisation (encoding, bit order)                                                |
+| 5     | Session      |                                                                                         |
+| 4     | Transport    | Segments and reassembles (TCP/UDP, ports)                                               |
+| 3     | Network      | Connectivity and path selection between two hosts (IP addresses, routers)               |
+| 2     | Data Link    | Data transmission formats and physical media control (Ethernet MAC, switches) addresses |
+| 1     | Physical     | Bit transmission between devices (voltage levels, data rates)                           |
+
+Common to categorise a problem to its layer, ex: for a cabling problem "I found it was a layer 1 issue".
+
+Inside joke: a layer 8 issue = human/user issue
+
+The TCP/IP pre-dates the OSI model (it was born as part of ARPAnet). The complete (all layers) data exchange unit is known as the Protocol Data Unit (PDU). Each layer has its own terminology for its data unit:
+
+| Layer | Name           | Data unit |
+| ----- | -------------- | --------- |
+| 4     | Application    | Data      |
+| 3     | Transport      | Segment   |
+| 2     | Internet       | Packet    |
+| 1     | Network Access | Frame     |
+
+## The OSI Layers
 
 ### Layer 2 (Link)
 
@@ -143,7 +169,6 @@ TCP tricks for performance issues:
 - Filter expressions in wireshark
 - Spotting delays in TCP streams
 
-
 #### UDP (user datagram protocol):
 
 - While TCP adds great functionality such as connection establishment, flow control etc.
@@ -192,12 +217,10 @@ To learn if you want to avoid cabling actual devices.
 - GNS3
 - EVE-NG
 
-
-
 ## Resources
 
 - [CCNA Exam](https://www.cisco.com/c/dam/en_us/training-events/le31/le46/cln/marketing/exam-topics/200-301-CCNA.pdf)
 - [Packet Tracer](https://skillsforall.com/resources/lab-downloads)
 
-https://learning.oreilly.com/videos/ccna-200-301/9780136582700/9780136582700-CCVC_1_1_8/
-
+Chris Greer on TCP Fundamentals Part 1
+https://www.youtube.com/watch?v=xdQ9sgpkrX8&t=536s
