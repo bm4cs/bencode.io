@@ -26,6 +26,9 @@ tags:
   - [Layer 7 (Application)](#layer-7-application)
     - [Layer 7 (Application) Protocols](#layer-7-application-protocols)
 - [Network Tools and Simulators](#network-tools-and-simulators)
+- [Cisco](#cisco)
+  - [IOS shell](#ios-shell)
+  - [IOS configuration](#ios-configuration)
 - [Resources](#resources)
 
 ## Overview
@@ -216,6 +219,72 @@ To learn if you want to avoid cabling actual devices.
 - VIRL
 - GNS3
 - EVE-NG
+
+
+## Cisco
+
+Started life as purely a router company in 1984. IOS has been the OS driving these things ever since. Including the Catalyst switch range (Cresendo acquisition) and PIX firewall range (Network Translation acquisition).
+
+IOS variations:
+
+- NX-OS on the Nexus and MDS data center switches
+- IOS-XR on service provider NCS, CRS, ASR9000 and XR12000 routers
+- IOS-XE on ASR1000 series routers
+
+### IOS shell
+
+Shell modes:
+
+- `hostname>` user exec mode
+- `hostname#` privileged exec mode (`enable`)
+- `hostname(config)#` global configuration mode (`configure terminal`)
+- `hostname(config-if)#` interface configuration mode (`interface <if_id>`)
+
+Navigation:
+
+- Abbreviation is supported everywhere, e.g. `en` = `enable`
+- `exit` drops down a shell level (e.g., global configuration model to priviliged exec mode)
+- `end` drop all the way down to priviliged exec mode
+
+Shortcuts:
+
+- Movement:
+  - `ctrl-A` cursor to line begin
+  - `ctrl-E` cursor to line end
+  - `esc-F` move forward one word
+  - `esc-B` move backward one word
+  - `ctrl-P` previous command
+  - `ctrl-N` next command
+- Functional:
+  - `ctrl-L` reprint line
+  - `ctrl-R` refresh
+  - `ctrl-C` exit command mode
+  - `ctrl-Z` run command and exit
+
+Help:
+
+- `?` help
+- `sh?` commands that begin with `sh`
+- `show ?` show nested-help for the `show` command
+- `show ip ?` show nested-nested-help for the `show ip` command
+
+Piped text processing:
+
+- `show running-config interface FastEthernet0/0`
+- `show running-config | begin FastEthernet0/0`
+- `show running-config | include FastEthernet0/0`
+- `show running-config | exclude FastEthernet0/0`
+- `show running-config | section interface`
+
+### IOS configuration
+
+Startup configuration lives on NVRAM and is persistent.
+
+Runtime configuration however lives only in memory and is not persistent.
+
+To save runtime configuration `copy running-config startup-config`
+
+To factory reset `wr erase` or `erase startup-config` followed by `reload`
 
 ## Resources
 
