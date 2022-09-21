@@ -35,15 +35,15 @@ tags:
 
 The Open Systems Interconnection (OSI) model is an ISO standard, for generalising how computers communicate. It comprises of 7 layers (PDNTSPA - Please Do Not Throw Sausage Pizza Away):
 
-| Layer | Name         | Includes                                                                                |
-| ----- | ------------ | --------------------------------------------------------------------------------------- |
-| 7     | Application  |                                                                                         |
-| 6     | Presentation | Data normalisation (encoding, bit order)                                                |
-| 5     | Session      |                                                                                         |
-| 4     | Transport    | Segments and reassembles (TCP/UDP, ports)                                               |
-| 3     | Network      | Connectivity and path selection between two hosts (IP addresses, routers)               |
-| 2     | Data Link    | Data transmission formats and physical media control (Ethernet MAC, switches) addresses |
-| 1     | Physical     | Bit transmission between devices (voltage levels, data rates)                           |
+| OSI layer | Name         | Includes                                                                                |
+| --------- | ------------ | --------------------------------------------------------------------------------------- |
+| 7         | Application  |                                                                                         |
+| 6         | Presentation | Data normalisation (encoding, bit order)                                                |
+| 5         | Session      |                                                                                         |
+| 4         | Transport    | Segments and reassembles (TCP/UDP, ports)                                               |
+| 3         | Network      | Connectivity and path selection between two hosts (IP addresses, routers)               |
+| 2         | Data Link    | Data transmission formats and physical media control (Ethernet MAC, switches) addresses |
+| 1         | Physical     | Bit transmission between devices (voltage levels, data rates)                           |
 
 Common to categorise a problem to its layer, ex: for a cabling problem "I found it was a layer 1 issue".
 
@@ -51,12 +51,12 @@ Inside joke: a layer 8 issue = human/user issue
 
 The TCP/IP pre-dates the OSI model (it was born as part of ARPAnet). The complete (all layers) data exchange unit is known as the Protocol Data Unit (PDU). Each layer has its own terminology for its data unit:
 
-| Layer | Name           | Data unit |
-| ----- | -------------- | --------- |
-| 4     | Application    | Data      |
-| 3     | Transport      | Segment   |
-| 2     | Internet       | Packet    |
-| 1     | Network Access | Frame     |
+| TCP/IP layer | Name           | Data unit |
+| ------------ | -------------- | --------- |
+| 4            | Application    | Data      |
+| 3            | Transport      | Segment   |
+| 2            | Internet       | Packet    |
+| 1            | Network Access | Frame     |
 
 ## The OSI Layers
 
@@ -156,21 +156,24 @@ When you think about a computer or device connected to a network, it is not unco
 - Provides the concept of a connection. A durable session is which data can flow.
 - Establishing a TCP connection is infamously known as a _3-way handshake_ (`SYN`, `SYN-ACK`, `ACK`)
 - On both the client and server accounting is established to facilitate re-ordering, acknowledging, congestion control and throttling, re-transmission, timeouts
+- The great water analog for TCP. A sender has a bucket (buffer size) which is pored into a water pipe (bandwidth), which empties into receivers bucket (receive window buffer).
 
-At its core TCP fundamentals to know well (kudos [Chris Greer](https://www.youtube.com/watch?v=xdQ9sgpkrX8)):
-
-9:00 into https://www.youtube.com/watch?v=xdQ9sgpkrX8
+At its core TCP fundamentals to know well (kudos [Chris Greer](https://www.youtube.com/watch?v=xdQ9sgpkrX8) the Packet Pioneer):
 
 - TCP handshake and options
+  - Buffer (window) sizes
+  - Sequence number
+  - Scale factor
+  - SACK
 - TCP windows
 - TCP retranmissions
 - Selective acknowledgements
 
-TCP tricks for performance issues:
+Wireshark TCP tricks for performance issues:
 
-- Creating a TCP profile, colors
-- Filter expressions in wireshark
-- Spotting delays in TCP streams
+- Custom profile to paint events of interest, such as `SYN` packets as bright green
+- Filter expressions
+- Spotting delays in TCP streams using delta time (the time difference between adjacent packets)
 
 #### UDP (user datagram protocol):
 
@@ -220,7 +223,6 @@ To learn if you want to avoid cabling actual devices.
 - GNS3
 - EVE-NG
 
-
 ## Cisco
 
 Started life as purely a router company in 1984. IOS has been the OS driving these things ever since. Including the Catalyst switch range (Cresendo acquisition) and PIX firewall range (Network Translation acquisition).
@@ -240,26 +242,30 @@ Shell modes:
 - `hostname(config)#` global configuration mode (`configure terminal`)
 - `hostname(config-if)#` interface configuration mode (`interface <if_id>`)
 
+Prefix commands with `do` to avoid having to drop up/down into the correct shell mode.
+
 Navigation:
 
 - Abbreviation is supported everywhere, e.g. `en` = `enable`
 - `exit` drops down a shell level (e.g., global configuration model to priviliged exec mode)
 - `end` drop all the way down to priviliged exec mode
+-
 
-Shortcuts:
+Movement shortcuts:
 
-- Movement:
-  - `ctrl-A` cursor to line begin
-  - `ctrl-E` cursor to line end
-  - `esc-F` move forward one word
-  - `esc-B` move backward one word
-  - `ctrl-P` previous command
-  - `ctrl-N` next command
-- Functional:
-  - `ctrl-L` reprint line
-  - `ctrl-R` refresh
-  - `ctrl-C` exit command mode
-  - `ctrl-Z` run command and exit
+- `ctrl-A` cursor to line begin
+- `ctrl-E` cursor to line end
+- `esc-F` move forward one word
+- `esc-B` move backward one word
+- `ctrl-P` previous command
+- `ctrl-N` next command
+
+Functional shortcuts:
+
+- `ctrl-L` reprint line
+- `ctrl-R` refresh
+- `ctrl-C` exit command mode
+- `ctrl-Z` run command and exit
 
 Help:
 
@@ -271,7 +277,7 @@ Help:
 Piped text processing:
 
 - `show running-config interface FastEthernet0/0`
-- `show running-config | begin FastEthernet0/0`
+- `sh run | begin hostname`
 - `show running-config | include FastEthernet0/0`
 - `show running-config | exclude FastEthernet0/0`
 - `show running-config | section interface`
