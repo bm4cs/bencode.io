@@ -226,6 +226,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Security
 
+- [OST2.FYI](https://ost2.fyi/) OpenSecurityTraining2's mission is to provide the world's deepest and best cybersecurity training. That our classes are free is just a bonus!
 - [The Ultimate List of SANS Cheat Sheets](https://www.sans.org/blog/the-ultimate-list-of-sans-cheat-sheets/) when it comes to quality cyber-security training and certs SANS is world leading. They have an amazing collection of thoughtful and useful cheat sheets from topics such as _Writing Tips for IT Professionals_, _Windows to Unix Cheat Sheet_, to using pieces of software such as `nmap`, `netcat`, `burb`. Its a treasure trove!
 - [Lenny Zeltser's IT and Information Security Cheat Sheets](https://zeltser.com/cheat-sheets/) speaking of thoughtful cheat sheets, lots of wisdom here
 - [Linux reverse engineering 101](https://github.com/michalmalik/linux-re-101) collection of resources for linux reverse engineering.
