@@ -100,6 +100,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Culture
 
+- [Why we're leaving the cloud](https://world.hey.com/dhh/why-we-re-leaving-the-cloud-654b47e0)
 - [You Are Not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) if you’re using a technology that originated at a large company, but your use case is very different, it’s unlikely that you arrived there deliberately; no, it’s more likely you got there through a ritualistic belief that imitating the giants would bring the same riches.
 - [GitLab's Guide to All-Remote](https://about.gitlab.com/company/culture/all-remote/guide/) the remote manifesto, tips and tricks and remote resources
 - [Why we at $FAMOUS_COMPANY Switched to $HYPED_TECHNOLOGY](https://saagarjha.com/blog/2020/05/10/why-we-at-famous-company-switched-to-hyped-technology/)
