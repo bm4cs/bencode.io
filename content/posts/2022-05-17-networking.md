@@ -14,11 +14,14 @@ tags:
 ---
 
 - [Overview](#overview)
+- [The OSI Layers](#the-osi-layers)
   - [Layer 2 (Link)](#layer-2-link)
     - [Layer 2 (Link) Protocols](#layer-2-link-protocols)
   - [Layer 3 (Network)](#layer-3-network)
     - [Layer 3 (Network) Protocols](#layer-3-network-protocols)
   - [Layer 4 (Transport)](#layer-4-transport)
+    - [TCP (tansmission control protocol):](#tcp-tansmission-control-protocol)
+    - [UDP (user datagram protocol):](#udp-user-datagram-protocol)
     - [Layer 4 (Transport) Protocols](#layer-4-transport-protocols)
   - [Layer 7 (Application)](#layer-7-application)
     - [Layer 7 (Application) Protocols](#layer-7-application-protocols)
@@ -29,12 +32,40 @@ tags:
 - [Network Emulators](#network-emulators)
   - [MiniNet](#mininet)
   - [Cisco Packet Tracer](#cisco-packet-tracer)
-  - [Boson NetSim](#boson-netsim)
-  - [VIRL](#virl)
-  - [GNS3](#gns3)
-  - [EVE-NG](#eve-ng)
+- [Network Tools and Simulators](#network-tools-and-simulators)
+- [Cisco](#cisco)
+  - [IOS shell](#ios-shell)
+  - [IOS configuration](#ios-configuration)
+- [Resources](#resources)
 
 ## Overview
+
+The Open Systems Interconnection (OSI) model is an ISO standard, for generalising how computers communicate. It comprises of 7 layers (PDNTSPA - Please Do Not Throw Sausage Pizza Away):
+
+| OSI layer | Name         | Includes                                                                                |
+| --------- | ------------ | --------------------------------------------------------------------------------------- |
+| 7         | Application  |                                                                                         |
+| 6         | Presentation | Data normalisation (encoding, bit order)                                                |
+| 5         | Session      |                                                                                         |
+| 4         | Transport    | Segments and reassembles (TCP/UDP, ports)                                               |
+| 3         | Network      | Connectivity and path selection between two hosts (IP addresses, routers)               |
+| 2         | Data Link    | Data transmission formats and physical media control (Ethernet MAC, switches) addresses |
+| 1         | Physical     | Bit transmission between devices (voltage levels, data rates)                           |
+
+Common to categorise a problem to its layer, ex: for a cabling problem "I found it was a layer 1 issue".
+
+Inside joke: a layer 8 issue = human/user issue
+
+The TCP/IP pre-dates the OSI model (it was born as part of ARPAnet). The complete (all layers) data exchange unit is known as the Protocol Data Unit (PDU). Each layer has its own terminology for its data unit:
+
+| TCP/IP layer | Name           | Data unit |
+| ------------ | -------------- | --------- |
+| 4            | Application    | Data      |
+| 3            | Transport      | Segment   |
+| 2            | Internet       | Packet    |
+| 1            | Network Access | Frame     |
+
+## The OSI Layers
 
 ### Layer 2 (Link)
 
@@ -127,13 +158,31 @@ When you think about a computer or device connected to a network, it is not unco
 - The _5 tuple_ in essence defines the logical connection
 - Sockets were an early layer 4 abstraction born in UNIX
 
-TCP (tansmission control protocol):
+#### TCP (tansmission control protocol):
 
 - Provides the concept of a connection. A durable session is which data can flow.
 - Establishing a TCP connection is infamously known as a _3-way handshake_ (`SYN`, `SYN-ACK`, `ACK`)
-- On both the client and server accounting is established to facilitate re-ordering, acknowledging, throttle, re-transmit, timeouts
+- On both the client and server accounting is established to facilitate re-ordering, acknowledging, congestion control and throttling, re-transmission, timeouts
+- The great water analog for TCP. A sender has a bucket (buffer size) which is pored into a water pipe (bandwidth), which empties into receivers bucket (receive window buffer).
 
-UDP (user datagram protocol):
+At its core TCP fundamentals to know well (kudos [Chris Greer](https://www.youtube.com/watch?v=xdQ9sgpkrX8) the Packet Pioneer):
+
+- TCP handshake and options
+  - Buffer (window) sizes
+  - Sequence number
+  - Scale factor
+  - SACK
+- TCP windows
+- TCP retranmissions
+- Selective acknowledgements
+
+Wireshark TCP tricks for performance issues:
+
+- Custom profile to paint events of interest, such as `SYN` packets as bright green
+- Filter expressions
+- Spotting delays in TCP streams using delta time (the time difference between adjacent packets)
+
+#### UDP (user datagram protocol):
 
 - While TCP adds great functionality such as connection establishment, flow control etc.
 - This comes at a cost and is trade-off that must be made.
@@ -231,23 +280,90 @@ To learn if you want to avoid cabling actual devices.
 ### Cisco Packet Tracer
 
 [Get it](https://skillsforall.com/resources/lab-downloads)
+## Network Tools and Simulators
 
-### Boson NetSim
+To learn if you want to avoid cabling actual devices.
 
-TODO
+- Cisco Packet Tracer
+- Boson NetSim
+- VIRL
+- GNS3
+- EVE-NG
 
-### VIRL
+## Cisco
 
-TODO
+Started life as purely a router company in 1984. IOS has been the OS driving these things ever since. Including the Catalyst switch range (Cresendo acquisition) and PIX firewall range (Network Translation acquisition).
 
-### GNS3
+IOS variations:
 
-> Join the world's largest community of network professionals who rely on GNS3 to build better networks, share ideas and make connections.
+- NX-OS on the Nexus and MDS data center switches
+- IOS-XR on service provider NCS, CRS, ASR9000 and XR12000 routers
+- IOS-XE on ASR1000 series routers
 
-[Get it](https://www.gns3.com/)
+### IOS shell
 
-### EVE-NG
+Shell modes:
 
-> EVE - The Emulated Virtual Environment For Network, Security and DevOps Professionals
+- `hostname>` user exec mode
+- `hostname#` privileged exec mode (`enable`)
+- `hostname(config)#` global configuration mode (`configure terminal`)
+- `hostname(config-if)#` interface configuration mode (`interface <if_id>`)
+
+Prefix commands with `do` to avoid having to drop up/down into the correct shell mode.
+
+Navigation:
+
+- Abbreviation is supported everywhere, e.g. `en` = `enable`
+- `exit` drops down a shell level (e.g., global configuration model to priviliged exec mode)
+- `end` drop all the way down to priviliged exec mode
+-
 
 [Get it](https://www.eve-ng.net/)
+Movement shortcuts:
+
+- `ctrl-A` cursor to line begin
+- `ctrl-E` cursor to line end
+- `esc-F` move forward one word
+- `esc-B` move backward one word
+- `ctrl-P` previous command
+- `ctrl-N` next command
+
+Functional shortcuts:
+
+- `ctrl-L` reprint line
+- `ctrl-R` refresh
+- `ctrl-C` exit command mode
+- `ctrl-Z` run command and exit
+
+Help:
+
+- `?` help
+- `sh?` commands that begin with `sh`
+- `show ?` show nested-help for the `show` command
+- `show ip ?` show nested-nested-help for the `show ip` command
+
+Piped text processing:
+
+- `show running-config interface FastEthernet0/0`
+- `sh run | begin hostname`
+- `show running-config | include FastEthernet0/0`
+- `show running-config | exclude FastEthernet0/0`
+- `show running-config | section interface`
+
+### IOS configuration
+
+Startup configuration lives on NVRAM and is persistent.
+
+Runtime configuration however lives only in memory and is not persistent.
+
+To save runtime configuration `copy running-config startup-config`
+
+To factory reset `wr erase` or `erase startup-config` followed by `reload`
+
+## Resources
+
+- [CCNA Exam](https://www.cisco.com/c/dam/en_us/training-events/le31/le46/cln/marketing/exam-topics/200-301-CCNA.pdf)
+- [Packet Tracer](https://skillsforall.com/resources/lab-downloads)
+
+Chris Greer on TCP Fundamentals Part 1
+https://www.youtube.com/watch?v=xdQ9sgpkrX8&t=536s

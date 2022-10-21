@@ -3,7 +3,7 @@ layout: post
 title: "Nerd Gems 💎"
 slug: "gems"
 date: "2017-04-02 13:38:10+11:00"
-lastmod: "2022-03-07 12:52:58+11:00"
+lastmod: "2022-08-21 19:39:58+11:00"
 comments: false
 categories:
   - geek
@@ -11,9 +11,10 @@ categories:
 
 _Updated: 2022-03-07_
 
-This is a list of valuable (to me) developer resources that I've managed to stumble across (hacker news, lobste.rs, cron.weekly, peers, university, etcetera).
+This is a list of valuable (to me) developer resources that I've managed to stumble across (my friends and fellow programmers, hacker news, lobste.rs, cron.weekly, university).
 
 - [Architecture](#architecture)
+- [AI and ML](#ai-and-ml)
 - [Awesome](#awesome)
 - [C](#c)
 - [Cloud](#cloud)
@@ -30,6 +31,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [gRPC](#grpc)
 - [Hardware](#hardware)
 - [Jobs](#jobs)
+- [Languages](#languages)
 - [Linux](#linux)
 - [Monitoring](#monitoring)
 - [Networking](#networking)
@@ -51,6 +53,10 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Why Segment Went Back to a Monolith](https://www.infoq.com/news/2020/04/microservices-back-again/) microservices come with serious tradeoffs
 - [All software sucks](http://harmful.cat-v.org/software/) complexity is the bane of all software, simplicity is the most important quality
 
+## AI and ML
+
+- [Andrej Karpathy on The spelled-out intro to neural networks and backpropagation: building micrograd](https://www.youtube.com/watch?v=VMj-3S1tku0) a 2.5 hour step-by-step spelled-out explanation of backpropagation and training of neural networks. It only assumes basic knowledge of Python and a vague recollection of calculus from high school.
+
 ## Awesome
 
 - [awesome-baremetal](https://github.com/alexellis/awesome-baremetal)
@@ -59,6 +65,8 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 ## C
 
 - [Easy Makefile](https://github.com/mortie/easy-makefile/) a Makefile boilerplate to hit the ground running
+- [Handmade Hero](https://handmadehero.org/) an educational series by Casey Muratori that teaches low-level game programming techniques by example
+- [Eskil Steenberg on How I program in C](https://www.youtube.com/watch?v=443UNeGrFoM)
 
 ## Cloud
 
@@ -154,10 +162,16 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 ## Hardware
 
 - [Backblaze hard drive stats](https://www.backblaze.com/blog/backblaze-hard-drive-stats-q1-2020/)
+- [Build an 8-bit CPU by Ben Eater](https://eater.net/8bit/) a programmable 8-bit computer from scratch on breadboards using only simple logic gates
+- [nand2tetris](https://www.nand2tetris.org/) a distilled version of the book The Elements of Computing Systems, By Noam Nisan and Shimon Schocken (MIT Press), contains all the project materials and tools necessary for building a general-purpose computer system and a modern software hierarchy from the ground up
 
 ## Jobs
 
 - [Inspired corp](inspiredcorp.com.au)
+
+## Languages
+
+- [Crafting Interpreters by Robert Nystrom](https://craftinginterpreters.com/) Ever wanted to make your own programming language or wondered how they are designed and built? If so, this book is for you.
 
 ## Linux
 

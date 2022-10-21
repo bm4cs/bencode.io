@@ -3,15 +3,15 @@ layout: post
 title: "Neovim setup (2022 edition)"
 slug: "vim"
 date: "2007-04-16 21:50:01"
-lastmod: "2022-01-23 22:04:38"
+lastmod: "2022-06-05 20:10:02+11:00"
 comments: false
 categories:
-    - vim
+  - vim
 tags:
-    - neovim
-    - vim
-    - texteditor
-    - vimlife
+  - neovim
+  - vim
+  - texteditor
+  - vimlife
 ---
 
 _Updated: 2022-01-23_
@@ -20,56 +20,55 @@ I finally (2007) bit the bullet and commited to learning a real text editor. Hav
 
 Vim is incredibly customisable. Its important to take the time to craft your own [`vimrc`](https://raw.githubusercontent.com/bm4cs/dots/master/.config/nvim/init.vim). Type `:options` to understand the various levers you can pull to make Vim your editor. Almost 15 years later, I'm still constantly fine tuning things.
 
--   [Help](#help)
--   [Basics](#basics)
--   [Operators](#operators)
--   [Object Selection](#object-selection)
--   [Windows](#windows)
--   [The Edit (e) Command](<#the-edit-(e)-command>)
--   [relativenumber](#relativenumber)
--   [Calculator](#calculator)
--   [Spell checking](#spell-checking)
--   [Sudo Save](#sudo-save)
--   [Jumps](#jumps)
--   [Registers](#registers)
--   [Macros](#macros)
--   [Macros over a collection of files](#macros-over-a-collection-of-files)
--   [Normalise line endings](#normalise-line-endings)
--   [Plugins I am loving of as 2022](#plugins-i-am-loving-of-as-2022)
-    -   [nnn.vim](#nnn.vim)
-    -   [nvim-lspconfig](#nvim-lspconfig)
-        -   [golang](#golang)
-        -   [rust](#rust)
-    -   [telescope.nvim](#telescope.nvim)
-    -   [fugitive.vim](#fugitive.vim)
-    -   [surround](#surround)
-    -   [vim-easy-align](#vim-easy-align)
-    -   [vim-commentary](#vim-commentary)
-    -   [vim-easy-motion](#vim-easy-motion)
-    -   [vim-better-whitespace](#vim-better-whitespace)
-    -   [vim-prettier](#vim-prettier)
-    -   [vim-css-color](#vim-css-color)
-    -   [nvim-lsp](#nvim-lsp)
-    -   [vim-markdown](#vim-markdown)
-    -   [tabular](#tabular)
-    -   [vim-matchup](#vim-matchup)
-    -   [vim-sneak](#vim-sneak)
--   [Getting my setup behind a corporate proxy](#getting-my-setup-behind-a-corporate-proxy)
--   [Resources](#resources)
+- [Help](#help)
+- [Basics](#basics)
+- [Operators](#operators)
+- [Object Selection](#object-selection)
+- [Windows](#windows)
+- [The Edit (e) Command](<#the-edit-(e)-command>)
+- [relativenumber](#relativenumber)
+- [Calculator](#calculator)
+- [Spell checking](#spell-checking)
+- [Sudo Save](#sudo-save)
+- [Jumps](#jumps)
+- [Registers](#registers)
+- [Macros](#macros)
+- [Macros over a collection of files](#macros-over-a-collection-of-files)
+- [Normalise line endings](#normalise-line-endings)
+- [Plugins Im loving of as 2022](#plugins-im-loving-of-as-2022)
+  - [nnn - file browser](#nnn---file-browser)
+  - [nvim-lspconfig - auto-completion](#nvim-lspconfig---auto-completion)
+    - [python](#python)
+    - [golang](#golang)
+    - [rust](#rust)
+  - [telescope - fuzzy finder](#telescope---fuzzy-finder)
+  - [fugitive - git](#fugitive---git)
+  - [surround - symbol surrounding](#surround---symbol-surrounding)
+  - [vim-commentary - code aware comment motions](#vim-commentary---code-aware-comment-motions)
+  - [vim-better-whitespace - redundant whitespace](#vim-better-whitespace---redundant-whitespace)
+  - [neoformat - code formatter](#neoformat---code-formatter)
+  - [vim-css-color - hex codes coloriser](#vim-css-color---hex-codes-coloriser)
+  - [nvim-lsp - code symbol awareness goto def](#nvim-lsp---code-symbol-awareness-goto-def)
+  - [vim-markdown - folding and ToCs](#vim-markdown---folding-and-tocs)
+  - [tabular - intuitive text aligning](#tabular---intuitive-text-aligning)
+  - [vim-matchup - code aware %](#vim-matchup---code-aware-%)
+  - [vim-sneak - precise motioning](#vim-sneak---precise-motioning)
+- [Getting my setup behind a corporate proxy](#getting-my-setup-behind-a-corporate-proxy)
+- [Resources](#resources)
 
 ## Help
 
 Vim has brilliant built-in help. Its only one `:help` away, `:h operator` or `:h motion`.
 
--   `:h cmd` normal mode _cmd_ help
--   `:h i_cmd` insert mode _cmd_ help
--   `:h v_cmd` visual mode _cmd_ help
--   `:h c_cmd` command line _cmd_ help
+- `:h cmd` normal mode _cmd_ help
+- `:h i_cmd` insert mode _cmd_ help
+- `:h v_cmd` visual mode _cmd_ help
+- `:h c_cmd` command line _cmd_ help
 
 ## Basics
 
--   `:enew` new buffer
--   `:edit!` revert buffer to reflect file on disk
+- `:enew` new buffer
+- `:edit!` revert buffer to reflect file on disk
 
 ## Operators
 
@@ -89,10 +88,10 @@ Vim has brilliant built-in help. Its only one `:help` away, `:h operator` or `:h
 
 See `:h operator` for more. All of these support being combined with a motion (or a visual mode selection). Some examples:
 
--   gUaw - make a word shout case
--   dap - delete entire paragraph
--   g?ap - ROT13 encode paragraph
--   gUgU - shout case entire line (factoid: when two operators are invoked in duplicate, applies to current line)
+- gUaw - make a word shout case
+- dap - delete entire paragraph
+- g?ap - ROT13 encode paragraph
+- gUgU - shout case entire line (factoid: when two operators are invoked in duplicate, applies to current line)
 
 ## Object Selection
 
@@ -123,12 +122,12 @@ Learning object selectors is one of the best ways of becoming more efficient wit
 
 Leverage the built-in windows manager, which can do splits to view multiple files at the same time.
 
--   `:sp` horizontal split
--   `:vs` vertical split
--   `ctrl+w o` - close all windows other than the active one.
--   `ctrl+w x` - exchange active window with the next one.
--   `ctrl+w c` - close the current window.
--   `ctrl+w r` - rotate windows clockwise (or counter clockwise).
+- `:sp` horizontal split
+- `:vs` vertical split
+- `ctrl+w o` - close all windows other than the active one.
+- `ctrl+w x` - exchange active window with the next one.
+- `ctrl+w c` - close the current window.
+- `ctrl+w r` - rotate windows clockwise (or counter clockwise).
 
 ## The Edit (e) Command
 
@@ -155,12 +154,12 @@ For example, `<C>r=16*4<CR>` will output 128 where the cursor is currently locat
 
 Built in spell checker, enable with `:set spell`.
 
--   `]s` jump to next error
--   `[s` jump to previous error
--   `z=` suggest corrections for current word
--   `zg` add word to dictionary
--   `zw` remove word from dictionary
--   `zug` undo `zg` or `zw` for current word
+- `]s` jump to next error
+- `[s` jump to previous error
+- `z=` suggest corrections for current word
+- `zg` add word to dictionary
+- `zw` remove word from dictionary
+- `zug` undo `zg` or `zw` for current word
 
 ## Sudo Save
 
@@ -176,9 +175,9 @@ Editing a file, but don't have privileges to save.
 
 Vim records the location before and after making a jump.
 
--   `<C-o>` go back
--   `<C-i>` go forward
--   `:jumps` show jump list
+- `<C-o>` go back
+- `<C-i>` go forward
+- `:jumps` show jump list
 
 | Jump command                  | Effect                                     |
 | ----------------------------- | ------------------------------------------ |
@@ -195,8 +194,8 @@ Vim records the location before and after making a jump.
 
 Handy named memory slots, using `:registers` to list them.
 
--   `""` the unnamed register, general dumping register
--   `"0` the yank register
+- `""` the unnamed register, general dumping register
+- `"0` the yank register
 
 When in insert mode use `<C-r><register>` to paste in a register content on the cursor position, such as `<C-r>"` for the unnamed register or `<C-r>0` for the yank register.
 
@@ -210,9 +209,9 @@ To append to an existing macro, capitalise its register (e.g. for reg `a` use `A
 
 To edit a macro, is easy, its just stored in the corresponding register. For example a macro recorded with `qa` is stored into the `a` register.
 
--   Paste the macro into the buffer with `:put a` or `"ap`
--   Edit it as needed
--   Yank it back into the register `0"ay$`
+- Paste the macro into the buffer with `:put a` or `"ap`
+- Edit it as needed
+- Yank it back into the register `0"ay$`
 
 ## Macros over a collection of files
 
@@ -228,6 +227,40 @@ qa                      "record macro
 :argdo normal @a        "apply macro a to all files in list
 :wall                   "save all files in buffer list
 :argdo write            "only save files in arglist
+```
+
+## Key maps
+
+```
+{cmd} {attr} {lhs} {rhs}
+```
+
+- `{cmd}` is one of ':map', ':map!', ':nmap', ':vmap', ':imap', ':cmap', ':smap', ':xmap', ':omap', ':lmap', etc.
+- `{attr}` is optional and one or more of the following: `<buffer> <silent> <expr> <script> <unique> <special>`. More than one attribute can be specified to a map.
+- `{lhs}` left hand side, is a sequence of one or more keys that you will use in your new shortcut.
+- `{rhs}` right hand side, is the sequence of keys that the {lhs} shortcut keys will execute when entered.
+
+Mode specific maps:
+
+```
+:nmap - Display normal mode maps
+:imap - Display insert mode maps
+:vmap - Display visual and select mode maps
+:smap - Display select mode maps
+:xmap - Display visual mode maps
+:cmap - Display command-line mode maps
+:omap - Display operator pending mode maps
+
+n  Normal mode map. Defined using ':nmap' or ':nnoremap'.
+i  Insert mode map. Defined using ':imap' or ':inoremap'.
+v  Visual and select mode map. Defined using ':vmap' or ':vnoremap'.
+x  Visual mode map. Defined using ':xmap' or ':xnoremap'.
+s  Select mode map. Defined using ':smap' or ':snoremap'.
+c  Command-line mode map. Defined using ':cmap' or ':cnoremap'.
+o  Operator pending mode map. Defined using ':omap' or ':onoremap'.
+
+<Space>  Normal, Visual and operator pending mode map. Defined using ':map' or ':noremap'.
+!  Insert and command-line mode map. Defined using 'map!' or 'noremap!'
 ```
 
 ## Normalise line endings
@@ -255,7 +288,7 @@ vim <your_file>
 :wq
 ```
 
-## Plugins I am loving of as 2022
+## Plugins Im loving of as 2022
 
 While core Vim functionality is like a rock, changing rarely, the plugin eco-system is where you can make Vim level up to doing tasks you commonly do with it. Consequently plugin selection can be quite personal based on specific langs one works with.
 
@@ -263,16 +296,16 @@ The Vim community seems obsessed with writing new plug-in managers, there's quit
 
 Coming from bloated power tool IDE's like awesome JetBrains tools, in order to be remotely productive, I need to be able to efficiency locate and jump between files within a large code base.
 
-### nnn.vim
+### nnn - file browser
 
 My #1 fav.
 
 Ditch NERDTree, and instead surface the awesome [nnn](https://github.com/jarun/nnn) terminal file manager within Vim, genius.
 
--   `<leader>n` start nnn in window
--   `^G` discard selection
+- `<leader>n` start nnn in window
+- `^G` discard selection
 
-### nvim-lspconfig
+### nvim-lspconfig - auto-completion
 
 An [LSP](https://neovim.io/doc/user/lsp.html) (Language Server Protocol) provides deep language specific knowledge, supporting functionality such as autocompletion, linting and syntax highlighting. It is editor agnostic and underpins other editors such as vscode.
 
@@ -280,18 +313,23 @@ The [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) plugin provides c
 
 Once the client plugin is done, install a [language server](https://microsoft.github.io/language-server-protocol/implementors/servers/).
 
+#### python
+
+1. `npm i -g pyright`
+2. Add `require'lspconfig'.pyright.setup{}` to `init.lua`
+
 #### golang
 
--   Make sure `gopls` is installed and on the PATH `go install golang.org/x/tools/gopls@latest`
--   Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
+- Make sure `gopls` is installed and on the PATH `go install golang.org/x/tools/gopls@latest`
+- Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
 
 #### rust
 
--   The LSP is called [rls](https://github.com/rust-lang/rls#setup)
--   Install with `rustup component add rls rust-analysis rust-src`
--   Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
+- The LSP is called [rls](https://github.com/rust-lang/rls#setup)
+- Install with `rustup component add rls rust-analysis rust-src`
+- Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
 
-### telescope.nvim
+### telescope - fuzzy finder
 
 Brilliant fuzzy finder. Picker sources include a range of file pickers (e.g. git files, find files, live grep), Vim pickers (e.g. buffers, tags), LSP pickers (e.g. symbols, references, actions) and Git pickers (commits, branches).
 
@@ -328,120 +366,118 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 | `<C-q>`        | Send all items not filtered to quickfixlist (qflist) |
 | `<M-q>`        | Send all selected items to qflist                    |
 
-### fugitive.vim
+### fugitive - git
 
 The crown jewel of Fugitive is `:Git` (or just `:G`), which calls any
 arbitrary Git command. If you know how to use Git at the command line, you
 know how to use `:Git`. It's vaguely akin to `:!git` but with numerous
 improvements:
 
--   The default behavior is to directly echo the command's output. Quiet
-    commands like `:Git add` avoid the dreaded "Press ENTER or type command to
-    continue" prompt.
--   `:Git commit`, `:Git rebase -i`, and other commands that invoke an editor do
-    their editing in the current Vim instance.
--   `:Git diff`, `:Git log`, and other verbose, paginated commands have their
-    output loaded into a temporary buffer. Force this behavior for any command
-    with `:Git --paginate` or `:Git -p`.
--   `:Git blame` uses a temporary buffer with maps for additional triage. Press
-    enter on a line to view the commit where the line changed, or `g?` to see
-    other available maps. Omit the filename argument and the currently edited
-    file will be blamed in a vertical, scroll-bound split.
--   `:Git mergetool` and `:Git difftool` load their changesets into the quickfix
-    list.
--   Called with no arguments, `:Git` opens a summary window with dirty files and
-    unpushed and unpulled commits. Press `g?` to bring up a list of maps for
-    numerous operations including diffing, staging, committing, rebasing, and
-    stashing.
--   This command (along with all other commands) always uses the current
-    buffer's repository, so you don't need to worry about the current working
-    directory.
+- The default behavior is to directly echo the command's output. Quiet
+  commands like `:Git add` avoid the dreaded "Press ENTER or type command to
+  continue" prompt.
+- `:Git commit`, `:Git rebase -i`, and other commands that invoke an editor do
+  their editing in the current Vim instance.
+- `:Git diff`, `:Git log`, and other verbose, paginated commands have their
+  output loaded into a temporary buffer. Force this behavior for any command
+  with `:Git --paginate` or `:Git -p`.
+- `:Git blame` uses a temporary buffer with maps for additional triage. Press
+  enter on a line to view the commit where the line changed, or `g?` to see
+  other available maps. Omit the filename argument and the currently edited
+  file will be blamed in a vertical, scroll-bound split.
+- `:Git mergetool` and `:Git difftool` load their changesets into the quickfix
+  list.
+- Called with no arguments, `:Git` opens a summary window with dirty files and
+  unpushed and unpulled commits. Press `g?` to bring up a list of maps for
+  numerous operations including diffing, staging, committing, rebasing, and
+  stashing.
+- This command (along with all other commands) always uses the current
+  buffer's repository, so you don't need to worry about the current working
+  directory.
 
 And more:
 
--   View any blob, tree, commit, or tag in the repository with `:Gedit` (and
-    `:Gsplit`, etc.). For example, `:Gedit HEAD~3:%` loads the current file as
-    it existed 3 commits ago.
--   `:Gdiffsplit` (or `:Gvdiffsplit`) brings up the staged version of the file
-    side by side with the working tree version. Use Vim's diff handling
-    capabilities to apply changes to the staged version, and write that buffer
-    to stage the changes. You can also give an arbitrary `:Gedit` argument to
-    diff against older versions of the file.
--   `:Gread` is a variant of `git checkout -- filename` that operates on the
-    buffer rather than the file itself. This means you can use `u` to undo it
-    and you never get any warnings about the file changing outside Vim.
--   `:Gwrite` writes to both the work tree and index versions of a file, making
-    it like `git add` when called from a work tree file and like `git checkout`
-    when called from the index or a blob in history.
--   `:Ggrep` is `:grep` for `git grep`. `:Glgrep` is `:lgrep` for the same.
--   `:GMove` does a `git mv` on the current file and changes the buffer name to
-    match. `:GRename` does the same with a destination filename relative to the
-    current file's directory.
--   `:GDelete` does a `git rm` on the current file and simultaneously deletes
-    the buffer. `:GRemove` does the same but leaves the (now empty) buffer
-    open.
+- View any blob, tree, commit, or tag in the repository with `:Gedit` (and
+  `:Gsplit`, etc.). For example, `:Gedit HEAD~3:%` loads the current file as
+  it existed 3 commits ago.
+- `:Gdiffsplit` (or `:Gvdiffsplit`) brings up the staged version of the file
+  side by side with the working tree version. Use Vim's diff handling
+  capabilities to apply changes to the staged version, and write that buffer
+  to stage the changes. You can also give an arbitrary `:Gedit` argument to
+  diff against older versions of the file.
+- `:Gread` is a variant of `git checkout -- filename` that operates on the
+  buffer rather than the file itself. This means you can use `u` to undo it
+  and you never get any warnings about the file changing outside Vim.
+- `:Gwrite` writes to both the work tree and index versions of a file, making
+  it like `git add` when called from a work tree file and like `git checkout`
+  when called from the index or a blob in history.
+- `:Ggrep` is `:grep` for `git grep`. `:Glgrep` is `:lgrep` for the same.
+- `:GMove` does a `git mv` on the current file and changes the buffer name to
+  match. `:GRename` does the same with a destination filename relative to the
+  current file's directory.
+- `:GDelete` does a `git rm` on the current file and simultaneously deletes
+  the buffer. `:GRemove` does the same but leaves the (now empty) buffer
+  open.
 
-### surround
+### surround - symbol surrounding
 
 Surround chunks of text with quotes or tags.
 
--   `ysiw"` surround word with double quotes
--   `v$S"` surround visual selection with double quotes
--   `vipS<p>` surround paragraph with `<p></p>`
--   `cs"'` change double quotes to single quotes
+- `ysiw"` surround word with double quotes
+- `v$S"` surround visual selection with double quotes
+- `vipS<p>` surround paragraph with `<p></p>`
+- `cs"'` change double quotes to single quotes
 
-### vim-easy-align
-
-OCD much? This helps to line up code based on a particular symbol.
-
--   `vipga=` visual select code block, align all `=` symbols by padding out
-
-### vim-commentary
+### vim-commentary - code aware comment motions
 
 Smart commenting based on the file type.
 
--   `gcc` comment current line
--   `gc<motion>` comment motion based selection e.g. `gcap` for paragraph selection
+- `gcc` comment current line
+- `gc<motion>` comment motion based selection e.g. `gcap` for paragraph selection
 
-### vim-easy-motion
-
-Vim motioning on steroids! Creates micro jumps based on a search pattern you provide, and dims down the buffer with each highlight getting a unique id you can hit.
-
--   `<leader><leader>w` beginning of all words
--   `<leader><leader>fo` motion all `o` characters going forward
--   `<leader><leader>to` motion before (till) `o` characters
--   `<leader><leader>n` jump to latest `/` or `?`
--   `<leader><leader>s` search
-
-### vim-better-whitespace
+### vim-better-whitespace - redundant whitespace
 
 Utilities to highlight and remove redundant use of whitespace.
 
--   `:EnableWhitespace`
--   `:DisableWhitespace`
--   `ToggleWhitespace`
--   `:StripWhitespace`
+- `:EnableWhitespace`
+- `:DisableWhitespace`
+- `:ToggleWhitespace`
+- `:StripWhitespace`
 
-### vim-prettier
+### neoformat - code formatter
 
--   `<leader>p` run the current buffer through prettier
+To use run `Neoformat` in command mode. It will reformat the current buffer.
 
-### vim-css-color
+A language agnostic code formatter. Its a neovim frontend to formatter backends. Tons of [langs/formatters](https://github.com/sbdchd/neoformat/blob/master/README.md) supported.
+
+For example, for python files I use 3 formatters:
+
+```vim
+let g:neoformat_enabled_python = ['autopep8', 'yapf', 'docformatter']
+```
+
+I bind `<leader>p` as my shortcut:
+
+```vim
+nnoremap <leader>p <cmd>Neoformat<cr>
+```
+
+### vim-css-color - hex codes coloriser
 
 Colorise hex codes in the buffer based on CSS standards.
 
-### nvim-lsp
+### nvim-lsp - code symbol awareness goto def
 
--   `<c-]>` definition
--   `K` hover
--   `gD` implementation
--   `<c-k>` signature_help
--   `1gD` type_definition
--   `gr` references
--   `g0` d()<CR>ocument_symbol
--   `gW` workspace_symbol
--   `gd` definition
--   `ga` suggested code action
+- `<c-]>` definition
+- `K` hover
+- `gD` implementation
+- `<c-k>` signature_help
+- `1gD` type_definition
+- `gr` references
+- `g0` d()<CR>ocument_symbol
+- `gW` workspace_symbol
+- `gd` definition
+- `ga` suggested code action
 
 For example if I git `ga` on a rust error, it will auto add the `use` statement for the trait I need:
 
@@ -451,38 +487,57 @@ Code actions:
 Type number and <Enter> or click with the mouse (q or empty cancels):
 ```
 
-### vim-markdown
+### vim-markdown - folding and ToCs
 
 The goto markdown plugin, supports folds and generating table of contents based on headings.
 
 Folding:
 
--   `zr` reduces fold level throughout the buffer
--   `zR` opens all folds
--   `zm` increases fold level throughout the buffer
--   `zM` folds everything all the way
--   `za` open a fold your cursor is on
--   `zA` open a fold your cursor is on recursively
--   `zc` close a fold your cursor is on
--   `zC` close a fold your cursor is on recursively
+- `zr` reduces fold level throughout the buffer
+- `zR` opens all folds
+- `zm` increases fold level throughout the buffer
+- `zM` folds everything all the way
+- `za` open a fold your cursor is on
+- `zA` open a fold your cursor is on recursively
+- `zc` close a fold your cursor is on
+- `zC` close a fold your cursor is on recursively
 
 Commands:
 
--   `:InsertToc`
--   `:TableFormat`
--   `:HeaderIncrease` and `:HeaderDecrease`
+- `:InsertToc`
+- `:TableFormat`
+- `:HeaderIncrease` and `:HeaderDecrease`
 
-### tabular
+### tabular - intuitive text aligning
 
 TODO: http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
 
-### vim-matchup
+### vim-matchup - code aware %
 
-TODO: https://github.com/andymass/vim-matchup
+Highlight, navigate and operate on sets of matching text. It extends the `%` key to language-specific words instead of just single characters.
 
-### vim-sneak
+Example, hit `%` on the `while` keyword, it will bounce you down its matching `endwhile`.
 
-TODO: https://github.com/justinmk/vim-sneak
+### vim-sneak - precise motioning
+
+> The missing motion for Vim
+
+Jump to any location specified by two characters.
+
+Sneak is invoked with `s` (or `z` if you have surround.vim) followed by exactly two characters:
+
+```
+s{char}{char}
+```
+
+- Type `sab` to move the cursor immediately to the next instance of the text "ab".
+  - Additional matches, if any, are highlighted until the cursor is moved.
+- Type `;` to go to the next match
+- Type `3;` to skip to the third match from the current position.
+- Type `ctrl-o` or ```` to go back to the starting point.
+  - This is a built-in Vim motion; Sneak adds to Vim's jumplist only on `s` invocation so you can abandon a trail of `;` or `,` by a single `ctrl-o` or ````.
+- Type `s<Enter>` at any time to repeat the last Sneak-search.
+- Type `S` to search backwards.
 
 ## Getting my setup behind a corporate proxy
 
@@ -490,8 +545,8 @@ TODO: Containerise everything including transitive dependencies
 
 ## Resources
 
--   [Smash into Vim](https://airbladesoftware.com/peepcode-vim/) the awesome PeepCode screen cast that helped me break through the learning curve back in the 2000's
--   [Vim Cheat Sheet](https://vim.rtorr.com/) good quick reference
--   [Jon Gjengset's vimrc](https://github.com/jonhoo/configs) a veteran rust developer
--   [Luke Smith's vimrc](https://github.com/LukeSmithxyz/voidrice) a linguist and Linux enthusiast
--   [HexDSL's vimrc](https://gitlab.com/hexdsl/dots) gamer and Linux enthusiast
+- [Smash into Vim](https://airbladesoftware.com/peepcode-vim/) the awesome PeepCode screen cast that helped me break through the learning curve back in the 2000's
+- [Vim Cheat Sheet](https://vim.rtorr.com/) good quick reference
+- [Jon Gjengset's vimrc](https://github.com/jonhoo/configs) a veteran rust developer
+- [Luke Smith's vimrc](https://github.com/LukeSmithxyz/voidrice) a linguist and Linux enthusiast
+- [HexDSL's vimrc](https://gitlab.com/hexdsl/dots) gamer and Linux enthusiast
