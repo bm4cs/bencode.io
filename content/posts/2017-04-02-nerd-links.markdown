@@ -183,6 +183,8 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Networking
 
+- [PacketLife Cheat Sheets](https://packetlife.net/library/cheat-sheets/)
+- [The Packet Pioneer Chris Greer on TCP Fundamentals Part 1 TCP/IP Explained with Wireshark](https://www.youtube.com/watch?v=xdQ9sgpkrX8)
 - [59 Linux Networking commands and scripts](https://haydenjames.io/linux-networking-commands-scripts/) the ultimate network tools goto list.
 - [Introduction to tcpdump and wireshark](https://www.linux.com/blog/learn/chapter/linux-security/2017/2/linux-security-fundamentals-part-5-introduction-tcpdump-and-wireshark)
 - [hping3](https://linux.die.net/man/8/hping3) send arbitary TCP/IP packets to network hosts
