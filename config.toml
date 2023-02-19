@@ -62,3 +62,8 @@ pygmentsStyle = "native"
         identifier = "papers"
         name = "Papers"
         url = "/papers"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
