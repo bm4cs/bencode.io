@@ -1,7 +1,7 @@
 ---
 layout: post
-draft: true
-title: "Information assurance"
+draft: false
+title: "Information Assurance"
 slug: "infoassurance"
 date: "2023-03-04 13:22:36+11:00"
 lastmod: "2023-03-04 13:22:36+11:00"
@@ -16,6 +16,8 @@ tags:
   - vulnerabilities
   - university
 ---
+
+This is a work in a progress.
 
 Kicking off the University year of 2023 at UNSW and ADFA in the Cybersecurity Masters program I am taking [Infomation Assurance and Security](https://legacy.handbook.unsw.edu.au/postgraduate/courses/2018/ZEIT8021.html).
 
