@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Atomic Habits"
+title: "Notes from the book Atomic Habits"
 slug: "habits"
 date: "2021-06-12 18:57:37"
 lastmod: "2021-06-12 18:57:39"

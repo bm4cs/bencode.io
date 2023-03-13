@@ -1,96 +1,93 @@
 ---
 layout: post
 title: "C"
-date: "2016-11-26 22:39:01"
+slug: "c"
+date: "2016-11-26 22:39:01+11:00"
+lastmod: "2022-04-17 20:32:54+11:00"
 comments: false
 categories:
-- dev
+    - c
 tags:
-- gcc
-- linux
+    - dev
+    - unix
+    - clang
+    - gcc
+    - linux
+    - bsd
 ---
 
-If you need a compiler and build system, my post on [make]({% post_url 2016-10-09-make %}) and GCC could be handy.
+_Update: 2022-04-26_: Overhauling to be simplier and bsd/clang friendly.
 
+-   [Rules of engagement](#rules-of-engagement)
+    -   [Style](#style)
+-   [The language](#the-language)
+    -   [Basic Types](#basic-types)
+        -   [Integer Types](#integer-types)
+        -   [Real and Complex Floating Types](#real-and-complex-floating-types)
+        -   [void](#void)
+    -   [Memory Access Operators](#memory-access-operators)
+    -   [Strings](#strings)
+-   [The Pre Processor](#the-pre-processor)
+    -   [Macros](#macros)
+-   [Patterns](#patterns)
+    -   [vtables](#vtables)
+        -   [person_s.h](#person_s.h)
+        -   [print_vtable.h](#print_vtable.h)
+        -   [print_vtable.c](#print_vtable.c)
+        -   [main.c](#main.c)
+    -   [Libraries](#libraries)
+        -   [C standard library](#c-standard-library)
+        -   [C POSIX library](#c-posix-library)
+        -   [Unit Testing](#unit-testing)
+    -   [Sample C code](#sample-c-code)
 
-# Philosophy #
+## Rules of engagement
 
-Rob Pike's 5 Rules of Programming [Source](http://users.ece.utexas.edu/~adnan/pike.html)
+-   [How I program C by Eskil Steenberg](https://www.youtube.com/watch?v=443UNeGrFoM)
+-   [Notes on Programming in C by Rob Pike](http://doc.cat-v.org/bell_labs/pikestyle)
+-   [The Ten Commandments for C Programmers by Henry Spencer](http://doc.cat-v.org/henry_spencer/ten-commandments)
 
-1. You can't tell where a program is going to spend its time. Bottlenecks occur in surprising places, so don't try to second guess and put in a speed hack until you've proven that's where the bottleneck is.
-2. Measure. Don't tune for speed until you've measured, and even then don't unless one part of the code overwhelms the rest.
-3. Fancy algorithms are slow when n is small, and n is usually small. Fancy algorithms have big constants. Until you know that n is frequently going to be big, don't get fancy. (Even if n does get big, use Rule 2 first)
-4. Fancy algorithms are buggier than simple ones, and they're much harder to implement. Use simple algorithms as well as simple data structures.
-5. Data dominates. If you've chosen the right data structures and organized things well, the algorithms will almost always be self-evident. Data structures, not algorithms, are central to programming.
+### Style
 
-Pike's rules 1 and 2 restate Tony Hoare's famous maxim
+-   [suckless](https://suckless.org/coding_style/)
+-   FreeBSD `man 9 style`
 
- > Premature optimization is the root of all evil
+## The language
 
-Ken Thompson rephrased Pike's rules 3 and 4 as
+### Basic Types
 
-> When in doubt, use brute force
-
-Rule 5 was previously stated by Fred Brooks in The Mythical Man-Month
-
-> write stupid code that uses smart objects
-
-
-
-
-## Resources ##
-
-[The Ten Commandments for C Programmers by Henry Spencer](http://doc.cat-v.org/henry_spencer/ten-commandments)
-
-[Notes on Programming in C by Rob Pike](http://www.lysator.liu.se/c/pikestyle.html)
-
-[The Art of UNIX Programming by Eric Raymond](http://www.catb.org/esr/writings/taoup/)
-
-[An Introduction to GCC](http://www.network-theory.co.uk/gcc/intro/)
-
-[Inside the C Standard Library](https://begriffs.com/posts/2019-01-19-inside-c-standard-lib.html)
-
-[Linux Device Drivers](https://lwn.net/Kernel/LDD3/)
-
-
-# Grammar #
-
-## Basic Types ##
-
-### Integer Types ###
+#### Integer Types
 
 C99 with `stdbool.h` introduced boolean type `_Bool` (1 byte), and macros `true` (1) and `false` (0).
 
-Type | Storage (bytes)
---- | ---
-`_Bool` | 1
-`char` | 1
-`unsigned char` | 1
-`signed char` | 1
-`int` | 2-4
-`unsigned int` | 2-4
-`short` | 2
-`unsigned short` | 2
-`long` | 4
-`unsigned long` | 4
-`long long(*)` | 8
-`unsigned long long(*)` | 8
+| Type                    | Storage (bytes) |
+| ----------------------- | --------------- |
+| `_Bool`                 | 1               |
+| `char`                  | 1               |
+| `unsigned char`         | 1               |
+| `signed char`           | 1               |
+| `int`                   | 2-4             |
+| `unsigned int`          | 2-4             |
+| `short`                 | 2               |
+| `unsigned short`        | 2               |
+| `long`                  | 4               |
+| `unsigned long`         | 4               |
+| `long long(*)`          | 8               |
+| `unsigned long long(*)` | 8               |
 
 Interestingly the specific storage size for `int` is not defined. A compilers given implementation bit widths are defined in `limits.h`.
 
-
-### Real and Complex Floating Types ###
+#### Real and Complex Floating Types
 
 Most compilers honour the IEEE 754-1985 standard.
 
-Type | Storage (bytes) | Precision (decimal)
---- | --- | ---
-`float` | 4 | 6
-`double` | 8 | 15
-`long double` | 10 | 19
+| Type          | Storage (bytes) | Precision (decimal) |
+| ------------- | --------------- | ------------------- |
+| `float`       | 4               | 6                   |
+| `double`      | 8               | 15                  |
+| `long double` | 10              | 19                  |
 
-
-### void ###
+#### void
 
 Represents no value, and is widely used in three scenarios:
 
@@ -98,9 +95,7 @@ Represents no value, and is widely used in three scenarios:
 2. Prototypes of functions that have no parameters, e.g. `int rand(void)`
 3. Pointers to void i.e. `void *` (typeless pointers)
 
-
-
-## Memory Access Operators ##
+### Memory Access Operators
 
 The **address of** operator, `&`, yields the address of its subject, thus `&foo` is a pointer to `foo`.
 
@@ -114,9 +109,8 @@ pnum = &num;
 
 The **subscript operator**, `[]`, can be used to address elements within an array. In reality this is sugar for offsetting into chunk of memory, or in other words `x[i]` is equivalent to `(*(x+(i)))`
 
-
 {% highlight c %}
-float arr[10] = { 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7 }, *parr;
+float arr[10] = { 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7 }, \*parr;
 parr = arr;
 parr = parr + 3;
 {% endhighlight %}
@@ -130,101 +124,87 @@ plabel = &label;
 plabel->name = "Bill Joy";
 {% endhighlight %}
 
+### Strings
 
+## The Pre Processor
 
-## Strings ##
-
-
-
-
-
-## The Pre Processor ##
-
-
-
-
-
-### Macros ###
+### Macros
 
 This following macro is called variadic. When the macro is invoked, all the tokens in its argument list after the last named argument, including any commas, become the variable argument. This sequence of tokens replaces the identifier `__VA_ARGS__` in the macro body wherever it appears.
 
-
-{% highlight c %}
+```c
 #define stopif(assertion, action, ...) {
-  if (assertion) {
-    fprintf(error_log ? error_log : stderr, __VA_ARGS__);
-    fprintf(error_log ? error_log : stderr, "\n");
-    action;
-  } }
+    if (assertion) {
+        fprintf(error_log ? error_log : stderr, **VA_ARGS**);
+        fprintf(error_log ? error_log : stderr, "\n");
+        action;
+    }
+}
 
 //usage
 stopif(!isnan(inv_total), goto nanval, "Invoice amount was NaN");
 stopif(!foo, return -1, "wtf dude, foo must not be NULL");
 
 nanval:
-  free(fooheap);
-  return NAN;
-{% endhighlight %}
-
-
+free(fooheap);
+return NAN;
+```
 
 Another one. The macro `print_log` acts as the public API, encapsulating internal grunt function `_print_log`:
 
-{% highlight c %}
+```c
 #define print_log(level, ...) do {
-    time_t _clk = time(NULL);
-    _print_log(level, __FILE__, __func__, ctime(&_clk), __LINE__, __VA_ARGS__);
-  } while (0)
+    time_t \_clk = time(NULL);
+    \_print_log(level, **FILE**, **func**, ctime(&\_clk), **LINE**, **VA_ARGS**);
+} while (0)
 
-extern void _print_log(int, char *, const char *, char*, int, char *, ...);
+extern void \_print*log(int, char *, const char \_, char*, int, char *, ...);
 
 //usage
 print_log(LOG_WARNING, "where be a wookie when you need one");
-{% endhighlight %}
+```
 
+## Patterns
 
-
-# Patterns
-
-## Vtables
+### vtables
 
 Virtual tables are a technique for adding functions outside of an objects struct. Using a hash table as the vtable data structure, the key, something unique to the object and the specific function (in case you want to store multiple functions in the vtable for the same object), and the value, the actual function.
 
-**person_s.h**
+#### person_s.h
 
-{% highlight c %}
+```c
 typedef struct person_s {
     char *name;
     char **books;
     int len;
     void (*print)(struct person_s*);
 };
-{% endhighlight %}
+```
 
-The object, a person. The `print` function pointer here is souly used as the hash key It's unique to both the object, and the specific operation of printing. It never points to an actual function.
+The object, a person. The `print` function pointer here is souly used as the hash key. It's unique to both the object, and the specific operation of printing. It never points to an actual function.
 
-**print_vtable.h**
+#### print_vtable.h
 
-{% highlight c %}
+```c
 extern HashTable *funcs_hash;
 
-typedef void (*print_fn_type)(struct person_s*);
+typedef void (_print_fn_type)(struct person_s_);
 
 void check_print_fn(print_fn_type pf);
 
-#define printfn_vtable_add(object, fn) { \
-    check_print_fn(fn); \
-    hash_table_insert(funcs_hash, (object)->print, fn); \
+##define printfn_vtable_add(object, fn) { \
+ check_print_fn(fn); \
+ hash_table_insert(funcs_hash, (object)->print, fn); \
 }
 
 void print_person_frontend(struct person_s *in);
-{% endhighlight %}
+```
 
 Declares hash table, a macro to add functions to the hash table (this exists only to add static type checking on the function passed, by first trying to pass it into `check_print_fn`), and the "frontend" function signature (for consumers of the API) that takes in a person and will query the vtable for the function to invoke.
 
-**print_vtable.c**
+#### print_vtable.c
 
-{% highlight c %}
+```c
 HashTable *funcs_hash;
 
 void check_print_fn(print_fn_type pf) { }
@@ -235,29 +215,32 @@ void print_person_frontend(struct person_s *in) {
     }
 
     print_fn_type printfn = hash_table_lookup(funcs_hash, in->print);
+
     if (printfn) {
         printfn(in);
         return;
     }
+
     printf("No print implementation found in vtable...panic!\n");
 }
-{% endhighlight %}
+```
 
-**main.c**
+#### main.c
 
-{% highlight c %}
+```c
 static void print_person_backend(struct person_s *in) {
     printf("\nName: %s\n", in->name);
     for (int i=0; i < in->len; i++)
-        printf("-  Book author for: %s\n", in->books[i]);
+    printf("- Book author for: %s\n", in->books[i]);
 }
 
 int main() {
     struct person_s dennis = {
         .name="Dennis Ritchie",
-        .books = (char*[]) { "The C Programming Language - 1978" },
+        .books = (char\*[]) { "The C Programming Language - 1978" },
         .len = 1
     };
+
     print_person_frontend(&dennis);
     printfn_vtable_add(&dennis, print_person_backend);
     print_person_frontend(&dennis);
@@ -270,22 +253,24 @@ int main() {
     print_person_frontend(&rob);
 
     return 0;
+
 }
-{% endhighlight %}
+```
 
 Output:
 
-    No print implementation found in vtable...panic!
-    
-    Name: Dennis Ritchie
-    -  Book author for: The C Programming Language - 1978
-    
-    Name: Rob Pike
-    -  Book author for: The Unix Programming Environment - 1982
-    -  Book author for: The Practice of Programming - 1999
+```
+No print implementation found in vtable...panic!
 
+Name: Dennis Ritchie
+-  Book author for: The C Programming Language - 1978
 
-# Libraries #
+Name: Rob Pike
+-  Book author for: The Unix Programming Environment - 1982
+-  Book author for: The Practice of Programming - 1999
+```
+
+### Libraries
 
 The [C standard library](https://en.wikipedia.org/wiki/C_standard_library) and the [C POSIX library](https://en.wikipedia.org/wiki/C_POSIX_library) both offer a standardised, resuable slabs of macros, type definitions and functions for tasks such as string handling, mathematical computations, input/output processing, memory management, and several common operating system services. A set of common building blocks.
 
@@ -293,161 +278,136 @@ POSIX being a superset of the C standard library. If C and POSIX is ever in conf
 
 [The GNU C Library](https://www.gnu.org/software/libc/manual/)
 
+#### C standard library
 
- ### C standard library ###
+| Header            | Description                                                                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `<assert.h>`      | Contains the assert macro, used to assist with detecting logical errors and other types of bug in debugging versions of a program.            |
+| `<complex.h>`     | A set of functions for manipulating complex numbers.                                                                                          |
+| `<ctype.h>`       | Defines set of functions used to classify characters by their types or to convert between upper and lower case                                |
+| `<errno.h>`       | For testing error codes reported by library functions.                                                                                        |
+| `<fenv.h>`        | Defines a set of functions for controlling floating-point environment.                                                                        |
+| `<float.h>`       | Defines macro constants specifying the implementation-specific properties of the floating-point library.                                      |
+| `<inttypes.h>`    | Defines exact width integer types.                                                                                                            |
+| `<iso646.h>`      | Defines several macros that implement alternative ways to express several standard tokens. For programming in ISO 646 variant character sets. |
+| `<limits.h>`      | Defines macro constants specifying the implementation-specific properties of the integer types.                                               |
+| `<locale.h>`      | Defines localization functions.                                                                                                               |
+| `<math.h>`        | Defines common mathematical functions.                                                                                                        |
+| `<setjmp.h>`      | Declares the macros setjmp and longjmp, which are used for non-local exits.                                                                   |
+| `<signal.h>`      | Defines signal handling functions.                                                                                                            |
+| `<stdalign.h>`    | For querying and specifying the alignment of objects.                                                                                         |
+| `<stdarg.h>`      | For accessing a varying number of arguments passed to functions.                                                                              |
+| `<stdatomic.h>`   | For atomic operations on data shared between threads.                                                                                         |
+| `<stdbool.h>`     | Defines a boolean data type.                                                                                                                  |
+| `<stddef.h>`      | Defines several useful types and macros.                                                                                                      |
+| `<stdint.h>`      | Defines exact width integer types.                                                                                                            |
+| `<stdio.h>`       | Defines core input and output functions                                                                                                       |
+| `<stdlib.h>`      | Defines numeric conversion functions, pseudo-random numbers generation functions, memory allocation, process control functions                |
+| `<stdnoreturn.h>` | For specifying non-returning functions.                                                                                                       |
+| `<string.h>`      | Defines string handling functions.                                                                                                            |
+| `<tgmath.h>`      | Defines type-generic mathematical functions.                                                                                                  |
+| `<threads.h>`     | Defines functions for managing multiple Threads as well as mutexes and condition variables.                                                   |
+| `<time.h>`        | Defines date and time handling functions                                                                                                      |
+| `<uchar.h>`       | Types and functions for manipulating Unicode characters.                                                                                      |
+| `<wchar.h>`       | Defines wide string handling functions.                                                                                                       |
+| `<wctype.h>`      | Defines set of functions used to classify wide characters by their types or to convert between upper and lower case.                          |
 
-Header | Description
---- | ---
-`<assert.h>` | Contains the assert macro, used to assist with detecting logical errors and other types of bug in debugging versions of a program.
-`<complex.h>` | A set of functions for manipulating complex numbers.
-`<ctype.h>` | Defines set of functions used to classify characters by their types or to convert between upper and lower case in a way that is independent of the used character set (typically ASCII or one of its extensions, although implementations utilizing EBCDIC are also known).
-`<errno.h>` | For testing error codes reported by library functions.
-`<fenv.h>` | Defines a set of functions for controlling floating-point environment.
-`<float.h>` | Defines macro constants specifying the implementation-specific properties of the floating-point library.
-`<inttypes.h>` | Defines exact width integer types.
-`<iso646.h>` | Defines several macros that implement alternative ways to express several standard tokens. For programming in ISO 646 variant character sets.
-`<limits.h>` | Defines macro constants specifying the implementation-specific properties of the integer types.
-`<locale.h>` | Defines localization functions.
-`<math.h>` | Defines common mathematical functions.
-`<setjmp.h>` | Declares the macros setjmp and longjmp, which are used for non-local exits.
-`<signal.h>` | Defines signal handling functions.
-`<stdalign.h>` | For querying and specifying the alignment of objects.
-`<stdarg.h>` | For accessing a varying number of arguments passed to functions.
-`<stdatomic.h>` | For atomic operations on data shared between threads.
-`<stdbool.h>` | Defines a boolean data type.
-`<stddef.h>` | Defines several useful types and macros.
-`<stdint.h>` | Defines exact width integer types.
-`<stdio.h>` | Defines core input and output functions
-`<stdlib.h>` | Defines numeric conversion functions, pseudo-random numbers generation functions, memory allocation, process control functions
-`<stdnoreturn.h>` | For specifying non-returning functions.
-`<string.h>` | Defines string handling functions.
-`<tgmath.h>` | Defines type-generic mathematical functions.
-`<threads.h>` | Defines functions for managing multiple Threads as well as mutexes and condition variables.
-`<time.h>` | Defines date and time handling functions
-`<uchar.h>` | Types and functions for manipulating Unicode characters.
-`<wchar.h>` | Defines wide string handling functions.
-`<wctype.h>` | Defines set of functions used to classify wide characters by their types or to convert between upper and lower case.
+#### C POSIX library
 
+| Header             | Description                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------- |
+| `<aio.h>`          | Asynchronous input and output                                                         |
+| `<arpa/inet.h>`    | Functions for manipulating numeric IP addresses (part of Berkeley sockets)            |
+| `<assert.h>`       | Verify assumptions                                                                    |
+| `<complex.h>`      | Complex Arithmetic, see C mathematical functions                                      |
+| `<cpio.h>`         | Magic numbers for the cpio archive format                                             |
+| `<ctype.h>`        | Character types                                                                       |
+| `<dirent.h>`       | Allows the opening and listing of directories                                         |
+| `<dlfcn.h>`        | Dynamic linking                                                                       |
+| `<errno.h>`        | Retrieving Error Number                                                               |
+| `<fcntl.h>`        | File opening, locking and other operations                                            |
+| `<fenv.h>`         | Floating-Point Environment (FPE), see C mathematical functions                        |
+| `<float.h>`        | Floating-point types, see C data types                                                |
+| `<fmtmsg.h>`       | Message display structures                                                            |
+| `<fnmatch.h>`      | Filename matching                                                                     |
+| `<ftw.h>`          | File tree traversal                                                                   |
+| `<glob.h>`         | Pathname "globbing" (pattern-matching)                                                |
+| `<grp.h>`          | User group information and control                                                    |
+| `<iconv.h>`        | Codeset conversion facility                                                           |
+| `<inttypes.h>`     | Fixed sized integer types, see C data types                                           |
+| `<iso646.h>`       | Alternative spellings, see C alternative tokens                                       |
+| `<langinfo.h>`     | Language information constants – builds on C localization functions                   |
+| `<libgen.h>`       | Pathname manipulation                                                                 |
+| `<limits.h>`       | Implementation-defined constants, see C data types                                    |
+| `<locale.h>`       | Category macros, see C localization functions                                         |
+| `<math.h>`         | Mathematical declarations, see C mathematical functions                               |
+| `<monetary.h>`     | String formatting of monetary units                                                   |
+| `<mqueue.h>`       | Message queue                                                                         |
+| `<ndbm.h>`         | NDBM database operations                                                              |
+| `<net/if.h>`       | Listing of local network interfaces                                                   |
+| `<netdb.h>`        | Translating protocol and host names into numeric addresses (part of Berkeley sockets) |
+| `<netinet/in.h>`   | Defines Internet protocol and address family (part of Berkeley sockets)               |
+| `<netinet/tcp.h>`  | Additional TCP control options (part of Berkeley sockets)                             |
+| `<nl_types.h>`     | Localization message catalog functions                                                |
+| `<poll.h>`         | Asynchronous file descriptor multiplexing                                             |
+| `<pthread.h>`      | Defines an API for creating and manipulating POSIX threads                            |
+| `<pwd.h>`          | passwd (user information) access and control                                          |
+| `<regex.h>`        | Regular expression matching                                                           |
+| `<sched.h>`        | Execution scheduling                                                                  |
+| `<search.h>`       | Search tables                                                                         |
+| `<semaphore.h>`    | POSIX semaphores                                                                      |
+| `<setjmp.h>`       | Stack environment declarations                                                        |
+| `<signal.h>`       | Signals, see C signal handling                                                        |
+| `<spawn.h>`        | Process spawning                                                                      |
+| `<stdarg.h>`       | Handle Variable Argument List                                                         |
+| `<stdbool.h>`      | Boolean type and values, see C data types                                             |
+| `<stddef.h>`       | Standard type definitions, see C data types                                           |
+| `<stdint.h>`       | Integer types, see C data types                                                       |
+| `<stdio.h>`        | Standard buffered input/output, see C file input/output                               |
+| `<stdlib.h>`       | Standard library definitions, see C standard library                                  |
+| `<string.h>`       | Several String Operations, see C string handling                                      |
+| `<strings.h>`      | Case-insensitive string comparisons                                                   |
+| `<stropts.h>`      | Stream manipulation, including ioctl                                                  |
+| `<sys/ipc.h>`      | Inter-process communication (IPC)                                                     |
+| `<sys/mman.h>`     | Memory management, including POSIX shared memory and memory mapped files              |
+| `<sys/msg.h>`      | POSIX message queues                                                                  |
+| `<sys/resource.h>` | Resource usage, priorities, and limiting                                              |
+| `<sys/select.h>`   | Synchronous I/O multiplexing                                                          |
+| `<sys/sem.h>`      | XSI (SysV style) semaphores                                                           |
+| `<sys/shm.h>`      | XSI (SysV style) shared memory                                                        |
+| `<sys/socket.h>`   | Main Berkley sockets header                                                           |
+| `<sys/stat.h>`     | File information (stat et al.)                                                        |
+| `<sys/statvfs.h>`  | File System information                                                               |
+| `<sys/time.h>`     | Time and date functions and structures                                                |
+| `<sys/times.h>`    | File access and modification times                                                    |
+| `<sys/types.h>`    | Various data types used elsewhere                                                     |
+| `<sys/uio.h>`      | Vectored I/O operations                                                               |
+| `<sys/un.h>`       | Unix domain sockets                                                                   |
+| `<sys/utsname.h>`  | Operating system information, including uname                                         |
+| `<sys/wait.h>`     | Status of terminated child processes (see wait)                                       |
+| `<syslog.h>`       | System error logging                                                                  |
+| `<tar.h>`          | Magic numbers for the tar archive format                                              |
+| `<termios.h>`      | Allows terminal I/O interfaces                                                        |
+| `<tgmath.h>`       | Type-Generic Macros, see C mathematical functions                                     |
+| `<time.h>`         | Type-Generic Macros, see C date and time functions                                    |
+| `<trace.h>`        | Tracing of runtime behavior (DEPRECATED)                                              |
+| `<ulimit.h>`       | Resource limiting (DEPRECATED in favor of <sys/resource.h>)                           |
+| `<unistd.h>`       | Various essential POSIX functions and constants                                       |
+| `<utime.h>`        | inode access and modification times                                                   |
+| `<utmpx.h>`        | User accounting database functions                                                    |
+| `<wchar.h>`        | Wide-Character Handling, see C string handling                                        |
+| `<wctype.h>`       | Wide-Character Classification and Mapping Utilities, see C character classification   |
+| `<wordexp.h>`      | Word-expansion like the shell would perform                                           |
 
-### C POSIX library ###
+#### Unit Testing
 
-Header | Description
---- | ---
-`<aio.h>` | Asynchronous input and output
-`<arpa/inet.h>` | Functions for manipulating numeric IP addresses (part of Berkeley sockets)
-`<assert.h>` | Verify assumptions
-`<complex.h>` | Complex Arithmetic, see C mathematical functions
-`<cpio.h>` | Magic numbers for the cpio archive format
-`<ctype.h>` | Character types
-`<dirent.h>` | Allows the opening and listing of directories
-`<dlfcn.h>` | Dynamic linking
-`<errno.h>` | Retrieving Error Number
-`<fcntl.h>` | File opening, locking and other operations
-`<fenv.h>` | Floating-Point Environment (FPE), see C mathematical functions
-`<float.h>` | Floating-point types, see C data types
-`<fmtmsg.h>` | Message display structures
-`<fnmatch.h>` | Filename matching
-`<ftw.h>` | File tree traversal
-`<glob.h>` | Pathname "globbing" (pattern-matching)
-`<grp.h>` | User group information and control
-`<iconv.h>` | Codeset conversion facility
-`<inttypes.h>` | Fixed sized integer types, see C data types
-`<iso646.h>` | Alternative spellings, see C alternative tokens
-`<langinfo.h>` | Language information constants – builds on C localization functions
-`<libgen.h>` | Pathname manipulation
-`<limits.h>` | Implementation-defined constants, see C data types
-`<locale.h>` | Category macros, see C localization functions
-`<math.h>` | Mathematical declarations, see C mathematical functions
-`<monetary.h>` | String formatting of monetary units
-`<mqueue.h>` | Message queue
-`<ndbm.h>` | NDBM database operations
-`<net/if.h>` | Listing of local network interfaces
-`<netdb.h>` | Translating protocol and host names into numeric addresses (part of Berkeley sockets)
-`<netinet/in.h>` | Defines Internet protocol and address family (part of Berkeley sockets)
-`<netinet/tcp.h>` | Additional TCP control options (part of Berkeley sockets)
-`<nl_types.h>` | Localization message catalog functions
-`<poll.h>` | Asynchronous file descriptor multiplexing
-`<pthread.h>` | Defines an API for creating and manipulating POSIX threads
-`<pwd.h>` | passwd (user information) access and control
-`<regex.h>` | Regular expression matching
-`<sched.h>` | Execution scheduling
-`<search.h>` | Search tables
-`<semaphore.h>` | POSIX semaphores
-`<setjmp.h>` | Stack environment declarations
-`<signal.h>` | Signals, see C signal handling
-`<spawn.h>` | Process spawning
-`<stdarg.h>` | Handle Variable Argument List
-`<stdbool.h>` | Boolean type and values, see C data types
-`<stddef.h>` | Standard type definitions, see C data types
-`<stdint.h>` | Integer types, see C data types
-`<stdio.h>` | Standard buffered input/output, see C file input/output
-`<stdlib.h>` | Standard library definitions, see C standard library
-`<string.h>` | Several String Operations, see C string handling
-`<strings.h>` | Case-insensitive string comparisons
-`<stropts.h>` | Stream manipulation, including ioctl
-`<sys/ipc.h>` | Inter-process communication (IPC)
-`<sys/mman.h>` | Memory management, including POSIX shared memory and memory mapped files
-`<sys/msg.h>` | POSIX message queues
-`<sys/resource.h>` | Resource usage, priorities, and limiting
-`<sys/select.h>` | Synchronous I/O multiplexing
-`<sys/sem.h>` | XSI (SysV style) semaphores
-`<sys/shm.h>` | XSI (SysV style) shared memory
-`<sys/socket.h>` | Main Berkley sockets header
-`<sys/stat.h>` | File information (stat et al.)
-`<sys/statvfs.h>` | File System information
-`<sys/time.h>` | Time and date functions and structures
-`<sys/times.h>` | File access and modification times
-`<sys/types.h>` | Various data types used elsewhere
-`<sys/uio.h>` | Vectored I/O operations
-`<sys/un.h>` | Unix domain sockets
-`<sys/utsname.h>` | Operating system information, including uname
-`<sys/wait.h>` | Status of terminated child processes (see wait)
-`<syslog.h>` | System error logging
-`<tar.h>` | Magic numbers for the tar archive format
-`<termios.h>` | Allows terminal I/O interfaces
-`<tgmath.h>` | Type-Generic Macros, see C mathematical functions
-`<time.h>` | Type-Generic Macros, see C date and time functions
-`<trace.h>` | Tracing of runtime behavior (DEPRECATED)
-`<ulimit.h>` | Resource limiting (DEPRECATED in favor of <sys/resource.h>`)
-`<unistd.h>` | Various essential POSIX functions and constants
-`<utime.h>` | inode access and modification times
-`<utmpx.h>` | User accounting database functions
-`<wchar.h>` | Wide-Character Handling, see C string handling
-`<wctype.h>` | Wide-Character Classification and Mapping Utilities, see C character classification
-`<wordexp.h>` | Word-expansion like the shell would perform
+-   [Unity Project](http://www.throwtheswitch.org/unity/) - Unity is most obviously about assertions. Assertions are statements of what we expect to be true about our embedded system.
+-   [GLib Testing](https://developer.gnome.org/glib/stable/glib-Testing.html)
 
+### Sample C code
 
-
-### Unit Testing
-
-[Unity Project](http://www.throwtheswitch.org/unity/) - Unity is most obviously about assertions. Assertions are statements of what we expect to be true about our embedded system.
-
-[GLib Testing](https://developer.gnome.org/glib/stable/glib-Testing.html)
-
-
-
-# Style #
-
-[Linux kernel coding style](https://www.kernel.org/doc/Documentation/CodingStyle)
-
-[GNU Coding Standards](https://www.gnu.org/prep/standards/standards.html)
-
-[FreeBSD](https://www.freebsd.org/cgi/man.cgi?query=style&sektion=9)
-
-
-
-# Sample C code #
-
-[Trending C GitHub Repos](https://github.com/trending/c)
-
-[GitHub C repos](https://github.com/search?l=c&q=stars%3A%3E1&s=updated&type=Repositories)
-
-[C binding for ØMQ](https://github.com/zeromq/czmq)
-
-[The C Code Archive Network](https://github.com/rustyrussell/ccan)
-
-[systemd](https://github.com/systemd/systemd)
-
-
-
-
+-   [Trending C GitHub Repos](https://github.com/trending/c)
+-   [GitHub C repos](https://github.com/search?l=c&q=stars%3A%3E1&s=updated&type=Repositories)
+-   [C binding for ØMQ](https://github.com/zeromq/czmq)
+-   [The C Code Archive Network](https://github.com/rustyrussell/ccan)
+-   [systemd](https://github.com/systemd/systemd)

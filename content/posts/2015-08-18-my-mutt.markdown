@@ -1,340 +1,203 @@
 ---
 layout: post
-title: "My Mutt"
-date: "2015-08-18 21:03:40"
+title: "NeoMutt setup (2022 edition)"
+slug: "mutt"
+date: "2012-08-18 21:03:40+10:00"
+lastmod: "2022-02-26 15:44:24+11:00"
 comments: false
 categories:
-- linux
+    - linux
 tags:
-- mutt
+    - mutt
+    - neomutt
+    - mail
+    - isync
+    - msmtp
+    - pass
+    - abook
+    - gpg
+    - pam-gnupg
+    - linux
 ---
 
-![Mutt](/images/mutt.png)
+-   [Intro](#intro)
+-   [Getting started with mutt](#getting-started-with-mutt)
+-   [2022 setup](#2022-setup)
+-   [cron](#cron)
+-   [GPG crypto](#gpg-crypto)
+-   [Address book integration](#address-book-integration)
+-   [pam-gnupg](#pam-gnupg)
 
-If you haven't heard of [mutt](http://www.mutt.org/) you're missing out. 
+## Intro
 
-> Mutt is a small but very powerful text-based mail client for Unix operating systems.
+If you haven't heard of `mutt` you're missing out.
 
+> Mutt is a small but very powerful text-based mail client for UNIX operating systems
 
-I started using the excellent terminal based mail client **mutt** recently, and its simplicity is totally refreshing. Using mutt, it quickly becomes apparent how much useless baggage many modern (i.e. lazy) mail clients (e.g. Microsoft Outlook) actually bog you down with, not to mention the harrowing way they actually encode mail. Its taken me years to understand this:
+It's a command line based mail reader (MUA). The [neomutt](https://github.com/neomutt/neomutt) project is a contemporary fork of the original `mutt` with added features, patch sets and fixes.
+
+I started seriously using `mutt` as my full-time mail client in 2012. I found its simplicity refreshing. It quickly became apparent how much useless baggage modern graphical mail clients (e.g., thunderbird, outlook, etc) actually bog you down with, not to mention the harrowing way they actually encode mail. Its taken me a long time to appreciate this:
 
 > All mail clients suck. This one just sucks less.
 
-Mutt is suprising feature packed. Supporting things like IMAP and threading out of the box.
+`mutt` is minimal however surprisingly extensible. As is the case with most well designed software, its UNIX design roots becomes apparent; do one thing well while allowing other complimentary programs to bolster it. Such as periodic IMAP polling using `cron` and `isync`, or address book integration using `abook`, or cryptography support using `gpg`. In the same way `git` revolutionised VCS by being distributed-first, `mutt` when paired with `isync`, mailboxes are local fully fledged copies, making it possible to work with your email in a disconnected fashion. This is powerful; you can still compose emails while offline (e.g., on a flight or on the road), search over all your email whenever you like with `notmuch` and just sleep better at night knowing your email is backed up on your own hardware.
 
-As for most well designed software, its UNIX design philosophy becomes apparent, where it does its one thing well, and allows other complimentary programs to bolster it. In mutt's case to do tricks like offline polling, so you can still effectively email while on a flight perhaps or without 3G reception.
+Like all worthy endeavours there is effort and time involved. You're going to need to understand how to craft a `neomuttrc`. The [docs](https://neomutt.org/guide/) are dense and the number of configuration levers you can pull can seem overwhelming.
 
-Like all good things, there is a little initial pain involved. You're going to need to understand how to craft a `.muttrc` to make mutt, your mutt.
+## Getting started with mutt
 
-The [arch wiki](https://wiki.archlinux.org/index.php/Mutt) is very good, but I learn fastest just trying things out. As a google user, I've got a configuration that is robust to having no or flaky network connection that offline syncs periodically using IMAP. Checkout my [muttrc](https://github.com/bm4cs/dots/blob/master/stow-home/neomutt/.config/neomutt/neomuttrc). Some notable features:
+If you're starting out on your `mutt` journey for the first time, I highly recommend checking out the [mutt-wizard](https://github.com/LukeSmithxyz/mutt-wizard) project started by [Luke Smith](https://lukesmith.xyz/). Luke is a smart unit with a PhD in linguistics. His [configuration files](https://github.com/LukeSmithxyz/voidrice) are also a wealth of knowledge. I can also highly recommend checking out [HexDSL](https://hexdsl.com/) and his [dots](https://gitlab.com/hexdsl/dots) repo, from which I have learned so much.
 
-* vi keys where possible
-* nvim as default editor
-* reads encrypted credentials using `pass`
-* has a signature block
-* configures the main gmail mailboxes
-* push notifications using `notify-send`
-* logical key binds (`gi` go to inbox, `Mi` move to inbox, `Ci` copy to inbox) possible targets `i` inbox, `a` all mail, `s` sent, `d` drafts, `t` trash.
-* helpful regex highlights
-* contacts integration with `abook`
+Finally of course [RTFM](http://www.mutt.org/doc/manual/).
 
+## 2022 setup
 
-### .muttrc
+My current (2022) terminal based mail setup is a mash-up of:
 
-    # account setup
-    set editor= "nvim +':set textwidth=0' +':set wrapmargin=0' +':set wrap'"
-    set folder = ~/mail/gmail"
-    set from = ben@bencode.net
-    set header_cache =~/mail/gmail/cache/headers
-    set mail_check = 10
-    set mbox_type = Maildir
-    set menu_scroll
-    set message_cachedir =~/mail/gmail/cache/bodies
-    set new_mail_command = "notify-send 'new mail'"
-    set pager_stop
-    set postponed ="+[Gmail]/Drafts"
-    set realname ="Ben Simmonds"
-    set record ="+[Gmail]/Sent Mail"
-    set signature ="~/.config/neomutt/signature"
-    set smtp_pass =`pass show gmail | head -n 1`
-    set smtp_url =smtp://ben@bencode.net@smtp.gmail.com:587/"
-    set sort =threads
-    set sort_aux =reverse-last-date-received
-    set sort_re
-    set spoolfile =+Inbox
-    set ssl_force_tls =yes
-    set ssl_starttls =yes
-    set timeout =0
-    set trash ="+[Gmail]/Trash"
-    set use_from =yes
-    unmailboxes *
-    mailboxes =Inbox
-    mailboxes ="[Gmail]/All Mail"
-    mailboxes ="[Gmail]/Drafts"
-    mailboxes ="[Gmail]/Starred"
-    mailboxes ="[Gmail]/Trash"
-    mailboxes ="[Gmail]/Sent Mail"
-    
-    
-    # General stuff
-    set text_flowed
-    unset mark_old
-    set delete           # don't ask, just do
-    unset confirmappend  # don't ask, just do!
-    set quit             # don't ask, just do!!
-    
-    # bindings
-    bind index,pager g noop
-    bind index,pager gg noop
-    bind index,pager M noop
-    bind index,pager C noop
-    bind index,pager i noop
-    bind index \Cf noop
-    bind index - collapse-thread
-    bind index _ collapse-all
-    bind pager <down> next-line"
-    bind pager <up> previous-line #scroll inside the message rather than the index
-    
-    set sort     = threads
-    set sort_aux = reverse-last-date-received
-    set sort_re
-    bind index - collapse-thread
-    bind index _ collapse-all
-    folder-hook . "exec collapse-all"
-    macro   index,pager ">"     "<next-thread><previous-entry>"
-    macro   index,pager "<"     "<previous-thread><next-entry>"
-    
-    # look and feel
-    set menu_scroll
-    set smart_wrap
-    set tilde
-    unset markers
-    
-    # composing
-    set editor="nvim +':set textwidth=0' +':set wrapmargin=0' +':set wrap'"
-    unset mime_forward
-    
-    # headers and dates
-    ignore *                               # first, ignore all headers
-    unignore from: to: cc: date: subject:  # then, show only these
-    hdr_order from: to: cc: date: subject: # and in this order
-    
-    bind index gg first-entry
-    macro index o "<shell-escape>mbsync -Va<enter>" "run mailsync"
-    macro index,pager gi "<change-folder>=Inbox<enter>" "go to inbox"
-    macro index,pager Mi "<save-message>=Inbox<enter>" "move mail to inbox"
-    macro index,pager Ci "<copy-message>=Inbox<enter>" "copy mail to inbox"
-    macro index,pager ga "<change-folder>=[Gmail]/All Mail<enter>" "go to inbox"
-    macro index,pager Ma "<save-message>=[Gmail]/All Mail<enter>" "move mail to inbox"
-    macro index,pager Ca "<copy-message>=[Gmail]/All Mail<enter>" "copy mail to inbox"
-    macro index,pager gs "<change-folder>=[Gmail]/Sent Mail<enter>" "go to sent"
-    macro index,pager Ms "<save-message>=[Gmail]/Sent Mail<enter>" "move mail to sent"
-    macro index,pager Cs "<copy-message>=[Gmail]/Sent Mail<enter>" "copy mail to sent"
-    macro index,pager gd "<change-folder>=Drafts<enter>" "go to drafts"
-    macro index,pager Md "<save-message>=Drafts<enter>" "move mail to drafts"
-    macro index,pager Cd "<copy-message>=Drafts<enter>" "copy mail to drafts"
-    macro index,pager gt "<change-folder>=Trash<enter>" "go to trash"
-    macro index,pager Mt "<save-message>=Trash<enter>" "move mail to trash"
-    macro index,pager Ct "<copy-message>=Trash<enter>" "copy mail to trash"
-    
-    set mailcap_path 	= ~/.config/neomutt/mailcap
-    set date_format		="%H:%M   %a %d %b   (%Y)"
-    set display_filter 	= "~/bin/email_dates" # format times as local
-    set index_format	="%5C   %zs %?X?A& ?    %-40.40s    %-20.20F   (%e/%E) %>  %D  "
-    set query_command 	= "abook --mutt-query '%s'"
-    set rfc2047_parameters = yes
-    set sleep_time 		= 0		# Pause 0 seconds for informational messages
-    set markers 		= no	# Disables the `+` displayed at line wraps
-    set wait_key 		= no	# mutt won't ask "press key to continue"
-    set fast_reply		= yes # skip to compose when replying
-    set fcc_attach		# save attachments with the body
-    set forward_format 	= "Fwd: %s"	# format of subject when forwarding
-    set forward_quote	# include message in forwards
-    set reverse_name	# reply as whomever it was to
-    set include			= yes # include message in replies
-    auto_view text/html	# automatically show html (mailcap uses w3m)
-    auto_view application/pgp-encrypted
-    alternative_order text/plain text/enriched text/html
-    
-    # General rebindings
-    bind attach <return> view-mailcap
-    bind attach l view-mailcap
-    bind editor <space> noop
-    bind index G last-entry
-    bind index gg first-entry
-    bind pager,attach h exit
-    bind pager j next-line
-    bind pager k previous-line
-    bind pager l view-attachments
-    bind index D delete-message
-    bind index U undelete-message
-    bind index L limit
-    bind index h noop
-    bind index l display-message
-    bind browser h goto-parent
-    bind browser l select-entry
-    bind pager,browser gg top-page
-    
-    # General rebindings
-    bind attach <return> view-mailcap
-    bind attach l view-mailcap
-    bind pager,browser G bottom-page
-    bind index,pager,browser d half-down
-    bind index,pager,browser u half-up
-    bind index,pager S sync-mailbox
-    bind index,pager R group-reply
-    bind index \031 previous-undeleted	# Mouse wheel
-    bind index \005 next-undeleted		# Mouse wheel
-    bind pager \031 previous-line		# Mouse wheel
-    bind pager \005 next-line		# Mouse wheel
-    bind editor <Tab> complete-query
-    
-    macro index,pager a "|abook --add-email\n" 'add sender to abook'
-    macro index \Cr "T~U<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all messages as read"
-    macro index O "<shell-escape>mbsync -Va<enter>" "run mbsync to sync all mail"
-    macro index \Cf "<enter-command>unset wait_key<enter><shell-escape>read -p 'Enter a search term to find with notmuch: ' x; echo \$x >~/.cache/mutt_terms<enter><limit>~i \"\`notmuch search --output=messages \$(cat ~/.cache/mutt_terms) | head -n 600 | perl -le '@a=<>;chomp@a;s/\^id:// for@a;$,=\"|\";print@a'\`\"<enter>" "show only messages matching a notmuch pattern"
-    macro index A "<limit>all\n" "show all messages (undo limit)"
-    macro attach 'V' "<pipe-entry>iconv -c --to-code=UTF8 > ~/.cache/mutt/mail.html<enter><shell-escape>firefox ~/.cache/mutt/mail.html<enter>"
-    
-    # Default index colors:
-    color index white default '.*'
-    color index_author red default '.*'
-    color index_number green default
-    color index_subject cyan default '.*'
-    color index_date blue default
-    
-    # New mail is boldened:
-    color index brightwhite black "~N"
-    color index_author brightred black "~N"
-    color index_subject brightcyan black "~N"
-    
-    # Deleted mail is dulled
-    color index brightblack default "~D"
-    
-    # Regex highlighting:
-    color header blue default ".*"
-    color header brightmagenta default "^(From)"
-    color header brightcyan default "^(Subject)"
-    color header brightwhite default "^(CC|BCC)"
-    color body brightred default "[\-\.+_a-zA-Z0-9]+@[\-\.a-zA-Z0-9]+" # Email addresses
-    color body brightblue default "(https?|ftp)://[\-\.,/%~_:?&=\#a-zA-Z0-9]+" # URL
-    color body green default "\`[^\`]*\`" # Green text between ` and `
-    color body brightblue default "^# \.*" # Headings as bold blue
-    color body brightcyan default "^## \.*" # Subheadings as bold cyan
-    color body brightgreen default "^### \.*" # Subsubheadings as bold green
-    color body white default "^(\t| )*(-|\\*) \.*" # List items as white
-    color body brightcyan default "[;:][-o][)/(|]" # emoticons
-    color body brightcyan default "[;:][)(|]" # emoticons
-    color body brightcyan default "[ ][*][^*]*[*][ ]?" # more emoticon?
-    color body brightcyan default "[ ]?[*][^*]*[*][ ]" # more emoticon?
-    color body red default "(BAD signature)"
-    color body cyan default "(Good signature)"
-    color body brightblack default "^gpg: Good signature .*"
-    color body brightwhite default "^gpg: "
-    color body brightwhite red "^gpg: BAD signature from.*"
-    mono body bold "^gpg: Good signature"
-    mono body bold "^gpg: BAD signature from.*"
-    color body red default "([a-z][a-z0-9+-]*://(((([a-z0-9_.!~*'();:&=+$,-]|%[0-9a-f][0-9a-f])*@)?((([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?|[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)(:[0-9]+)?)|([a-z0-9_.!~*'()$,;:@&=+-]|%[0-9a-f][0-9a-f])+)(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?(#([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?|(www|ftp)\\.(([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?(:[0-9]+)?(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?(#([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?)[^].,:;!)? \t\r\n<>\"]"
-    
-    source ~/.config/neomutt/colours
-    # vim: filetype=neomuttrc
+-   [fastmail](https://www.fastmail.com/) as of 2022 is my paid for mail/contacts/calendar provider. Exceptional value for money, privacy controls and features technical users (like me) care deeply about. I'm so happy after being on gmail since 2005
+-   `neomutt` as my MUA
+-   `isync` IMAP downloads and syncs mail locally, run by `cron` periodically `*/30 * * * * mbsync -a`. See my [.mbsyncrc](https://raw.githubusercontent.com/bm4cs/dots/master/.mbsyncrc) for a working fastmail setup
+-   `msmtp` to send outgoing email using SMTP
+-   `pass` to safely encrypt credentials in my publicly viewable [dot files](https://github.com/bm4cs/dots/)
+-   `pam-gnupg` a PAM module that hands over your login password to `gpg-agent`, i.e., automatically log into GPG once logged into your system, see [doco](https://github.com/cruegge/pam-gnupg) for setup. On Debian I manually built it as described [below](#pam-gnupg)
+-   `lynx` to view HTML encoded emails (gross)
+-   `abook` command line based address book, using tab in the recipient field within `neomutt` will auto-suggest
+-   `notmuch` index and search mail, `ctrl-f` in `mutt` will trigger this. Run `notmuch setup` if you don't have a `~/.notmuch-config` yet. Search examples:
+    -   `from:will@example.com AND to:john@example.com OR to:jane@example.com`
+    -   `date:”2015-09-01″..”2015-09-02″`
+    -   `budget AND FY14 OR FY15 AND date:”2015-09-01″..”2015-09-02″`
+-   `gpg` for crypto
 
+My 2022 [neomuttrc](https://raw.githubusercontent.com/bm4cs/dots/master/.config/neomutt/neomuttrhttps://raw.githubusercontent.com/bm4cs/dots/master/.config/neomutt/neomuttrcc) integrates with the above and customises `neovim` further:
 
+-   `vim` keys where possible
+-   `neovim` as default editor
+-   reads encrypted credentials using `pass`
+-   has a signature block
+-   configures each fastmail mailbox individually as a channel in `~/.mbsyncrc`
+-   push toast notifications when new mail arrives `notify-send`
+-   logical key binds (`gi` go to inbox, `Mi` move to inbox, `Ci` copy to inbox) possible targets `i` inbox, `a` archive, `s` sent, `d` drafts, `t` trash.
+-   helpful regex highlights
+-   contacts integration with `abook`
 
-# Key Bindings
+## cron
 
-Orginal source: [http://files.zeth.net/mutt.txt](http://files.zeth.net/mutt.txt)
+To neatly glue this together in the background:
 
+```crontab
+*/15 * * * * mbsync -a && notmuch new
+0 */3 * * * fastmail-abook-sync
+```
 
-    ==========================================================================       
-                                 MUTT COMMANDS                                       
-    ==========================================================================       
-                                                                                     
-    q      (x)      exit the current menu (abort without saving)                     
-    ^g              cancel current action                                            
-    ?               list all keybindings for the current menu                        
-                                                                                     
-    ==========================================================================       
-                                 INDEX (browsing mailbox)                            
-    ==========================================================================       
-                                                                                     
-    ^n     ^p       next/prev thread
-    m               compose a new message                                            
-    d      (D)      delete the current message (matching a pattern)                  
-    u      (U)      undelete-message (matching a pattern)                            
-    C      (ALT C)  copy the current message to another mailbox (decode first)       
-    s      (ALT s)  save-message (decode first)                                      
-    r      (g)  (L) reply to sender (all recipients) (reply to mailing list)         
-    f      (b)      forward message (bounce)                                         
-    /      (ALT /)  search  (search-reverse)                                         
-    c               change to a different mailbox/folder                             
-    F      (N)      mark as important (new)                                          
-    l               show messages matching a pattern                                 
-    o      (O)      change the current sort method (reverse sort)                    
-    t      (ALT t)  toggle the tag on a message (entire message thread)              
-    T      (^t)     tag messages matching a pattern (untag)                          
-    v               view-attachments                                                 
-    <Return>        display-message                                                  
-    <Tab>           jump to the next new message                                     
-    @               show the author's full e-mail address                            
-    $               save changes to mailbox                                          
-    ^l              clear and redraw the screen                                      
-    ALT k           mail a PGP public key to someone                                 
-                                                                                     
-                                                                                     
-    ==========================================================================       
-                                 PAGER (reading an email)                            
-    ==========================================================================       
-                                                                                     
-    <Return>        go down one line                                                 
-    <Space>  (-)    display the next page/message (previous)                         
-    ^        ($)    jump to the top (bottom) of the message                          
-    /   (ALT /) (n) search for a regular expression (search backwards) (next match)  
-    \               toggle search pattern coloring                                   
-    S        (T)    skip beyond quoted text (toggle display of quoted text)          
-                                                                                     
-                                                                                     
-    ==========================================================================       
-                                 COMPOSER (new email send options)                   
-    ==========================================================================       
-                                                                                     
-    y    (P)   (w)  send the message  (postpone)  (write to folder)                  
-    i               check spelling, if available                                     
-    a    (A)   (D)  attach a file  (attach message)  (detach)                        
-    d               edit description on attachment                                   
-    t      (ALT f)  edit the To field (From field)                                   
-    c      (b)      edit the Cc field (Bcc field)                                    
-    s               edit the Subject                                                 
-    r               edit the Reply-To field                                          
-    p               select PGP options                                               
-    ALT k           attach a PGP public key                                          
-    ^k              import a PGP public key (from attachment)
-    ^f              wipe PGP passphrase from memory                                  
-    f               specify an 'Fcc' mailbox i.e. sent folder                        
+## GPG crypto
 
+Integrates `gpg`. Handy for encrypting, decrypting, creating and validating digital signatures all conveniently within `mutt`:
 
-
-# PGP support
-
-1. Install `gpg`.
+1. Install `gpg`
 1. Copy `/usr/share/doc/neomutt/samples/gpg.rc` to `~/.config/neomutt/`
 1. Set the default key, by grabbing the last 8 hex digits from the fingerprint of your public key, by running `gpg --list-keys`
-1. After composing mail in mutt, but before sending, hit `p` to bring up gpg options (such as encrypt, sign, both).
-1. When reading mail, mutt will try to automatically decrypt and verify signatures destined to you.
-1. Profit!
+1. After composing mail in mutt, but before sending, hit `p` to bring up gpg options (such as encrypt, sign, both)
+1. When reading mail, mutt will try to automatically decrypt and verify signatures destined to you
 
+## Address book integration
 
+`abook` is a stand-alone TUI program dedicated to contact management. Contacts are stored in a plain text, human-readable database. How refreshing!
 
-# Google Contacts Integration
+A thank you to [José María Mateos](https://rinzewind.org/blog-en/2018/how-to-sync-fastmails-carddav-to-use-with-mutt-abook.html) who pointed out fastmail have a REST API for pulling your contacts back as a single vcard dump:
 
-`abook` is a stand-alone TUI program dedicated to contact management. Contacts are stored in a plain text, human-readable database.
+```
+https://carddav.fastmail.com/dav/addressbooks/user/<username@domain.tld>/default
+```
 
-I prefer to manually maintain my abook database:
+Here is a bash script to glue it up and place the output at `~/.abook/addressbook`:
 
-1. Export contacts using [contacts.google.com](https://contacts.google.com/) web UI in vCard format. This outputs a `contacts.vcf`
-1. In the `~/.abook` directory, run [`adr_conv3.py`](https://github.com/gavcos/Abook-Contact-Importer/blob/master/adr_conv3.py), which by default reads in `contacts.vcf` and outputs into a file called `addressbook`
+```bash
+#!/bin/bash
+
+tmpfile=$(mktemp)
+destfile=$(mktemp)
+
+wget -q https://carddav.fastmail.com/dav/addressbooks/user/ben@bencode.io/Default \
+    --user ben@bencode.io \
+    --password $(pass show fastmail | head -n 1) \
+    -O $tmpfile
+
+abook --convert \
+    --informat vcard \
+    --infile $tmpfile \
+    --outformat abook \
+    --outfile $destfile
+
+rm $tmpfile
+chmod 600 $destfile
+mv $destfile ~/.abook/addressbook
+```
+
 1. Start `abook` which brings a TUI (text user interface) up, you should see all your contacts neatly organised.
 1. In `mutt`, compose a new mail, enter part of the name of a known contact (e.g. 'Tom') and hit TAB to query your `abook` database.
-1. Profit!
+1. Schedule the above script `fastmail-abook-sync` in `cron` to run periodically `0 19 * * * fastmail-abook-sync`
 
+## pam-gnupg
 
+This is needed to automatically schedule `isync` to run using `cron`. Given `pass` (a `gpg` frontend) is being used to securely bind credentials into the various config files, `pass` will interactively prompt for the `gpg` passphrase to your secret key. Interactive user prompting doesn't work too well with `cron` after all.
+
+Luckily [pam-gnupg](https://github.com/cruegge/pam-gnupg) solves this:
+
+> A PAM module that hands over your login password to gpg-agent, which can be useful if you are using a GnuPG-based password manager like pass.
+
+In essence, all `pam-gnupg` does is to send the password as entered in the login prompt to `gpg-agent`. Therefore its important that your user account password is the same as the passphrase on your GPG key.
+
+As this isn't a widely used piece of software (e.g., doesn't exist in the big repos for distros like Debian). Time to dust off `automake` and `gcc`:
+
+```shell
+sudo apt install libpam0g-dev     # install pam development headers
+g clone git@github.com:cruegge/pam-gnupg.git
+./autogen.sh
+./configure
+make
+sudo make install
+```
+
+On Debian as `root` edit `/etc/pam.d/login` (`system-local-login` on Arch) adding the following block to the end:
+
+```
+auth     optional  pam_gnupg.so store-only
+session  optional  pam_gnupg.so
+```
+
+Create `~/.gnupg/gpg-agent.conf` with the following:
+
+```
+allow-preset-passphrase
+max-cache-ttl 86400
+```
+
+Create `~/.pam-gnupg` adding the 40 character `gpg` keygrip identifier of the encryption subkey you want to set the password for:
+
+```
+$ gpg -K --with-keygrip
+sec   rsa2048 2018-11-16 [SC]
+      9AB5DD43C5E5FD40475FA6DA0D776275F7F5B2E7
+      Keygrip = 6F4ABB77A88E922406BCE6627AFEEE2363914B76
+uid           [ultimate] Chris Ruegge <mail@cxcs.de>
+ssb   rsa2048 2018-11-16 [E]
+      Keygrip = FBDEAD7B0C484CDC85F1CF70352833EB0C921D58
+
+$ echo FBDEAD7B0C484CDC85F1CF70352833EB0C921D58 > ~/.pam-gnupg
+```
+
+Finally make sure the user account password is identical to the gpg passphrase. I chose to update my gpg passphrase:
+
+```
+$ gpg --list-keys
+pub   4096R/9AABBCD8 2013-10-04
+uid                  Home Nas Server (Home Nas Server Backup)
+sub   4096R/149D60C7 2013-10-04
+
+$ gpg --edit-key 9AABBCD8
+
+gpg> passwd
+gpg> save
+```
+
+Time to test it out, `sudo reboot` and login. If you carefully followed the above steps you will now be able to run `pass show fastmail` without any additional password prompting. More usefully this means `cron` can now `mbsync` for you.

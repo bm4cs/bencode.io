@@ -1,6 +1,6 @@
 baseURL = "/"
 languageCode = "en-us"
-title = "Benjamin Simmonds"
+title = "Ben Simmonds"
 theme = "terminal"
 rssLimit = 100
 paginate = 64
@@ -33,17 +33,16 @@ pygmentsStyle = "native"
 	themeColor = "green"
 	fullWidthTheme = false
 	centerTheme = true
-	favicon = "images/doomguy-32x32.png"
-    [params.logo]
-    url = "logo.png"
-    width = 50
-    height = 50
-    alt = "Logo"
+	favicon = "/android-chrome-512x512.png"
+
+[params.twitter]
+    creator = "bm4cs"
+    site = "www.bencode.io"
 
 [languages]
   [languages.en]
     title = "Ben Simmonds"
-    subtitle = "Yet another blog about code and computers."
+    subtitle = "A blog about code and computers"
     keywords = ""
     copyright = ""
     menuMore = "Show more"
@@ -63,3 +62,8 @@ pygmentsStyle = "native"
         identifier = "papers"
         name = "Papers"
         url = "/papers"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
