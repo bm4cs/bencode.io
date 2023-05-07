@@ -63,7 +63,7 @@ Contents:
     - [Asset discovery](#asset-discovery)
   - [Asset Lifecycle](#asset-lifecycle)
 - [Module 4: Threat assessment](#module-4-threat-assessment)
-- [Module 5: Controls](#module-5-controls)
+- [Module 5: Communication Network Security](#module-5-communication-network-security)
 - [Module 7: Assessment](#module-7-assessment)
 - [Module 9: Accreditation](#module-9-accreditation)
 
@@ -339,7 +339,6 @@ Process of Protection of Valuable Assets Based on Classification
 - Protect Based on Classification
 - Baselines for each classification level
 
-
 ### Asset Lifecycle
 
 Steps:
@@ -351,10 +350,37 @@ Steps:
 5. Disposition
 6. Archive OR Destruction
 
-
 ## Module 4: Threat assessment
 
-## Module 5: Controls
+## Module 5: Communication Network Security
+
+IEC/ISO 7498 (Open Systems Interconnection — Basic Reference Model: The Basic Model) as the architecture and design base:
+
+- Part 1: The Basic Model
+- Part 2: Security Architecture
+- Part 3: Naming and Addressing
+- Part 4: Management Framework
+
+This hinges on the 7-layer OSI networking model. PDNTSPA (Please Do Not Throw Sausage Pizza Away).
+
+- L7 Application: Human supported messaging. DHCP, LDAP, HTTP, DNS, SNMP, VNC, 
+- L6 Presentation: Encoding methods (ASCII, UTF-8, unicode)
+- L5 Session: Persistent connections between hosts. Protocols; PAP (password authentication protocol), CHAP, PPTP (point to point tunneling), RPC. ISO 7498 states no security services are provided in the session layer.
+- L4 Transport: Segments. Streaming and end-to-end delivery guarantees, introduces ports. UDP and TCP.
+- L3 Network: Packets. Logical addressing for unicast, multicast, anycast and broadcast interactions. Common protocols; IPv4, IPv6, ICMP, IGMP, OSPF (network size of shape discovery and mapping). Devices; routers, firewalls, NGFW
+- L2 Data link: Frames. MAC, ARP, MPLS, spanning tree protocol (STP), multicast,  switches, VLANs, flooding, spoofing, 
+- L1 Physical: 
+
+Intrusion detection and prevention systems (IDS/IPS)
+
+-  Host-based intrusion detection system (HIDS)
+-  Network-based intrusion detection system (NIDS)
+-  Host-based intrusion prevention system (HIPS)
+-  Network-based intrusion prevention system (NIPS)
+   -  Signature or pattern-matching systems
+   -  Protocol-anomaly-based systems
+   -  Statistical-anomaly-based systems
+
 
 ## Module 7: Assessment
 
