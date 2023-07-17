@@ -282,6 +282,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Web
 
+- [HTML5 UP](https://html5up.net/) makes spiffy HTML5 site templates that are HTML5 + CSS3, customizable and 100% free under the Creative Commons
 - [How I built a modern website in 2021](https://kentcdodds.com/blog/how-i-built-a-modern-website-in-2021)
 - [Certbot](https://certbot.eff.org/) automatically use Let’s Encrypt certificates
 - [Ask HN: Is There Still a Place for Native Desktop Apps?](https://news.ycombinator.com/item?id=23211851)
