@@ -23,9 +23,9 @@ Vim is incredibly customisable. Its important to take the time to craft your own
 - [Help](#help)
 - [Basics](#basics)
 - [Operators](#operators)
-- [Object Selection](#object-selection)
+- [Motions](#motions)
 - [Windows](#windows)
-- [The Edit (e) Command](<#the-edit-(e)-command>)
+- [netrw](<#netrw)
 - [relativenumber](#relativenumber)
 - [Calculator](#calculator)
 - [Spell checking](#spell-checking)
@@ -93,9 +93,9 @@ See `:h operator` for more. All of these support being combined with a motion (o
 - g?ap - ROT13 encode paragraph
 - gUgU - shout case entire line (factoid: when two operators are invoked in duplicate, applies to current line)
 
-## Object Selection
+## Motions
 
-Learning object selectors is one of the best ways of becoming more efficient with Vim. Commands that start with `i` select inner objects without white space, and thus always select less text than their `a` equivalents. When you discover these can be paired with _operators_ (discussed above), _life changing_, e.g. `daw` delete a word, `gUis` uppercase inner sentence, and so on.
+Learning motions is one of the best ways of becoming more efficient with Vim. Commands that start with `i` select inner objects without white space, and thus always select less text than their `a` equivalents. When you discover these can be paired with _operators_ (discussed above), _life changing_, e.g. `daw` delete a word, `gUis` uppercase inner sentence, and so on.
 
 | Selector  | Effect                                    |
 | --------- | ----------------------------------------- |
@@ -129,9 +129,63 @@ Leverage the built-in windows manager, which can do splits to view multiple file
 - `ctrl+w c` - close the current window.
 - `ctrl+w r` - rotate windows clockwise (or counter clockwise).
 
-## The Edit (e) Command
+## Tabs
+
+- `<c-T>` break window out into its own tab
+- `gt` goto next tab
+- `<c-pgdown>` goto next tab
+- `<c-pgup>` goto previous tab
+- `:tabnew` creates a new tab
+
+
+## netrw
 
 Vim's built-in edit command, will present you with a nice file system explorer, for example `:e .` to present the current working directory.
+
+- `:Ex` full window explorer
+- `:Sex` side explorer
+
+### netrw keys
+
+*Navigate*
+
+- `-` go up dir
+- `<cr>` enter dir or open file
+
+*Act*
+
+- `cd` make this dir the current
+- `d` make dir
+- `D` delete
+- `%` make file
+- `R` rename
+- `mc` copy marks to target
+- `me` put marks on arg list
+- `mm` move marked files to target
+- `mx` shell cmd to marks
+- `mz` compress marks
+
+*View*
+
+- `<c-l>` refresh
+- `gh` toggle hidden
+- `i` cycle between thin, long, wide views
+- `I` toggle banner
+- `s` toggle sort mode
+- `r` reverse sort order
+- `qf` display file info
+- `<c-tab>` collapse/expand explorer window
+- `a` cycle between normal, hiding, showing
+
+*Select*
+
+- `mb` mark dir
+- `mf` mark file
+- `mu` unmark marks
+- `mr` mark using regex
+- `mF` unmark files
+- `mt` set cd as markfile target
+- `mp` print marks
 
 ## relativenumber
 
@@ -288,46 +342,37 @@ vim <your_file>
 :wq
 ```
 
-## Plugins Im loving of as 2022
+## Plugins Im loving of as 2023
 
-While core Vim functionality is like a rock, changing rarely, the plugin eco-system is where you can make Vim level up to doing tasks you commonly do with it. Consequently plugin selection can be quite personal based on specific langs one works with.
+While core Neovim functionality is like a rock, changing rarely, the plugin eco-system is where you can make Vim level up to doing tasks you commonly do with it. Consequently plugin selection can be quite personal based on what kind of text editing jobs one mostly does.
 
-The Vim community seems obsessed with writing new plug-in managers, there's quite a bit of choice and tradeoffs, I have used a few in the past (Pathogen, Vundle) and as of 2020 have settled with [vim-plug](https://github.com/junegunn/vim-plug), which balances minimalism and functionality nicely.
+There are lots of package managers out there, if you're on Neovim, [Packer.nvim](https://github.com/wbthomason/packer.nvim) is excellent.
 
-Coming from bloated power tool IDE's like awesome JetBrains tools, in order to be remotely productive, I need to be able to efficiency locate and jump between files within a large code base.
 
-### nnn - file browser
-
-My #1 fav.
-
-Ditch NERDTree, and instead surface the awesome [nnn](https://github.com/jarun/nnn) terminal file manager within Vim, genius.
-
-- `<leader>n` start nnn in window
-- `^G` discard selection
-
-### nvim-lspconfig - auto-completion
+### lsp-zero
 
 An [LSP](https://neovim.io/doc/user/lsp.html) (Language Server Protocol) provides deep language specific knowledge, supporting functionality such as autocompletion, linting and syntax highlighting. It is editor agnostic and underpins other editors such as vscode.
 
-The [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) plugin provides common configuration for many servers.
+[lsp-zero](https://github.com/VonHeikemen/lsp-zero.nvim) is a one stop LSP shop for neovim:
 
-Once the client plugin is done, install a [language server](https://microsoft.github.io/language-server-protocol/implementors/servers/).
+> bundles all the "boilerplate" to have nvim-cmp (a completion engine) and the LSP client working together nicely, with the help of mason.nvim, it can let you install language servers from inside neovim.
 
-#### python
+TODO: keybindings
 
-1. `npm i -g pyright`
-2. Add `require'lspconfig'.pyright.setup{}` to `init.lua`
 
-#### golang
-
-- Make sure `gopls` is installed and on the PATH `go install golang.org/x/tools/gopls@latest`
-- Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
+### nvim-dap
 
 #### rust
 
-- The LSP is called [rls](https://github.com/rust-lang/rls#setup)
-- Install with `rustup component add rls rust-analysis rust-src`
-- Patch `init.vim` to include a [supported client lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
+> A Debug Adapter Protocol client implementation for Neovim
+
+For rust debugging:
+
+1. `rustup component add rust-analyzer`
+1. Download [codelldb](https://github.com/vadimcn/vscode-lldb/releases)
+2. Unpack the vsix (just a gzip) 
+3. Setup `rust-tools.nvim`
+
 
 ### telescope - fuzzy finder
 
@@ -366,6 +411,7 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 | `<C-q>`        | Send all items not filtered to quickfixlist (qflist) |
 | `<M-q>`        | Send all selected items to qflist                    |
 
+
 ### fugitive - git
 
 The crown jewel of Fugitive is `:Git` (or just `:G`), which calls any
@@ -373,14 +419,9 @@ arbitrary Git command. If you know how to use Git at the command line, you
 know how to use `:Git`. It's vaguely akin to `:!git` but with numerous
 improvements:
 
-- The default behavior is to directly echo the command's output. Quiet
-  commands like `:Git add` avoid the dreaded "Press ENTER or type command to
-  continue" prompt.
-- `:Git commit`, `:Git rebase -i`, and other commands that invoke an editor do
-  their editing in the current Vim instance.
-- `:Git diff`, `:Git log`, and other verbose, paginated commands have their
-  output loaded into a temporary buffer. Force this behavior for any command
-  with `:Git --paginate` or `:Git -p`.
+- The default behavior is to directly echo the command's output. Quiet commands like `:Git add` avoid the dreaded "Press ENTER or type command to continue" prompt.
+- `:Git commit`, `:Git rebase -i`, and other commands that invoke an editor do their editing in the current Vim instance.
+- `:Git diff`, `:Git log`, and other verbose, paginated commands have their output loaded into a temporary buffer. Force this behavior for any command with `:Git --paginate` or `:Git -p`.
 - `:Git blame` uses a temporary buffer with maps for additional triage. Press
   enter on a line to view the commit where the line changed, or `g?` to see
   other available maps. Omit the filename argument and the currently edited
@@ -419,6 +460,7 @@ And more:
   the buffer. `:GRemove` does the same but leaves the (now empty) buffer
   open.
 
+
 ### surround - symbol surrounding
 
 Surround chunks of text with quotes or tags.
@@ -428,6 +470,7 @@ Surround chunks of text with quotes or tags.
 - `vipS<p>` surround paragraph with `<p></p>`
 - `cs"'` change double quotes to single quotes
 
+
 ### vim-commentary - code aware comment motions
 
 Smart commenting based on the file type.
@@ -435,118 +478,10 @@ Smart commenting based on the file type.
 - `gcc` comment current line
 - `gc<motion>` comment motion based selection e.g. `gcap` for paragraph selection
 
-### vim-better-whitespace - redundant whitespace
 
-Utilities to highlight and remove redundant use of whitespace.
-
-- `:EnableWhitespace`
-- `:DisableWhitespace`
-- `:ToggleWhitespace`
-- `:StripWhitespace`
-
-### neoformat - code formatter
-
-To use run `Neoformat` in command mode. It will reformat the current buffer.
-
-A language agnostic code formatter. Its a neovim frontend to formatter backends. Tons of [langs/formatters](https://github.com/sbdchd/neoformat/blob/master/README.md) supported.
-
-For example, for python files I use 3 formatters:
-
-```vim
-let g:neoformat_enabled_python = ['autopep8', 'yapf', 'docformatter']
-```
-
-I bind `<leader>p` as my shortcut:
-
-```vim
-nnoremap <leader>p <cmd>Neoformat<cr>
-```
-
-### vim-css-color - hex codes coloriser
-
-Colorise hex codes in the buffer based on CSS standards.
-
-### nvim-lsp - code symbol awareness goto def
-
-- `<c-]>` definition
-- `K` hover
-- `gD` implementation
-- `<c-k>` signature_help
-- `1gD` type_definition
-- `gr` references
-- `g0` d()<CR>ocument_symbol
-- `gW` workspace_symbol
-- `gd` definition
-- `ga` suggested code action
-
-For example if I git `ga` on a rust error, it will auto add the `use` statement for the trait I need:
-
-```
-Code actions:
-1: Line : Add `use std::str::FromStr;\n\n`
-Type number and <Enter> or click with the mouse (q or empty cancels):
-```
-
-### vim-markdown - folding and ToCs
-
-The goto markdown plugin, supports folds and generating table of contents based on headings.
-
-Folding:
-
-- `zr` reduces fold level throughout the buffer
-- `zR` opens all folds
-- `zm` increases fold level throughout the buffer
-- `zM` folds everything all the way
-- `za` open a fold your cursor is on
-- `zA` open a fold your cursor is on recursively
-- `zc` close a fold your cursor is on
-- `zC` close a fold your cursor is on recursively
-
-Commands:
-
-- `:InsertToc`
-- `:TableFormat`
-- `:HeaderIncrease` and `:HeaderDecrease`
-
-### tabular - intuitive text aligning
-
-TODO: http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
-
-### vim-matchup - code aware %
-
-Highlight, navigate and operate on sets of matching text. It extends the `%` key to language-specific words instead of just single characters.
-
-Example, hit `%` on the `while` keyword, it will bounce you down its matching `endwhile`.
-
-### vim-sneak - precise motioning
-
-> The missing motion for Vim
-
-Jump to any location specified by two characters.
-
-Sneak is invoked with `s` (or `z` if you have surround.vim) followed by exactly two characters:
-
-```
-s{char}{char}
-```
-
-- Type `sab` to move the cursor immediately to the next instance of the text "ab".
-  - Additional matches, if any, are highlighted until the cursor is moved.
-- Type `;` to go to the next match
-- Type `3;` to skip to the third match from the current position.
-- Type `ctrl-o` or ```` to go back to the starting point.
-  - This is a built-in Vim motion; Sneak adds to Vim's jumplist only on `s` invocation so you can abandon a trail of `;` or `,` by a single `ctrl-o` or ````.
-- Type `s<Enter>` at any time to repeat the last Sneak-search.
-- Type `S` to search backwards.
-
-## Getting my setup behind a corporate proxy
-
-TODO: Containerise everything including transitive dependencies
 
 ## Resources
 
 - [Smash into Vim](https://airbladesoftware.com/peepcode-vim/) the awesome PeepCode screen cast that helped me break through the learning curve back in the 2000's
 - [Vim Cheat Sheet](https://vim.rtorr.com/) good quick reference
-- [Jon Gjengset's vimrc](https://github.com/jonhoo/configs) a veteran rust developer
-- [Luke Smith's vimrc](https://github.com/LukeSmithxyz/voidrice) a linguist and Linux enthusiast
-- [HexDSL's vimrc](https://gitlab.com/hexdsl/dots) gamer and Linux enthusiast
+- [tjdevries nvim kickstart](https://github.com/nvim-lua/kickstart.nvim/blob/master/init.lua)
