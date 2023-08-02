@@ -30,6 +30,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Golang](#golang)
 - [gRPC](#grpc)
 - [Hardware](#hardware)
+- [Humanities](#humanities)
 - [Jobs](#jobs)
 - [Languages](#languages)
 - [Linux](#linux)
@@ -165,6 +166,11 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Backblaze hard drive stats](https://www.backblaze.com/blog/backblaze-hard-drive-stats-q1-2020/)
 - [Build an 8-bit CPU by Ben Eater](https://eater.net/8bit/) a programmable 8-bit computer from scratch on breadboards using only simple logic gates
 - [nand2tetris](https://www.nand2tetris.org/) a distilled version of the book The Elements of Computing Systems, By Noam Nisan and Shimon Schocken (MIT Press), contains all the project materials and tools necessary for building a general-purpose computer system and a modern software hierarchy from the ground up
+
+
+## Humanities
+
+- [The Chomsky List](https://chomskylist.com/where-start-chomsky-best-books.php)
 
 ## Jobs
 

@@ -113,4 +113,5 @@ In a nutshell:
 - Standards (e.g. ISO27002) provide the breadth needed to tackle the overwhelming job of securing an organisation
 - Control frameworks (e.g. ISM, NIST 800-53) compliment risk frameworks, by providing a catalog of concrete security and privacy controls
 - Domain specific frameworks (e.g. NIST AI 100-1 for Artificial Intelligence Risk Management Framework) provide depth to an overall security strategy and plan
-- Practices such as zero trust and defence in depth can be useful
+- Practices such as zero trust and defence in depth can be useful when developing a security plan
+
