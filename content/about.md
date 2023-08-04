@@ -29,7 +29,7 @@ Some examples of tools and equipment I consider worth every cent:
 -   Training - I'm an annual subcriber to Pluralsight, O'Reilly Learning, InterviewCake. I pay to study at University.
 -   Great computer hardware - my 2021 custom build runs a 12 core AMD Ryzen CPU, fastest NVMe flash storage, etc.
 
-## Critical books on software construction
+## Literature on software construction
 
 -   [The Mythical Man Month](https://www.goodreads.com/book/show/13629.The_Mythical_Man_Month) by Frederick Brooks
 -   [The Pragmatic Programmer: From journeyman to master](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/) by Andrew Hunt and David Thomas
@@ -47,3 +47,14 @@ Some examples of tools and equipment I consider worth every cent:
 -   [LinkedIn](https://www.linkedin.com/in/bm4cs)
 -   [Keybase](https://keybase.io/bm4cs)
 -   [Twitter](https://twitter.com/bm4cs)
+
+## Rubik's cube algo
+
+- The daisy (yellow center and white sides)
+- For each petal match it to its underlying color and strip the petal
+- Chase the white dogs
+- Match center rows (none yellow squares)
+- Yellow plus (FUR-RUF = front, up, right, right, up, front)
+- Feed the yellow fish (clock, clock, counter then clock, clock, flip, counter)
+- Match top corners (counter, clock, counter, flip, clock, counter, counter, flip, flip)
+- Finish it (flip, clock x 3, counter x 5, clock, counter)

@@ -3,7 +3,7 @@ layout: post
 title: "Nerd Gems 💎"
 slug: "gems"
 date: "2017-04-02 13:38:10+11:00"
-lastmod: "2022-08-21 19:39:58+11:00"
+lastmod: "2023-08-03 15:31:58+11:00"
 comments: false
 categories:
   - geek
@@ -11,7 +11,7 @@ categories:
 
 _Updated: 2022-03-07_
 
-This is a list of valuable (to me) developer resources that I've managed to stumble across (my friends and fellow programmers, hacker news, lobste.rs, cron.weekly, university).
+This is a list of valuable (to me) developer resources that I've managed to stumble across (books, courses, friends and fellow programmers, hacker news, lobste.rs, university).
 
 - [Architecture](#architecture)
 - [AI and ML](#ai-and-ml)
