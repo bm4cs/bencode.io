@@ -30,6 +30,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Golang](#golang)
 - [gRPC](#grpc)
 - [Hardware](#hardware)
+- [Humanities](#humanities)
 - [Jobs](#jobs)
 - [Languages](#languages)
 - [Linux](#linux)
@@ -44,6 +45,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Text wrangling](#text-wrangling)
 - [Talks](#talks)
 - [Testing](#testing)
+- [TypeScript](#typescript)
 - [Web](#web)
 
 ## Architecture
@@ -61,6 +63,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 - [awesome-baremetal](https://github.com/alexellis/awesome-baremetal)
 - [awesome-kubernetes](https://github.com/ramitsurana/awesome-kubernetes)
+- [learn-anything/books](https://github.com/learn-anything/books)
 
 ## C
 
@@ -166,6 +169,13 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Build an 8-bit CPU by Ben Eater](https://eater.net/8bit/) a programmable 8-bit computer from scratch on breadboards using only simple logic gates
 - [nand2tetris](https://www.nand2tetris.org/) a distilled version of the book The Elements of Computing Systems, By Noam Nisan and Shimon Schocken (MIT Press), contains all the project materials and tools necessary for building a general-purpose computer system and a modern software hierarchy from the ground up
 
+
+## Humanities
+
+- [The Chomsky List](https://chomskylist.com/where-start-chomsky-best-books.php)
+- [A definitive guide to Noam Chomsky: 10 books to get you started](https://ideapod.com/a-definitive-guide-to-noam-chomsky-10-books-to-get-you-started/)
+- [RATM reading list](https://www.goodreads.com/list/show/77151.Rage_Against_The_Machine_s_Recommended_Reading_List)
+
 ## Jobs
 
 - [Inspired corp](inspiredcorp.com.au)
@@ -225,7 +235,9 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 ## Python
 
 - [Python Design Patterns](https://python-patterns.guide/)
-
+- [Inside the Python Virtual Machine](https://leanpub.com/insidethepythonvirtualmachine)
+- [Full Speed Python from Superior School of Technology of Setúbal](https://github.com/joaoventura/full-speed-python/tree/master)
+- [Intermediate Python](https://leanpub.com/intermediatepython)
 ## Security
 
 - [OST2.FYI](https://ost2.fyi/) OpenSecurityTraining2's mission is to provide the world's deepest and best cybersecurity training. That our classes are free is just a bonus!
@@ -279,6 +291,10 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 - [Smocker](https://smocker.dev/) simple HTTP mock server, uses YAML to define mocks and responses
 - [MockServer](https://www.mock-server.com/) for any system you integrate with via HTTP or HTTPS MockServer can be used as: a mock configured to return specific responses for different requests, a proxy recording and optionally modifying requests and responses or as both a proxy for some requests and a mock for other requests at the same time
+
+## TypeScript
+
+- [The Consise TypeScript Book](https://github.com/gibbok/typescript-book/)
 
 ## Web
 
