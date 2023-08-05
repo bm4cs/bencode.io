@@ -70,6 +70,22 @@ The `TestCase` class provides several assert methods to check for and report fai
 | `assertIsInstance(a, b)`    | `isinstance(a, b)`     |
 | `assertNotIsInstance(a, b)` | `not isinstance(a, b)` |
 
+
+### Exceptions
+
+Validates an exception is raised when callable is called with any positional or keyword arguments that are also passed to `assertRaises()`.
+
+```python
+class TestComputedAttrs(unittest.TestCase):
+    def setUp(self) -> None:
+        self._sut = ParrotComputedAttributes()
+
+    def test_read_missing_property(self):
+        with self.assertRaises(AttributeError):
+            self._sut.missing_property
+```
+
+
 ### Running
 
 A common way is to trigger `unittest.main()` like so:

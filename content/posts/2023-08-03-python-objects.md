@@ -18,6 +18,12 @@ As I learn more about Pythons idioms reflect on its unique approach to object ba
 
 Everything in Python is an object.
 
+- [Special methods (dunders)](#special-methods-dunders)
+  - [Basics](#basics)
+  - [Iterators](#iterators)
+  - [Computed attributes](#computed-attributes)
+  - [Callable classes](#callable-classes)
+
 ## Special methods (dunders)
 
 Filed under [Special Method Names](https://docs.python.org/3/reference/datamodel.html#special-method-names) in the docs, defines the special traits a class can implement that are invoked by special syntax, such as arithmetic operations.
@@ -48,3 +54,32 @@ for x in seq:
 ```
 
 Python will call `seq.__iter__()` to create an iterator, then call the `__next__()` method on that iterator to get each value of x. When the `__next__()` method raises a `StopIteration` exception, the for loop ends gracefully.
+
+### Computed attributes
+
+| You want                                      | So you write            | And Python calls                      |
+| --------------------------------------------- | ----------------------- | ------------------------------------- |
+| to get a computed attribute (unconditionally) | `x.my_property`         | `x.__getattribute__('my_property')`   |
+| to get a computed attribute (fallback)        | `x.my_property`         | `x.__getattr__('my_property')`        |
+| to set an attribute                           | `x.my_property = value` | `x.__setattr__('my_property', value)` |
+| to delete an attribute                        | `del x.my_property`     | `x.__delattr__('my_property')`        |
+| to list all attributes and methods            | `dir(x)`                | `x.__dir__()`                         |
+
+Tips:
+
+- If defined `__getattribute__()` will always be called for every reference to any attribute or method name (except for special dunders)
+- `__getattr__()` on the other hand will only be called only after looking for the attribute in the normal places
+- `__dir__()` is useful if you use either of the `__getattr*__()` traits, as `dir(x)` only lists regular attributes and methods, by overriding `__dir__()` can register dynamic attributes to the list of available attributes.
+
+### Callable classes
+
+| You want                              | So you write    | And Python calls         |
+| ------------------------------------- | --------------- | ------------------------ |
+| to “call” an instance like a function | `my_instance()` | `my_instance.__call__()` |
+
+
+
+
+
+
+<https://web.archive.org/web/20110131211638/http://diveintopython3.org/special-method-names.html>
