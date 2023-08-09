@@ -26,6 +26,7 @@ tags:
   - [Classes that act like numbers](#classes-that-act-like-numbers)
   - [Classes that can be used in a with block](#classes-that-can-be-used-in-a-with-block)
   - [Esoteric behavior](#esoteric-behavior)
+- [Design Patterns](#design-patterns)
 
 As I learn more about Pythons idioms reflect on its unique approach to object based programming. In combination with duck typing its approach to objects feels distrubingly flexible.
 
@@ -306,3 +307,7 @@ Context manager tips:
 | to control whether a class is a subclass of your abstract base class | `issubclass(C, MyABC)`   | `MyABC.__subclasshook__(C)`                          |
 
 <!-- <https://web.archive.org/web/20110131211638/http://diveintopython3.org/special-method-names.html> -->
+
+## Design Patterns
+
+https://python-patterns.guide/gang-of-four/composition-over-inheritance/
