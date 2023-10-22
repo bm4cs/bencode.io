@@ -459,6 +459,8 @@ Link count: 1
 
 - Windows shellbags
 - 8 timestamps on an NTFS file system, an attacker can fairly easily mutate 4 of them, hard to convincingly adjust nano-second level
+- [Eric Zimmermans Windows Forensics Tools]()
+- [SANS Hunt Evil Poster](https://www.sans.org/posters/hunt-evil/) Knowing what’s normal on a Windows host helps cut through the noise to quickly locate potential malware. Use this information as a reference to know what’s normal in Windows and to focus your attention on the outliers.
 - [MITRE ATT&CK](https://attack.mitre.org/matrices/enterprise/)
 - [MITRE ATT&CK for ICS](https://attack.mitre.org/matrices/ics/)
 - [Cyber Kill Chain](https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html)
