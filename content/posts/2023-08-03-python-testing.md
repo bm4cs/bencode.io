@@ -1,8 +1,8 @@
 ---
 layout: post
-draft: true
+draft: false
 title: "Testing in Python"
-slug: "python"
+slug: "pythontesting"
 date: "2023-08-03 16:28:33+11:00"
 lastmod: "2023-08-03 16:28:33+11:00"
 comments: false
@@ -14,9 +14,11 @@ tags:
   - code
 ---
 
-There are many ways to write unit tests in Python. Here I want to focus on living off the land with the standard libraries [unittest](https://docs.python.org/3/library/unittest.html).
+There are many ways to write unit tests in Python. 
 
 ## unittest
+
+Here the focus is living off the land with built-in [unittest](https://docs.python.org/3/library/unittest.html).
 
 `unittest` is both a framework and test runner, meaning it can execute your tests and return the results. In order to write `unittest` tests, you must:
 
@@ -110,9 +112,14 @@ python3 -m unittest objects/test/test_parrot.py
 ### Pro tips
 
 - If you shuffle tests into a `test` directory in the source tree, you’ll need to make sure the code under test is available on the `PYTHONPATH`
--
 
-## Topics
+
+
+## pytest
+
+Pytest is the defacto standard.
+
+## TODO
 
 - `unittest`
 - monkey patching

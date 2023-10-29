@@ -108,13 +108,13 @@ On the other hand if there was an `await` statement inside the for loop this wou
 
 A `Future` object is a type of awaitable. Unlike a coroutine when a future is awaited it does not cause a block of code to be executed. Instead a future object can be thought of as representing some process that is ongoing which may or may not yet be finished.
 
-Running `await` on a future causing the following:
+Running `await` on a future causes the following:
 
 - If the process the future represents has finished and returned a value then the `await` statement immediately returns that value.
 - If the process the future represents has finished and raised an exception then the `await` statement immediately raises that exception.
 - If the process the future represents has not yet finished then the current `Task` is paused until the process has finished. Once it is finished it behaves as described in the first two bullet points here.
 
-IN addition to be awaitablek all Future objects support the following synchronous interface:
+IN addition to being awaitable all `Future` objects support the following synchronous interface:
 
 - `f.done()` returns `True` if the process the future represents has finished.
 - `f.exception()` raises an `asyncio.InvalidStateError` exception if the process has not yet finished. If the process has finished it returns the exception it raised, or `None` if it terminated without raising.
@@ -123,7 +123,6 @@ IN addition to be awaitablek all Future objects support the following synchronou
 ⚠️ The difference between a `Coroutine` and a `Future` may seem subtle. A Coroutine’s code will not be executed until it is awaited. A future represents something that is executing anyway, and simply allows your code to wait for it to finish, check if it has finished, and fetch the result if it has.
 
 ⚠️ Objects which implement the `__await__` dunder method may do almost anything when awaited. They might behave more like Coroutines, or more like Futures. They may do something else entirely.
-
 
 ## Tasks
 
@@ -138,13 +137,11 @@ t = asyncio.create_task(example_coroutine_function())
 
 The method `create_task` takes a coroutine object as a parameter and returns a `Task` object, which inherits from `asyncio.Future`. The call creates the task inside the event loop for the current thread, and starts the task executing at the beginning of the coroutine’s code-block. The returned future will be marked as `done()` only when the task has finished execution. As you might expect the return value of the coroutine’s code block is the `result()` which will be stored in the future object when it is finished (and if it `raises` then the exception will be caught and stored in the future).
 
-
 Creating a task to wrap a `coroutine` is a synchronous call, so it can be done anywhere, including inside synchronous or asynchronous code. If you do it in asynchronous code then the event loop is already running (since it is currently executing your asynchronous code), and when it next gets the opportunity (i.e. next time your current task pauses) it might make the new task active.
 
-When you do it in synchronous code, however, chances are that the event loop is not yet running. Manualy manipulating event loops is discouranged by the python documentation. Unless you are developing libraries extending asyncio functionality, you should probably avoid trying to create a task from synchronous code.
+When you do it in synchronous code, however, chances are that the event loop is not yet running. Manualy manipulating event loops is discouranged by the python documentation. Unless you are developing libraries extending `asyncio` functionality, you should probably avoid trying to create a task from synchronous code.
 
 If you do need to call a single piece of async code in an otherwise synchronous script, you can use `asyncio.run()`.
-
 
 ## Typings
 
@@ -154,7 +151,7 @@ If you are using typing then there is an abstract class `Awaitable` which is gen
 
 ### Future
 
-If you want to specify that a variable is a Future then you can use the asyncio.Future class as a type annotation. If you want to specify that the Future’s result should be of a specific type, R then you can use the following notation:
+If you want to specify that a variable is a `Future` then you can use the `asyncio.Future` class as a type annotation. If you want to specify that the Future’s result should be of a specific type, R then you can use the following notation:
 
 ```python
 f: asyncio.Future[R]

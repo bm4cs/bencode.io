@@ -75,6 +75,17 @@ Should end up with something similar to:
 
 In `assets/css/main.css` patch `..headings--one-size` setting the `margin-top` to `0`.
 
+
+### Strip the double dotted line between posts
+
+In `assets/css/posts.scss` jump down to line 47, remove these lines:
+
+- 47: `$border: 3px dotted $accent`
+- 52: `border-bottom: $border`
+- 60: `border-bottom: $border`
+
+
+
 ### Rebuild the theme
 
 A node toolchain is needed to proceed. Install dependencies and build:
