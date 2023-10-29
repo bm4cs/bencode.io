@@ -14,13 +14,13 @@ Can never remember this.
 6. Rebuild the theme with npm/yarn (also described below)
 
 ```html
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+<meta name="msapplication-TileColor" content="#da532c" />
+<meta name="theme-color" content="#ffffff" />
 ```
 
 ## Theme customisation
@@ -75,7 +75,6 @@ Should end up with something similar to:
 
 In `assets/css/main.css` patch `..headings--one-size` setting the `margin-top` to `0`.
 
-
 ### Strip the double dotted line between posts
 
 In `assets/css/posts.scss` jump down to line 47, remove these lines:
@@ -84,7 +83,9 @@ In `assets/css/posts.scss` jump down to line 47, remove these lines:
 - 52: `border-bottom: $border`
 - 60: `border-bottom: $border`
 
+## Customise the footer
 
+Edit `layouts/partials/footer.html`
 
 ### Rebuild the theme
 
