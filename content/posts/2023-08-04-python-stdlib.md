@@ -1,8 +1,8 @@
 ---
 layout: post
-draft: true
+draft: false
 title: "Python Standard Libraries"
-slug: "python"
+slug: "pythonstdlib"
 date: "2023-08-04 18:01:33+11:00"
 lastmod: "2023-08-04 18:01:33+11:00"
 comments: false
