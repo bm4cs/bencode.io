@@ -19,17 +19,16 @@ A modified version of excellent original checklist by [Paul Wolf](https://python
 ## General
 
 - Code is blackened with `black`
-- `flake8` has been run with no errors
+- `ruff` has been run with no errors
 - `mypy` has been run with no errors
 - Function complexity problems have been resolved using the _default_ complexity index of `flake8`.
 - Important core code can be loaded in iPython, ipdb easily.
 - There is no dead code
 - Comprehensions or generator expressions are used in place of for loops where appropriate
 - Comprehensions and generator expressions produce state but they do not have side effects within the expression.
-- Use `zip()`, `any()`, `all()`, etc. instead of for loops where appropriate
+- Use `zip()`, `any()`, `all()`, `filter()`, etc. instead of for loops where appropriate
 - Functions that take as parameters and mutate mutable variables don’t return these variables. They return None.
-- Return immutable copies of mutable types instead of mutating the instances themselves when mutable types are passed as parameters with
-  the intention of returning a mutated version of that variable.
+- Return immutable copies of mutable types instead of mutating the instances themselves when mutable types are passed as parameters with the intention of returning a mutated version of that variable.
 - Avoid method cascading on objects with methods that return `self`.
 - Function and method parameters never use empty collection or sequence instances like list `[]` or dict `{}`. Instead they must use `None` to indicate missing input
 - Variables in a function body are initialised with empty sequences or collections by callables, `list()`, `dict()`, instead of `[]`, `{}`, etc.
@@ -40,7 +39,7 @@ A modified version of excellent original checklist by [Paul Wolf](https://python
 - Functions including class methods don’t have too many local parameters or instance variables. Especially a class’ `__init__()` should not have too many parameters.
 - Profiling code is minimal
 - Logging is the minimum required for production use
-- There are no home-brewed solutions for things that already exist in the PSL
+- There are no home-brewed solutions for things that already exist in the PSL (python standard library)
 
 ## Imports and modules
 
