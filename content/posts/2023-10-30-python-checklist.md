@@ -41,6 +41,21 @@ A modified version of excellent original checklist by [Paul Wolf](https://python
 - Logging is the minimum required for production use
 - There are no home-brewed solutions for things that already exist in the PSL (python standard library)
 
+## n00b habbits
+
+- Bare `except` clause, Python uses exceptions to flag system level interupts such as sigkills. Don't do this.
+- Argument default mutatable arguments such as `def foo(bar=[])` are defined when the function is defined, not when its run, and will result in a all function calls sharing the same instance of `bar`
+- Checking for equality using `==`. Due to inheritance this is not desirable as it pins to a concrete type and not potentially it descendents. In other words the Liskov substitution principle. Instead `isinstance(p, tuple)`
+- Explicit bool or length checks, such as `if bool(x)` or `if len(x) > 0` is redundant, as Python has sane truthy evaluation.
+- Use of `range` over the `for in` idiom
+- If you really need the index, always use `enumerate`
+- Not using items() on a dict `for k, v in dict.items()`)
+- Using `time.time` to measure code performance. Use `time.perf_counter` instead.
+- Using `print` statements over `logging`
+- Using `import *` will normally liter the namespace with variable. Dont be lazy, be specific. `from itertools import count`
+- 
+
+
 ## Imports and modules
 
 - Imports are sorted by `isort` or according to some standard that is consistent within the team
