@@ -34,6 +34,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Jobs](#jobs)
 - [Languages](#languages)
 - [Linux](#linux)
+- [Mongo](#mongo)
 - [Monitoring](#monitoring)
 - [Networking](#networking)
 - [Open source](#open-source)
@@ -199,6 +200,11 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Tmux for mere mortals](https://zserge.com/posts/tmux/) good defaults, modifying the keybindings to boost usability
 - [Tips for cleaning up a Linux server](https://ma.ttias.be/clean-up-linux-server-using-these-simple-tips/) low hanging disk space fruit, like removing old kernels, pruning unused Docker space, clearing logs
 - [Shell productivity tips and tricks](https://blog.balthazar-rouberol.com/shell-productivity-tips-and-tricks) faster command line tips
+
+## Mongo
+
+- [Quick reference cards](https://www.mongodb.com/collateral/quick-reference-cards)
+- [Aggregation pipeline quick reference](https://www.mongodb.com/docs/manual/reference/aggregation-quick-reference/)
 
 ## Monitoring
 
