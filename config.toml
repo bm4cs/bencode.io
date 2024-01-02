@@ -27,6 +27,11 @@ pygmentsStyle = "native"
     name = 'Papers'
     url = '/papers'
     weight = -120
+[[menu.main]]
+    identifier = 'recipes'
+    name = 'Recipes'
+    url = '/recipes'
+    weight = -120
 
 [params]
     description = "bencode.net"
@@ -62,6 +67,10 @@ pygmentsStyle = "native"
         identifier = "papers"
         name = "Papers"
         url = "/papers"
+      [[languages.en.menu.main]]
+        identifier = "recipes"
+        name = "Recipes"
+        url = "/recipes"
 
 [markup]
   [markup.goldmark]

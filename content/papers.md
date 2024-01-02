@@ -19,6 +19,6 @@ A collection of some of my academic papers about low-level computer topics.
 
 -   [Feasibility of Binary Similarity Analysis](/papers/mine/2019-simmonds-reveng-binary-similarity.pdf) (May 2019)
 
-# Cheat sheets
+## Cheat sheets
 
 -   [Git](/papers/mine/git-cheatsheet.pdf)
