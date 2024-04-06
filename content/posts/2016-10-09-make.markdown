@@ -2,179 +2,159 @@
 layout: post
 title: "make"
 date: "2016-10-09 20:23:01"
+lastmod: "2024-03-28 12:45:33+11:00"
 comments: false
 categories:
-- dev
+  - dev
 tags:
-- make
-- linux
+  - make
+  - linux
 ---
 
-A small orientation guide, to getting a [gcc](https://www.gnu.org/software/gcc/) and [make](https://www.gnu.org/software/make/manual/make.html) C development environment running. Assuming everything is installed on your system.
+A small [make](https://www.gnu.org/software/make/manual/make.html) orientation guide.
 
-Example source tree (physical organisation) is as follows:
-
-    seething
-    ├── include
-    │   ├── allheads.h
-    │   ├── engine
-    │   │   └── safe_sum.h
-    │   ├── logger.h
-    │   ├── one_loney_integer.h
-    │   └── person.h
-    ├── src
-    │   ├── engine
-    │   │   └── safe_sum.c
-    │   ├── logger.c
-    │   ├── main.c
-    │   ├── person.c
-    │   └── person_tests.c
-    └── makefile
-
-The `makefile` (capital M) is parsed by [GNU Make](https://www.gnu.org/software/make/manual/make.html), which is responsible for generating the various GCC compiler commands, required to compile this source code. For example, I could issue individual compiler commands like this to create my binaries:
+The `Makefile` (capital M) is parsed by [GNU Make](https://www.gnu.org/software/make/manual/make.html), which is responsible for generating the various GCC compiler commands, required to compile this source code. For example, I could issue individual compiler commands like this to create my binaries:
 
     gcc -Wall -g -std=gnu11 -O0 -Iinclude -Iinclude/engine `pkg-config --cflags glib-2.0` -c -o main.o src/main.c
 
-However, this is tedious, error prone, and slow. I don't want to have to keep a list of source files I modified, that require rebuilding. Worse, things dependant on changes also need to be rebuilt, forcing me to constantly consider the dependency graph. What a chore. GNU make to the rescue.
+However, this is tedious, error prone and slow. I don't want to have to keep a list of source files I modified, that require rebuilding. Worse, things dependant on changes also need to be rebuilt, forcing me to constantly consider the dependency graph. What a chore. GNU make to the rescue.
 
-To build the above source tree, here is one possible makefile:
+### make
 
-### make ###
+```makefile
+# Makefile for transpiling with Babel in a Node app, or in a client- or
+# server-side shared library.
 
-{% highlight make %}
+.PHONY: all clean
+
+# Install `babel-cli` in a project to get the transpiler.
+babel := node_modules/.bin/babel
+
+# Identify modules to be transpiled by recursively searching the `src/`
+# directory.
+src_files := $(shell find src/ -name '*.js')
+
+# Building will involve copying every `.js` file from `src/` to a corresponding
+# file in `lib/` with a `.js.flow` extension. Then we will run `babel` to
+# transpile copied files, where the transpiled file will get a `.js` extension.
+# This assignment computes the list of transpiled `.js` that we expect to end up;
+# and we will work backward from there to figure out how to build them.
+transpiled_files := $(patsubst src/%,lib/%,$(src_files))
+
+# Putting each generated file in the same directory with its corresponding
+# source file is important when working with Flow: during type-checking Flow
+# will look in npm packages for `.js.flow` files to find type definitions. So
+# putting `.js` and `.js.flow` files side-by-side is how you export type
+# definitions from a shared library.
+
+# Compute the list of type-definition source files that we want to end up with.
+# This is done by replacing the `.js` extension from every value in the
+# `transpiled_files` list with a `.js.flow` extension.
+flow_files := $(patsubst %.js,%.js.flow,$(transpiled_files))
+
+# Ask `make` to build all of the transpiled `.js` and `.js.flow` files that we
+# want to end up with in `lib/`.
+#
+# This target also depends on the `node_modules/` directory, so that `make`
+# automatically runs `yarn install` if `package.json` has changed.
+all: node_modules $(flow_files) $(transpiled_files)
+
+# This rule tells `make` how to transpile a source file using `babel`.
+# Transpiled files will be written to `lib/`
+lib/%: src/%
+	mkdir -p $(dir $@)
+	$(babel) $< --out-file $@ --source-maps
+
+# Transpiling one file at a time makes incremental transpilation faster:
+# `make` will only transpile source files that have changed since the last
+# invocation.
+
+# This rule tells `make` how to produce a `.js.flow` file. It is just a copy of
+# a source file - the rule copies a file from `src/` to `lib/` and changes the
+# extension.
+lib/%.js.flow: src/%.js
+	mkdir -p $(dir $@)
+	cp $< $@
+
+clean:
+	rm -rf lib
+
+# This rule informs `make` that the `node_modules/` directory is out-of-date
+# after changes to `package.json` or `yarn.lock`, and instructs `make` on how to
+# install modules to get back up-to-date.
+node_modules: package.json yarn.lock
+	yarn install
+```
+
+This tiny `Makefile` showcases many of the useful features of make, such as variables, implicit variables, recipes, path probing with vpath, automatic make variables (e.g. `$<`, `$@`, `$*`), phony targets and utility functions. [RTFM](https://www.gnu.org/software/make/manual/make.html) for more.
+
+## Make essentials
+
+`make` generates files from other files, using _recipes_, the syntax is as follows. Please note, thanks to POSIX standardisation the recipe MUST be indented with a tab (not spaces):
+
+```
+target_file: prerequisite_file1 prerequisite_file2
+	shell command to build target_file (MUST be indented with tabs, not spaces)
+	another shell command (these commands are called the "recipe")
+```
+
+Unless you specify otherwise, Make assumes that the target (`target_file` above) and prerequisites (`prerequisite_file1` and `prerequisite_file2`) are actual files or directories. You can ask Make to build a target from the command line like this:
+
+```bash
+$ make target_file
+```
+
+If the `target_file` does not exist, or if `prerequisite_file1` or `prerequisite_file2` have been modified since `target_file` was last built, Make will run the given shell commands. But first Make will check to see if there are recipes in the Makefile for `prerequisite_file1` and `prerequisite_file2` and build or rebuild those if necessary.
+
+
+
+
+
+
+
+
+
+An example of this in action:
+
+```
 P=seething
 OBJECTS= main.o safe_sum.o
-CC=gcc
-CFLAGS= -Wall -g -std=gnu11 -O0 -Iinclude -Iinclude/engine
-CFLAGS+= `pkg-config --cflags glib-2.0`
-LDLIBS=
-LDLIBS+= `pkg-config --libs glib-2.0 gobject-2.0 gio-2.0` # `-l` flags e.g: -lglib-2.0
-VPATH=src:include:src/engine:include/engine
 
 all: $(P)
 
 $(P): $(OBJECTS)
     $(CC) $(CFLAGS) -o $(P) $(OBJECTS) $(LDLIBS)
+```
 
-.PHONY: clean
-clean:
-    rm -f $(P)
-    rm -f *.o
-    rm -f *.log
-{% endhighlight %}
+The first target, in this case `all` is the default target, and is dependent on my project `seething`. In order to build the binary `seething`, make moves on looking for the `seething` target, which is dependent on objects `main.o` and `safe_sum.o`. The recipe defines instructions make should use to invoke the C compiler, which will produce an output binary of `seething`. Luckily we don't have to explain to make how to build `main.o` and `safe_sum.o`, because make is smart enough to infer a default build recipe, because we are dealing with C, will be `$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $*.c`, concretely for `safe_sum.o` this will wind up being `gcc -Wall -g -std=gnu11 -O0 -Iinclude -o safe_sum.o safe_sum.c`
 
-This tiny makefile showcases many of the useful features of make, such as variables, implicit variables, recipes, path probing with vpath, automatic make variables (e.g. `$<`, `$@`, `$*`), phony targets, and utility functions, which I will not delve into detail here. The offical [documentation](https://www.gnu.org/software/make/manual/make.html) is very good.
+### Equal signs
 
+About the equal signs:
 
+`:=` simple shallow evaluation
+`=` recursively expands defined variables
 
-### make essentials ###
+```makefile
+A := Did $(C)
+B = Did $(C)
+C  = you understand?
 
+all:
+    $(info $(A)) # output "Did"
+    $(info $(B)) # output "Did you understand?"
+```
 
-The [GNU make Manual](https://www.gnu.org/software/make/manual/make.html) is fantastic.
+### Built-in variables
 
+- `$@` current target
+- `$<` name of the first prerequisite
+- `$^` all prerequisites
+- `$*` target with no suffix (e.g. `prog.o`, `$*` is just `prog`)
+- `$(@D)` directory part of the file name of the target
+- `$(@F)` file part of the file name of the target
 
-**Custom variables**
-
-    P=seething
-    OBJECTS= main.o safe_sum.o
-    the_day=$(shell date +%A)
-
-
-**Implicit variables**
-
-make is a generic system for generating files, based on other files. It is in no way, specific to a C compiler, and can be used to drive any compiler. Make is a great platform for driving common tasks, such as producing documentation, or running a test suite. To ease working with common languages and compilers, make does have a general awareness, for example, of how to (agnostically) drive a C compiler. If make detects its working with a C, standard (or implicit) variables such as `CC` (name of desired C compiler), `CFLAGS` (compiler flags), `LDFLAGS` (linker flags) etc kick in. See [implicit variables](https://www.gnu.org/software/make/manual/make.html#Implicit-Variables) for more.
-
-
-Program for compiling C programs
-
-    CC=gcc
-
-Compiler flags:
-
-    CFLAGS= -Wall -g -std=gnu11 -O3 -Iinclude -Iinclude/engine
-
-If you're not familiar with GCC:
-
-- `-Wall` adds compiler warnings
-- `-g` adds symbols for debugging
-- `-std=gnu11` compiler should allow code conforming to the C11 and POSIX standards
-- `-O3` indicates optimization level three, which tries every trick to build faster code
-- `-I` include paths
-
-While in `CFLAGS` territory, its important to make note of `pkg-config`.
-
-> pkg-config - Return metainformation about installed libraries
-
-Hard coding include paths to third party dependencies works, it is likely to become a maintenance point in the future, worse if there are plans to share this makefile with other developers, it is unlikely to work on their system (i.e. poor portability). For example, my project requires the GNOME core utility library [GLib](https://developer.gnome.org/glib/). I could append the hardcoded path to my `CFLAG` like this:
-
-    CFLAGS+= -I/usr/include/glib-2.0
-
-However, a slightly better approach is to shell out to `pkg-config` which will return the neatly formatted `-I`, using paths based on my machines installation paths. For example:
-
-    CFLAGS+= `pkg-config --cflags glib-2.0`
-
-
-Linker flags for everything non-library related (e.g. `-L`).
-
-    LDFLAGS=
-
-- `-L` (e.g. `-L/usr/local/lib`) is where to search for libraries to resolve symbols
-
-Libraries that the linker (`ld`) needs to, link in.
-
-    LDLIBS=
-    LDFLAGS+= -lglib-2.0 # hard-coded version
-
-Again, `pkg-config` can do linker flags, for more robust makefiles:
-
-    LDLIBS+= `pkg-config --libs glib-2.0 gobject-2.0 gio-2.0`
-
-`LDADD` (ADDitional linker/ld) is useful for feeding any other additional terms to the linker, for example:
-
-    LDADD= -Llibpath -Wl,-Rlibpath
-
-- `-L` flag tells the compiler where to search for libraries to resolve symbols
-- `-Wl` flag passes its flags through from gcc to the linker
-- `-R` the linker will embed these into the runtime search path for libraries to link to
-
-
-`VPATH` specifies a list of directories that make should search:
-
-    VPATH=src:include:src/engine:include/engine
-
-
-OK, with the compiler and linker guff out of the way, its time to direct `make` at our source code. `make` generates files from other files, using *recipes*, the syntax is as follows. Please note, thanks to POSIX standardisation the recipe must be indented with a tab (not spaces):
-
-    <target>: <dependency>
-      <recipe>
-
-An example of this in action:
-
-    P=seething
-    OBJECTS= main.o safe_sum.o
-
-    all: $(P)
-
-    $(P): $(OBJECTS)
-      $(CC) $(CFLAGS) -o $(P) $(OBJECTS) $(LDLIBS)
-
-The first target, in this case `all` is the default target, and is dependent on my project `seething`. In order to build the binary `seething`, make moves on looking for the `seething` target, which is dependent on objects `main.o` and `safe_sum.o`. The recipe defined instructs make to invoke the `CC` compiler, producing an output of `seething`. Luckily we don't have to explain to make how to build `main.o` and `safe_sum.o`, because make is smart enough to infer a default build recipe, because we are dealing with C, will be:
-
-    $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $*.c
-
-For `safe_sum.o` this will wind up being:
-
-    gcc -Wall -g -std=gnu11 -O0 -Iinclude -o safe_sum.o safe_sum.c
-
-
-**Automatic make variables**
-
-- `$<` returns the name of the first prerequisite
-- `$@` the full target filename (eg the .o compiled from .c)
-- `$*` target with no suffix (e.g. prog.o, $* is just prog)
-
-
-**Phony targets**
+### Phony targets
 
 A phony target prevents make from confusing it with a real file. For example, with `.PHONY`, even if a file called 'clean' is actually created, `make clean` will still execute.
 
@@ -183,7 +163,6 @@ A phony target prevents make from confusing it with a real file. For example, wi
       rm -f $(P)
       rm -f *.o
       rm -f *.log
-
 
 **Utility functions**
 
@@ -203,8 +182,78 @@ Running this:
     Ben it's Sunday!
     make: Nothing to be done for 'stringfun'.
 
-
 **Other bits**
 
 `make -p` will dump out implicit rules and variables available
 
+## C specifics
+
+### Custom variables
+
+```makefile
+P=seething
+OBJECTS= main.o safe_sum.o
+the_day=$(shell date +%A)
+```
+
+### Implicit variables
+
+`make` is a generic system for generating files, based on other files. It is in no way, specific to a C compiler, and can be used to drive any compiler. Make is a great platform for driving common tasks, such as producing documentation, or running a test suite. To ease working with common languages and compilers, make does have a general awareness, for example, of how to (agnostically) drive a C compiler. If it detects its working with a C, standard (or implicit) variables such as `CC` (name of desired C compiler), `CFLAGS` (compiler flags), `LDFLAGS` (linker flags) kick in. See [implicit variables](https://www.gnu.org/software/make/manual/make.html#Implicit-Variables) for more.
+
+Program for compiling C programs
+
+```makefile
+CC=gcc  # CC = C compiler to use
+CFLAGS= -Wall -g -std=gnu11 -O3 -Iinclude -Iinclude/engine  # flags to pass to C compiler
+```
+
+If you're not familiar with GCC:
+
+- `-Wall` adds compiler warnings
+- `-g` adds symbols for debugging
+- `-std=gnu11` compiler should allow code conforming to the C11 and POSIX standards
+- `-O3` set optimization level three, which applies every clever trick to make your code as fast as possible
+- `-I` include paths
+
+While in `CFLAGS` territory, its important to make note of `pkg-config`:
+
+> pkg-config - Return metainformation about installed libraries
+
+Hard coding include paths to third party dependencies works, however it is likely to become a maintenance burden in the future, worse if there are plans to share this `Makefile` with other developers, it is unlikely to work on their system (i.e. poor portability). For example, my project requires the GNOME core utility library [GLib](https://developer.gnome.org/glib/). I could append the hardcoded path to my `CFLAG` like this:
+
+```
+CFLAGS+= -I/usr/include/glib-2.0
+```
+
+However, a slightly better approach is to shell out to `pkg-config` which will return the neatly formatted `-I`, using paths based on my machines installation paths. For example:
+
+```
+CFLAGS+= `pkg-config --cflags glib-2.0`
+```
+
+Linker flags `LDFLAGS` for everything non-library related (e.g. `-L`).
+
+- `-L` (e.g. `-L/usr/local/lib`) is where to search for libraries to resolve symbols
+
+Libraries that the linker (`ld`) needs to, link in.
+
+```
+LDLIBS=
+LDFLAGS+= -lglib-2.0 # hard-coded version
+```
+
+Again, `pkg-config` can do linker flags, for more robust Makefiles like this:
+
+```
+LDLIBS+= `pkg-config --libs glib-2.0 gobject-2.0 gio-2.0`
+```
+
+`LDADD` (ADDitional linker/ld) is useful for feeding any other additional terms to the linker, for example `LDADD= -Llibpath -Wl,-Rlibpath`:
+
+- `-L` flag tells the compiler where to search for libraries to resolve symbols
+- `-Wl` flag passes its flags through from gcc to the linker
+- `-R` the linker will embed these into the runtime search path for libraries to link to
+
+`VPATH` specifies a list of directories that make should search:
+
+    VPATH=src:include:src/engine:include/engine

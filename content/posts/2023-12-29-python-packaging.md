@@ -68,11 +68,34 @@ Paths:
 ...
 ```
 
+On a Linux system under a virtualenv:
+
+```bash
+$ poetry run python3 -m sysconfig
+Platform: "linux-x86_64"
+Python version: "3.11"
+Current installation scheme: "venv"
+
+Paths:
+        data = "/home/bms/.cache/pypoetry/virtualenvs/brightsnakes-u3bhK9-x-py3.11"
+        include = "/usr/include/python3.11"
+        platinclude = "/usr/include/python3.11"
+        platlib = "/home/bms/.cache/pypoetry/virtualenvs/brightsnakes-u3bhK9-x-py3.11/lib/python3.11/site-packages"
+        platstdlib = "/home/bms/.cache/pypoetry/virtualenvs/brightsnakes-u3bhK9-x-py3.11/lib/python3.11"
+        purelib = "/home/bms/.cache/pypoetry/virtualenvs/brightsnakes-u3bhK9-x-py3.11/lib/python3.11/site-packages"
+        scripts = "/home/bms/.cache/pypoetry/virtualenvs/brightsnakes-u3bhK9-x-py3.11/bin"
+        stdlib = "/usr/lib/python3.11"
+```
+
 _TODO_: how to add custom package paths, using env vars, or sysconfig directly
+
+## Version number
+
+There's [several ways](https://packaging.python.org/en/latest/guides/single-sourcing-package-version/) to approach managing a single source of truth version number for a package, such as keeping a `VERSION` text file and having `setup.py` read it, or abandon keeping a version in your repo at all and instead infer this from Git using [setuptools_scm](https://pypi.org/project/setuptools-scm/), or in the case of poetry the `poetry-dynamic-versioning[plugin]` plugin.
 
 ## Project Structure
 
-A typical Python package consists of a directory (aka package) containing an `__init__.py` other Python source files. The `__init__.py` file is executed when the package is imported, and it's often left empty but must exist in order for Python to recognize the directory as a package.
+A typical Python package consists of a directory (aka package) containing an `__init__.py` other Python source files. The `__init__.py` file is executed when the package is imported, and it's often left empty but must exist in order for Python to recognise the directory as a standard package.
 
 ## Setup Script
 
@@ -85,3 +108,11 @@ Once the package and setup script are prepared, you can use tools like `setuptoo
 ## Distribution
 
 Finally, you can distribute the package by uploading the distribution archives to the Python Package Index (PyPI), a public repository of software for the Python programming language. Users can then install your package using pip, the standard package installer for Python.
+
+## Poetry
+
+```bash
+poetry self add "poetry-dynamic-versioning[plugin]"
+poetry source add --priority=supplemental private http://localhost:8080/simple/
+poetry publish --repository private
+```

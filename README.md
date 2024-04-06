@@ -1,6 +1,6 @@
 # Yet Another Hugo Site (YAHS)
 
-My [hugo](https://gohugo.io/) static site, for software development related thoughts and content available at <https://www.bencode.net>
+My [hugo](https://gohugo.io/) static site, for software development related thoughts, published at <https://www.bencode.net>
 
 ## favicon
 
