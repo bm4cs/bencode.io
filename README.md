@@ -61,7 +61,7 @@ Should end up with something similar to:
         </h1>
         <div class="post-meta">
           <span class="post-date">
-            {{ .Lastmod.Format "January 2006" }}
+            {{- .Lastmod | time.Format "January 2006" -}}
           </span>
         </div>
       </div>
