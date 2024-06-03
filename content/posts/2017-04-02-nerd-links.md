@@ -3,13 +3,11 @@ layout: post
 title: "Nerd Gems 💎"
 slug: "gems"
 date: "2017-04-02 13:38:10+11:00"
-lastmod: "2023-08-03 15:31:58+11:00"
+lastmod: "2024-05-18 16:10:58+11:00"
 comments: false
 categories:
   - geek
 ---
-
-_Updated: 2022-03-07_
 
 This is a list of valuable (to me) developer resources that I've managed to stumble across (books, courses, friends and fellow programmers, hacker news, lobste.rs, university).
 
@@ -25,20 +23,20 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Development](#development)
 - [Diagramming](#diagramming)
 - [dotfiles](#dotfiles)
-- [Encoding and Serialization](#encoding-and-serialization)
 - [Git](#git)
 - [Golang](#golang)
 - [gRPC](#grpc)
 - [Hardware](#hardware)
 - [Humanities](#humanities)
 - [Jobs](#jobs)
+- [Kubernetes](#kubernetes)
 - [Languages](#languages)
 - [Linux](#linux)
+- [Message queues](#message-queues)
 - [Mongo](#mongo)
 - [Monitoring](#monitoring)
 - [Networking](#networking)
 - [Open source](#open-source)
-- [Papers](#papers)
 - [Python](#python)
 - [Security](#security)
 - [Shell](#shell)
@@ -46,6 +44,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Text wrangling](#text-wrangling)
 - [Talks](#talks)
 - [Testing](#testing)
+- [Text, Encoding and Serialization](#text-encoding-and-serialization)
 - [TypeScript](#typescript)
 - [Web](#web)
 
@@ -55,10 +54,12 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Communicating Sequential Processes](http://www.usingcsp.com/cspbook.pdf) Tony Hoare's seminal 1977 paper on concurrency and CSP
 - [Why Segment Went Back to a Monolith](https://www.infoq.com/news/2020/04/microservices-back-again/) microservices come with serious tradeoffs
 - [All software sucks](http://harmful.cat-v.org/software/) complexity is the bane of all software, simplicity is the most important quality
+- [Designing Actor-Based Software with Hugh McKee](https://www.youtube.com/watch?v=CBUWcUuG6Ss) an approach to building scalable software systems
 
 ## AI and ML
 
 - [Andrej Karpathy on The spelled-out intro to neural networks and backpropagation: building micrograd](https://www.youtube.com/watch?v=VMj-3S1tku0) a 2.5 hour step-by-step spelled-out explanation of backpropagation and training of neural networks. It only assumes basic knowledge of Python and a vague recollection of calculus from high school.
+- [A Beginner’s Guide to Vector Embeddings](https://www.timescale.com/blog/a-beginners-guide-to-vector-embeddings/)
 
 ## Awesome
 
@@ -80,6 +81,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [The Google Cloud Developer's Cheat Sheet](https://github.com/gregsramblings/google-cloud-4-words) every product in the Google Cloud family described in under 4 words
 - [Ask HN: Is Your Company Sticking to On-Premise Servers? Why?](https://news.ycombinator.com/item?id=23089999)
 - [Using AWS CodeBuild to Execute Administrative Tasks](https://aws.amazon.com/blogs/devops/using-aws-codebuild-to-execute-administrative-tasks/)
+- [What Is Amazon Resource Name (ARN)?](https://everythingdevops.dev/what-is-amazon-resource-name-arn/) more to the humble ARN than you think `arn:partition:service:region:account-id:resource`
 
 ## Containers
 
@@ -125,19 +127,13 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 - [Excalidraw](https://excalidraw.com/) beautiful web based diagrams
 - [PlantText](https://www.planttext.com/) PlantUML (text) based diagram generator
+- [Taking ASCII Drawings Seriously: How Programmers Diagram Code](https://pg.ucsd.edu/publications/how-programmers-ASCII-diagram-code_CHI-2024.pdf)
 
 ## dotfiles
 
 - [HexDSL](https://git.hexdsl.co.uk/HexDSL/dots)
 - [LukeSmithxyz](https://github.com/LukeSmithxyz/voidrice)
 - [uoou](https://gitlab.com/uoou)
-
-## Encoding and Serialization
-
-- [The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)](https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/)
-- [Illustrated jq tutorial](https://mosermichael.github.io/jq-illustrated/dir/content.html) jq is a lightweight and flexible command-line JSON processor
-- [Cap'n Proto](https://capnproto.org/)
-- [Google Protocol Buffers](https://github.com/google/protobuf)
 
 ## Git
 
@@ -147,15 +143,9 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 ## Golang
 
 - [Everyday Golang](https://gumroad.com/l/everyday-golang)
-- [Containerize Your Go Developer Environment – Part 1](https://www.docker.com/blog/containerize-your-go-developer-environment-part-1/)
-- [Communicating Between Python and Go with gRPC](https://www.ardanlabs.com/blog/2020/06/python-go-grpc.html)
-- [GoFakeIt: A Random Fake Data Generator](https://github.com/brianvoe/gofakeit) over 120 functions for generating things like names, emails, locations, user agents, ...
-- [Exploring the Container Packages (list, ring, and heap)](https://therebelsource.com/blog/exploring-container-package-in-go-list-ring-and-heap/9zTBiMaaYg)
 - [LearnGo: A Large Collection of Go Examples, Exercises, and Quizzes](https://github.com/inancgumus/learngo)
 - [Writing Go CLIs With Just Enough Architecture](https://blog.carlmjohnson.net/post/2020/go-cli-how-to-and-advice/)
-- [A Go RabbitMQ Beginners' Tutorial](https://www.youtube.com/watch?v=pAXp6o-zWS4)
 - [Getting Hands-On with io_uring from Go](https://developers.mattermost.com/blog/hands-on-iouring-go/)
-- [RobotGo: Native Cross-Platform GUI Automation](https://github.com/go-vgo/robotgo) control the pointer, keyboard, read the screen, to automate many computer-based jobs
 - [Diving Into Go by Building a CLI Application](https://eryb.space/2020/05/27/diving-into-go-by-building-a-cli-application.html)
 - [Immutability Patterns in Go](https://rauljordan.com/2020/05/25/immutability-patterns-in-go.html)
 - [Writing An Interpreter In Go](https://interpreterbook.com/)
@@ -180,6 +170,11 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 - [Inspired corp](inspiredcorp.com.au)
 
+## Kubernetes
+
+- [7 Mind-Blowing Kubernetes Hacks](https://overcast.blog/7-mind-blowing-kubernetes-hacks-36037e59bb54)
+- [The guide to kubectl I never had](https://medium.com/@jake.page91/the-guide-to-kubectl-i-never-had-3874cc6074ff)
+
 ## Languages
 
 - [Crafting Interpreters by Robert Nystrom](https://craftinginterpreters.com/) Ever wanted to make your own programming language or wondered how they are designed and built? If so, this book is for you.
@@ -199,6 +194,10 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Tmux for mere mortals](https://zserge.com/posts/tmux/) good defaults, modifying the keybindings to boost usability
 - [Tips for cleaning up a Linux server](https://ma.ttias.be/clean-up-linux-server-using-these-simple-tips/) low hanging disk space fruit, like removing old kernels, pruning unused Docker space, clearing logs
 - [Shell productivity tips and tricks](https://blog.balthazar-rouberol.com/shell-productivity-tips-and-tricks) faster command line tips
+
+## Message queues
+
+- [Postgres Message Queue - PGMQ](https://github.com/tembo-io/pgmq) lightweight message queue, like AWS SQS and RSMQ but on Postgres
 
 ## Mongo
 
@@ -232,10 +231,6 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 - [Google Open Source](https://opensource.google.com/projects/explore/featured) 2000+ OSS projects managed by Google
 - [NSA on GitHub](https://nationalsecurityagency.github.io)
-
-## Papers
-
-- Coming soon
 
 ## Python
 
@@ -298,6 +293,13 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 - [Smocker](https://smocker.dev/) simple HTTP mock server, uses YAML to define mocks and responses
 - [MockServer](https://www.mock-server.com/) for any system you integrate with via HTTP or HTTPS MockServer can be used as: a mock configured to return specific responses for different requests, a proxy recording and optionally modifying requests and responses or as both a proxy for some requests and a mock for other requests at the same time
+
+## Text, Encoding and Serialization
+
+- [The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)](https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/)
+- [Illustrated jq tutorial](https://mosermichael.github.io/jq-illustrated/dir/content.html) jq is a lightweight and flexible command-line JSON processor
+- [Cap'n Proto](https://capnproto.org/)
+- [Google Protocol Buffers](https://github.com/google/protobuf)
 
 ## TypeScript
 
