@@ -1,10 +1,10 @@
 ---
 layout: post
 draft: false
-title: "Elasticsearch Engineer 8.1"
+title: "Elasticsearch Performance and Tuning"
 slug: "elasticsearch"
-date: "2024-06-02 18:46:01"
-lastmod: "2024-06-03 10:15:30"
+date: "2024-06-07 18:46:01"
+lastmod: "2024-06-07 18:47:30"
 comments: false
 categories:
   - elastic
@@ -14,7 +14,7 @@ tags:
   - kibana
 ---
 
-A dedicate performance course run by Matt Gregory from Elastic, who designed much of the Elasticsearch core training material.
+A dedicated performance course run by Matt Gregory from Elastic, an absolute legend with deep Elasticsearch expert.
 
 Contents
 
@@ -36,7 +36,7 @@ Contents
 - [Tuning for search](#tuning-for-search)
   - [API settings and data modelling to improve search performance](#api-settings-and-data-modelling-to-improve-search-performance)
     - [Search as few fields as possible](#search-as-few-fields-as-possible)
-    - [One big copy\_to field as opposed to individual text multi field](#one-big-copy_to-field-as-opposed-to-individual-text-multi-field)
+    - [One big copy_to field as opposed to individual text multi field](#one-big-copy_to-field-as-opposed-to-individual-text-multi-field)
     - [Consider mapping identifiers as keywords](#consider-mapping-identifiers-as-keywords)
     - [Document modeling](#document-modeling)
     - [Consider mapping numeric fields as keyword](#consider-mapping-numeric-fields-as-keyword)
@@ -63,8 +63,6 @@ Contents
   - [Explain and Tasks API](#explain-and-tasks-api)
     - [Explain API](#explain-api)
     - [Score](#score)
-    - [Term frequency (TF)](#term-frequency-tf)
-    - [Inverse document frequency (IDF)](#inverse-document-frequency-idf)
     - [Field length normalization and coordindation](#field-length-normalization-and-coordindation)
     - [Other Query Parameters](#other-query-parameters)
 - [API Settings to improve indexing performance](#api-settings-to-improve-indexing-performance)
@@ -82,7 +80,7 @@ Contents
 - Ensure the heap is beefed up
 - a `must` clause is the first line of defence for scoring, `should` is then used as the second pass of scoring
 - always format queries as a 'bool'
-- ansible configuration everywhere
+- Configuration management everywhere (Ansible, etc)
 - dedicated monitoring cluster
 
 ## Tuning for Index Speed
@@ -472,7 +470,11 @@ GET /my-index-000001/_search
 
 Because a search request may be executed against one or more shards in an index, and a search may cover one or more indices, the top level element in the profile response is an array of shard objects
 
-The ID’s format is `[nodeID][indexName][shardID]` ex: `"id": "[2aE02wS1R8q_QFnYu6vDVQ][my-index-000001][0]"`
+The ID’s format is `[nodeID][indexName][shardID]`:
+
+```
+[2aE02wS1R8q_QFnYu6vDVQ][my-index-000001][0]
+```
 
 #### Query section
 
@@ -525,17 +527,11 @@ You might be thinking how does score affect performance. Well calculating score 
 
 #### Score
 
-#### Term frequency (TF)
-
-Commonly uncommon terms.
-
-#### Inverse document frequency (IDF)
-
-Commonly common terms.
-
-"Matt is the best technical training instructor I've experienced and I feel privileged to have got to hang out today. Exceptional communication skills and depth of subject matter. Kept the class and labs flowing smoothly. Gold standard."
+TODO
 
 #### Field length normalization and coordindation
+
+TODO
 
 #### Other Query Parameters
 
