@@ -16,7 +16,7 @@ tags:
 
 Revised 2024 edition based on Elasticsearch 8.1.
 
-Recently the opportunity to attend this 4-day training on the core Elasticsearch engine has come my way, which I did in-person about 5 years ago in Sydney. Elasticsearch has always been an integral part of the data solutions I've been involved with and I'm quite fond of it. This time round the course now only runs in a virtual class room format (using strigo.io), our trainers in this instance are Krishna Shah and Kiju Kim.
+Recently the opportunity to attend the latest revision of the 4-day Elasticsearch engineer course, which I did in-person about 5 years ago in Sydney. Elasticsearch has often been an integral part of the data solutions I've been involved with and I'm quite fond of it. This time round the course only runs in a virtual class room format (using strigo.io) with our awesome trainers Krishna Shah and Kiju Kim.
 
 **Contents**
 
@@ -47,13 +47,13 @@ Recently the opportunity to attend this 4-day training on the core Elasticsearch
 - [You know, for search](#you-know-for-search)
   - [Query DSL](#query-dsl)
     - [match](#match)
-    - [minimum\_should\_match](#minimum_should_match)
-    - [match\_phrase](#match_phrase)
+    - [minimum_should_match](#minimum_should_match)
+    - [match_phrase](#match_phrase)
     - [sort, from and size](#sort-from-and-size)
     - [fields](#fields)
     - [Trimming the fat on \_source](#trimming-the-fat-on-_source)
     - [range and date math](#range-and-date-math)
-    - [multi\_match](#multi_match)
+    - [multi_match](#multi_match)
     - [Compound queries with bool](#compound-queries-with-bool)
   - [Query and Filter Contexts](#query-and-filter-contexts)
   - [Search templates](#search-templates)
@@ -76,12 +76,12 @@ Recently the opportunity to attend this 4-day training on the core Elasticsearch
     - [cardinality](#cardinality)
     - [min](#min)
     - [stats](#stats)
-    - [percentile\_ranks](#percentile_ranks)
-    - [top\_hits](#top_hits)
+    - [percentile_ranks](#percentile_ranks)
+    - [top_hits](#top_hits)
   - [term (bucket)](#term-bucket)
-  - [significant\_terms and significant\_text](#significant_terms-and-significant_text)
+  - [significant_terms and significant_text](#significant_terms-and-significant_text)
   - [Pipeline aggregations](#pipeline-aggregations)
-    - [moving\_aggs](#moving_aggs)
+    - [moving_aggs](#moving_aggs)
   - [Scripted (painless) aggregations](#scripted-painless-aggregations)
   - [Aggregation essentials](#aggregation-essentials)
     - [Reducing aggregation by combining with query](#reducing-aggregation-by-combining-with-query)
