@@ -38,11 +38,13 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Networking](#networking)
 - [Open source](#open-source)
 - [Python](#python)
+- [Rust](#rust)
 - [Security](#security)
 - [Shell](#shell)
 - [systemd](#systemd)
 - [Text wrangling](#text-wrangling)
 - [Talks](#talks)
+- [Terminal](#terminal)
 - [Testing](#testing)
 - [Text, Encoding and Serialization](#text-encoding-and-serialization)
 - [TypeScript](#typescript)
@@ -55,6 +57,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Why Segment Went Back to a Monolith](https://www.infoq.com/news/2020/04/microservices-back-again/) microservices come with serious tradeoffs
 - [All software sucks](http://harmful.cat-v.org/software/) complexity is the bane of all software, simplicity is the most important quality
 - [Designing Actor-Based Software with Hugh McKee](https://www.youtube.com/watch?v=CBUWcUuG6Ss) an approach to building scalable software systems
+- [Queueing: An interactive study of queueing strategies](https://encore.dev/blog/queueing) an interactive journey to understand common queueing strategies for handling HTTP requests.
 
 ## AI and ML
 
@@ -174,6 +177,7 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 - [7 Mind-Blowing Kubernetes Hacks](https://overcast.blog/7-mind-blowing-kubernetes-hacks-36037e59bb54)
 - [The guide to kubectl I never had](https://medium.com/@jake.page91/the-guide-to-kubectl-i-never-had-3874cc6074ff)
+- [The Pros of On-Prem Kubernetes with Justin Garrison](https://share.transistor.fm/s/9b51036c)
 
 ## Languages
 
@@ -238,6 +242,13 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Inside the Python Virtual Machine](https://leanpub.com/insidethepythonvirtualmachine)
 - [Full Speed Python from Superior School of Technology of Setúbal](https://github.com/joaoventura/full-speed-python/tree/master)
 - [Intermediate Python](https://leanpub.com/intermediatepython)
+- [Ruff: Internals of a Rust-backed Python linter-formatter - Part 1](https://compileralchemy.substack.com/p/ruff-internals-of-a-rust-backed-python)
+- [A Guide to Python's Weak References Using weakref Module](https://martinheinz.dev/blog/112)
+- [A Complete Guide to Pytest Fixtures](https://betterstack.com/community/guides/testing/pytest-fixtures-guide/)
+
+## Rust
+
+- [100 Exercises To Learn Rust](https://rust-exercises.com/) teaches Rust's core concepts, one exercise at a time. You'll learn about Rust's syntax, its type system, its standard library, and its ecosystem.
 
 ## Security
 
@@ -288,6 +299,10 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [James Mickens on JavaScript]()
 - [Liz Rice on Containers From Scratch]()
 - [James Mickens on Why Do Keynote Speakers Keep Suggesting That Improving Security Is Possible?]()
+
+## Terminal
+
+- [Terminal Text Effects](https://github.com/ChrisBuilds/terminaltexteffects) visual effects applied to text in the terminal
 
 ## Testing
 
