@@ -9,7 +9,7 @@ I’ve been professionally building software systems since the early 00's, contr
 
 Academically, I hold three degrees: a Master of Cyber Security from UNSW, a Master of IT from UC, and a Bachelor of Software Engineering from UC, alongside certifications in relevant technologies and practices. One of the most satisfying things I’ve done as a software engineer is nand2tetris by the Hebrew University of Jerusalem, which involves building a CPU and general-purpose 16-bit computer literally from the NAND gates up to the OS. This hands-on experience reinforced my appreciation for foundational principles and continues to shape my approach to designing efficient, scalable, and maintainable software systems. Thanks to Ben Eater I soon followed this up by making my own physical 8-bit CPU out of hundreds of TTL logic gates and breadboards. This pilgrimage has led me into the wonderful world of low-level topics including OS internals, binary reversing, and exploit development.
 
-## Other ways to find me
+### Contacts
 
 - Email: ben at bencode dot io
 - <https://github.com/bm4cs>
@@ -19,7 +19,7 @@ Academically, I hold three degrees: a Master of Cyber Security from UNSW, a Mast
 
 ## PGP public key
 
-If you want to privately message me.
+Securely send me bits.
 
 ```
 -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -74,4 +74,3 @@ p/wkIynnkGwAXyksLNOjSPLOhHChNvzAmQSzHPOVTdHc0SZjXMOWPf5zNaGeDyE=
 =4sMn
 -----END PGP PUBLIC KEY BLOCK-----
 ```
-

@@ -1,6 +1,6 @@
 baseURL = "/"
 languageCode = "en-us"
-title = "Ben Simmonds"
+title = "Benny Simmonds"
 theme = "terminal"
 rssLimit = 100
 paginate = 64
@@ -46,7 +46,7 @@ pygmentsStyle = "native"
 
 [languages]
   [languages.en]
-    title = "Ben Simmonds"
+    title = "Benny Simmonds"
     subtitle = "A blog about code and computers"
     keywords = ""
     copyright = ""
@@ -55,7 +55,7 @@ pygmentsStyle = "native"
     readOtherPosts = "Read other posts"
 
     [languages.en.params.logo]
-      logoText = "Ben Simmonds"
+      logoText = "Benny Simmonds"
       logoHomeLink = "/"
 
     [languages.en.menu]
