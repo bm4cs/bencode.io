@@ -16,7 +16,7 @@ tags:
 
 Kustomize is built into `kubectl` with `-k`. Great samples on [kubernetes.io/docs](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/)
 
-> Kustomize provides a template-free way to customize kubernetes manifest
+> Kustomize provides a template-free way to customize kubernetes manifests
 
 Contents:
 

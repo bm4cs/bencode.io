@@ -1,6 +1,6 @@
 ---
 layout: post
-draft: false
+draft: true
 title: "Vue and TypeScript"
 slug: "vue"
 date: "2023-05-24 20:45:36+11:00"
@@ -66,33 +66,32 @@ Import it on the components needed:
 import type { Restaurant } from "@/types";
 ```
 
-
 ### Data
 
 Now we have a type definition, can strongly type the data definition e.g. a `DataShape` type:
 
 ```html
 <script lang="ts">
-import type { Restaurant } from "@/types";
+  import type { Restaurant } from "@/types";
 
-type DataShape = {
-  filterText: string
-  restaurantList: Restaurant[]
-  showNewForm: boolean
-}
+  type DataShape = {
+    filterText: string;
+    restaurantList: Restaurant[];
+    showNewForm: boolean;
+  };
 
-export default defineComponent({
-  data: (): DataShape => ({
-    filterText: '',
-    restaurantList: [
-      {
-        id: 'd22d1ddf-992e-4111-b489-31a08ecb74c4',
-        name: 'Bread n Butter',
-        address: '46 Thistle Place'
-      }
-    ]
-  })
-})
+  export default defineComponent({
+    data: (): DataShape => ({
+      filterText: "",
+      restaurantList: [
+        {
+          id: "d22d1ddf-992e-4111-b489-31a08ecb74c4",
+          name: "Bread n Butter",
+          address: "46 Thistle Place",
+        },
+      ],
+    }),
+  });
 </script>
 ```
 
