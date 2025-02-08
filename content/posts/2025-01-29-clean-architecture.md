@@ -32,6 +32,8 @@ Barbara Liskov's 1988 definition of subtypes, states that subtypes must be subst
 
 Avoid depending on things not used. The principle suggests that if a class uses only a subset of the operations of another class, it should not depend on the entire class. Depending on things that are not needed can lead to unexpected troubles and unnecessary redeployment. The ISP is a specific case of the more general principle, "Don't depend on things you don't need".
 
+Dynamically typed langs like Python are less susceptible to inadvertant coupling to a type and all its symbols by design; statically typed and compiled langs like C# and Rust need to navigate, validate and bind these public facing symbols between components, effectively gluing them together regardless of use. Concrete example, all the functions with a struct get coupled to the call site in other components that use the struct, even if only a single function is used.
+
 ### Dependency Inversion Principle
 
 The most flexible systems are those in which source code dependencies refer only to abstractions, not to concretions. High-level policies should not depend on low-level details; rather, details should depend on policies. The principle says to depend on abstractions (interfaces or abstract classes) rather than concrete implementations. The DIP inverts the direction of source code dependencies against the flow of control.
