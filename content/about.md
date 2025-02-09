@@ -1,17 +1,17 @@
 ---
 title: "About"
-date: "2024-12-26"
+date: "2025-01-08"
 ---
 
-I love learning, problem solving, having fun with my peers, and making great software. This passion has driven me to successfully deliver impactful software solutions across enterprises, start-ups, and hyperscale clouds, always balancing innovation with practical trade-offs. Some of my current interests include clean architecture, Rust, Linux internals and Kubernetes.
+I love learning, problem solving, having fun with my peers, and making great software. This passion has driven me to successfully deliver impactful software systems for enterprises, start-ups, and hyperscale clouds, always balancing innovation with practical trade-offs. Some of my current interests include clean architecture, Rust, Linux internals and Kubernetes.
 
-I’ve been professionally building software systems since the early 00's, contributing to industries such as government, cloud computing, and e-commerce. Notable projects include designing a distributed data processing engine for international collaboration and developing high-scale telemetry systems for retail operations. I grew up in the age of the web, Linux and Java/.NET. Thanks to several years of consulting, I’ve worn many hats including frontend, backend, architecture, distributed systems, databases, search engines, message queues and buses, data streaming, data analytics and service-based architectures.
+Since graduating in software engineering in 2003, I’ve been professionally designing and building software systems, contributing to industries such as government, ASX top 50 companies, hyperscaler cloud providers, and e-commerce. Notable projects include designing a distributed data processing engine for international collaboration and developing huge scale telemetry systems for retail operations. Having grown up in the age of the web, Linux and Java, and thanks to many years of consulting I’ve worn many hats such as; frontend and backend dev, full stack engineer, architect, tech lead, service designer, devops engineer, data engineer, network engineer, ...
 
-Academically, I hold three degrees: a Master of Cyber Security from UNSW, a Master of IT from UC, and a Bachelor of Software Engineering from UC, alongside certifications in relevant technologies and practices. One of the most satisfying things I’ve done as a software engineer is nand2tetris by the Hebrew University of Jerusalem, which involves building a CPU and general-purpose 16-bit computer literally from the NAND gates up to the OS. This hands-on experience reinforced my appreciation for foundational principles and continues to shape my approach to designing efficient, scalable, and maintainable software systems. Thanks to Ben Eater I soon followed this up by making my own physical 8-bit CPU out of hundreds of TTL logic gates and breadboards. This pilgrimage has led me into the wonderful world of low-level topics including OS internals, binary reversing, and exploit development.
+Academically, I hold three degrees; a Master of Cyber Security, a Master of IT and a Bachelor of Software Engineering. One of the most satisfying things I’ve done during my career is `nand2tetris` by the Hebrew University of Jerusalem, designing a functioning 16-bit CPU literally from NAND gates up. This pilgrimage has cemented my belief in the importance of understanding _first principles_ and opened up the world of low-level computing topics including OS internals, binary reversing and exploit development.
 
 ### Contacts
 
-- Email: ben at bencode dot io
+- Email ben at bencode dot io
 - <https://github.com/bm4cs>
 - <https://www.linkedin.com/in/bm4cs>
 - <https://keybase.io/bm4cs>
@@ -19,7 +19,7 @@ Academically, I hold three degrees: a Master of Cyber Security from UNSW, a Mast
 
 ## PGP public key
 
-Securely send me bits.
+Securely send me information.
 
 ```
 -----BEGIN PGP PUBLIC KEY BLOCK-----

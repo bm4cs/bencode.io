@@ -3,6 +3,8 @@ title: "Recipes"
 date: "2024-01-02"
 ---
 
+A collection of (mostly vegan) recipes I love.
+
 - [Mains](#mains)
   - [BBQ Chickpea and Carrot Sliders](#bbq-chickpea-and-carrot-sliders)
   - [Oat and Lentil “Meat Loaf”](#oat-and-lentil-meat-loaf)
@@ -153,7 +155,6 @@ Directions
 1. To serve, add the broth to a bowl with the desired amount of noodles. Top with the cabbage, broccoli, baby corn, tofu and spinach.
 1. Garnish with the jalapeno, nori, sesame seeds, and cilantro.
 
-
 ### Smashed Potato Nachos
 
 Ingredients
@@ -181,7 +182,6 @@ Directions
 1. Continue to roast for 15-20 minutes and remove the potatoes from oven once crispy.
 1. Place half of the warm potatoes onto a serving platter or bowl, topping with ½ cup of the warmed Sweet Potato Queso, 1/2 the sausage crumble, and 1/2 the black beans. Add the rest of the potatoes to the platter, drizzling remaining ½ of the Queso, beans, and crumble. Finish with tomato, green onions, jalapeños, plant-based sour cream and cilantro garnish.
 1. Serve immediately to all your friends!
-
 
 ### Sweet Potato Buns
 
@@ -293,7 +293,6 @@ Directions
 1. Add all the ingredients to a high speed blender and blend until smooth.
 1. Store in sealed containers in refrigerator. The sauce will last for 10 days.
 
-
 ### Sweet Dijon Vinaigrette
 
 Ingredients
@@ -308,7 +307,6 @@ Ingredients
 Directions
 
 In small mixing bowl, whisk all the ingredients well until smooth (alternatively add all ingredients to a mason jar with the lid and shake aggressively). This will keep for 7-10 days in the refrigerator.
-
 
 ### Sweet Potato Queso
 

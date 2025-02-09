@@ -12,7 +12,7 @@ categories:
   - architecture
 ---
 
-Thoughts and ideas from Uncle Bob's [Clean Architecture]()
+Thoughts and reflections from Uncle Bob's Clean Architecture.
 
 ## SOLID
 
