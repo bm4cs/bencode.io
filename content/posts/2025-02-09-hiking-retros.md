@@ -2,7 +2,7 @@
 layout: post
 draft: false
 title: "Hiking Retrospectives"
-slug: "clean"
+slug: "hikebetter"
 date: "2025-02-09 15:38:01+1100"
 lastmod: "2025-02-09 15:38:01+1100"
 comments: false
