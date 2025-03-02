@@ -14,40 +14,46 @@ Getting out on the trail is one my favourite things to do, especially long multi
 
 > "At regular intervals, the team reflects on how to become more effective, then tunes and adjusts its behavior accordingly" - Agile Manifesto, 2001
 
+- [2025](#2025)
+  - [January - Te Araroa, New Zealand](#january---te-araroa-new-zealand)
+    - [What Worked Great](#what-worked-great)
+    - [What Didn’t Work](#what-didnt-work)
+    - [Opportunities for Next Time](#opportunities-for-next-time)
+
 ## 2025
 
-### January - Te Araroa, NZ
+### January - Te Araroa, New Zealand
 
 Base weight: 4.7KG
 
-A solid 2 week stage of this epic thru hike, in the Canterbury region of the south island. I don't normally travel internationally to hike, so navigating customs restrictions was new for me as was New Zealands crazy weather system. I decided push my ultralight skills beyond my comfort level, figuring I'd just pick up gear, ask for help and basically just "live off the land" (e.g. food and resupply from tiny supermarkets, dairies). This included not taking any spare clothes, no cook system and not relying on anything fancy I may not be able to get, such as dehydrated meals. Having come from traditional backpacking with 20-25KG packs, this was the most freeing and enjoyable hikes I've done...less gear, longer distances, better morale.
+A solid two-week stage of this epic thru-hike in the Canterbury region of the South Island of New Zealand. To me NZ is one of the most naturally stunning places in the world, making it a gold mine for hiking. I don’t normally travel internationally to hike, so navigating customs restrictions was new for me, as was New Zealand’s unpredictable weather. I decided to push my ultralight skills beyond my comfort level, figuring I’d just pick up gear, ask for help, and “live off the land” (e.g., resupplying from small supermarkets and dairies). This meant no spare clothes, no cook system, and avoiding specialty items like dehydrated meals. Coming from traditional backpacking with 20-25KG packs, this was one of the most freeing and enjoyable hikes I’ve done, less gear, longer distances, better morale.
 
-What worked great:
+#### What Worked Great
 
-- Cold soaking: I've dabbled with this a few times and I loved the simplisity (no butune, no burners, no cleaning pots) and lighter pack I got. There were some cold patches where a warm drink would've been "nice", but to be honest, once we layered up, I never missed it
-- Katadyn befree: real time water filter/treatment system. I never used one this much and have always preferred the safety of chemical treatment systems...but this hike I decided it was time to lean into this method as much as possible. I carried at most 1L on my back and would drink as many litres as possible when good flowing stream opportunites came up, known as the "camel method". I always felt well hydrated. The flow rate was amazing, I could treat one litre of in about 20-30 seconds.
-- Lightway 58L pack (medium): minimal pack with just enough features, fits me like a glove
-- Silverlight socks: the single pair I took held up to every condition imaginable, including being wet all day
-- Altra lone peak 7 trail runners: My feet are so happy and cool in these
-- Lightweight gloves (sealskins): we hit a spurising amount of cold, wet and windy (60KM/h) conditions, unexpected for usual Summer weather patterns. My hands would have been frozen without these and we're a god send when I needed them.
-- Patagonia torrent shell pants: I never take rain pants, but the NZ's weather was insane and changed everyday, 2 of the days we faced zero degree celius, high wind chill conditions, these pants likely stopped me from getting hypothermia, I was hard on them too, fording rivers in them and they were incredible
-- Scroggin mix for lunches: a simple no fuss option, no wraps or bread, of cutting, slicing things, I made my own up based on whatever the small shops in NZ had, I'm a full convert; salted nuts (almonds, cashews, walnuts, macadamias, brazil nuts), goji berries, dried banana chips, dried mango pieces, dried pawpaw, dried apricot squares, soy crisps, peanut M&Ms, skittles
-- Protein heavy foods: I noticed my muscle recovery overnight was fasted than normal, I made sure to stack protein into most meals where I could e.g. in Fresh Choice (a common grocery chain here) I was able to find small tubs of WPI, so I mixed 80g with some oats and chia seeds which only took a few minutes to cold soak.
+- Cold soaking: I’ve dabbled with this before and loved the simplicity (no butane, no burner, no cleaning pots). A warm drink would have been nice in cold patches, but once layered up, I never missed it.
+- Katadyn BeFree: A real-time water filter/treatment system. I used it extensively instead of chemical treatments. I carried at most 1L and drank as much as possible at streams (the "camel method"). Flow rate was excellent—about 20-30 seconds per liter.
+- Lightway 58L pack (medium): Minimalist design with just enough features. Fits me perfectly.
+- Silverlight socks: My single pair held up through every condition, including being wet all day.
+- Altra Lone Peak 7 trail runners: Kept my feet happy and cool.
+- Lightweight gloves (Sealskinz): Unexpected cold, wet, and 60KM/h winds made these essential.
+- Patagonia Torrentshell pants: Normally don’t take rain pants, but NZ’s insane weather made them invaluable. Saved me from hypothermia in near-freezing conditions and performed well for river crossings.
+- Scroggin mix for lunches: Simple, no fuss, and no need for slicing or wraps. Made my own from small NZ shops: salted nuts (almonds, cashews, walnuts, macadamias, Brazil nuts), goji berries, dried banana chips, mango, pawpaw, apricots, soy crisps, peanut M&Ms, and Skittles.
+- Protein-heavy foods: Improved muscle recovery. Found small tubs of WPI at Fresh Choice (a common NZ grocery chain) and mixed 80g with oats and chia seeds for quick cold soaking.
 
-What didn't:
+#### What Didn’t Work
 
-- Sunscreen; total fail, a nivia tube I got, which I made sure to reapply several times each day and got destroyed by sunburn
-- Short sleeve shirt: being above treeline most of this hike, and mostly alpine, we were incredibly exposed, my arms got roasted by wind and sun burn
-- PLB: hired one at the start of the trip for about $70 for 2 weeks, it was old and heavy and was a pain to get back in time before we had to fly home
-- Too many platypus bladders: I love these 1L bladders and is my favourite way to carry water, however just having a single 1L thin disposable water bottle would have been amazing for collecting water at streams etc. Also I found there was never a shortage of water in NZ, so having 4L capacity was overkill.
-- USB cables: TL;DR I stuffed this up, I had old anker batteries with the old style USB A connectors, a head lamp with a micro USB A, a phone with USB C, USB C to USB C cables that connected to the power adapter just fine, but wouldn't to my battery...argh, painful. Luckilly on battery saver I was able to get 4 days of power out of my Pixel 8 phone, occassionally taking photos and getting GPS pings to help me navigate through each day. Luckily I found a small selection of cables that was enough to fix up my sitution Geraldine's Fresh Choice. I needed 7 different cables!?
+- Sunscreen: Nivea tube failed miserably—reapplied frequently but still got burned.
+- Short-sleeve shirt: Above-treeline exposure led to sun and windburn.
+- PLB rental: Hired an old, heavy one for ~$70 for two weeks. Returning it before flying home was a hassle.
+- Too many Platypus bladders: Love 1L bladders, but a single disposable 1L bottle would have been better for quick water collection. Also, NZ had abundant water sources, making my 4L capacity overkill.
+- USB cables: Total fail. Had old Anker batteries (USB-A), a headlamp (micro-USB), a phone (USB-C), and various cables that didn’t connect properly. Barely scraped by on battery saver mode. Luckily found a fix at Geraldine’s Fresh Choice. Needed seven different cables!?
 
-Opportunities:
+#### Opportunities for Next Time
 
-- Lightweight long pants: exposure was crazy and I needed allot of sunscreen to keep my legs protected, also in rivers much of the time
-- Longsleeve hiking shirt or sun hoodie
-- Badger foot balm: an american we met (Sammy) used this each evening as part of his routine to care for his feet
-- Garman PLB and satilite client: while $600, this thing is lighter than most traditional PLB's and for a monthly subscription you can text message the phone network even when out of coverage, which we were basically the entire trail. This would have been incredible for organising logistics for pick-ups we when hit the major (not passable) braided rivers. Instead, we had to hitch hike, which actualy worked out great!
-- Take my trap next time: I took a heavier tarp/tent (700g) which has built-in mosquito mesh, but I found given we were mostly in alpine environment there were no annoying bugs in this section.
-- Narrower shoes: while the Altra Lone Peak trail runners are AWESOME and the best shoe by far I've found (so far), I could feel my narrow feet sliding around in the wide toe box, no blisters or major issues, just something I can improve upon
-- Bounce boxes: I carried a clean shirt and shorts, to use as city clothes when not on trail. Most of the experienced hikers I met sent themselves gear, food, whatever either between post offices or to their planned accomodation destinations. There is a special way you need to address the package, which I need to find out, but this is a no brainer, helping to keep to pack as light as possible.
+- Lightweight long pants: Exposure (to sun and wind) was fairly intense, requiring too much sunscreen. Also, I was knee-deep in rivers often.
+- Long-sleeve hiking shirt or sun hoodie.
+- Badger foot balm: Met an American hiker (Sammy) who used this every evening to maintain foot health.
+- Garmin PLB: At ~$600, it’s lighter than traditional PLBs and offers text messaging even when out of coverage (which we were for most of the trail). Would have been great for organizing logistics at major river crossings. Instead, we had to hitchhike, which actually worked out fine.
+- Bring my tarp: Took a heavier tarp/tent (700g) with a mosquito mesh, but given the mostly alpine environment, bugs weren’t an issue.
+- Narrower shoes: Altra Lone Peaks are fantastic, but my narrow feet slid around in the wide toe box. No blisters, but something to improve.
+- Bounce boxes: Many experienced hikers mailed themselves gear, food, and clean clothes between post offices or planned accommodations. Need to figure out the correct addressing method, but this would help keep my pack ultra-light.
