@@ -32,22 +32,22 @@ menu:
   main:
     - name: Archive
       url: archives
-      weight: 5
+      weight: -100
     - name: Search
       url: search/
-      weight: 10
+      weight: -80
     - identifier: about
       name: About
       url: /about/
-      weight: -110
+      weight: -60
     - identifier: papers
       name: Papers
       url: /papers
-      weight: -120
+      weight: -40
     - identifier: recipes
       name: Recipes
       url: /recipes
-      weight: -120
+      weight: -20
 
 outputs:
   home:
@@ -58,7 +58,7 @@ outputs:
 params:
   env: production # to enable google analytics, opengraph, twitter-cards and schema.
   title: Benny Simmonds
-  description: "A blog about computers, health and books."
+  description: "A blog about computers, health and business."
   keywords: [Blog, Portfolio, PaperMod]
   # author: "Benny"
   # author: ["Me", "You"] # multiple authors
@@ -90,30 +90,23 @@ params:
     apple_touch_icon: "/apple-touch-icon.png"
 
   homeInfoParams:
-    Title: "Benny Simmonds"
+    Title: "Welcome"
     Content: >
-      👋 Welcome to demo page of Hugo's theme PaperMod!
-
-      - **PaperMod**  is designed to be clean and simple but fast and responsive theme with useful feature-set that enhances UX.
-
-      - Feel free to show your support by giving us a star 🌟 on GitHub and sharing with your friends and social media .
-
-      - PaperMod is based on theme [Paper](https://github.com/nanxiaobei/hugo-paper/tree/4330c8b12aa48bfdecbcad6ad66145f679a430b3).
+      👋 I'm Benny, a software engineer and aspiring entreprener. Here I write about computers, life hacks and ideas.
 
   socialIcons:
     - name: github
-      title: View Source on Github
-      url: "https://github.com/adityatelange/hugo-PaperMod"
-    - name: Discord
-      title: Join discord community
-      url: "https://discord.gg/ahpmTvhVmp"
+      title: My Github profile
+      url: "https://github.com/bm4cs"
+    # - name: Discord
+    #   title: Join discord community
+    #   url: "https://discord.gg/ahpmTvhVmp"
     - name: X
-      title: Share PaperMod on X/Twitter
-      url: "https://x.com/intent/tweet/?text=Checkout%20Hugo%20PaperMod%20%E2%9C%A8%0AA%20fast,%20clean,%20responsive%20Hugo%20theme.&url=https://github.com/adityatelange/hugo-PaperMod&hashtags=Hugo,PaperMod"
-    - name: KoFi
-      title: Buy me a Ko-Fi :)
-      url: "https://ko-fi.com/adityatelange"
-
+      title: Follow me on X/Twitter
+      url: "https://x.com/bm4cs"
+    # - name: KoFi
+    #   title: Buy me a Ko-Fi :)
+    #   url: "https://ko-fi.com/adityatelange"
 
   fuseOpts:
     isCaseSensitive: false
@@ -127,38 +120,8 @@ params:
 
   analytics:
     google:
-      SiteVerificationTag: "XYZabc"
+      SiteVerificationTag: "G-29Q8FVJW1G"
 
-# languages:
-#   en:
-#     title: Benny Simmonds
-#     subtitle: A blog about computers, health and books.
-#     keywords: ""
-#     copyright: ""
-#     menuMore: Show more
-#     readMore: Read more
-#     readOtherPosts: Read other posts
-#     params:
-#       logo:
-#         logoText: Benny Simmonds
-#         logoHomeLink: /
-#     menu:
-#       main:
-#         - name: Archive
-#           url: archives
-#           weight: 5
-#         - name: Search
-#           url: search/
-#           weight: 10
-#         - identifier: about
-#           name: About
-#           url: /about
-#         - identifier: papers
-#           name: Papers
-#           url: /papers
-#         - identifier: recipes
-#           name: Recipes
-#           url: /recipes
 # markup:
 #   goldmark:
 #     renderer:

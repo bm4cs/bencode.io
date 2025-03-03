@@ -1,6 +1,6 @@
 ---
 layout: post
-draft: true
+draft: false
 title: "Stubborn Attachments"
 slug: "stubborn"
 date: "2025-02-15 11:55:56+1100"
@@ -10,7 +10,7 @@ categories:
   - books
 ---
 
-_Stubborn Attachments_ is a book by _Tyler Cowen_ that paints a picture of an altruistic and bright future for the human race. Cohen argues and highlights the importance of sustained economic growth, moral philosophy and consequentialism, radical uncertainty, rules-based ethics, that future generations matter deeply, and how we as a race must be stubbornly attached to core principles as the necessary pre-conditions for sustainable prosperity.
+_Stubborn Attachments_ is a book by _Tyler Cowen_ that paints a picture of an altruistic and bright future for the human race. Cohen argues and highlights the importance of sustained economic growth, moral philosophy and consequentialism, radical uncertainty, rules-based ethics, that future generations matter deeply, and how we as a race must be stubbornly attached to certain core principles as the necessary pre-conditions for sustainable prosperity.
 
 - [Overview](#overview)
 - [Supporting Arguments](#supporting-arguments)
