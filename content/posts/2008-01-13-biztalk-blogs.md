@@ -1,10 +1,10 @@
 ---
 layout: post
 title: "BizTalk Blogs"
-date: "2008-01-13 16:17:11"
+date: "2008-01-13 16:17:11+1100"
 comments: false
 categories:
-- biztalk
+  - biztalk
 ---
 
 In the drive for gathering tips and tricks from industry experts and maintaining a "fresher" awareness of BizTalk developments, I have added the following (active) BizTalk centric blogs to my news aggregator. I am amazed at the number of BizTalk gems I have already picked up...
