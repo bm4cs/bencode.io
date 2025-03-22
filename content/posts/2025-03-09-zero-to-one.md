@@ -38,6 +38,30 @@ Zero to One is about the value of true innovation made accessible to the masses 
   - [Indefinite Optimism](#indefinite-optimism)
   - [The Return of Design](#the-return-of-design)
   - [You Are Not a Lottery Ticket](#you-are-not-a-lottery-ticket)
+- [Follow the Money](#follow-the-money)
+  - [The Power Law of Venture Capital](#the-power-law-of-venture-capital)
+  - [Why People Don’t See the Power Law](#why-people-dont-see-the-power-law)
+  - [What to Do with the Power Law](#what-to-do-with-the-power-law)
+- [Secrets](#secrets)
+  - [Why Aren’t People Looking for Secrets?](#why-arent-people-looking-for-secrets)
+  - [The World According to Convention](#the-world-according-to-convention)
+  - [The Case for Secrets](#the-case-for-secrets)
+  - [How to Find Secrets](#how-to-find-secrets)
+  - [What to Do with Secrets](#what-to-do-with-secrets)
+- [Foundations](#foundations)
+  - [Founding Matrimony](#founding-matrimony)
+  - [Ownership, Possession, and Control](#ownership-possession-and-control)
+  - [On the Bus or off the Bus](#on-the-bus-or-off-the-bus)
+  - [Cash Is Not King](#cash-is-not-king)
+  - [Vested Interests](#vested-interests)
+  - [Extending the Founding](#extending-the-founding)
+- [The Mechanics of Mafia](#the-mechanics-of-mafia)
+- [Beyond Professionalism](#beyond-professionalism)
+- [Recruiting Conspirators](#recruiting-conspirators)
+- [What’s Under Silicon Valley’s Hoodies?](#whats-under-silicon-valleys-hoodies)
+- [Do One Thing](#do-one-thing)
+- [Of Cults and Consultants](#of-cults-and-consultants)
+- [Glossary](#glossary)
 
 ## Key insights
 
@@ -54,7 +78,7 @@ Zero to One is about the value of true innovation made accessible to the masses 
 1. Rather than initially painting a grandiose vision of global market dominance, the best way to build a monopoly is to start small. Capture a small, specific market with the tentacles to easily branch to related markets over time.
 1. Beware short term thinking. Those who obsess over measurement mania (e.g. active users, revenue targets) typically overlook deeper, harder to measure problems that threaten the durability of the business. For example the Zynga story.
 1. Instead think long term. Will this business still be around a decade from now? Numbers alone wont help, instead critical thinking about the qualitative traits of the business is needed.
-1. Know that venture capital firms typically make their money by finding the one single startup that will outperform all their other investments. The bar really is that high for your pitch.
+1. Life is not diversifiable. Trust in the compounding effect and focus relentlessly on something you’re good at doing (assuming you believe it will be valuable in the future).
 1. The one single startup that will outperform all the others in a VC's firm's portfolio has solved a previously unaddressed problem or need in the world. In other words, they have unearthed and solved a "secret". The good news is that, despite common knowledge, there are many secrets left to find and solve.
 1. The foundation you set for your startup is disproportionally important to the success of your company. The most crucial aspects to get right are related to personnel – selecting your co-founder and board.
 1. Offering equity as a form of compensation can be a good way to weed out those who lack the long-term commitment to and passion for the vision of your venture.
@@ -69,6 +93,8 @@ Zero to One is about the value of true innovation made accessible to the masses 
 Thiel when interviewing likes to ask:
 
 > What important truth do very few people agree with you on?
+
+Or in other words, what do most people disagree with you about? The business version of this, what valuable company is nobody building?
 
 Progress can take one of two forms:
 
@@ -306,12 +332,255 @@ When big businesses acquire startups they almost always offer too much or too li
 
 ### You Are Not a Lottery Ticket
 
-Indefinite thinking needs to be replaced in philosophy, politics, etc. but those environments are highly resistant to change.
+Indefinite thinking needs to be replaced in philosophy, politics, and others, but those environments are highly resistant to change.
 
 A startup is a vehicle for change that you can have definite mastery over.
 
-A successful startup is the best way to inject definite thinking into these domains.
+A successful startup is the best way to inject definite thinking into these domains. As a software engineer I personally love this mentality, planning, design, intentional action and architecture. Interestingly this way of conducting business is precisely what other business experts, like as Gerber in the infamous E-Myth, prescribe.
 
-<https://mvwi.medium.com/exhaustive-notes-zero-to-one-peter-thiel-eff75b3b1266>
+## Follow the Money
 
-<https://youexec.com/book-summaries/zero-to-one-by-peter-thiel-and-blake-masters>
+“Money makes money” or perhaps more accurately, “value makes value”.
+
+The world operates exponentially, not linearly, as famously observed by Pareto’s Italian land ownership and the pea pod yield measured.
+
+“Power law” dynamics define much of our world, especially in business.
+
+### The Power Law of Venture Capital
+
+Most startups fail and most VC funds fail with them.
+
+People almost always underestimate just how different winners are from losers, not only in busines but in most other domains too.
+
+The error is thinking that returns will be normally distributed, which leads to portfolio diversification which is indefinite thinking.
+
+> “The biggest secret in VC is that the best investment in a successful fund outperforms the entire rest of the fund combined”
+
+Therefore an intelligent investor should:
+
+> “Only invest in companies that have the potential to return the value of the entire fund”
+
+Once your investments become so indefinite that they start needing diversification or hedging you’ve already lost.
+
+### Why People Don’t See the Power Law
+
+Mostly because compounding over time does not reflect daily observations until very near the end. That is, the staggering power of the _compounding effect_ is most observable later in its lifecycle, once it has taken flight.
+
+The differences between winners and losers, success and failure hide in plain sight.
+
+### What to Do with the Power Law
+
+Life is not diversifiable. Focus relentlessly on something you’re good at doing, assuming you believe it will be valuable in the future.
+
+The differences _between_ companies dwarf the differences _within_ companies.
+
+For many it makes more sense to attach yourself to a company with huge potential than to start your own.
+
+If you do decide to start a company, remember power law dynamics come in to play in many other ways
+
+- One market will probably outperform the rest combined (chapter 5)
+- One distribution strategy will probably outperform the rest combined (chapter 11)
+- One use of time will probably outperform the rest combined (chapter 9)
+- One decision will probably outperform the rest combined
+
+## Secrets
+
+The business version of Thiels contrarian question:
+
+> What valuable company is nobody building?
+
+Every successful company has a secret at its core; something important and unknown, hard but doable.
+
+### Why Aren’t People Looking for Secrets?
+
+The idea that additional technological advancement is so hard that it is virtually impossible, is pervasive.
+
+> “If everything worth doing has already been done, you may as well feign an allergy to achievement and become a barista”
+
+This idea is shared by fundamentalists of all types, aka people who want to go back to a simpler/easier/better time.
+
+Kaczynski, the famous child prodigy and PhD in math, aka the Unabomber, is referenced for having made a 35K word manifesto, who claimed that in order to be happy, every individual "needs to have goals whose attainment requires effort, and needs to succeed in attaining at least some of his goals". He divided human goals into 3 categories:
+
+1. Goals that require minimal effort
+2. Goals that require serious effort
+3. Goals that cannot be satisfied, no matter how much effort is made
+
+Kaczynski argued that modern people are depressed because the all the worlds hard problems have already been solved. What's left is either easy or impossible, pursuing either is deeply unsatisfying. What you can do, even a child can do; what you can't do, event Einstein couldn't have done.
+
+While Kaczynski's methods were crazy, his loss of faith in the technological frontier is all around us. Why do so many believe that there are no hard (but not impossible) problems left to solve?
+
+1. Geography? (there are no more unexplored areas)
+2. Incrementalism (only take small steps)
+3. Risk aversion (fear of failure)
+4. Complacency in the elite (rent collecting)
+5. Flatness (of the world, economy, talent pool, etc)
+
+### The World According to Convention
+
+Hypothesis: We’ve already solved all solvable problems _therefore_ our world’s conventions are in the best possible state _therefore_ our world has no injustice.
+
+The idea there aren’t any more hard but solvable problems leads to fantasies like the efficient market hypothesis despite persistent evidence to the contrary (bubbles, irrationality, etc.)
+
+What happens when a company stops believing in secrets?
+
+HP led by rent collectors instead of new tech R&D.
+
+### The Case for Secrets
+
+Discovering secrets requires someone to have faith that hard does not equal impossible and to actually spend time looking (Andrew Wiles w/ Fermat’s last theorem).
+
+There are myriad secrets in science, medicine, and business left to discover. We only need someone to recklessly defy convention by looking for them.
+
+### How to Find Secrets
+
+There are two types of secrets:
+
+- Secrets about nature; to find them you must study the natural world
+- Secrets about people; to find them you must study what people don’t know about themselves or what they hide intentionally
+
+This leads to two questions when deciding what kind of company to build:
+
+- What secrets is nature not telling you?
+- What secrets are people not telling you?
+
+People secrets are relatively unappreciated because they don’t require any special training or expertise to ask:
+
+- What are people not allowed to talk about?
+- What is taboo?
+- What is forbidden?
+
+> “The best place to look for secrets is where no one else is looking” (nutrition, taxis, affordable quite accomodation)
+
+### What to Do with Secrets
+
+Once you find a secret who do you tell?
+
+Exactly as many people as you need to (this is also known as a company)
+
+“A great company is a conspiracy to change the world.”
+
+Tolkien LOTR quote:
+
+> Still round the corner there may wait,
+> A new road or a secret gate,
+> And though we pass them by today,
+> Tomorrow we may come this way,
+> And take the hidden paths that run,
+> Towards the Moon or to the Sun
+
+## Foundations
+
+There are a few things that every great company must get right at the beginning
+
+> “Theil’s law: A startup messed up at its foundation cannot be fixed”
+
+### Founding Matrimony
+
+The first and most important decision is who you start the company with.
+
+Founders should share history and work well together.
+
+### Ownership, Possession, and Control
+
+You need everyone (not just the founders) to work well together and get along and you need rules in place to make sure the social contract is understood and followed. To prevent future misalignment it’s useful to outline who has which of these:
+
+- Ownership (financial ownership, equity)
+- Possession (day to day operations)
+- Control (formal governance of affairs)
+
+In theory these distinctions are simple but misalignment is still very possible (Department of Motor Vehicles, big corporations, government institutions).
+
+> “A board of three is ideal. Your board should never exceed five people, unless it is publicly held"
+
+### On the Bus or off the Bus
+
+Avoid part time, contractors, remote workers, etc. — all are risks for misaligned incentives. Why? It's about genuine commitment to something bigger and building something long term; these models incentivise short-term thinking and behaviors.
+
+### Cash Is Not King
+
+There’s a clear pattern between low paid CEOs and company performance (focus on LTV).
+
+The CEO should either be the lowest paid person in the company (signaling) or the highest paid (ceiling).
+
+> "In no case should a CEO of an early-stage, venture-backed startup receive more than $150K per year in salary"
+
+A cash poor executive will focus on increasing the value of the company as a whole. It also sets the bar for everyone else (Aaron Levie CEO of Box)
+
+### Vested Interests
+
+Equity is the one form of compensation which best aligns incentives but it is effectively impossible to allocate in a way that won’t cause resentment.
+
+Solution: keep allocations secret
+
+### Extending the Founding
+
+A founding only really happens once but the best companies establish a founding’s openness to invention as a persistent company value.
+
+> "If you get the founding moment right, you can do more than create a valuable company: you can steer its distant future toward the creation of new things instead of stewardship of inherited success"
+
+## The Mechanics of Mafia
+
+> “Company culture doesn’t exist apart from the company itself”
+
+All of the perks in the world won’t help inject culture if there is no unifying mission — it’s just window dressing
+
+## Beyond Professionalism
+
+In PayPal, they assembled a culture so strong that it transcended the company itself spawning 7+ $1B companies and a ‘Mafia’.
+
+> "A startup is a team of people on a mission, and a good culture is just what that looks like on the inside"
+
+The way to build the mafia wasn’t hiring the most talented people (law firm) but to hire people that would be close knit. The relationship between misaligned people, like in law firms or consultancies, is oddly thin. Why work with a group of people who don't even like each other?
+
+> “They had to be talented, but even more than that they had to be excited about working specifically with us”
+
+## Recruiting Conspirators
+
+Equity, salary, and working with smart people aren’t enough to catch top talent, those are a given anywhere they go.
+
+More important is your answer to:
+
+> "Why should the 20th employee join your company?"
+
+More valuable are specifics about your mission, and why you are the only ones that can get it done.
+
+You must also explain why your company is a good fit for them personally.
+
+> “Above all, don’t fight the perk war”
+
+## What’s Under Silicon Valley’s Hoodies?
+
+> “From the outside, everyone in your company should be different in the same way”
+
+The early PayPal team worked so well together because they all shared the same interests and obsessions (Cryptonomicon, Star Wars, currency)
+
+> "Startups should make their early staff as personally similar as possible" - Max Levchin (PayPal cofounder)
+
+## Do One Thing
+
+> “On the inside, every individual should be sharply distinguished by her work”
+
+Internal conflict tends to happen when people are competing for the same responsibilities. To solve this, assign and evaluate people on one (and only one) thing.
+
+Internal strife makes companies vulnerable to outside threats.
+
+Most companies fail from the inside out.
+
+## Of Cults and Consultants
+
+Cults and consultants are on two ends of the same spectrum.
+
+Cultures of total dedication look crazy from the outside.
+
+The extreme opposite of a cult is a consulting firm like Accenture, void of meaning and purpose, consultants drop in and out of companies to which they have no long-term connection.
+
+The best startups are like slightly less extreme cults.
+
+> "People at successful startups are fanatically right about something those outside it have missed"
+
+## Glossary
+
+| Term | Definition                |
+| ---- | ------------------------- |
+| CAC  | Customer Acquisition Cost |
+| CLV  | Customer Lifetime Value   |

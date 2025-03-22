@@ -4,8 +4,6 @@ My [hugo](https://gohugo.io/) static site, for software development related thou
 
 ## favicon
 
-Can never remember this.
-
 1. First read [this](https://stackoverflow.com/questions/48956465/favicon-standard-2022-svg-ico-png-and-dimensions#48969053)
 2. Upload high resolution PNG you want to use into <https://realfavicongenerator.net/>
 3. Generate emoji based favicon using [favicon.io](https://favicon.io/emoji-favicons/carpentry-saw)
@@ -25,13 +23,15 @@ Can never remember this.
 
 ## Theme customisation
 
+### Terminal
+
 Uses the mint [terminal](https://hugo-terminal.vercel.app/) theme by [Radek Kozieł](https://github.com/panr).
 
-### Post sort order
+#### Post sort order
 
 Edit `layouts/_default/index.html` sort posts by lastmod descending with `$paginator := .Paginate (where $PageContext.RegularPages.ByLastmod.Reverse "Type" $contentTypeName)`
 
-### Simplify post summaries in the main list view
+#### Simplify post summaries in the main list view
 
 Rip out all content in `layouts/_default/index.html` except the title, and the last modified date of the post in `January 2021` format.
 
@@ -71,11 +71,11 @@ Should end up with something similar to:
 {{ end }}
 ```
 
-### Padding tweaks now leaner post summaries
+#### Padding tweaks now leaner post summaries
 
 In `assets/css/main.css` patch `..headings--one-size` setting the `margin-top` to `0`.
 
-### Strip the double dotted line between posts
+#### Strip the double dotted line between posts
 
 In `assets/css/posts.scss` jump down to line 47, remove these lines:
 
@@ -83,11 +83,11 @@ In `assets/css/posts.scss` jump down to line 47, remove these lines:
 - 52: `border-bottom: $border`
 - 60: `border-bottom: $border`
 
-## Customise the footer
+#### Customise the footer
 
 Edit `layouts/partials/footer.html`
 
-### Rebuild the theme
+#### Rebuild the theme
 
 A node toolchain is needed to proceed. Install dependencies and build:
 
