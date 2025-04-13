@@ -56,11 +56,23 @@ _Zero to One_ is a book by Peter Thiel and Blake Masters about the value of true
   - [Vested Interests](#vested-interests)
   - [Extending the Founding](#extending-the-founding)
 - [The Mechanics of Mafia](#the-mechanics-of-mafia)
-- [Beyond Professionalism](#beyond-professionalism)
-- [Recruiting Conspirators](#recruiting-conspirators)
-- [What’s Under Silicon Valley’s Hoodies?](#whats-under-silicon-valleys-hoodies)
-- [Do One Thing](#do-one-thing)
-- [Of Cults and Consultants](#of-cults-and-consultants)
+  - [Beyond Professionalism](#beyond-professionalism)
+  - [Recruiting Conspirators](#recruiting-conspirators)
+  - [What’s Under Silicon Valley’s Hoodies?](#whats-under-silicon-valleys-hoodies)
+  - [Do One Thing](#do-one-thing)
+  - [Of Cults and Consultants](#of-cults-and-consultants)
+- [If You Build It, Will They Come?](#if-you-build-it-will-they-come)
+  - [Nerds vs Salesmen](#nerds-vs-salesmen)
+  - [Sales Is Hidden](#sales-is-hidden)
+  - [How to Sell a Product](#how-to-sell-a-product)
+    - [Complex Sales ($1m — $100m)](#complex-sales-1m--100m)
+    - [Personal Sales ($10k — $100k)](#personal-sales-10k--100k)
+  - [Distribution Doldrums](#distribution-doldrums)
+  - [Marketing and Advertising](#marketing-and-advertising)
+  - [Viral Marketing](#viral-marketing)
+  - [The Power Law Distribution](#the-power-law-distribution)
+  - [Selling to Non-Customers](#selling-to-non-customers)
+  - [Everybody Sells](#everybody-sells)
 - [Glossary](#glossary)
 
 ## Key insights
@@ -399,7 +411,7 @@ The idea that additional technological advancement is so hard that it is virtual
 
 This idea is shared by fundamentalists of all types, aka people who want to go back to a simpler/easier/better time.
 
-Kaczynski, the famous child prodigy and PhD in math, aka the Unabomber, is referenced for having made a 35K word manifesto, who claimed that in order to be happy, every individual "needs to have goals whose attainment requires effort, and needs to succeed in attaining at least some of his goals". He divided human goals into 3 categories:
+Kaczynski, the famous child prodigy and PhD in math, aka the Unabomber, is referenced for having made a 35,000 word manifesto, who claimed that in order to be happy, every individual "needs to have goals whose attainment requires effort, and needs to succeed in attaining at least some of his goals". He divided human goals into 3 categories:
 
 1. Goals that require minimal effort
 2. Goals that require serious effort
@@ -411,7 +423,7 @@ While Kaczynski's methods were crazy, his loss of faith in the technological fro
 
 1. Geography? (there are no more unexplored areas)
 2. Incrementalism (only take small steps)
-3. Risk aversion (fear of failure)
+3. Risk aversion - fear of failure and the risk of being "wrong", simply put secrets haven't been vetted by society
 4. Complacency in the elite (rent collecting)
 5. Flatness (of the world, economy, talent pool, etc)
 
@@ -524,7 +536,7 @@ A founding only really happens once but the best companies establish a founding�
 
 All of the perks in the world won’t help inject culture if there is no unifying mission — it’s just window dressing
 
-## Beyond Professionalism
+### Beyond Professionalism
 
 In PayPal, they assembled a culture so strong that it transcended the company itself spawning 7+ $1B companies and a ‘Mafia’.
 
@@ -534,11 +546,9 @@ The way to build the mafia wasn’t hiring the most talented people (law firm) b
 
 > “They had to be talented, but even more than that they had to be excited about working specifically with us”
 
-## Recruiting Conspirators
+### Recruiting Conspirators
 
-Equity, salary, and working with smart people aren’t enough to catch top talent, those are a given anywhere they go.
-
-More important is your answer to:
+Equity, salary, and working with smart people aren’t enough to catch top talent, those are a given anywhere they go. More important is your answer to:
 
 > "Why should the 20th employee join your company?"
 
@@ -548,7 +558,7 @@ You must also explain why your company is a good fit for them personally.
 
 > “Above all, don’t fight the perk war”
 
-## What’s Under Silicon Valley’s Hoodies?
+### What’s Under Silicon Valley’s Hoodies?
 
 > “From the outside, everyone in your company should be different in the same way”
 
@@ -556,17 +566,19 @@ The early PayPal team worked so well together because they all shared the same i
 
 > "Startups should make their early staff as personally similar as possible" - Max Levchin (PayPal cofounder)
 
-## Do One Thing
+### Do One Thing
 
 > “On the inside, every individual should be sharply distinguished by her work”
 
 Internal conflict tends to happen when people are competing for the same responsibilities. To solve this, assign and evaluate people on one (and only one) thing.
 
+> "The best thing I did as a manager at PayPal was to make every person in the company responsible for doing just one thing. Every employee's one thing was unique, and everyone knew I would evaluate him only on that one thing"
+
 Internal strife makes companies vulnerable to outside threats.
 
 Most companies fail from the inside out.
 
-## Of Cults and Consultants
+### Of Cults and Consultants
 
 Cults and consultants are on two ends of the same spectrum.
 
@@ -578,9 +590,98 @@ The best startups are like slightly less extreme cults.
 
 > "People at successful startups are fanatically right about something those outside it have missed"
 
+## If You Build It, Will They Come?
+
+Startups tend to underestimate (even demonize) the importance of sales and distribution.
+
+> "The engineer's grail is a product great enough that "it sells itself". But anyone who would actually say this about a real product must be lying: either he's delusional (lying to himself) or he's selling something (and contradicting himself)"
+
+### Nerds vs Salesmen
+
+Because technical work is so easily evaluated, it’s easy for technical people to undervalue the nontechnical (and hard) work of sales and marketing.
+
+### Sales Is Hidden
+
+We only react negatively to sales when it is done poorly (i.e. obviously).
+
+The best sales people make us buy without us realising we’ve been sold to.
+
+If you have a great product without a way to sell it, you have a bad business.
+
+### How to Sell a Product
+
+Superior sales and distribution can make a monopoly even out of an undifferentiated product.
+
+A superior product cannot become a monopoly with undifferentiated distribution.
+
+LTV and CAC are closely related.
+
+#### Complex Sales ($1m — $100m)
+
+Average deal sizes over 7 figures need very high touch, often the involving the CEO, consultative sales approach (SpaceX → NASA, Palantir → Gov Security Agencies).
+
+Complex sales companies do well if they grow 50–100% over a decade.
+
+They don’t have much potential for virality. Deals tend to build on each other over time.
+
+#### Personal Sales ($10k — $100k)
+
+The challenge in this range isn't about how to make any particular sale, but instead to establish a process for how a modestly sized sales team can move the product to a wide audience.
+
+In 2008, Box had an innovative Internet storage solution, before cloud was a thing. The problem masses didn't appreciate the value yet. Blake (Box's third salesperson) sought out small groups of users with the most acute file sharing problems and built relationships with more users within each client company. In 2009 Blake had a small breakthrough, Stanford Sleep Clinic, who's researchers needed an easy, secure way to store experimental data logs. This relationship blossomed into Stanford branded Box accounts for every student and faculty member. If Blake started trying to sell an enterprise-wide offering to Stanford's president, nothing would have come from it.
+
+Grass roots, land & expand approach.
+
+### Distribution Doldrums
+
+There’s a dead zone between personal sales (i.e. salespeople needed) and traditional advertising (i.e. no salespeople required).
+
+These are businesses that really need personal sales to reach target customers but these very customers don’t have the LTV to warrant it. For example, you have an inventory solution for convenience stores, priced at $1000. Even if the value proposition is clear, there is no effective way to reach convenience store owners, without scaling up to a personal sales effort. But at $1000, no business has the resources to send an actual person to talk to every prospective customer. This is why so many SME's don't use tools the big firms do - distribution is the hidden bottleneck.
+
+### Marketing and Advertising
+
+Low priced products with mass appeal and no viral distribution. Procter & Gamble can't afford salespeople to door knock selling laundry detergent, so have to resort to TV ads, newspaper ads, psychologically attractive packaging.
+
+Advertising can work for startups, but only when customer acquisition costs and customer lifetime value make every other distribution channel uneconomical.
+
+Warby Parker and cheap $100 eye glasses, can only afford dozens of dollars acquiring a new customer (CAC), needs the largest broadcasting medium it can afford, TV ads in their case.
+
+### Viral Marketing
+
+Virality is when core functionality encourages people to invite others.
+
+> “Whoever is first to dominate the most important segment of a market with viral potential will be the last mover in the whole market”
+
+Ideal target for viral advertising: a small niche with frequent interactions.
+
+The 20,000 odd eBay PowerSellers in the case of PayPal in the early days, were a critical target customer. eBay's own payment solution was terrible, these power merchants were enthusiastic early adopters. Once this segment was dominated, PayPal soon after became the payment platform for eBay generally.
+
+### The Power Law Distribution
+
+Most businesses get zero distribution channels to work.
+
+One distribution method is usually better than all of the others combined for a business. If you can get just one channel to work, you have a great business.
+
+This is counterintuitive for most entrepreneurs, that assume more = more. The "kitchen sink" approach of doing a bit of everything, salespeople, google ads, magazine ads.
+
+### Selling to Non-Customers
+
+My businesses needs to sell more than its product.
+
+I must sell to potential employees and customers too.
+
+Never assume that people will admire your company without a public relations strategy. Even if you have a vibrant distribution channel, media attention can help attract investors and employees.
+
+Any prospective employee worth hiring will do their own due diligence, what he finds (or doesn't) when googling your company will be critical to success.
+
+### Everybody Sells
+
+If you don’t see the salesperson, you are the salesperson.
+
 ## Glossary
 
-| Term | Definition                |
-| ---- | ------------------------- |
-| CAC  | Customer Acquisition Cost |
-| CLV  | Customer Lifetime Value   |
+| Term | Definition                                                    |
+| ---- | ------------------------------------------------------------- |
+| CAC  | Customer Acquisition Cost                                     |
+| CLV  | Customer Lifetime Value: See LTV                              |
+| LTV  | Lifetime Value: Average revenue that a customer will generate |
