@@ -1,6 +1,6 @@
 ---
 layout: post
-draft: true
+draft: false
 title: "Zero to One: Notes on Startups or How to Build the Future"
 slug: "zero2one"
 date: "2025-03-09 16:47:56+1100"
