@@ -662,7 +662,7 @@ Most businesses get zero distribution channels to work.
 
 One distribution method is usually better than all of the others combined for a business. If you can get just one channel to work, you have a great business.
 
-This is counterintuitive for most entrepreneurs, that assume more = more. The "kitchen sink" approach of doing a bit of everything, salespeople, google ads, magazine ads.
+This is counterintuitive for most entrepreneurs, that assume more channels = more results. The "kitchen sink" approach of doing a bit of everything (salespeople, google ads, magazine ads) spreads a business most effective channel thin.
 
 ### Selling to Non-Customers
 

@@ -13,14 +13,14 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 - [Architecture](#architecture)
 - [AI and ML](#ai-and-ml)
-- [Awesome](#awesome)
+- [Books and Reading Lists](#books-and-reading-lists)
 - [C](#c)
+- [Compilers and Interpreters](#compilers-and-interpreters)
 - [Cloud](#cloud)
 - [Containers](#containers)
 - [Cheat sheets](#cheat-sheets)
-- [Culture](#culture)
 - [Databases](#databases)
-- [Development](#development)
+- [Developer culture](#developer-culture)
 - [Diagramming](#diagramming)
 - [dotfiles](#dotfiles)
 - [Git](#git)
@@ -30,7 +30,6 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Humanities](#humanities)
 - [Jobs](#jobs)
 - [Kubernetes](#kubernetes)
-- [Languages](#languages)
 - [Linux](#linux)
 - [Message queues](#message-queues)
 - [Mongo](#mongo)
@@ -44,11 +43,13 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [systemd](#systemd)
 - [Text wrangling](#text-wrangling)
 - [Talks](#talks)
+- [Tasks](#tasks)
 - [Terminal](#terminal)
 - [Testing](#testing)
 - [Text, Encoding and Serialization](#text-encoding-and-serialization)
-- [TypeScript](#typescript)
+- [Vim](#vim)
 - [Web](#web)
+- [Writing](#writing)
 
 ## Architecture
 
@@ -64,17 +65,22 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Andrej Karpathy on The spelled-out intro to neural networks and backpropagation: building micrograd](https://www.youtube.com/watch?v=VMj-3S1tku0) a 2.5 hour step-by-step spelled-out explanation of backpropagation and training of neural networks. It only assumes basic knowledge of Python and a vague recollection of calculus from high school.
 - [A Beginner’s Guide to Vector Embeddings](https://www.timescale.com/blog/a-beginners-guide-to-vector-embeddings/)
 
-## Awesome
+## Books and Reading Lists
 
-- [awesome-baremetal](https://github.com/alexellis/awesome-baremetal)
-- [awesome-kubernetes](https://github.com/ramitsurana/awesome-kubernetes)
+- [Arjan Codes Books](https://kit.co/ArjanCodes/book-recommendations)
 - [learn-anything/books](https://github.com/learn-anything/books)
+- [A Programmer's Reading List: 100 Articles I Enjoyed 1-50](https://www.piglei.com/articles/en-programmer-reading-list-part-one/)
 
 ## C
 
 - [Easy Makefile](https://github.com/mortie/easy-makefile/) a Makefile boilerplate to hit the ground running
 - [Handmade Hero](https://handmadehero.org/) an educational series by Casey Muratori that teaches low-level game programming techniques by example
 - [Eskil Steenberg on How I program in C](https://www.youtube.com/watch?v=443UNeGrFoM)
+
+## Compilers and Interpreters
+
+- [Crafting Interpreters by Robert Nystrom](https://craftinginterpreters.com/) Ever wanted to make your own programming language or wondered how they are designed and built? If so, this book is for you.
+- [You should make a new programming language](https://ntietz.com/blog/you-should-make-a-new-terrible-programming-language/)
 
 ## Cloud
 
@@ -88,10 +94,10 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Containers
 
-- [OKD: The Community Distribution of Kubernetes that powers OpenShift](https://github.com/openshift/okd/)
+- [Building Docker Images - Best Practices](https://www.youtube.com/watch?v=JcGwgNMZc_E)
 - [The Docker Handbook](https://www.freecodecamp.org/news/the-docker-handbook/)
 - [25 Basic Docker Commands for Beginners](https://codeopolis.com/posts/25-basic-docker-commands-for-beginners/)
-- [Setting the Record Straight: containers vs. Zones vs. Jails vs. VMs]()
+- [Setting the Record Straight: containers vs. Zones vs. Jails vs. VMs](#)
 - [Docker Security Best Practices](https://blog.sqreen.io/docker-security/) tools and methods to help secure Docker
 - [Kubernetes Workshop](http://www.zoobab.com/kubernetes-workshop) tons of details for getting started
 - [10 Most Common Mistakes When Using Kubernetes](https://blog.pipetail.io/posts/2020-05-04-most-common-mistakes-k8s/)
@@ -104,16 +110,8 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 ## Cheat sheets
 
 - [Linux Commands - A practical reference](http://www.pixelbeat.org/cmdline.html) an amazing cheat sheet, quick reference
-- [The Ultimate List of SANS Cheat Sheets](https://www.sans.org/blog/the-ultimate-list-of-sans-cheat-sheets/) when it comes to quality cyber-security training and certs SANS is world leading. They have an amazing collection of thoughtful and useful cheat sheets from topics such as _Writing Tips for IT Professionals_, _Windows to Unix Cheat Sheet_, to using pieces of software such as `nmap`, `netcat`, `burb`. Its a treasure trove!
+- [The Ultimate List of SANS Cheat Sheets](https://www.sans.org/blog/the-ultimate-list-of-sans-cheat-sheets/) when it comes to quality cyber-security training and certs SANS is world leading. They have an amazing collection of thoughtful and useful cheat sheets from topics such as _Writing Tips for IT Professionals_, _Windows to Unix Cheat Sheet_, to using pieces of software such as `nmap`, `netcat`, `burp`. Its a treasure trove!
 - [Lenny Zeltser's IT and Information Security Cheat Sheets](https://zeltser.com/cheat-sheets/) speaking of thoughtful cheat sheets, lots of wisdom here
-
-## Culture
-
-- [Why we're leaving the cloud](https://world.hey.com/dhh/why-we-re-leaving-the-cloud-654b47e0)
-- [You Are Not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) if you’re using a technology that originated at a large company, but your use case is very different, it’s unlikely that you arrived there deliberately; no, it’s more likely you got there through a ritualistic belief that imitating the giants would bring the same riches.
-- [GitLab's Guide to All-Remote](https://about.gitlab.com/company/culture/all-remote/guide/) the remote manifesto, tips and tricks and remote resources
-- [Why we at $FAMOUS_COMPANY Switched to $HYPED_TECHNOLOGY](https://saagarjha.com/blog/2020/05/10/why-we-at-famous-company-switched-to-hyped-technology/)
-- [Habbits of High-Functioning Software Teams](https://deniseyu.io/2020/05/23/habits-of-high-performing-teams.html) characteristics and habits of the highest-performing dev teams
 
 ## Databases
 
@@ -121,10 +119,20 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [SQL Coding Standards](http://wiki.c2.com/?AntiPatternsCatalog)
 - [PostgreSQL Course: A Curious Moon](https://bigmachine.io/products/a-curious-moon/) learn PostgreSQL the way the pros do: on the job and under pressure. You'll assume the role of interim DBA at aerospace startup Red:4, exploring data from the Cassini mission!
 
-## Development
+## Developer culture
 
+- [Eric S Raymond talking about The Cathedral and the Bazaar](http://www.catb.org/esr/writings/cathedral-bazaar/linux1_d50_96kbs.mp3)
+- [The Problem with Vibe Coding](https://dylanbeattie.net/2025/04/11/the-problem-with-vibe-coding.html)
+- [The Post-Developer Era](https://www.joshwcomeau.com/blog/the-post-developer-era/)
+- [Lessons Learned in 35 Years of Making Software](https://dev.jimgrey.net/2024/07/03/lessons-learned-in-35-years-of-making-software/)
 - [What To Code](https://what-to-code.com) inspiration and ideas
 - [Why the developers who use Rust love it so much](https://stackoverflow.blog/2020/06/05/why-the-developers-who-use-rust-love-it-so-much/)
+- [Why we're leaving the cloud](https://world.hey.com/dhh/why-we-re-leaving-the-cloud-654b47e0)
+- [You Are Not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) if you’re using a technology that originated at a large company, but your use case is very different, it’s unlikely that you arrived there deliberately; no, it’s more likely you got there through a ritualistic belief that imitating the giants would bring the same riches.
+- [GitLab's Guide to All-Remote](https://about.gitlab.com/company/culture/all-remote/guide/) the remote manifesto, tips and tricks and remote resources
+- [Why we at $FAMOUS_COMPANY Switched to $HYPED_TECHNOLOGY](https://saagarjha.com/blog/2020/05/10/why-we-at-famous-company-switched-to-hyped-technology/)
+- [Habbits of High-Functioning Software Teams](https://deniseyu.io/2020/05/23/habits-of-high-performing-teams.html) characteristics and habits of the highest-performing dev teams
+- [A Taxonomy of Tech Debt](https://technology.riotgames.com/news/taxonomy-tech-debt)
 
 ## Diagramming
 
@@ -178,10 +186,6 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [7 Mind-Blowing Kubernetes Hacks](https://overcast.blog/7-mind-blowing-kubernetes-hacks-36037e59bb54)
 - [The guide to kubectl I never had](https://medium.com/@jake.page91/the-guide-to-kubectl-i-never-had-3874cc6074ff)
 - [The Pros of On-Prem Kubernetes with Justin Garrison](https://share.transistor.fm/s/9b51036c)
-
-## Languages
-
-- [Crafting Interpreters by Robert Nystrom](https://craftinginterpreters.com/) Ever wanted to make your own programming language or wondered how they are designed and built? If so, this book is for you.
 
 ## Linux
 
@@ -238,6 +242,8 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Python
 
+- [Interactive Python Type Challenges](https://python-type-challenges.zeabur.app/)
+- [packse: Python packaging scenarios](https://github.com/astral-sh/packse)
 - [Python Design Patterns](https://python-patterns.guide/)
 - [Inside the Python Virtual Machine](https://leanpub.com/insidethepythonvirtualmachine)
 - [Full Speed Python from Superior School of Technology of Setúbal](https://github.com/joaoventura/full-speed-python/tree/master)
@@ -283,22 +289,27 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 ## Talks
 
-- [Rich Hickey on Simple Made Easy]()
-- [Mike Acton on Data-orientated Design]()
-- [Jonathan Blow on Programming Aesthetics learned from making independent games]()
-- [Eskil Steenberg on How I program in C]()
-- [Rich Hickey on Hammock Driven Development]()
-- [Brian Will on Why OOP is Bad]()
-- [Abner Coimbre on What Programming is Never About]()
-- [Scott Meyers on CPU Caches and Why You Care]()
-- [Jeff and Casey Show on The Evils of Non-native Programming]()
-- [Jeff and Casey’s Guide to Becoming a Bigger Programmer]()
-- [Hadi Hariri on The Silver Bullet Syndrome]()
-- [Bryan Cantrill on Fork Yeah! The Rise and Development if illumos]()
-- [Rob Pike on Concurrency Is Not Parallelism]()
-- [James Mickens on JavaScript]()
-- [Liz Rice on Containers From Scratch]()
-- [James Mickens on Why Do Keynote Speakers Keep Suggesting That Improving Security Is Possible?]()
+- [Rich Hickey on Simple Made Easy](#)
+- [Mike Acton on Data-orientated Design](#)
+- [Jonathan Blow on Programming Aesthetics learned from making independent games](#)
+- [Eskil Steenberg on How I program in C](#)
+- [Rich Hickey on Hammock Driven Development](#)
+- [Brian Will on Why OOP is Bad](#)
+- [Abner Coimbre on What Programming is Never About](#)
+- [Scott Meyers on CPU Caches and Why You Care](#)
+- [Jeff and Casey Show on The Evils of Non-native Programming](#)
+- [Jeff and Casey’s Guide to Becoming a Bigger Programmer](#)
+- [Hadi Hariri on The Silver Bullet Syndrome](#)
+- [Bryan Cantrill on Fork Yeah! The Rise and Development if illumos](#)
+- [Rob Pike on Concurrency Is Not Parallelism](#)
+- [James Mickens on JavaScript](#)
+- [Liz Rice on Containers From Scratch](#)
+- [James Mickens on Why Do Keynote Speakers Keep Suggesting That Improving Security Is Possible?](#)
+
+## Tasks
+
+- [Learn Makefiles](https://makefiletutorial.com/)
+- [Abusing Makefiles for fun and profit](https://kokada.dev/blog/abusing-makefiles-for-fun-and-profit/)
 
 ## Terminal
 
@@ -316,14 +327,20 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [Cap'n Proto](https://capnproto.org/)
 - [Google Protocol Buffers](https://github.com/google/protobuf)
 
-## TypeScript
+## Vim
 
-- [The Consise TypeScript Book](https://github.com/gibbok/typescript-book/)
+- [A Flexible Minimalist Neovim for 2024](https://wickstrom.tech/2024-08-12-a-flexible-minimalist-neovim.html)
+- [A Case for Using Neovim Without Plugins](https://blog.erikwastaken.dev/posts/2023-05-06-a-case-for-neovim-without-plugins.html)
 
 ## Web
 
+- [The Consise TypeScript Book](https://github.com/gibbok/typescript-book/)
 - [HTML5 UP](https://html5up.net/) makes spiffy HTML5 site templates that are HTML5 + CSS3, customizable and 100% free under the Creative Commons
 - [How I built a modern website in 2021](https://kentcdodds.com/blog/how-i-built-a-modern-website-in-2021)
 - [Certbot](https://certbot.eff.org/) automatically use Let’s Encrypt certificates
 - [Ask HN: Is There Still a Place for Native Desktop Apps?](https://news.ycombinator.com/item?id=23211851)
 - [topngx](https://github.com/gsquire/topngx) parse and aggregrate statistics from NGINX access logs
+
+## Writing
+
+- [Dungeons and Dragons taught me how to write alt text](https://ericwbailey.website/published/dungeons-and-dragons-taught-me-how-to-write-alt-text/)
