@@ -13,3 +13,4 @@ run-drafts:
 
 stop:
 	killall hugo
+
