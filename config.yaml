@@ -1,0 +1,140 @@
+baseURL: "https://www.bencode.io"
+languageCode: en-us
+title: Benny Simmonds
+theme: PaperMod
+
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+
+pagination:
+  enabled: true
+  pagerSize: 10
+  sortField: "moddate"
+  sortReverse: true
+
+minify:
+  disableXML: true
+  minifyOutput: true
+
+rssLimit: 100
+preserveTaxonomyNames: true
+pygmentsCodefences: true
+pygmentsStyle: native
+taxonomies:
+  category: categories
+  tag: tags
+permalinks:
+  post: /:slug/
+  page: /:slug/
+menu:
+  main:
+    - name: Archive
+      url: archives
+      weight: -100
+    - name: Search
+      url: search/
+      weight: -80
+    - identifier: about
+      name: About
+      url: /about/
+      weight: -60
+    - identifier: papers
+      name: Papers
+      url: /papers
+      weight: -40
+    - identifier: recipes
+      name: Recipes
+      url: /recipes
+      weight: -20
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+params:
+  env: production # to enable google analytics, opengraph, twitter-cards and schema.
+  title: Benny Simmonds
+  description: "A blog about computers, health and business."
+  keywords: [Blog, Portfolio, PaperMod]
+  # author: "Benny"
+  # author: ["Me", "You"] # multiple authors
+  # images: ["<link or path of image for opengraph, twitter-cards>"]
+  DateFormat: "January 2, 2006"
+  defaultTheme: auto # dark, light
+  disableThemeToggle: false
+
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: false
+  ShowWordCount: false
+  ShowRssButtonInSectionTermList: true
+  UseHugoToc: true
+  disableSpecial1stPost: false
+  disableScrollToTop: false
+  comments: false
+  hidemeta: false
+  hideSummary: false
+  showtoc: false
+  tocopen: false
+
+  assets:
+    favicon: "/favicon.ico"
+    favicon16x16: "/favicon-16x16.png"
+    favicon32x32: "/favicon-32x32.png"
+    apple_touch_icon: "/apple-touch-icon.png"
+
+  homeInfoParams:
+    Title: "Welcome"
+    Content: >
+      👋 I'm Benny, a software engineer and aspiring entrepreneur. Here I like to write about computers, life hacks and ideas.
+
+  socialIcons:
+    - name: github
+      title: My Github profile
+      url: "https://github.com/bm4cs"
+    # - name: Discord
+    #   title: Join discord community
+    #   url: "https://discord.gg/ahpmTvhVmp"
+    - name: X
+      title: Follow me on X/Twitter
+      url: "https://x.com/bm4cs"
+    # - name: KoFi
+    #   title: Buy me a Ko-Fi :)
+    #   url: "https://ko-fi.com/adityatelange"
+
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 0
+    # limit: 10 # refer: https://www.fusejs.io/api/methods.html#search
+    keys: ["title", "permalink", "summary", "content"]
+
+  analytics:
+    google:
+      SiteVerificationTag: "G-29Q8FVJW1G"
+
+# markup:
+#   goldmark:
+#     renderer:
+#       unsafe: true
+# Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
+pygmentsUseClasses: true
+markup:
+  highlight:
+    noClasses: false
+    # anchorLineNos: true
+    # codeFences: true
+    # guessSyntax: true
+    # lineNos: true
+    # style: monokai
+
+ignoreLogs: ["warning-goldmark-raw-html"]

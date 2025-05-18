@@ -2,7 +2,7 @@
 layout: post
 draft: false
 title: "Elasticsearch Performance and Tuning"
-slug: "elasticsearch"
+slug: "esperf"
 date: "2024-06-07 18:46:01"
 lastmod: "2024-06-07 18:47:30"
 comments: false
