@@ -2,7 +2,7 @@
 layout: post
 draft: false
 title: "Elasticsearch Engineer 8.1"
-slug: "elasticsearch"
+slug: "eseng8"
 date: "2024-06-02 18:46:01"
 lastmod: "2024-06-03 10:15:30"
 comments: false

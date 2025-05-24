@@ -1,7 +1,7 @@
 ---
 layout: post
 draft: false
-title: "Zero to One: Notes on Startups or How to Build the Future"
+title: "Zero to One: Notes on Startups and Building the Future"
 slug: "zero2one"
 date: "2025-03-09 16:47:56+1100"
 lastmod: "2025-03-09 16:47:56+1100"
@@ -12,7 +12,7 @@ categories:
   - startup
 ---
 
-Zero to One is about the value of true innovation made accessible to the masses through startups. It outlines several tenets that keen-minded business people should hold dear, including why technology trumps globalization, why we should be supporting monopolies instead of "healthy competition," why successful innovators have the worldview of a "definite optimist," and why no one should be afraid of losing their job to a robot. Zero to One also delivers unique business insights, such as the four most important things to pay attention to about your product (hint: they're not quantitative) and the seven questions every business must answer for itself.
+_Zero to One_ is a book by Peter Thiel and Blake Masters about the value of true innovation made accessible to the masses through startups. It outlines several tenets that keen-minded business people should hold dear, including why technology trumps globalization, why we should be supporting monopolies instead of "healthy competition", why successful innovators have the worldview of a "definite optimist" and why no one should be afraid of losing their job to a robot. _Zero to One_ also delivers unique business insights, such as the four most important things to pay attention to about your product (they're not quantitative) and the seven questions every business must answer for itself.
 
 - [Key insights](#key-insights)
 - [Challenge of The Future](#challenge-of-the-future)
@@ -21,11 +21,11 @@ Zero to One is about the value of true innovation made accessible to the masses 
 - [The Ideology of Competition](#the-ideology-of-competition)
   - [War and Peace](#war-and-peace)
 - [Last Mover Advantage](#last-mover-advantage)
-  - [Characteristics of Monopoly](#characteristics-of-monopoly)
-    - [Proprietary Technology](#proprietary-technology)
-    - [Network Effects](#network-effects)
-    - [Economies of Scale](#economies-of-scale)
-    - [Branding](#branding)
+  - [The Four Characteristics of a Monopoly](#the-four-characteristics-of-a-monopoly)
+    - [1. Proprietary Technology](#1-proprietary-technology)
+    - [2. Network Effects](#2-network-effects)
+    - [3. Economies of Scale](#3-economies-of-scale)
+    - [4. Branding](#4-branding)
   - [Building a Monopoly](#building-a-monopoly)
     - [Start Small and Monopolize](#start-small-and-monopolize)
     - [Scaling Up](#scaling-up)
@@ -81,7 +81,7 @@ Zero to One is about the value of true innovation made accessible to the masses 
 1. One way to move from "one to n" is globalization, or enabling new markets to access something that has already been created. But, because resources are not infinite, globalization needs to be accompanied by new technologies to make the consumption of goods more efficient and sustainable, otherwise doom awaits.
 1. The world needs startups as an engine to both envision and create the future. Though there has been new technology lately, there are still many aspects of everyday life that are begging for improvement, given the right vision and strategy.
 1. The dot-com crash of the 1990s taught entrepreneurs lessons about how to build a business that, when followed today, hinder the development of real technological innovations and sustainable growth. These "rules" should be ignored.
-1. Monopolies generate good for the world. If a business has achieved a monopoly, it indicates that the business has truly gone from "zero to one," and created something for society that did not exist before or improved upon an existing technology to such a degree that it has made the old technology obsolete.
+1. Monopolies generate good for the world. If a business has achieved a monopoly, it indicates that the business has truly gone from "zero to one", and created something for society that did not exist before or improved upon an existing technology to such a degree that it has made the old technology obsolete.
 1. To create this sort of change it is helpful to be a "definite optimist" – someone who believes that "the future will be better than the present if he plans and works to make it better". This kind of worldview enables the vision, gumption, and persistence to go from zero to one.
 1. Monopolies also generate good for the world because of the privilege that major profits allot. "Since [Google] doesn't have to worry about competing with anyone, it has wider latitude to care about its workers, its products, and its impact on the wider world".
 1. Monopolies are more ubiquitous than we're led to believe and shape their stories to avoid scrutiny and regulation. For example, if Google is seen primarily as a search engine company, they own 68% of that market. In contrast, if they're described as playing in the global advertising market, they only own 3.4%.
@@ -185,16 +185,16 @@ Growth alone isn’t enough, a company must grow and endure. For example Zynga a
 
 > “Will this business still be around a decade from now?”
 
-### Characteristics of Monopoly
+### The Four Characteristics of a Monopoly
 
-All monopolies are unique but the all tend to have:
+All monopolies are unique but the all tend to four key traits:
 
 1. Proprietary technology
-1. Network effects
-1. Economies of scale
-1. Branding
+2. Network effects
+3. Economies of scale
+4. Branding
 
-#### Proprietary Technology
+#### 1. Proprietary Technology
 
 The biggest advantage a company can have, is that it makes it hard to replicate (Google).
 
@@ -208,7 +208,7 @@ For example:
 - Amazon for book selection
 - Apple for the iPhone or iPad
 
-#### Network Effects
+#### 2. Network Effects
 
 When a product becomes more useful with scale.
 
@@ -216,15 +216,15 @@ You will never get big enough to achieve network effects unless your product is 
 
 Network effect businesses _must_ start with a small market and grow.
 
-#### Economies of Scale
+#### 3. Economies of Scale
 
 When a company gets more efficient as it grows.
 
 Software businesses do this easily while service (or biotech) businesses have a much harder time.
 
-#### Branding
+#### 4. Branding
 
-Branding tactics can be copies (minimalism, material quality, etc.) but they lose impact without consistency and cohesion.
+Branding tactics can be copies (minimalism, material quality, etc) but they lose impact without consistency and cohesion.
 
 Branding can be a powerful effect but:
 

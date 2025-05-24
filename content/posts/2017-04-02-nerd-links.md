@@ -187,6 +187,10 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 - [The guide to kubectl I never had](https://medium.com/@jake.page91/the-guide-to-kubectl-i-never-had-3874cc6074ff)
 - [The Pros of On-Prem Kubernetes with Justin Garrison](https://share.transistor.fm/s/9b51036c)
 
+## Languages
+
+- [Crafting Interpreters by Robert Nystrom](https://craftinginterpreters.com/) Ever wanted to make your own programming language or wondered how they are designed and built? If so, this book is for you.
+
 ## Linux
 
 - [Linux Commands - A practical reference](http://www.pixelbeat.org/cmdline.html) an amazing cheat sheet, quick reference
@@ -310,6 +314,10 @@ This is a list of valuable (to me) developer resources that I've managed to stum
 
 - [Learn Makefiles](https://makefiletutorial.com/)
 - [Abusing Makefiles for fun and profit](https://kokada.dev/blog/abusing-makefiles-for-fun-and-profit/)
+
+## Terminal
+
+- [Terminal Text Effects](https://github.com/ChrisBuilds/terminaltexteffects) visual effects applied to text in the terminal
 
 ## Terminal
 
