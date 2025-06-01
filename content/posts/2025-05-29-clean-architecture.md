@@ -20,6 +20,7 @@ Domain centric architectures, like clean architecture, have inner architectural 
   - [Domain layer](#domain-layer)
     - [Entities](#entities)
     - [Value Objects](#value-objects)
+    - [Domain Events](#domain-events)
   - [Application layer](#application-layer)
   - [Infrastructure layer](#infrastructure-layer)
   - [Presentation layer](#presentation-layer)
@@ -96,15 +97,24 @@ Desirable design traits:
 2. Contains behavior, rich not anemic.
 3. Can be compared.
 4. Does not rely solely on primitive types (primitive obsession).
+5. Disallows mutation of properties outside of the entity itself (encapsulation), promoting enforcement of invariants.
+6. Hides its constructor and provides a factory method.
 
 To centralise common entity concerns like this, will build out `abstract` class `Entity`.
 
-To ensure subclasses of Entity get a robust and consistent equality implementation, the best practice is to:
+Entities should not expose their constructor and instead provide a static factory method, for example called `Create()`. This keeps the constructor pure in that there is less pressure to overwhelm it with non-constructor concerns (because its a convenient lifecycle hook). The killer reason however, is because a factory method is likely to be laden with side effects in the form of domain events.
+
+
+For a robust and consistent equality its best practice is to:
 
 - Override `Equals(object?)` to compare entities by their identity.
 - Override `GetHashCode()` to use the Id.
 - Optionally, implement `IEquatable<Entity>` for type safety and performance.
 - Overload the `==` and `!=` operators for convenience.
+
+
+
+
 
 💀 Be wary of **anemic domain models** where domain objects (entities) primarily serve as data containers with little to no embedded business logic. The business logic is instead typically placed in separate service layers or managers, leading to a procedural programming style. This contrasts with a _rich domain model_ where entities encapsulate both data and behavior.
 
@@ -125,6 +135,15 @@ var a1 = new Address("US", "CA", "LA", "Main St", "90001");
 var a2 = new Address("US", "CA", "LA", "Main St", "90001");
 bool areEqual = a1 == a2; // true, value-based equality
 ```
+
+#### Domain Events
+
+Something of significance that has occurred in the domain that domain experts care about and that triggers side effects.
+
+An interface called `IDomainEvent` will be used to define the shape of such events.
+
+
+
 
 ### Application layer
 
@@ -147,8 +166,11 @@ Typical examples: REST API, gRPC, SPA, CLI
 ## .NET Implementation Tips
 
 - 2 top tier solution folders `src` and `test`
-- Domain entities in classlib `Wintermute.Domain` with classes organised by domain features, such as `Trading`, `Investments`.
-- A `record` is a good fit for representing _Value Objects_
+- House domain entities in its own classlib `Wintermute.Domain` organised by domain features, such as `Trading`, `Investments`.
+- `record` types are a perfect fit for representing _Value Objects_, see [Records](#records)
+- Entity classes should be `sealed`, preventing unwanted inheritance relationships.
+- Entity properties should lean into `private set` heavily, disallowing external mutation.
+- Static factory pattern. Entities should have a private constructor and a public `Create` method
 
 ### Records
 
