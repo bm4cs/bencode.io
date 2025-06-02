@@ -3,8 +3,8 @@ layout: post
 draft: false
 title: "Clean Architecture"
 slug: "cleanarch"
-date: "2025-01-29 20:14:01+1100"
-lastmod: "2025-01-29 20:14:01+1100"
+date: "2025-05-29 20:14:01+1000"
+lastmod: "2025-05-29 20:14:01+1000"
 comments: false
 categories:
   - software
