@@ -2,7 +2,7 @@
 layout: post
 draft: false
 title: "Clean Architecture"
-slug: "clean"
+slug: "cleanarch"
 date: "2025-01-29 20:14:01+1100"
 lastmod: "2025-01-29 20:14:01+1100"
 comments: false
