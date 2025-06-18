@@ -118,7 +118,7 @@ For a robust and consistent equality its best practice is to:
 
 💀 Be wary of **anemic domain models** where domain objects (entities) primarily serve as data containers with little to no embedded business logic. The business logic is instead typically placed in separate service layers or managers, leading to a procedural programming style. This contrasts with a _rich domain model_ where entities encapsulate both data and behavior.
 
-💀 **Primitive obsession** is a code smell where you overuse basic types (like `int`, `string`, `bool`, etc.) to represent domain concepts, instead of creating dedicated types or classes. For example, using a `string` for an email address or a `decimal` for money everywhere, rather than defining `EmailAddress` or `Money` value objects. Leading to lack of encapsulation for validation and behavior, increased risk of bugs (mixing up values, invalid data) and harder to understand and maintain code. In clean architecture and DDD, you avoid primitive obsession by modeling important domain concepts as their own types, making the code more expressive, safe, and maintainable.
+💀 **[Primitive obsession](https://luzkan.github.io/smells/primitive-obsession)** is a code smell where you overuse basic types (like `int`, `string`, `bool`, etc.) to represent domain concepts, instead of creating dedicated types or classes. For example, using a `string` for an email address or a `decimal` for money everywhere, rather than defining `EmailAddress` or `Money` value objects. Leading to lack of encapsulation for validation and behavior, increased risk of bugs (mixing up values, invalid data) and harder to understand and maintain code. In clean architecture and DDD, you avoid primitive obsession by modeling important domain concepts as their own types, making the code more expressive, safe, and maintainable.
 
 #### Value Objects
 
@@ -162,6 +162,12 @@ As one of the two outer layers, takes care of interfacing with external systems 
 Single point of entry to the application. Requests are processed by leveraging the layers below.
 
 Typical examples: REST API, gRPC, SPA, CLI
+
+
+
+
+
+
 
 ## .NET Implementation Tips
 
