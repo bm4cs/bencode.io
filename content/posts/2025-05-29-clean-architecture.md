@@ -26,6 +26,8 @@ Domain centric architectures, like clean architecture, have inner architectural 
   - [Presentation layer](#presentation-layer)
 - [.NET Implementation Tips](#net-implementation-tips)
   - [Records](#records)
+  - [MediatR](#mediatr)
+    - [MediatR.Contracts Package](#mediatrcontracts-package)
 
 ## Glossary
 
@@ -52,7 +54,7 @@ Domain centric architectures, like clean architecture, have inner architectural 
 | **Onion Architecture**     | Similar to Clean Architecture, organizing code in concentric layers with dependencies pointing inward.                                     |
 | **Port**                   | An interface that defines how the application core communicates with external systems (part of Hexagonal Architecture).                    |
 | **Query**                  | In CQRS, a request for data that doesn't change system state, optimized for reading operations.                                            |
-| **Repository**             | A pattern that encapsulates the logic needed to access data sources, centralizing common data access functionality.                        |
+| **Repository**             | A pattern that encapsulates the logic needed to access data sources, centralising common data access functionality.                        |
 | **Rich Domain Model**      | A domain model where business logic is encapsulated within domain objects rather than external services.                                   |
 | **Saga**                   | A pattern for managing long-running business processes that span multiple aggregates or bounded contexts.                                  |
 | **Specification Pattern**  | A pattern used to encapsulate business rules and criteria that can be combined and reused.                                                 |
@@ -140,7 +142,34 @@ bool areEqual = a1 == a2; // true, value-based equality
 
 Something of significance that has occurred in the domain that domain experts care about and that triggers side effects.
 
-An interface called `IDomainEvent` will be used to define the shape of such events.
+Event driven architectures are a powerful way to keep components loosely coupled, and more importantly change and evolve behaviour over time.
+
+- **Decoupling**: Domain logic doesn't need to know about emails, notifications, or external integrations
+- **Single Responsibility**: Each handler has one clear purpose
+- **Extensibility**: Easy to add new handlers without modifying existing code
+- **Testability**: Handlers can be tested independently
+- **Cross-Cutting Concerns**: Logging, caching, and validation can be added through MediatR behaviors
+
+
+An interface called `IDomainEvent` and in-turn Mediatr's `INotification`, will be used to represent such events. For example a `SubscriptionExpiredEvent` domain event could be triggered when a customer subscription reaches expiration:
+
+```csharp
+public class SubscriptionExpiredEvent : IDomainEvent
+{
+    public Guid SubscriptionId { get; }
+    public Guid UserId { get; }
+    public string PlanName { get; }
+    public DateTime ExpiredAt { get; }
+}
+```
+
+Downstream handlers might:
+
+- Downgrade user permissions
+- Send renewal reminder emails
+- Archive user data
+- Update billing system
+- Log churn analytics
 
 
 
@@ -171,12 +200,15 @@ Typical examples: REST API, gRPC, SPA, CLI
 
 ## .NET Implementation Tips
 
-- 2 top tier solution folders `src` and `test`
+- Simple source tree organisation with 2 top tier solution folders `src` and `test`
 - House domain entities in its own classlib `Wintermute.Domain` organised by domain features, such as `Trading`, `Investments`.
-- `record` types are a perfect fit for representing _Value Objects_, see [Records](#records)
-- Entity classes should be `sealed`, preventing unwanted inheritance relationships.
-- Entity properties should lean into `private set` heavily, disallowing external mutation.
-- Static factory pattern. Entities should have a private constructor and a public `Create` method
+- .NET `record` types provide the perfect traits for representing a _Value Object_, see [Records](#records)
+- **Entity** classes should be `sealed`, preventing unwanted inheritance relationships.
+- **Entity** properties should lean into `private set` heavily, disallowing external mutation.
+- Each **Entity** should be a static factory. That is, a private constructor and a public `Create` method.
+- **Domain Events** should use `Mediatr.Contracts` to keep the domain events lean and framrwork agnostic.
+- The base `Entity` should feature a collection of `IDomainEvent`, to represent domain events raised by the entity, including associated CRUD methods, all `public` except `RaiseDomainEvent` which is `protected`.
+- The **Repository Pattern** will encapsulate the storage of a domain model. Agnostic contracts should be placed in the Domain class library, as they will work against the pure domain models that live in here.
 
 ### Records
 
@@ -243,3 +275,45 @@ public record Currency
 ```
 
 
+### MediatR
+
+MediatR is a .NET library that implements the Mediator pattern. It acts as an in-process messaging framework that decouples components by providing a simple way to publish commands, queries, and notifications without having direct dependencies between classes.
+
+The classical mediator design pattern introduces a hub in between objects that need to communicate; instead of communicating directly with each other, they go through a central mediator. This reduces coupling and makes code more maintainable.
+
+Key use cases in an architecture:
+
+- Commands: Actions that change state (e.g. `CreateGymCommand`)
+- Queries: Read operations that return data (e.g. `GetGymByIdQuery`)
+- Notifications: Events that can have multiple handlers (e.g. `GymCreatedEvent`)
+
+In clean architecture, MediatR is particularly valuable:
+
+- Decoupling: Your controllers don't need to know about specific business logic classes
+- Single Responsibility: Each handler does one thing
+- Cross-cutting Concerns: You can add behaviors like logging, validation, or caching through MediatR's pipeline behaviors
+- Domain Events: Perfect for publishing domain events when business rules are triggered
+
+
+#### MediatR.Contracts Package
+
+The `MediatR.Contracts` package contains just the core interfaces and contracts without the full implementation. This is good practice for a few reasons:
+
+1. You want to reference MediatR interfaces in your domain layer without pulling in the full library
+1. You're building libraries that need to expose MediatR contracts
+1. You want to keep your domain layer lightweight, keeping your domain events clean and framework-agnostic while still leveraging MediatR's powerful dispatching capabilities in your infrastructure layer
+
+
+```csharp
+public class GymCreatedEvent : INotification
+{
+    public Guid GymId { get; }
+    public string Email { get; }
+    
+    public GymCreatedEvent(Guid gymId, string email)
+    {
+        GymId = gymId;
+        Email = email;
+    }
+}
+```
