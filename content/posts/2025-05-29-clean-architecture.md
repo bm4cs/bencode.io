@@ -21,10 +21,14 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [Entities](#entities)
     - [Value Objects](#value-objects)
     - [Domain Events](#domain-events)
+    - [Domain Services](#domain-services)
+    - [Interfaces](#interfaces)
+    - [Results and Exceptions](#results-and-exceptions)
   - [Application layer](#application-layer)
   - [Infrastructure layer](#infrastructure-layer)
   - [Presentation layer](#presentation-layer)
 - [.NET Implementation Tips](#net-implementation-tips)
+  - [Contemporary .NET gems](#contemporary-net-gems)
   - [Records](#records)
   - [MediatR](#mediatr)
     - [MediatR.Contracts Package](#mediatrcontracts-package)
@@ -86,7 +90,7 @@ The inner heart layer, houses the most important enterprise logic and business r
 - _Domain events_: Notifications that something significant has happened within the domain.
 - _Domain services_: Stateless operations or business logic that don't naturally fit within an entity or value object.
 - _Interfaces_: Abstractions that define contracts for dependencies, enabling inversion of control and testability.
-- _Exceptions_: Domain-specific errors used to signal and handle invalid states or business rule violations.
+- _Results and Exceptions_: Domain-specific errors used to signal and handle invalid states or business rule violations.
 - _Enums_: Enumerations representing a fixed set of related constants, often used for domain concepts with limited options.
 
 #### Entities
@@ -171,6 +175,217 @@ Downstream handlers might:
 - Update billing system
 - Log churn analytics
 
+The base abstract `Entity`, which all **Entity** types inherit, is furnished with domain event handling:
+
+```csharp
+public abstract class Entity(Guid id) : IEquatable<Entity>
+{
+    public Guid Id { get; init; } = id;
+    private readonly List<IDomainEvent> _domainEvents = [];
+    public IReadOnlyList<IDomainEvent> GetDomainEvents => _domainEvents.ToList();
+    public void ClearDomainEvents() => _domainEvents.Clear();
+    protected void RaiseDomainEvent(IDomainEvent domainEvent)
+    {
+        ArgumentNullException.ThrowIfNull(domainEvent);
+        _domainEvents.Add(domainEvent);
+    }
+}
+```
+
+
+Now **Entities** and **Domain Services** have a consistent way of publishing **Domain Events**, in a clean agnostic manner. For example here the `Booking` entity hooks in domain eventing:
+
+```csharp
+public static Booking Reserve(
+        Apartment apartment,
+        Guid userId,
+        DateRange duration,
+        DateTime utcNow,
+        PricingService pricingService
+    )
+{
+    // DOUBLE DISPATCH PATTERN - dispatch to a Domain Service for cleaner rich domain models
+    var pricingDetails = pricingService.CalculatePrice(apartment, duration);
+    var booking = new Booking(
+        Guid.NewGuid(),
+        apartment.Id,
+        userId,
+        duration,
+        pricingDetails.PriceForPeriod,
+        pricingDetails.CleaningFee,
+        pricingDetails.AmenitiesUpcharge,
+        pricingDetails.TotalPrice,
+        BookingStatus.Reserved,
+        utcNow
+    );
+    booking.RaiseDomainEvent(new BookingReservedDomainEvent(booking.Id));
+    apartment.LastBookedOnUtc = utcNow;
+    return booking;
+}
+```
+
+
+#### Domain Services
+
+**Domain Services** exist to handle business logic that doesn't naturally belong to any single **Entity** or **Value Object**, but is still core domain knowledge. They represent pure business operations that coordinate between multiple domain objects or perform calculations that require specialised domain expertise.
+
+Create **Domain Services** when you have business logic that:
+
+1. Operates on multiple **Entity** and/or **Value Objects** from different aggregates (logical domain groupings)
+1. Doesn't conceptually belong to any single **Entity**
+1. Represents a significant business operation or calculation
+1. Requires domain expertise that would be awkward to place in an **Entity**
+
+
+Such as a pricing calculator for AirBnb type booking service:
+
+```csharp
+// DOMAIN SERVICE - assess and work with Entity and/or Value Objects
+public class PricingService
+{
+    public PricingDetails CalculatePrice(Apartment apartment, DateRange dateRange)
+    {
+        // Complex pricing logic that considers:
+        // - Apartment characteristics (size, location, amenities)
+        // - Date range factors (seasonality, demand, holidays)
+        // - Market conditions, dynamic pricing rules
+        // - Promotional discounts, loyalty programs
+        
+        return new PricingDetails(basePrice, adjustments, finalPrice);
+    }
+}
+```
+
+**Why a Domain Service is a good fit for this logic:**
+
+- **Spans multi entity and value objects**: Uses both `Apartment` and `DateRange`
+- **Complex business rules**: Pricing logic is sophisticated domain knowledge
+- **Doesn't belong to Apartment**: An apartment doesn't "calculate its own price" - pricing is a higher order business concern
+- **Pure domain logic**: No infrastructure dependencies
+
+
+
+**Key Traits of a Domain Service**
+
+1. **Stateless**: They don't hold state between operations
+1. **Pure Business Logic**: Focus solely on domain rules and calculations
+1. **Domain Language**: Methods express business concepts (CalculatePrice, ValidateBooking)
+1. **No Infrastructure**: Don't depend on databases, external APIs, etc.
+
+Common examples:
+
+- `LoanApprovalService` that evaluates an finance application, which considers credit scoring, risk assessment, policy rules, etc.
+- `ShippingCalculatorService` that determines shipping for e-commerce orders, that considers weight, distance, carriers, promotions, etc.
+- `DosageCalculationService` for a healthcare provider that calculates a clients dosage needs based on age, weight, medical history, intolerances, etc.
+
+
+#### Interfaces
+
+The **Repository** and **Unit Of Work** patterns, and their associated abstractions need to live in the domain, this is critical for defining a rich domain model. The definition of "repository" can be further tightened to **Entity Repository**, each concerned with one type of domain entity - which has a few architectural benefits:
+
+- Single Responsibility: Each repository has clear, focused methods for one type of aggregate
+- Encapsulation: Repository methods can express domain specific concepts e.g. `FindOverdueOrders()` vs generic `Find()`
+- Testability: Easy to mock specific entity repositories for unit testing
+
+
+**What problem does the Repository Pattern actually solve?**
+
+Without **Repository** and **Unit of Work**, domain entities become anemic i.e. they can't perform business operations that require data access because they'd need direct dependencies on infrastructure concerns like databases, ORMs, or external services. This violates the **Dependency Inversion Principle** and makes your domain layer impure.
+
+The **Repository** abstraction allows domain entities and services to work with collections of objects as if they were in-memory, without knowing about persistence details, these benefits:
+
+1. Domain entities can perform complex business logic that requires querying or modifying related data
+2. Domain services can orchestrate operations across multiple entities without infrastructure dependencies
+3. Business rules stay in the domain rather than leaking into application services
+
+```csharp
+// ANEMIC - business logic pushed to application layer
+public class Order
+{
+    public decimal Total { get; private set; }
+    public void SetTotal(decimal total) => Total = total;
+}
+
+// RICH - business logic stays in domain
+public class Order
+{
+    public decimal CalculateTotal(IProductRepository productRepository)
+    {
+        var products = productRepository.GetByIds(this.ProductIds);
+        return products.Sum(p => p.Price * GetQuantity(p.Id));
+    }
+}
+```
+
+**Unit of Work, what's its purpose?**
+
+There will be repositories that sit across functional boundaries. A business interaction may enact change across them. This is where the UoW comes in, it ensures that all changes within a business transaction are treated as a single atomic operation - preserving domain invariants across aggregate boundaries - its key value adds to the architecture:
+
+- Consistency: Multiple aggregate changes happen together or not at all
+- Performance: Batches database operations instead of individual saves
+- Transaction Management: Handles complex business processes that span multiple entities
+
+
+#### Results and Exceptions
+
+
+**Errors** represents something that went wrong:
+
+```csharp
+public record Error(string Code, string Name)
+{
+    public static Error None = new Error(string.Empty, string.Empty);
+    public static Error NullValue = new("Error.NullValue", "Null value encountered");
+}
+```
+
+
+**Result** represents a domain layer outcome:
+
+`Result` will be used by the **Domain Layer** to return a descriptive outcome of what occurred to upper layers, specifically the **Application Layer**. Either success that the business rules were satisfied, or an error with a fault and description clearly articulating the business rule that was broken.
+
+```csharp
+using System.Net.Http.Headers;
+
+namespace Bookify.Domain.Abstractions;
+
+public class Result
+{
+    protected internal Result(bool isSuccess, Error error)
+    {
+        IsSuccess = isSuccess;
+        Error = error;
+    }
+
+    public bool IsSuccess { get; }
+    public bool IsFailure => !IsSuccess;
+    public Error Error { get; }
+
+    public static Result Success() => new(true, Error.None);
+    public static Result Failure(Error error) => new(false, Error.None);
+    public static Result<T> Success<T>(T value) => new(value, true, Error.None);
+    public static Result<T> Failure<T>(Error error) => new (default, false, error);
+    public static Result<T> Create<T>(T? value) => 
+        value is not null ? Success(value) : Failure<T>(Error.NullValue);
+}
+
+
+public class Result<T> : Result
+{
+    private readonly T? _value;
+
+    protected internal Result(T? value, bool isSuccess, Error error) : base(isSuccess, error)
+    {
+        _value = value;
+    }
+
+    public T Value => IsSuccess
+        ? _value!
+        : throw new InvalidOperationException("Cannot access Value on a failure result.");
+
+    public static implicit operator Result<T>(T? value) => Create(value);
+}
+```
 
 
 
@@ -201,14 +416,85 @@ Typical examples: REST API, gRPC, SPA, CLI
 ## .NET Implementation Tips
 
 - Simple source tree organisation with 2 top tier solution folders `src` and `test`
-- House domain entities in its own classlib `Wintermute.Domain` organised by domain features, such as `Trading`, `Investments`.
-- .NET `record` types provide the perfect traits for representing a _Value Object_, see [Records](#records)
+- House domain entities in its own class library `Wintermute.Domain`. Source should be organised into directories that represent each domain function, such as `Trades`, `Investments`, `Bookings` and so on. Shared **Entity** or **Value Objects** such as `Money`, should be placed into a `Shared` directory.
+- .NET `record` types provide the perfect traits for representing **Value Objects**, see [Records](#records)
 - **Entity** classes should be `sealed`, preventing unwanted inheritance relationships.
 - **Entity** properties should lean into `private set` heavily, disallowing external mutation.
 - Each **Entity** should be a static factory. That is, a private constructor and a public `Create` method.
-- **Domain Events** should use `Mediatr.Contracts` to keep the domain events lean and framrwork agnostic.
+- **Domain Events** should use `Mediatr.Contracts` to keep the domain events lean and framrwork agnostic. These should be placed into `Events` directories within each functional domain e.g. `Bookings/Events`, `Users/Events`.
 - The base `Entity` should feature a collection of `IDomainEvent`, to represent domain events raised by the entity, including associated CRUD methods, all `public` except `RaiseDomainEvent` which is `protected`.
 - The **Repository Pattern** will encapsulate the storage of a domain model. Agnostic contracts should be placed in the Domain class library, as they will work against the pure domain models that live in here.
+- For saving changes (i.e. mutating) an underlying data store, the **Unit Of Work Pattern** is a good fit, with its abstraction living in the domain model as `IUnitOfWork`.
+- For inter **Entity** interactions, specifically when one entity needs to modify another entity, `private set` properties are too restrictive to permit this. An interesting design choice is to leverage `internal set`, which allows types within an assembly to change each others properties. In the context of the domain assembly, this is a nice fit.
+
+
+### Contemporary .NET gems
+
+- `DateOnly` and `TimeOnly` structs (.NET6)
+- Init properties (C#9) `public DateOnly End { get; init; }` can only be set during object initialization
+- Primary Constructors (C#11) combines constructor parameters such as `public class User(string firstName)` directly with property initialization `public string FirstName { get; } = firstName;`. The optional constructor body uses the => syntax for any additional initialization logic.
+- `switch` expressions (C#8)
+- `null` forgiving operator e.g. `_value!` tells the compiler not to warn about `_value` possibly being `null`.
+- The `implicit operator` in C# defines an implicit conversion between types, e.g. `public static implicit operator Result<T>(T? value) => Create(value)` allows assignment of a value of type `T` directly to a variable of type `Result<T>`, and the compiler will automatically convert it using the `Create` method. This simple assignment `Result<string> result = "hello";` implicitly calls `Result<string>.Create("hello")`
+
+
+**Primary Constructors:**
+
+```csharp
+// PRIMARY CONSTRUCTORS in C# 11
+public class User(string firstName, string lastName)
+{
+    public string FirstName { get; } = firstName;
+    public string LastName { get; } = lastName;
+    
+    // Optional constructor body
+    => Console.WriteLine($"Created user: {firstName} {lastName}");
+}
+```
+
+**Switch Expressions**:
+
+```csharp
+// SWITCH EXPRESSIONS in C# 8
+public static class SwitchExample
+{
+    public enum Direction
+    {
+        Up,
+        Down,
+        Right,
+        Left
+    }
+
+    public enum Orientation
+    {
+        North,
+        South,
+        East,
+        West
+    }
+
+    public static Orientation ToOrientation(Direction direction) => direction switch
+    {
+        Direction.Up    => Orientation.North,
+        Direction.Right => Orientation.East,
+        Direction.Down  => Orientation.South,
+        Direction.Left  => Orientation.West,
+        _ => throw new ArgumentOutOfRangeException(nameof(direction), $"Not expected direction value: {direction}"),
+    };
+
+    public static void Main()
+    {
+        var direction = Direction.Right;
+        Console.WriteLine($"Map view direction is {direction}");
+        Console.WriteLine($"Cardinal orientation is {ToOrientation(direction)}");
+        // Output:
+        // Map view direction is Right
+        // Cardinal orientation is East
+    }
+}
+```
+
 
 ### Records
 
