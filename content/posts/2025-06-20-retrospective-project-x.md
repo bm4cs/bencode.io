@@ -1,8 +1,8 @@
 ---
 layout: post
 draft: false
-title: "Trading"
-slug: "trading"
+title: "Software Project Retrospective"
+slug: "retrox"
 date: "2025-06-20 13:13:00+1000"
 lastmod: "2025-06-20 13:13:00+1000"
 comments: false

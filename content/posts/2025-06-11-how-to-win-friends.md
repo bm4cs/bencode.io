@@ -41,7 +41,7 @@ categories:
   - [Hollywood Does It - dramatize ideas](#hollywood-does-it---dramatize-ideas)
   - [When Nothing Else Works - stimulate competition](#when-nothing-else-works---stimulate-competition)
 - [Be a Leader](#be-a-leader)
-  - [TODO](#todo)
+  - [If Must Find Fault, Begin This Way - sandwich technique](#if-must-find-fault-begin-this-way---sandwich-technique)
 
 Dale Carnegie's flagship "How to Win Friends and Influence People" is a foundational book on communication, relationship-building, and personal effectiveness. First published in 1936, its principles remain relevant for anyone seeking to improve their social skills, leadership, and influence.
 
@@ -447,4 +447,22 @@ That is what every successful person loves: **the game**. The chance for self-ex
 
 ## Be a Leader
 
-### TODO
+### If Must Find Fault, Begin This Way - sandwich technique
+
+**Begin with praise and honest appreciation.**
+
+A barber lathers a man before he shaves him.
+
+McKinley's criticism of an inappropriate speech prepared for him:
+
+> “My friend, that is a splendid speech, a magnificent speech,” McKinley said. “No one could have prepared a better one. There are many occasions on which it would be precisely the right thing to say, but is it quite suitable to this particular occasion? Sound and sober as it is from your standpoint, I must consider its effect from the party’s standpoint. Now you go home and write a speech along the lines I indicate, and send me a copy of it.”
+
+Lincoln's letter to General Joseph Hooker, during the darkest moments of teh civil war:
+
+> I have placed you at the head of the Army of the Potomac. Of course, I have done this upon what appears to me to be sufficient reasons, and yet I think it best for you to know that **there are some things in regard to which I am not quite satisfied with you**. I believe you to be a brave and skillful soldier, which, of course, I like. I also believe you do not mix politics with your profession, in which you are right. You have confidence in yourself, which is a valuable if not an indispensable quality. You are ambitious, which, within reasonable bounds, does good rather than harm, But I think that during General Burnside’s command of the army you have taken counsel of your ambition and thwarted him as much as you could, in which you did a great wrong to the country and to a most meritorious and honorable brother officer. I have heard, in such a way as to believe it, of your recently saying that both the army and the Government needed a dictator. Of course, it was not for this, but in spite of it, that I have given you command. Only those generals who gain successes can set up as dictators. What I now ask of you is military success and I will risk the dictatorship. The Government will support you to the utmost of its ability, which is neither more nor less than it has done and will do for all commanders. **I much fear that the spirit which you have aided to infuse into the army, of criticizing their commander and withholding confidence from him, will now turn upon you**. I shall assist you, as far as I can, to put it down. Neither you nor Napoleon, if he were alive again, could get any good out of an army while such spirit prevails in it, and now beware of rashness. Beware of rashness, but with energy and sleepless vigilance go forward and give us victories.
+
+A story of dealing with a difficult (bronze) subcontractor, during a building construction project, which risked delaying the overall delivery timing. Furious and frustrated, Mr Gaw was sent to New York to beard the bronze corporation lion (CEO) in his den. Instead of blowing his top, started friendly and from a relaxed position of genuine understanding and friendship:
+
+> “Do you know you are the only person in Brooklyn with your name?” Mr Gaw asked the president of the subcontracting firm shortly after they were introduced. The president was surprised. “No, I didn’t know that.”
+
+Beginning with praise is like the dentist who begins his work with pain reduction. The patient still gets the needed drilling, but it makes it more bearable.
