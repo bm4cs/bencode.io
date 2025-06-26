@@ -24,7 +24,7 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [Domain Services](#domain-services)
     - [Interfaces](#interfaces)
     - [Results and Exceptions](#results-and-exceptions)
-  - [Application layer](#application-layer)
+  - [Application layer: The Use Case Orchestrator](#application-layer-the-use-case-orchestrator)
   - [Infrastructure layer](#infrastructure-layer)
   - [Presentation layer](#presentation-layer)
 - [.NET Implementation Tips](#net-implementation-tips)
@@ -83,7 +83,7 @@ High level qualities that a good software architecture should (and enforce) stri
 
 ### Domain layer
 
-The inner heart layer, houses the most important enterprise logic and business rules. Housed in class library `src\Wintermute.Domain`.
+The inner heart layer, houses the most important enterprise logic and business rules. Housed in class library `src/Wintermute.Domain`.
 
 - _Entities_: Represent core business objects with a unique identity that persists over time.
 - _Value objects_: Immutable objects defined by their attributes, not identity, used to describe aspects of the domain.
@@ -389,13 +389,117 @@ public class Result<T> : Result
 
 
 
-### Application layer
+### Application layer: The Use Case Orchestrator
 
-The middle layer.
+The **Application Layer** is the middle layer that defines **Use Cases** by orchestrating the **Rich Domain Model**. It's the "conductor" that coordinates domain objects to fulfill business scenarios. This layer has no external concerns of its own. **CQRS** (Command Query Responsibility Segregation) is a powerful approach to organising this layer, in a nutshell split data reads (queries) and writes (commands) apart. Cross-cutting concerns will be elegantly managed using the **Decorator Pattern** with MediatR pipeline behaviours.
 
-1. Responsible for orchestrating the domain.
-2. Higher level business logic that doesn't "fit" in the domain.
-3. Defines the use cases. Drivers of behavior in the application across domain entities. Typically encoded as a set of _Appliation services_, or alternatively as the CQRS pattern with MediatR.
+
+Five **Application Layer** primary conerns:
+
+**1. Use Case Orchestration**
+
+Defines the "what" of business operations without caring about "how", by coordinating multiple domain services, entities, and repositories as workflow of business processes.
+
+Example: `BookApartmentUseCase` orchestrates apartment availability checking, pricing calculation, booking creation, and payment processing.
+
+
+**2. Higher-Level Business Logic**
+
+Workflow logic that spans multiple aggregates (e.g. bookings, users, apartments, etc) by defining business rules that don't belong in any single domain entity. As this layer is now responsible for cross-aggregate interactions, it takes on the challenge of managing transactions and consistency rules.
+
+Example: "Cancel booking if payment fails after 3 attempts" is business logic but involves multiple domains
+
+
+**3. Cross-Cutting Concerns**
+
+- Logging: What happened, when, and by whom
+- Validation: Input validation and business rule validation
+- Authorization: Who can perform which operations
+- Caching: Performance optimizations
+
+Examples: Log all booking attempts, validate user permissions, cache pricing calculations.
+
+
+**4. Exception Translation & Handling**
+
+Translates domain exceptions into application appropriate responses. The app layer needs to deal with infrastructure failures gracefully and provides meaningful error context for upper layers.
+
+Example: Convert `DomainExceptionXYZ` to `ApplicationExceptionXYZ` with business contextual messaging.
+
+
+**5. Dependency Injection Hub**
+
+Due to its higher order nature, **Application Services** typically composite many pieces from the rich domain model. Given Clean Architecture embraces the **Dependency Inversion Principle** this is first touch point in the architecture to start defining **Depending Injection** policies, including infrastructure abstractions (repositories, external services) and cross-cutting concern behaviors.
+
+
+**What the Application Layer Does NOT Do:**
+
+- No business rules that belong in the domain
+- No infrastructure concerns (database, external APIs, UI)
+- No presentation logic (formatting, UI concerns)
+- No low-level technical details
+
+
+**Example Application Serivces:**
+
+Example Application Service (traditional) implementation:
+
+```csharp
+public class BookingApplicationService
+{
+    public async Task<BookingResult> BookApartment(BookApartmentRequest request)
+    {
+        // Orchestrate domain operations
+    }
+}
+```
+
+
+CQRS with MediatR:
+
+```csharp
+public class BookApartmentCommandHandler : IRequestHandler<BookApartmentCommand, BookingResult>
+{
+    public async Task<BookingResult> Handle(BookApartmentCommand command, CancellationToken cancellationToken)
+    {
+        // Same orchestration, different structure
+    }
+}
+```
+
+
+**Example Use Case Flow:**
+
+```csharp
+public class BookApartmentUseCase
+{
+    public async Task<BookingResult> Execute(BookingRequest request)
+    {
+        // 1. Validate input (Application concern)
+        await _validator.ValidateAsync(request);
+        
+        // 2. Check availability (Domain orchestration)
+        var apartment = await _apartmentRepository.GetByIdAsync(request.ApartmentId);
+        var availability = _availabilityService.CheckAvailability(apartment, request.DateRange);
+        
+        // 3. Calculate pricing (Domain service)
+        var pricing = _pricingService.CalculatePrice(apartment, request.DateRange);
+        
+        // 4. Create booking (Domain operation)
+        var booking = apartment.CreateBooking(request.GuestId, request.DateRange, pricing);
+        
+        // 5. Save and publish events (Application orchestration)
+        await _unitOfWork.SaveAsync();
+        await _mediator.Publish(new BookingCreatedEvent(booking.Id));
+        
+        // 6. Return result (Application concern)
+        return new BookingResult(booking.Id, pricing.Total);
+    }
+}
+```
+
+
+
 
 ### Infrastructure layer
 
