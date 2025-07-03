@@ -25,13 +25,23 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [Interfaces](#interfaces)
     - [Results and Exceptions](#results-and-exceptions)
   - [Application layer: The Use Case Orchestrator](#application-layer-the-use-case-orchestrator)
+    - [Dependency Injection and MediatR Bootstrapping](#dependency-injection-and-mediatr-bootstrapping)
+    - [CQRS Abstractions](#cqrs-abstractions)
+    - [Handling Domain Events](#handling-domain-events)
+    - [Implementing Queries with Dapper](#implementing-queries-with-dapper)
   - [Infrastructure layer](#infrastructure-layer)
   - [Presentation layer](#presentation-layer)
 - [.NET Implementation Tips](#net-implementation-tips)
-  - [Contemporary .NET gems](#contemporary-net-gems)
+  - [General .NET Tips](#general-net-tips)
+  - [Domain Layer .NET Tips](#domain-layer-net-tips)
+  - [Application Layer .NET Tips](#application-layer-net-tips)
+  - [Bonus: Contemporary .NET gems](#bonus-contemporary-net-gems)
   - [Records](#records)
   - [MediatR](#mediatr)
+    - [INotification and INotificationHandler](#inotification-and-inotificationhandler)
+    - [IRequest and IRequestHandler](#irequest-and-irequesthandler)
     - [MediatR.Contracts Package](#mediatrcontracts-package)
+  - [Visual Studio and Roslyn Code Quality Level Ups](#visual-studio-and-roslyn-code-quality-level-ups)
 
 ## Glossary
 
@@ -158,6 +168,8 @@ Event driven architectures are a powerful way to keep components loosely coupled
 An interface called `IDomainEvent` and in-turn Mediatr's `INotification`, will be used to represent such events. For example a `SubscriptionExpiredEvent` domain event could be triggered when a customer subscription reaches expiration:
 
 ```csharp
+public interface IDomainEvent : INotification { }
+
 public class SubscriptionExpiredEvent : IDomainEvent
 {
     public Guid SubscriptionId { get; }
@@ -184,7 +196,7 @@ public abstract class Entity(Guid id) : IEquatable<Entity>
     private readonly List<IDomainEvent> _domainEvents = [];
     public IReadOnlyList<IDomainEvent> GetDomainEvents => _domainEvents.ToList();
     public void ClearDomainEvents() => _domainEvents.Clear();
-    protected void RaiseDomainEvent(IDomainEvent domainEvent)
+    protected void RegisterDomainEvent(IDomainEvent domainEvent)
     {
         ArgumentNullException.ThrowIfNull(domainEvent);
         _domainEvents.Add(domainEvent);
@@ -391,10 +403,10 @@ public class Result<T> : Result
 
 ### Application layer: The Use Case Orchestrator
 
-The **Application Layer** is the middle layer that defines **Use Cases** by orchestrating the **Rich Domain Model**. It's the "conductor" that coordinates domain objects to fulfill business scenarios. This layer has no external concerns of its own. **CQRS** (Command Query Responsibility Segregation) is a powerful approach to organising this layer, in a nutshell split data reads (queries) and writes (commands) apart. Cross-cutting concerns will be elegantly managed using the **Decorator Pattern** with MediatR pipeline behaviours.
+Housed in class library `src/Wintermute.Application`, the **Application Layer** is the middle layer that defines **Use Cases** by orchestrating the **Rich Domain Model**. It's the "conductor" that coordinates domain objects to fulfill business scenarios. This layer has no external concerns of its own. **CQRS** (Command Query Responsibility Segregation) is a powerful approach to organising this layer, in a nutshell split data reads (queries) and writes (commands) apart. Cross-cutting concerns will be elegantly managed using the **Decorator Pattern** with MediatR pipeline behaviours (middleware).
 
 
-Five **Application Layer** primary conerns:
+The five **Application Layer** key conerns:
 
 **1. Use Case Orchestration**
 
@@ -498,6 +510,97 @@ public class BookApartmentUseCase
 }
 ```
 
+#### Dependency Injection and MediatR Bootstrapping
+
+Due to its higher order nature, **Application Services** typically composite many pieces from the rich domain model. Given Clean Architecture embraces the **Dependency Inversion Principle** this is first touch point in the architecture to start defining **Depending Injection** policies, including infrastructure abstractions (repositories, external services) and cross-cutting concern behaviors.
+
+Create a top level `DependencyInjection.cs` class.
+
+MediatR has an incredible `IServiceCollection.AddMediatR` (aka the built-in .NET IoC container) extension method that will automatically register handler and mediator types with MediatR.
+
+```csharp
+public static class DependencyInjection
+{
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        services.AddMediatR(configuration =>
+        {
+            configuration.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
+        });
+        services.AddTransient<PricingService>();
+        return services;
+    }
+}
+```
+
+#### CQRS Abstractions
+
+**CQRS** (Command Query Responsibility Segregation) is a powerful approach to organising this layer, which in a nutshell splits data reads (queries) and writes (commands) apart.
+
+Here we define abstractions `IQuery` and `ICommand` to represent reads and writes respectively.
+
+
+```csharp
+// query request
+public interface IQuery<TResponse> : IRequest<Result<TResponse>> { }
+
+// query handler
+public interface IQueryHandler<in TQuery, TResponse> : IRequestHandler<TQuery, Result<TResponse>>
+    where TQuery : IQuery<TResponse> { } // <in TQuery> = contravariant
+
+// command request
+public interface IBaseCommand  { }
+public interface ICommand : IRequest<Result>, IBaseCommand  { } // Command that returns nothing
+public interface ICommand<TResponse> : IRequest<Result<TResponse>>, IBaseCommand  { } // Command that returns a response
+
+// command handler
+public interface ICommandHandler<TCommand> : IRequestHandler<TCommand, Result> where TCommand : ICommand { }
+public interface ICommandHandler<TCommand, TResponse> : IRequestHandler<TCommand, Result<TResponse>> where TCommand : ICommand<TResponse> { }
+```
+
+Example of a concrete command its associated handler:
+
+```csharp
+public sealed record ReserveBookingCommand(
+    Guid ApartmentId,
+    Guid UserId,
+    DateOnly StartDate,
+    DateOnly EndDate) : ICommand<Guid>;
+
+internal sealed class ReserveBookingCommandHandler : ICommandHandler<ReserveBookingCommand, Guid>
+{
+    public Task<Result<Guid>> Handle(ReserveBookingCommand request, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+}
+```
+
+#### Handling Domain Events
+
+Refer to [BookingReservedDomainEventHandler.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Application/Bookings/ReserveBooking/BookingReservedDomainEventHandler.cs).
+
+Considerations:
+
+1. Subscribe to **Domain Events** emitting from the **Domain Layer**, by implementing MediatR's ` INotificationHandler` contract, for example ` INotificationHandler<BookingReservedDomainEvent>`
+2. Place each individual **Domain Handler** in the same directory where the respective `ICommand` and `ICommandHandler` lives, that is responsible for triggering the event. This keeps these mediation types semantically clumped together.
+3. Naming convension suggestion, add the `Handler` suffix to the OG domain event name. Like this: `BookingReservedDomainEvent => BookingReservedDomainEventHandler`
+
+
+```
+.
+├── Bookify.Application
+│   ├── Bookings
+│   │   └── ReserveBooking
+│   │       ├── BookingReservedDomainEventHandler.cs
+│   │       ├── ReserveBookingCommand.cs
+│   │       └── ReserveBookingCommandHandler.cs
+```
+
+
+#### Implementing Queries with Dapper
+
+
 
 
 
@@ -513,13 +616,45 @@ Typical examples: REST API, gRPC, SPA, CLI
 
 
 
-
-
-
-
 ## .NET Implementation Tips
 
+
+### General .NET Tips
+
 - Simple source tree organisation with 2 top tier solution folders `src` and `test`
+- Using `DateTime.UtcNow` directly is a DRY-ness code smell. For testability and maintainability, much better option is to define a common `IDateTimeProvider` abstraction.
+
+
+```csharp
+public interface IDateTimeProvider  // Wintermute.Application/Abstractions/Clock/IDateTimeProvider.cs
+{
+    DateTime UtcNow { get; }
+}
+
+
+// BEFORE
+var booking = Booking.Reserve(
+    apartment,
+    user.Id,
+    duration,
+    DateTime.UtcNow,
+    _pricingService
+);
+
+
+// AFTER
+var booking = Booking.Reserve(
+    apartment,
+    user.Id,
+    duration,
+    _dateTimeProvider.UtcNow,
+    _pricingService
+);
+```
+
+
+### Domain Layer .NET Tips
+
 - House domain entities in its own class library `Wintermute.Domain`. Source should be organised into directories that represent each domain function, such as `Trades`, `Investments`, `Bookings` and so on. Shared **Entity** or **Value Objects** such as `Money`, should be placed into a `Shared` directory.
 - .NET `record` types provide the perfect traits for representing **Value Objects**, see [Records](#records)
 - **Entity** classes should be `sealed`, preventing unwanted inheritance relationships.
@@ -532,7 +667,22 @@ Typical examples: REST API, gRPC, SPA, CLI
 - For inter **Entity** interactions, specifically when one entity needs to modify another entity, `private set` properties are too restrictive to permit this. An interesting design choice is to leverage `internal set`, which allows types within an assembly to change each others properties. In the context of the domain assembly, this is a nice fit.
 
 
-### Contemporary .NET gems
+
+### Application Layer .NET Tips
+
+- The **Application Layer** can enjoy more concrete couplings to packages such as MediatR and Dapper for example, for concrete `IRequestHandler` and `INotification` implementations.
+- The **Application Layer** will enjoy loose coupling to the **Domain Layer** by adopting CQRS using MediatR.
+- Contravariant generic arguments in C# are specified with the `in` keyword, e.g: `public interface IQueryHandler<in TQuery, TResponse> : IRequestHandler<TQuery, Result<TResponse>>`. **Contravariance** allows you to use a less derived (more general) type than originally specified. Meaning its possible to assign an `IQueryHandler<BaseQuery, TResponse>` to a variable of type `IQueryHandler<DerivedQuery, TResponse>`, where `DerivedQuery` inherits from `BaseQuery`.
+- Having the different `ICommand` variations implement a common interface `IBaseCommand`, is useful, for expressing MediatR pipeline subscriptions with generic typing constraints, for dealing with cross-cutting concerns. Its also a handy potential maintainablilty point.
+- .NET `record` types in combination with a **Primary Constructors** are an elegant way to represent concrete `IRequest` (i.e. the requests, not the handlers) implementations.
+- `IRequestHandler` implementation should be `internal sealed` to prevent undesirable misuse or extension outside of the **Application Layer** assembly.
+- **Queries** and **Commands** will need to return and accept data respectively. These abstractions (e.g. `BookingResponse`) should live in the Application Layer, close-by to the query or commands that work with them. These DTO's should be as plain as possible (POCOs), comprising of primtive types and flat non-nested hierarchical structures.
+- This 
+
+
+
+
+### Bonus: Contemporary .NET gems
 
 - `DateOnly` and `TimeOnly` structs (.NET6)
 - Init properties (C#9) `public DateOnly End { get; init; }` can only be set during object initialization
@@ -540,6 +690,8 @@ Typical examples: REST API, gRPC, SPA, CLI
 - `switch` expressions (C#8)
 - `null` forgiving operator e.g. `_value!` tells the compiler not to warn about `_value` possibly being `null`.
 - The `implicit operator` in C# defines an implicit conversion between types, e.g. `public static implicit operator Result<T>(T? value) => Create(value)` allows assignment of a value of type `T` directly to a variable of type `Result<T>`, and the compiler will automatically convert it using the `Create` method. This simple assignment `Result<string> result = "hello";` implicitly calls `Result<string>.Create("hello")`
+- `with` expressions: TODO
+- Extension methods: TODO see `Wintermute.Application/DependencyInjection.cs`
 
 
 **Primary Constructors:**
@@ -675,7 +827,7 @@ Key use cases in an architecture:
 
 - Commands: Actions that change state (e.g. `CreateGymCommand`)
 - Queries: Read operations that return data (e.g. `GetGymByIdQuery`)
-- Notifications: Events that can have multiple handlers (e.g. `GymCreatedEvent`)
+- Notifications: Events that can have multiple handlers, aka publish/subscribe (e.g. `GymCreatedEvent`)
 
 In clean architecture, MediatR is particularly valuable:
 
@@ -683,6 +835,17 @@ In clean architecture, MediatR is particularly valuable:
 - Single Responsibility: Each handler does one thing
 - Cross-cutting Concerns: You can add behaviors like logging, validation, or caching through MediatR's pipeline behaviors
 - Domain Events: Perfect for publishing domain events when business rules are triggered
+
+
+
+#### INotification and INotificationHandler
+
+`INotificationHandler<TNotification>` handles notifications (events) that may have multiple handlers, or in other words the publish/subscribe pattern. Used for domain or integration events. When a notification is published, all registered handlers are invoked. Examples: Sending an email, logging, or updating a read model after something happens.
+
+#### IRequest and IRequestHandler
+
+`IRequestHandler<TRequest, TResponse>` handles requests (commands or queries) that expect a single response, implementing the request/response pattern. Used for commands (write operations) or queries (read operations) where only one handler processes the request and returns a result. Examples: Creating a booking, fetching booking details.
+
 
 
 #### MediatR.Contracts Package
@@ -707,3 +870,12 @@ public class GymCreatedEvent : INotification
     }
 }
 ```
+
+
+
+### Visual Studio and Roslyn Code Quality Level Ups
+
+`.editorconfig` allows you to configure the default code style rules you want to apply to your C# code. This [.editorconfig](#TODO) provides a set of sensible defaults to get started with.
+
+The `Directory.Build.props` file allows you to define default dependencies for all your projects. Such as treating compiler warnings as errors (so you'll have to fix them) and to install the `SonarAnalyzer.CSharp` library that introduces additional source code analyzers.
+
