@@ -28,7 +28,9 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [Dependency Injection and MediatR Bootstrapping](#dependency-injection-and-mediatr-bootstrapping)
     - [CQRS Abstractions](#cqrs-abstractions)
     - [Handling Domain Events](#handling-domain-events)
-    - [Implementing Queries with Dapper](#implementing-queries-with-dapper)
+    - [Cross Cutting Concerns with MediatR Pipelines](#cross-cutting-concerns-with-mediatr-pipelines)
+      - [Logging](#logging)
+      - [Validation with](#validation-with)
   - [Infrastructure layer](#infrastructure-layer)
   - [Presentation layer](#presentation-layer)
 - [.NET Implementation Tips](#net-implementation-tips)
@@ -597,11 +599,58 @@ Considerations:
 │   │       └── ReserveBookingCommandHandler.cs
 ```
 
+#### Cross Cutting Concerns with MediatR Pipelines
 
-#### Implementing Queries with Dapper
+##### Logging
+
+One of the design traits of having all `ICommand` variations implement `IBaseCommand` is that we can hook them all as a single generic type arg when leveraging MediatR pipelines. This [LoggingBehavior.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Application/Abstractions/Behaviors/LoggingBehavior.cs) MediatR pipeline will log all `ICommand` related activity.
+
+1. Install the `Microsoft.Extensions.Logging.Abstractions` NuGet package.
+2. Create the MediatR pipeline class [LoggingBehavior.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Application/Abstractions/Behaviors/LoggingBehavior.cs)
+3. Register the pipeline with the dependency injection setup.
 
 
+Pipeline behavior:
 
+
+```csharp
+public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IBaseCommand
+{
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken
+    )
+    {
+        var name = request.GetType().Name;
+        try
+        {
+            _logger.LogInformation("Executing command {Command}", name);
+            var result = await next();
+            _logger.LogInformation("Command {Command} processed successfully", name);
+            return result;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Command {Command} processing failed", name);
+            throw;
+        }
+    }
+}
+
+```
+
+Dependency injection setup:
+
+```csharp
+services.AddMediatR(configuration =>
+{
+    configuration.AddOpenBehavior(typeof(LoggingBehavior<,>));
+});
+```
+
+##### Validation with 
 
 
 ### Infrastructure layer
@@ -673,12 +722,13 @@ var booking = Booking.Reserve(
 - The **Application Layer** can enjoy more concrete couplings to packages such as MediatR and Dapper for example, for concrete `IRequestHandler` and `INotification` implementations.
 - The **Application Layer** will enjoy loose coupling to the **Domain Layer** by adopting CQRS using MediatR.
 - Contravariant generic arguments in C# are specified with the `in` keyword, e.g: `public interface IQueryHandler<in TQuery, TResponse> : IRequestHandler<TQuery, Result<TResponse>>`. **Contravariance** allows you to use a less derived (more general) type than originally specified. Meaning its possible to assign an `IQueryHandler<BaseQuery, TResponse>` to a variable of type `IQueryHandler<DerivedQuery, TResponse>`, where `DerivedQuery` inherits from `BaseQuery`.
-- Having the different `ICommand` variations implement a common interface `IBaseCommand`, is useful, for expressing MediatR pipeline subscriptions with generic typing constraints, for dealing with cross-cutting concerns. Its also a handy potential maintainablilty point.
-- .NET `record` types in combination with a **Primary Constructors** are an elegant way to represent concrete `IRequest` (i.e. the requests, not the handlers) implementations.
+- Having the different `ICommand` variations implement a common interface `IBaseCommand`, is useful, for expressing MediatR pipeline subscriptions with generic typing constraints, which will be handy when dealing with cross-cutting concerns. Its also just a handy potential maintainablilty point.
+- .NET `record` types in combination with a **Primary Constructors** are an elegant way to represent concrete `IQuery` implementations, which in-turn implement MediatR `IRequest`. The  (i.e. the requests, not the handlers).
 - `IRequestHandler` implementation should be `internal sealed` to prevent undesirable misuse or extension outside of the **Application Layer** assembly.
-- **Queries** and **Commands** will need to return and accept data respectively. These abstractions (e.g. `BookingResponse`) should live in the Application Layer, close-by to the query or commands that work with them. These DTO's should be as plain as possible (POCOs), comprising of primtive types and flat non-nested hierarchical structures.
-- This 
-
+- **Queries** and **Commands** will need to accept and return data respectively. These data transport definitions (e.g. `BookingResponse`) should live in the Application Layer, close-by to the query or commands that work with them. As this layer will be marshalling the data between queries/commands, these DTO's should be as plain as possible (POCOs), comprising of primtive types and flat non-nested hierarchical structures.
+- CQRS sets out the architectural bluebrint for keeping query and command logic separate - its often desirable to exploit differing techniques for querying the data versus modifying it. For example, using a micro ORM like Dapper for fast reads, but leaning into unit of work, repositories and entity framework for managing writes.
+- MediatR provides `IPipelineBehavior` which is an elegant middleware, that allows you to hook and wrap `IRequest` and `INotification` events as they occur. Put these in `Wintermute.Application/Abstractions/Behaviors/`.
+- 
 
 
 
