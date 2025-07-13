@@ -30,7 +30,7 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [Handling Domain Events](#handling-domain-events)
     - [Cross Cutting Concerns with MediatR Pipelines](#cross-cutting-concerns-with-mediatr-pipelines)
       - [Logging](#logging)
-      - [Validation with](#validation-with)
+      - [Validation with FluentValidation](#validation-with-fluentvalidation)
   - [Infrastructure layer](#infrastructure-layer)
   - [Presentation layer](#presentation-layer)
 - [.NET Implementation Tips](#net-implementation-tips)
@@ -650,7 +650,91 @@ services.AddMediatR(configuration =>
 });
 ```
 
-##### Validation with 
+##### Validation with FluentValidation
+
+**FluentValidation** is a popular .NET library for building strongly-typed validation rules for objects. It helps you separate validation logic from your models, making your code cleaner, more maintainable, and testable. TL;DR of how it works:
+
+- You create validator classes by inheriting from `AbstractValidator<T>`, where `T` is your model type.
+- Inside the validator, you define rules using a fluent API (e.g., `RuleFor(x => x.Property).NotEmpty().MaximumLength(100)`).
+- Validators can be registered with the DI container using the `FluentValidation.DependencyInjectionExtensions` NuGet package.
+- At runtime, you resolve and use validators to validate objects, receiving a result that lists any validation failures.
+
+[ValidationBehavior.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Application/Abstractions/Behaviors/ValidationBehavior.cs) is a working example.
+
+
+**Step 1: MediatR pipeline that evaluates FluentValidation validators**
+
+```csharp
+// src\Bookify.Application\Abstractions\Behaviors\ValidationBehavior.cs
+public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IBaseCommand // pipeline only applicable to command types, not queries
+    where TResponse : notnull // ensure that the response type is not null, a requirement in MediatR handlers
+{
+    private readonly IEnumerable<IValidator<TRequest>> _validators; // all relevant validators that apply to the request type
+
+    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
+    {
+        _validators = validators;
+    }
+
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken
+    )
+    {
+        if (!_validators.Any())
+        {
+            return await next(cancellationToken).ConfigureAwait(false);
+        }
+
+        var validationContext = new ValidationContext<TRequest>(request);
+
+        var validationErrors = _validators
+            .Select(v => v.Validate(validationContext))
+            .Where(r => !r.IsValid)
+            .SelectMany(r => r.Errors)
+            .Select(validationError => new ValidationError(
+                validationError.PropertyName,
+                validationError.ErrorMessage
+            ))
+            .ToList();
+
+        if (validationErrors.Count != 0)
+        {
+            throw new Exceptions.ValidationException(validationErrors);
+        }
+
+        return await next(cancellationToken).ConfigureAwait(false);
+    }
+}
+```
+
+**Step 2 Register ValidationBehavior pipeline with dependency injection:**
+
+```csharp
+// src\Wintermute.Application\DependencyInjection.cs
+public static class DependencyInjection
+{
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        services.AddMediatR(configuration =>
+        {
+            configuration.AddOpenBehavior(typeof(ValidationBehavior<,>));
+        });
+        // ...
+        return services;
+    }
+}
+
+```
+
+**Step 3 Create specific AbstractValidator implementations:**
+
+```csharp
+
+```
+
 
 
 ### Infrastructure layer
