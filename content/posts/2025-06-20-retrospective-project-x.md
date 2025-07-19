@@ -1,8 +1,8 @@
 ---
 layout: post
 draft: false
-title: "Software Project Retrospective"
-slug: "retrox"
+title: "Retrospective"
+slug: "retro25"
 date: "2025-06-20 13:13:00+1000"
 lastmod: "2025-06-20 13:13:00+1000"
 comments: false
@@ -12,7 +12,7 @@ categories:
   - develeloper
 ---
 
-This retrospective reflects my perspective on a two-year international software development collaboration, on both technical and human sides of software development.
+This retrospective reflects my observations about technology and human matters as a result of working on a complex 2 year software development project in a geographically dispersed team.
 
 - [Key Successes](#key-successes)
   - [Technical Achievements](#technical-achievements)
@@ -37,22 +37,25 @@ This retrospective reflects my perspective on a two-year international software 
 
 ### Technical Achievements
 
-- Successfully built a horizontally scalable ingest system using Kubernetes and leaned into cloud native approaches early on
-- Established a strong typing system in Python that improved code quality
-- Was the project's Elasticsearch expert:
+- Successfully built a big data horizontally scalable ingestion system using Kubernetes and leaned into cloud native approaches early on
+- Established heavy use of Python type hints early on, which improved code quality and editor aid
+- Evangelised Elasticsearch early in the design phase:
+  - Led the adoption of Elasticsearch for read workloads, in the face of aprehension and inexperience in the broader team
   - Implemented and tuned sophisticated text analysis pipelines
-  - Optimized search with ngram tokenizers, stemming, and asciifolding
-  - Designed efficient document structures and indexing strategies
-  - Led the adoption of Elasticsearch for read workloads
-- Created flexible hierarchy layering design
+  - Optimised search with ngram tokenizers, stemming, and asciifolds
+  - Designed efficient denormalised document structures and indexing strategies
+  - Lesson learned how important it is to make the the most appropriate data storage and management choices, make or break analytic solutions such as the one we collectively built. What consistency guarantees do are required? How fast? How are you going to calculate aggregations? What kind of read or write workloads need to be handled? Can these be separated and tackled as different problems?
+  - Elasticsearch is a HUGE reason why we were successful
+- Created flexible hierarchy layering design, allowing differing customers to stamp the data with their own ways of doing things.
 - Integrated OpenTelemetry for comprehensive observability
 - Developed optimistic locking scheme and deep linking capabilities
-- Automated deployment and quality verification through Bamboo CI pipeline
+- Automated deployments and quality verification with a gigantic test suite investment (unit and integration), linting, autoformatting, all orchestrated with a `Makefile` frontend and Bamboo CI pipeline
+- The team embraced containers heavily from day 1. From running local vendor infra containers (redis, mongo, elasticsearch, etc) to running repeatable build workloads.
 
 ### Process Improvements
 
-- Adopted Make for development automation, significantly boosting productivity
-- Leveraged code generation effectively for complex scenarios
+- Adopted `Make` for development automation, significantly boosting productivity
+- Leveraged code generation effectively for complex scenarios, an ever powerful technique
 - Implemented comprehensive integration testing with containerization
 - Successfully broke down the system into functional components early
 - Established well-defined data schemas upfront, which provided stability
@@ -65,8 +68,8 @@ Team structure and collaboration issues:
 
 - Lack of clear role definitions created power dynamics uncertainty
 - Limited team buy-in; developers focused on ticket completion over quality
-- No regular showcases or knowledge sharing sessions
-- Missing opportunities for team growth and cross-pollination of ideas
+- No regular showcases or knowledge sharing sessions, creating a culture of us vs them, broken window syndrome and morale issues
+- Missed tremendous opportunities for team growth and cross-pollination of ideas
 
 ### Working Software over Comprehensive Documentation
 
@@ -99,12 +102,15 @@ Process Inflexibility:
 - Rigid upfront planning without room for iteration
 - Long release cycles prevented quick adjustments
 - Limited ability to incorporate feedback and learnings
+- Adding large features went through a double litigation review process, resulting in double handling, unnessary time lag to getting good enough code merged
 
 ## Challenges and Learnings
 
 ### Technical Challenges
 
 - Python-specific challenges:
+  - General struggles with Python's magic; pytest fixture injection or complex runtime challenges (e.g. wrong event loop when working with async) frequently producing incorrect code. It turns out [AI agents struggle](https://lucumr.pocoo.org/2025/6/12/agentic-coding/) to write correct Python too.
+  - Unstable toolchain. We evolved from `requirements.txt` to `pyproject.toml`, using `pip`, using rawdog `venv`, using `poetry`, using `uv`. They all have there pros/cons. Every python tutorial out there seems to preach differing recommedations (e.g. Python Packaging in 202X). This distracted the team throughout and plagued the team non-deterministic builds (devs on Windows, MacOS, Linux usually got differing results).
   - Type system limitations and related codebase churn
   - Import resolution and circular dependency issues
   - Async programming complexities:
@@ -116,10 +122,11 @@ Process Inflexibility:
     - Import-time side effects causing hard-to-debug issues
     - Dynamic runtime behaviors making static analysis less effective
   - Performance bottlenecks:
-    - Test suite execution time growing to 15-20 minutes
+    - Test suite execution time took on average 15-20 minutes, and that was after performance tuning and parallelisation efforts
     - Limited improvement despite parallelization efforts
     - Significant overhead in import time and startup
 - Initial struggles with API versioning between frontend and backend
+- Struggle with NoSQL document databases and evolving schemas and representations over time. I think this is a hidden upfront trade off, that you end up paying for down the road. Stuffing unversioned pydantic models into MongoDB and Elasticsearch indices will bite you.
 - Test suite maintenance and mock complexity
 - No common environments or tooling standards
 - Team broadly unskilled in software architecture and design generally, linux basics, kubernetes and helm
@@ -127,14 +134,16 @@ Process Inflexibility:
 ### Team and Communication
 
 - Remote collaboration challenges with a large international team
-- Initial PR process was overly rigid and focused on perfection over progress
-- Limited knowledge sharing and cross-team collaboration
+- PR process was overly rigid and focused on perfection over progress. The PR process carried the weight of poor communication across the team, reviewers often having zero context.
+- Narrow knowledge sharing and cross-team collaboration
 - Waterfall-style management created friction with agile development needs
 - Team commitment and ownership could have been stronger
 - Opportunties for training to bring the team up to a baseline set of skills were missed
+- Technical training would have paid huge dividends, and in the long run is always a cheap investment
 
 ### Architecture Decisions
 
+- The team struggled to make forest (big things that matter) from trees (small things that don't really matter) decisions. The result a fairly dirty hard to maintain codebase, that didn't embrace clean architecture, SOLID principles, etc.
 - Early time investment in technical decisions (linters, formatters, etc.) was possibly excessive
 - Data access layer needed more upfront architectural patterns (Unit of Work, CQRS)
 - Model separation proved valuable (API, business layer, data access layer)
@@ -209,6 +218,7 @@ Architecture Foundation
 - Developed a love for TUI based tools
 - Reinforced appreciation for simple, reliable tools
 - Enhanced leadership and influence skills
+- I now appreciate that software projects are more about people than code
 
 ## Lessons for Future Projects
 
