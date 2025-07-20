@@ -25,19 +25,37 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [Interfaces](#interfaces)
     - [Results and Exceptions](#results-and-exceptions)
   - [Application layer: The Use Case Orchestrator](#application-layer-the-use-case-orchestrator)
+    - [Application Layer Key Responsibilities](#application-layer-key-responsibilities)
+      - [Use Case Orchestration](#use-case-orchestration)
+      - [Higher Order Business Logic](#higher-order-business-logic)
+      - [Cross Cutting Concerns](#cross-cutting-concerns)
+      - [Exception Translation \& Handling](#exception-translation--handling)
+      - [Dependency Injection Hub](#dependency-injection-hub)
+    - [What the Application Layer Does NOT Do](#what-the-application-layer-does-not-do)
+    - [Example Application Service](#example-application-service)
     - [Dependency Injection and MediatR Bootstrapping](#dependency-injection-and-mediatr-bootstrapping)
     - [CQRS Abstractions](#cqrs-abstractions)
     - [Handling Domain Events](#handling-domain-events)
     - [Cross Cutting Concerns with MediatR Pipelines](#cross-cutting-concerns-with-mediatr-pipelines)
-      - [Logging](#logging)
-      - [Validation with FluentValidation](#validation-with-fluentvalidation)
+      - [Logging Pipeline](#logging-pipeline)
+      - [Validation Pipeline with FluentValidation](#validation-pipeline-with-fluentvalidation)
   - [Infrastructure layer](#infrastructure-layer)
+    - [Infrastructure Layer Key Responsibilities](#infrastructure-layer-key-responsibilities)
+      - [Data Persistence and Access](#data-persistence-and-access)
+      - [External Service Integration](#external-service-integration)
+      - [Cross Cutting Concerns Implementation](#cross-cutting-concerns-implementation)
+      - [Event Handling Infrastructure](#event-handling-infrastructure)
+    - [What the Infrastructure Layer Does NOT Do](#what-the-infrastructure-layer-does-not-do)
+    - [Example Concrete Provider for IDateTimeProvider](#example-concrete-provider-for-idatetimeprovider)
+    - [EF Core Setup](#ef-core-setup)
+    - [Integrating Domain Entities with EF Core](#integrating-domain-entities-with-ef-core)
   - [Presentation layer](#presentation-layer)
 - [.NET Implementation Tips](#net-implementation-tips)
   - [General .NET Tips](#general-net-tips)
   - [Domain Layer .NET Tips](#domain-layer-net-tips)
   - [Application Layer .NET Tips](#application-layer-net-tips)
-  - [Bonus: Contemporary .NET gems](#bonus-contemporary-net-gems)
+  - [Infrastructure Layer .NET Tips](#infrastructure-layer-net-tips)
+- [Bonus: Contemporary .NET gems](#bonus-contemporary-net-gems)
   - [Records](#records)
   - [MediatR](#mediatr)
     - [INotification and INotificationHandler](#inotification-and-inotificationhandler)
@@ -408,23 +426,23 @@ public class Result<T> : Result
 Housed in class library `src/Wintermute.Application`, the **Application Layer** is the middle layer that defines **Use Cases** by orchestrating the **Rich Domain Model**. It's the "conductor" that coordinates domain objects to fulfill business scenarios. This layer has no external concerns of its own. **CQRS** (Command Query Responsibility Segregation) is a powerful approach to organising this layer, in a nutshell split data reads (queries) and writes (commands) apart. Cross-cutting concerns will be elegantly managed using the **Decorator Pattern** with MediatR pipeline behaviours (middleware).
 
 
-The five **Application Layer** key conerns:
+#### Application Layer Key Responsibilities
 
-**1. Use Case Orchestration**
+##### Use Case Orchestration
 
 Defines the "what" of business operations without caring about "how", by coordinating multiple domain services, entities, and repositories as workflow of business processes.
 
 Example: `BookApartmentUseCase` orchestrates apartment availability checking, pricing calculation, booking creation, and payment processing.
 
 
-**2. Higher-Level Business Logic**
+##### Higher Order Business Logic
 
 Workflow logic that spans multiple aggregates (e.g. bookings, users, apartments, etc) by defining business rules that don't belong in any single domain entity. As this layer is now responsible for cross-aggregate interactions, it takes on the challenge of managing transactions and consistency rules.
 
 Example: "Cancel booking if payment fails after 3 attempts" is business logic but involves multiple domains
 
 
-**3. Cross-Cutting Concerns**
+##### Cross Cutting Concerns
 
 - Logging: What happened, when, and by whom
 - Validation: Input validation and business rule validation
@@ -434,19 +452,19 @@ Example: "Cancel booking if payment fails after 3 attempts" is business logic bu
 Examples: Log all booking attempts, validate user permissions, cache pricing calculations.
 
 
-**4. Exception Translation & Handling**
+##### Exception Translation & Handling
 
 Translates domain exceptions into application appropriate responses. The app layer needs to deal with infrastructure failures gracefully and provides meaningful error context for upper layers.
 
 Example: Convert `DomainExceptionXYZ` to `ApplicationExceptionXYZ` with business contextual messaging.
 
 
-**5. Dependency Injection Hub**
+##### Dependency Injection Hub
 
 Due to its higher order nature, **Application Services** typically composite many pieces from the rich domain model. Given Clean Architecture embraces the **Dependency Inversion Principle** this is first touch point in the architecture to start defining **Depending Injection** policies, including infrastructure abstractions (repositories, external services) and cross-cutting concern behaviors.
 
 
-**What the Application Layer Does NOT Do:**
+#### What the Application Layer Does NOT Do
 
 - No business rules that belong in the domain
 - No infrastructure concerns (database, external APIs, UI)
@@ -454,7 +472,7 @@ Due to its higher order nature, **Application Services** typically composite man
 - No low-level technical details
 
 
-**Example Application Serivces:**
+#### Example Application Service
 
 Example Application Service (traditional) implementation:
 
@@ -601,7 +619,7 @@ Considerations:
 
 #### Cross Cutting Concerns with MediatR Pipelines
 
-##### Logging
+##### Logging Pipeline
 
 One of the design traits of having all `ICommand` variations implement `IBaseCommand` is that we can hook them all as a single generic type arg when leveraging MediatR pipelines. This [LoggingBehavior.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Application/Abstractions/Behaviors/LoggingBehavior.cs) MediatR pipeline will log all `ICommand` related activity.
 
@@ -650,7 +668,7 @@ services.AddMediatR(configuration =>
 });
 ```
 
-##### Validation with FluentValidation
+##### Validation Pipeline with FluentValidation
 
 **FluentValidation** is a popular .NET library for building strongly-typed validation rules for objects. It helps you separate validation logic from your models, making your code cleaner, more maintainable, and testable. TL;DR of how it works:
 
@@ -665,7 +683,7 @@ services.AddMediatR(configuration =>
 **Step 1: MediatR pipeline that evaluates FluentValidation validators**
 
 ```csharp
-// src\Bookify.Application\Abstractions\Behaviors\ValidationBehavior.cs
+// src/Bookify.Application/Abstractions/Behaviors/ValidationBehavior.cs
 public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IBaseCommand // pipeline only applicable to command types, not queries
     where TResponse : notnull // ensure that the response type is not null, a requirement in MediatR handlers
@@ -713,7 +731,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 **Step 2 Register ValidationBehavior pipeline with dependency injection:**
 
 ```csharp
-// src\Wintermute.Application\DependencyInjection.cs
+// src/Wintermute.Application/DependencyInjection.cs
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
@@ -732,6 +750,33 @@ public static class DependencyInjection
 **Step 3 Create specific AbstractValidator implementations:**
 
 ```csharp
+// src/Bookify.Application/Bookings/ReserveBooking/ReserveBookingCommandValidator.cs
+internal class ReserveBookingCommandValidator : AbstractValidator<ReserveBookingCommand>
+{
+    public ReserveBookingCommandValidator()
+    {
+        RuleFor(c => c.UserId).NotEmpty();
+        RuleFor(c => c.ApartmentId).NotEmpty();
+        RuleFor(c => c.StartDate).LessThan(c => c.EndDate);
+    }
+}
+```
+
+**Step 4 Register Validators with DI:**
+
+
+```csharp
+using Microsoft.Extensions.DependencyInjection;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        // ...
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+        return services;
+    }
+}
 
 ```
 
@@ -739,7 +784,169 @@ public static class DependencyInjection
 
 ### Infrastructure layer
 
-As one of the two outer layers, takes care of interfacing with external systems (DBs, queues, caches, S3, identity, etc).
+> If it's about "what the business does" rather than "how we technically accomplish it," it doesn't belong in the infrastructure layer.
+
+As one of the two outer layers, the **infrastructure layer** serves as the implementation detail layer that handles all external concerns (e.g. configuration, secrets, environment, databases, queues, caches, S3, identity, etc). It's where abstract interfaces defined in the **application layer** get their concrete implementations. This layer is intentionally placed at the outermost ring because it deals with volatile, external dependencies that change frequently.
+
+Typically housed as either a single class library such as `Wintermute.Infrastructure`, or by individual external concern such as `Wintermute.Infrastructure.Identity`, `Wintermute.Infrastructure.Queuing` and so on.
+
+The infrastructure layer's isolation means your business logic remains testable and portable. You can swap out SQL Server for PostgreSQL, or replace Azure Service Bus with RabbitMQ, without touching your core business rules. This separation also enables easier testing through mocking and better adherence to the dependency inversion principle.
+The layer typically contains adapters, gateways, and concrete implementations that translate between your domain's needs and the external world's constraints.
+
+#### Infrastructure Layer Key Responsibilities
+
+##### Data Persistence and Access
+
+Beyond just EF Core setup, this includes implementing repository patterns, unit of work patterns, database migrations, connection string management, and query optimisation such as caching. You'll often find database specific logic here like stored procedure calls, bulk operations, or database specific performance optimisations.
+
+##### External Service Integration
+
+This encompasses REST API clients, SOAP service consumers, message queue producers/consumers (RabbitMQ), caching implementations (Redis, in-memory), file storage (Azure Blob, AWS S3), and email/SMS service integrations.
+
+##### Cross Cutting Concerns Implementation
+
+Logging frameworks (Serilog, NLog), security implementations (JWT handling, encryption), configuration management, health checks, and monitoring/telemetry collection all live here.
+
+##### Event Handling Infrastructure
+
+The concern of domain event publishing. This includes event bus implementations, outbox pattern for reliable messaging, event serialization, and integration event handling for communication between bounded contexts.
+
+
+#### What the Infrastructure Layer Does NOT Do
+
+- **Business Logic or Domain Rules**: The infrastructure layer should never contain business validation, calculations, or decision-making logic. If you find yourself writing "if the customer is premium, then..." in a repository or service client, that logic belongs in the domain or application layer.
+- **Application Flow Control or Orchestration**: It shouldn't coordinate complex workflows, handle use case orchestration, or manage application-level transactions that span multiple operations. That's the application layer's responsibility - infrastructure just executes individual technical operations.
+- **Data Transformation for Business Purposes**: While it may handle technical serialization (JSON to objects), it shouldn't transform data for business reasons. Converting a customer's raw data into a "risk score" or formatting display values belongs in higher layers.
+- **Cross-Boundary Business Validation**: Infrastructure components shouldn't validate business rules that span multiple aggregates or enforce complex business constraints. They can handle technical validation (like "is this a valid email format") but not business validation (like "can this customer place this order").
+- **Application State Management**: It shouldn't maintain application session state, user context, or coordinate between different parts of your application flow. Infrastructure provides services to the application layer but doesn't manage the application's logical state or progression.
+
+
+#### Example Concrete Provider for IDateTimeProvider
+
+
+**Step 1: Application Layer Abstract Provider**
+
+Recall how the **Application Layer** defined abstract providers and services, in effect inverting the dependency tree, a cornerstone of clean architecture. Here is a simple example:
+
+```csharp
+// Bookify.Application/Abstractions/Clock/IDateTimeProvider.cs
+public interface IDateTimeProvider
+{
+    DateTime UtcNow { get; }
+}
+```
+
+**Step 2: Concrete Infrastructure Layer Implementation**
+
+```csharp
+// Bookify.Infrastructure/Clock/DateTimeProvider.cs
+internal sealed class DateTimeProvider : IDateTimeProvider
+{
+    public DateTime UtcNow => DateTime.UtcNow;
+}
+```
+
+**Step 3: Infrastructure Layer Dependency Injection**
+
+```csharp
+// Bookify.Infrastructure/DependencyInjection.cs
+public static class DependencyInjection
+{
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
+    {
+        services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+        services.AddTransient<IEmailService, EmailService>();
+        return services;
+    }
+}
+```
+
+#### EF Core Setup
+
+Entity Framework Core is Microsoft's object relational mapper (ORM) for .NET applications. It acts as a translation layer between your C# objects and your database tables. Instead of writing raw SQL queries, you work with regular C# classes and LINQ queries, and EF Core handles converting those into the appropriate SQL statements for your database.
+
+Key capabilities:
+
+- **Code first development**: define your database schema using C# classes and attributes
+- **Database first development**: generate C# classes from an existing database
+- **Change tracking**: automatically detects when your objects are modified and generates the appropriate `UPDATE` statements
+- **Migrations**: version control for your database schema changes
+- **LINQ query translation**: converts your C# LINQ queries into optimised SQL
+
+EF Core supports multiple database providers (SQL Server, PostgreSQL, SQLite, MySQL, etc.) and handles the database-specific SQL generation for you. It's particularly valuable because it reduces boilerplate data access code, provides compile-time safety for queries, and integrates well with .NET's dependency injection and configuration systems.
+
+**Example**:
+
+```csharp
+// Instead of writing: "SELECT * FROM Customers WHERE City = 'London'"
+var londonCustomers = context.Customers
+    .Where(c => c.City == "London")
+    .ToList();
+```
+
+In our clean architecture, EF Core typically lives in the infrastructure layer as the concrete implementation of your repository interfaces.
+
+1. Add NuGet package `Npgsql.EntityFrameworkCore.PostgreSQL` to `Wintermute.Infrastructure`
+2. Define and initialise the `DbContext` in [Wintermute.Infrastructure/ApplicationDbContext.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/ApplicationDbContext.cs) as `public sealed class ApplicationDbContext : DbContext, IUnitOfWork { }`. Interestly DbContext already satisfies the `IUnitOfWork` contract out of the box.
+3. Parse the DB connection string from config and bind it to `DbContext` using the database specific driver, in this case `services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));`.
+4. Database specific tweaks. In the case of PostgreSQL it is common practice to always use snake casing name for tables. Add NuGet package `EFCore.NamingConventions`, which adds a `UseSnakeCaseNamingConvention` extension method to the `DbContextOptionsBuilder`.
+
+
+#### Integrating Domain Entities with EF Core
+
+This is where two worlds collide, the pure rich domain model and the storage concerns that EF core is concerned with. EF Core *code first* involves using the `EntityTypeBuilder` to hint how the model works relationally, using a fluent style syntax. For example, here's the configuration for the `Apartment` domain model:
+
+```csharp
+// Wintermute.Infrastructure/Configurations/ApartmentConfiguration.cs
+internal sealed class ApartmentConfiguration : IEntityTypeConfiguration<Apartment>
+{
+    public void Configure(EntityTypeBuilder<Apartment> builder)
+    {
+        builder.ToTable("apartments");
+
+        builder.HasKey(apartment => apartment.Id);
+
+        builder.OwnsOne(apartment => apartment.Address);
+
+        builder
+            .Property(apartment => apartment.Name)
+            .HasMaxLength(200)
+            .HasConversion(name => name.Value, value => new Name(value));
+
+        builder
+            .Property(apartment => apartment.Description)
+            .HasMaxLength(2000)
+            .HasConversion(description => description.Value, value => new Description(value));
+
+        builder.OwnsOne(
+            apartment => apartment.Price,
+            priceBuilder =>
+            {
+                priceBuilder
+                    .Property(money => money.Currency)
+                    .HasConversion(currency => currency.Code, code => Currency.FromCode(code));
+            }
+        );
+
+        builder.OwnsOne(
+            apartment => apartment.CleaningFee,
+            priceBuilder =>
+            {
+                priceBuilder
+                    .Property(money => money.Currency)
+                    .HasConversion(currency => currency.Code, code => Currency.FromCode(code));
+            }
+        );
+
+        builder.Property<uint>("Version").IsRowVersion();
+    }
+}
+```
+
+
 
 ### Presentation layer
 
@@ -811,12 +1018,19 @@ var booking = Booking.Reserve(
 - `IRequestHandler` implementation should be `internal sealed` to prevent undesirable misuse or extension outside of the **Application Layer** assembly.
 - **Queries** and **Commands** will need to accept and return data respectively. These data transport definitions (e.g. `BookingResponse`) should live in the Application Layer, close-by to the query or commands that work with them. As this layer will be marshalling the data between queries/commands, these DTO's should be as plain as possible (POCOs), comprising of primtive types and flat non-nested hierarchical structures.
 - CQRS sets out the architectural bluebrint for keeping query and command logic separate - its often desirable to exploit differing techniques for querying the data versus modifying it. For example, using a micro ORM like Dapper for fast reads, but leaning into unit of work, repositories and entity framework for managing writes.
-- MediatR provides `IPipelineBehavior` which is an elegant middleware, that allows you to hook and wrap `IRequest` and `INotification` events as they occur. Put these in `Wintermute.Application/Abstractions/Behaviors/`.
-- 
+- MediatR provides `IPipelineBehavior` which is an elegant middleware like implementation, that allows you to hook and wrap `IRequest` and `INotification` events as they occur. Put these in `Wintermute.Application/Abstractions/Behaviors/`.
+- An incredibly elegant way to integrate cross cutting validation is by combining MediatR pipelines and FluentValidation, see [Validation Pipeline with FluentValidation](#validation-pipeline-with-fluentvalidation). TL;DR an `IPipelineBehavior` that applies to only `IBaseCommand` types (i.e. commands not queries), that through dependency injection only receives an applicable collection of `IValidator` implementations.
 
 
 
-### Bonus: Contemporary .NET gems
+### Infrastructure Layer .NET Tips
+
+- Create a `Wintermute.Infrastructure` class library. The **Infrastructure Layer**, as one of two bottom layers (outer layers of the onion), can leverge the **Application** and **Domain** layers. Add a project reference to `Wintermute.Application`.
+- Like the **Application Layer**, will take care of dependency injection concerns that relate to infrastructure. Add a top level `DependencyInjection.cs`. Using `Microsoft.Extensions.DependencyInjection`, in addition to defining the  `this IServiceCollection services` extension method, at this layer will want to bind in externally defined configuration via `IConfiguration`. Not a base class library, add a NuGet package for `Microsoft.Extensions.Configuration.Abstractions`.
+
+
+
+## Bonus: Contemporary .NET gems
 
 - `DateOnly` and `TimeOnly` structs (.NET6)
 - Init properties (C#9) `public DateOnly End { get; init; }` can only be set during object initialization
