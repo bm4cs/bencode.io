@@ -897,7 +897,7 @@ In our clean architecture, EF Core typically lives in the infrastructure layer a
 
 #### Integrating Domain Entities with EF Core
 
-This is where two worlds collide, the pure rich domain model and the storage concerns that EF core is concerned with. EF Core *code first* involves using the `EntityTypeBuilder` to hint how the model works relationally, using a fluent style syntax. For example, here's the configuration for the `Apartment` domain model:
+This is where two worlds collide, the pure rich domain model and the storage concerns that EF core is concerned with. EF Core's *code first* approach involves using an `EntityTypeBuilder` to express how the model works relationally and other DB enforcable traits that may apply to each domain model, all using a fluent style syntax. For example, here's the configuration for the `Apartment` domain model:
 
 ```csharp
 // Wintermute.Infrastructure/Configurations/ApartmentConfiguration.cs
@@ -942,6 +942,19 @@ internal sealed class ApartmentConfiguration : IEntityTypeConfiguration<Apartmen
         );
 
         builder.Property<uint>("Version").IsRowVersion();
+    }
+}
+```
+
+Applying model configurations can be done automatically, by hooking the `OnModelCreating` event on the custom `DbContext` sub-class and sniffing the assembly for any `IEntityTypeConfiguration` implementations.
+
+```csharp
+public sealed class ApplicationDbContext : DbContext, IUnitOfWork
+{
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        base.OnModelCreating(modelBuilder);
     }
 }
 ```
@@ -1027,7 +1040,7 @@ var booking = Booking.Reserve(
 
 - Create a `Wintermute.Infrastructure` class library. The **Infrastructure Layer**, as one of two bottom layers (outer layers of the onion), can leverge the **Application** and **Domain** layers. Add a project reference to `Wintermute.Application`.
 - Like the **Application Layer**, will take care of dependency injection concerns that relate to infrastructure. Add a top level `DependencyInjection.cs`. Using `Microsoft.Extensions.DependencyInjection`, in addition to defining the  `this IServiceCollection services` extension method, at this layer will want to bind in externally defined configuration via `IConfiguration`. Not a base class library, add a NuGet package for `Microsoft.Extensions.Configuration.Abstractions`.
-
+- 
 
 
 ## Bonus: Contemporary .NET gems
