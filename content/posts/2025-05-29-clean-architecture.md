@@ -49,6 +49,8 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [Example Concrete Provider for IDateTimeProvider](#example-concrete-provider-for-idatetimeprovider)
     - [EF Core Setup](#ef-core-setup)
     - [Integrating Domain Entities with EF Core](#integrating-domain-entities-with-ef-core)
+    - [Publishing Domain Events in the Unit of Work](#publishing-domain-events-in-the-unit-of-work)
+    - [Handling Race Conditions with Optimistic Concurrency](#handling-race-conditions-with-optimistic-concurrency)
   - [Presentation layer](#presentation-layer)
 - [.NET Implementation Tips](#net-implementation-tips)
   - [General .NET Tips](#general-net-tips)
@@ -890,7 +892,7 @@ var londonCustomers = context.Customers
 In our clean architecture, EF Core typically lives in the infrastructure layer as the concrete implementation of your repository interfaces.
 
 1. Add NuGet package `Npgsql.EntityFrameworkCore.PostgreSQL` to `Wintermute.Infrastructure`
-2. Define and initialise the `DbContext` in [Wintermute.Infrastructure/ApplicationDbContext.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/ApplicationDbContext.cs) as `public sealed class ApplicationDbContext : DbContext, IUnitOfWork { }`. Interestly DbContext already satisfies the `IUnitOfWork` contract out of the box.
+2. Define and initialise the `DbContext` in [Wintermute.Infrastructure/ApplicationDbContext.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/ApplicationDbContext.cs) as `public sealed class ApplicationDbContext : DbContext, IUnitOfWork { }`. Interestly `DbContext` already satisfies the `IUnitOfWork` contract out of the box, and can literally be injected as the `IUnitOfWork` implementation `services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());`
 3. Parse the DB connection string from config and bind it to `DbContext` using the database specific driver, in this case `services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));`.
 4. Database specific tweaks. In the case of PostgreSQL it is common practice to always use snake casing name for tables. Add NuGet package `EFCore.NamingConventions`, which adds a `UseSnakeCaseNamingConvention` extension method to the `DbContextOptionsBuilder`.
 
@@ -960,6 +962,96 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 ```
 
 
+#### Publishing Domain Events in the Unit of Work
+
+A common place (choak point) to evaluate and publish domain events is within the Unit Of Work, which in the case of EF Core is the `DbContext`. TL;DR add `PublishDomainEventsAsync` (see below) and invoke it in an override of `SaveChangesAsync`.
+
+```csharp
+public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+{
+    var result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    await PublishDomainEventsAsync().ConfigureAwait(false);  // this could fail killing the transaction, level up with outbox
+    return result;
+}
+
+private async Task PublishDomainEventsAsync()
+{
+    var domainEvents = ChangeTracker
+        .Entries<Entity>()
+        .Select(e => e.Entity)
+        .SelectMany(e =>
+        {
+            var domainEvents = e.GetDomainEvents();
+            e.ClearDomainEvents();  // Event handlers could in turn further DbContexts
+            return domainEvents;
+        })
+        .ToList();
+
+    foreach (var domainEvent in domainEvents)
+    {
+        await _publisher.Publish(domainEvent).ConfigureAwait(false); // MediatR publish
+    }
+}
+```
+
+
+#### Handling Race Conditions with Optimistic Concurrency
+
+> In EF Core, [optimistic concurrency](https://learn.microsoft.com/en-us/ef/core/saving/concurrency?tabs=data-annotations) is implemented by configuring a property as a concurrency token. The concurrency token is loaded and tracked when an entity is queried. Then, when an update or delete operation is performed during `SaveChanges()`, the value of the concurrency token on the database is compared against the original value read by EF Core.
+
+Here can leverage EF Core's `DbUpdateConcurrencyException`. So that the **Application Layer** remains insulated from infrastructure level concerns, publish a custom `ConcurrencyException` defined in the **Domain Layer**.
+
+
+```csharp
+// Wintermute.Infrastructure/ApplicationDbContext.cs
+public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+{
+    try
+    {
+        var result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await PublishDomainEventsAsync().ConfigureAwait(false);
+        return result;
+    }
+    catch (DbUpdateConcurrencyException ex)
+    {
+        throw new ConcurrencyException("Concurrency exception occurred.", ex);
+    }
+}
+```
+
+`ICommandHandler` implementations in the **Application Layer** can react to concurrency conflicts from a business perspective, for example in `ReserveBookingCommandHandler`:
+
+```csharp
+// Wintermute.Application/Bookings/ReserveBooking/ReserveBookingCommandHandler.cs
+try
+{
+    var booking = Booking.Reserve(
+        apartment,
+        user.Id,
+        duration,
+        _dateTimeProvider.UtcNow,
+        _pricingService
+    );
+
+    _bookingRepository.Add(booking);
+
+    await _unitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+    return booking.Id;
+}
+catch (ConcurrencyException)
+{
+    return Result.Failure<Guid>(BookingErrors.Overlap);
+}
+```
+
+With concurrency detection and handling in place, the remaining piece is to instruct EF Core what specific fields should be used for row versioning. This is done in the `IEntityTypeConfiguration` definitions, for example `ApartmentConfiguration`:
+
+```csharp
+builder.Property<uint>("Version").IsRowVersion();  // adds a shadow state property, which the npgsql driver will back with an xmin system column
+```
+
+Npgsql will create a [concurrency token](https://www.npgsql.org/efcore/modeling/concurrency.html) that is backed with an `xmin` system column, which holds the ID of the last transaction that updated the row.
 
 ### Presentation layer
 
@@ -1030,7 +1122,7 @@ var booking = Booking.Reserve(
 - .NET `record` types in combination with a **Primary Constructors** are an elegant way to represent concrete `IQuery` implementations, which in-turn implement MediatR `IRequest`. The  (i.e. the requests, not the handlers).
 - `IRequestHandler` implementation should be `internal sealed` to prevent undesirable misuse or extension outside of the **Application Layer** assembly.
 - **Queries** and **Commands** will need to accept and return data respectively. These data transport definitions (e.g. `BookingResponse`) should live in the Application Layer, close-by to the query or commands that work with them. As this layer will be marshalling the data between queries/commands, these DTO's should be as plain as possible (POCOs), comprising of primtive types and flat non-nested hierarchical structures.
-- CQRS sets out the architectural bluebrint for keeping query and command logic separate - its often desirable to exploit differing techniques for querying the data versus modifying it. For example, using a micro ORM like Dapper for fast reads, but leaning into unit of work, repositories and entity framework for managing writes.
+- CQRS sets out the architectural bluebrint for keeping query and command logic separate. Its often desirable to exploit differing techniques for querying the data versus modifying it. For example, using a micro ORM like Dapper for fast reads, but leaning into unit of work, repositories and entity framework for managing writes.
 - MediatR provides `IPipelineBehavior` which is an elegant middleware like implementation, that allows you to hook and wrap `IRequest` and `INotification` events as they occur. Put these in `Wintermute.Application/Abstractions/Behaviors/`.
 - An incredibly elegant way to integrate cross cutting validation is by combining MediatR pipelines and FluentValidation, see [Validation Pipeline with FluentValidation](#validation-pipeline-with-fluentvalidation). TL;DR an `IPipelineBehavior` that applies to only `IBaseCommand` types (i.e. commands not queries), that through dependency injection only receives an applicable collection of `IValidator` implementations.
 
@@ -1040,6 +1132,8 @@ var booking = Booking.Reserve(
 
 - Create a `Wintermute.Infrastructure` class library. The **Infrastructure Layer**, as one of two bottom layers (outer layers of the onion), can leverge the **Application** and **Domain** layers. Add a project reference to `Wintermute.Application`.
 - Like the **Application Layer**, will take care of dependency injection concerns that relate to infrastructure. Add a top level `DependencyInjection.cs`. Using `Microsoft.Extensions.DependencyInjection`, in addition to defining the  `this IServiceCollection services` extension method, at this layer will want to bind in externally defined configuration via `IConfiguration`. Not a base class library, add a NuGet package for `Microsoft.Extensions.Configuration.Abstractions`.
+- [Wintermute.Infrastructure/ApplicationDbContext.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/ApplicationDbContext.cs) the specific `DbContext` implementation already satisfies the `IUnitOfWork` contract out of the box, and can literally be injected as the `IUnitOfWork` implementation `services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());`
+- Dapper by default doesn't know how to encode `DateOnly` types, a [DateOnlyTypeHandler](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Data/DateOnlyTypeHandler.cs) Dapper `TypeHandler` is used. Finally Dapper knows about it at bootstrapping time (for example during DI setup) `SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());`
 - 
 
 
@@ -1203,10 +1297,13 @@ In clean architecture, MediatR is particularly valuable:
 
 `INotificationHandler<TNotification>` handles notifications (events) that may have multiple handlers, or in other words the publish/subscribe pattern. Used for domain or integration events. When a notification is published, all registered handlers are invoked. Examples: Sending an email, logging, or updating a read model after something happens.
 
+`INotification` types can be published using an `IPublisher`.
+
 #### IRequest and IRequestHandler
 
 `IRequestHandler<TRequest, TResponse>` handles requests (commands or queries) that expect a single response, implementing the request/response pattern. Used for commands (write operations) or queries (read operations) where only one handler processes the request and returns a result. Examples: Creating a booking, fetching booking details.
 
+`IRequest` types can be sent using `IMediator.Send`.
 
 
 #### MediatR.Contracts Package
