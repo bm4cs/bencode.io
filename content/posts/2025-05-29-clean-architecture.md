@@ -1134,9 +1134,50 @@ Shouldn't maintain business state between requests (beyond basic session/authent
 While it might trigger logging or caching, the actual implementation of these concerns should be handled by infrastructure components, not embedded in presentation logic.
 
 
-
-
 #### API Controllers and Endpoints
+
+```csharp
+[ApiController]
+[Route("api/bookings")]
+public class BookingsController : ControllerBase
+{
+    private readonly ISender _sender; // To publish MediatR events
+
+    public BookingsController(ISender sender)
+    {
+        _sender = sender;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ReserveBooking(
+        ReserveBookingRequest request, // Simple DTO to decouple presentation layer representation
+        CancellationToken cancellationToken
+    )
+    {
+        var command = new ReserveBookingCommand(
+            request.ApartmentId,
+            request.UserId,
+            request.StartDate,
+            request.EndDate
+        );
+
+        Result<Guid> result = await _sender
+            .Send(command, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        // RESTful return 201 for creation with location header to corresponding GET API
+        return CreatedAtAction(nameof(GetBooking), new { id = result.Value }, result.Value);
+    }
+}
+```
+
+When dealing with more complex objects in the API's, its important to create a layer of DTO's that glue between the MVC API and **Query** or **Command** that is delegated to internally with the API. These simple .NET records should be placed next to the `Controller` classes, so they are nearby, as they are semantically related.
+
 
 
 
@@ -1220,7 +1261,8 @@ var booking = Booking.Reserve(
 
 - Create `Wintermute.Api`, either as a minimal web API or full blown MVC API. Add references to the `Wintermute.Infrastructure` and `Wintermute.Application` projects.
 - In API's `Program.cs` where the `WebApplicationBuilder` is bootstrapped and configured, register the **Infrastructure** and **Application** layers DI setup, but calling their respective builder extension methods, `builder.Services.AddInfrastructure(builder.Configuration)` and `builder.Services.AddApplication()` respectively.
-
+- When dealing with more complex objects in the API's, its important to create a layer of DTO's that glue between the MVC API and **Query** or **Command** that is delegated to internally with the API. These simple .NET records should be placed next to the `Controller` classes, so they are nearby, as they are semantically related.
+- In API's that create data, its RESTful to return an HTTP 201, with a `Location` header to the URI of the complimentary API responsible for reading the object. MVC provides `CreatedAtAction` for this, for example: `return CreatedAtAction(nameof(GetBooking), new { id = result.Value }, result.Value)`.
 
 
 ## Bonus: Contemporary .NET gems
