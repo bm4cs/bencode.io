@@ -52,18 +52,39 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [Publishing Domain Events in the Unit of Work](#publishing-domain-events-in-the-unit-of-work)
     - [Handling Race Conditions with Optimistic Concurrency](#handling-race-conditions-with-optimistic-concurrency)
   - [Presentation layer](#presentation-layer)
+    - [Presentation Layer Key Responsibilities](#presentation-layer-key-responsibilities)
+      - [Input Handling and Validation](#input-handling-and-validation)
+      - [Request Translation](#request-translation)
+      - [Response Formatting](#response-formatting)
+      - [Authentication and Authorization](#authentication-and-authorization)
+      - [Error Handling and Translation](#error-handling-and-translation)
+      - [Dependency Injection Configuration](#dependency-injection-configuration)
+    - [What the Presentation Layer Does NOT Do](#what-the-presentation-layer-does-not-do)
+      - [Business Logic](#business-logic)
+      - [Data Access](#data-access)
+      - [Complex Validation](#complex-validation)
+      - [State Management](#state-management)
+      - [Cross-Cutting Concerns Implementation](#cross-cutting-concerns-implementation-1)
+    - [API Controllers and Endpoints](#api-controllers-and-endpoints)
 - [.NET Implementation Tips](#net-implementation-tips)
   - [General .NET Tips](#general-net-tips)
   - [Domain Layer .NET Tips](#domain-layer-net-tips)
   - [Application Layer .NET Tips](#application-layer-net-tips)
   - [Infrastructure Layer .NET Tips](#infrastructure-layer-net-tips)
+  - [Presentation Layer .NET Tips](#presentation-layer-net-tips)
 - [Bonus: Contemporary .NET gems](#bonus-contemporary-net-gems)
+  - [Primary Constructors](#primary-constructors)
+  - [Switch Expressions](#switch-expressions)
   - [Records](#records)
+  - [Async Tips](#async-tips)
   - [MediatR](#mediatr)
-    - [INotification and INotificationHandler](#inotification-and-inotificationhandler)
-    - [IRequest and IRequestHandler](#irequest-and-irequesthandler)
+    - [IRequest and IRequestHandler - Request/Response](#irequest-and-irequesthandler---requestresponse)
+      - [Publishing](#publishing)
+    - [INotification and INotificationHandler - Pub/Sub](#inotification-and-inotificationhandler---pubsub)
+      - [Publishing](#publishing-1)
     - [MediatR.Contracts Package](#mediatrcontracts-package)
   - [Visual Studio and Roslyn Code Quality Level Ups](#visual-studio-and-roslyn-code-quality-level-ups)
+  - [dotnet CLI Tips](#dotnet-cli-tips)
 
 ## Glossary
 
@@ -1055,9 +1076,67 @@ Npgsql will create a [concurrency token](https://www.npgsql.org/efcore/modeling/
 
 ### Presentation layer
 
-Single point of entry to the application. Requests are processed by leveraging the layers below.
+The bridge between the core business logic and the outside world. Its a receptionist; greets visitors, checks if they have appointments, direct them to the right department, and communicate responses back. They don't make business decisions or handle the actual work.
+ 
+By separating the concern of how data is displayed/received and how business logic operates, allows change to occur in user interfaces, API formats, or communication protocols without impacting core business rules. For example, you could switch from a web API to a desktop application, or from REST to GraphQL, while keeping all your business logic intact.
 
-Typical examples: REST API, gRPC, SPA, CLI
+Even more compelling, it encourages multiple presentation formats for the same underlying functionality. Such as serving web APIs, mobile apps, console applications, and background services simultaneously, each with their own presentation layer implementation.
+
+
+#### Presentation Layer Key Responsibilities
+
+##### Input Handling and Validation
+
+The presentation layer receives requests from external sources (HTTP requests, user input, messages) and performs initial validation like format checking, required field validation, and basic data type conversion. This is only structural validation, not business rule validation.
+
+##### Request Translation
+
+It converts external requests into commands, queries, or DTOs that your application layer understands. For instance, transforming HTTP POST data into a `CreateGymMemberCommand` object.
+
+##### Response Formatting
+
+Takes the results from your application layer and formats them appropriately for the consumer, serializing to JSON, rendering HTML views, formatting console output, so on.
+
+##### Authentication and Authorization
+
+Handles user authentication (verifying identity) and often the first level of authorization (checking if a user can access an endpoint), though business level authorization should remain in deeper layers.
+
+##### Error Handling and Translation
+
+Catches exceptions from inner layers and translates them into appropriate responses for the consumer (HTTP status codes, user-friendly error messages, etc).
+
+##### Dependency Injection Configuration
+
+Often responsible for wiring up the dependency injection container and configuring how different layers glue together.
+
+
+
+#### What the Presentation Layer Does NOT Do
+
+##### Business Logic
+
+Never implement business rules, calculations, or domain-specific operations. The presentation layer shouldn't know that "premium customers get 10% discount" or "orders over $100 qualify for free shipping."
+
+##### Data Access
+
+Should never directly query databases, call external APIs, or handle data persistence. All data operations should flow through the application layer.
+
+##### Complex Validation
+
+While it can check if an email field contains an "@" symbol, it shouldn't validate business rules like "users can only have 5 active subscriptions."
+
+##### State Management
+
+Shouldn't maintain business state between requests (beyond basic session/authentication data). Each request should be stateless from a business perspective.
+
+##### Cross-Cutting Concerns Implementation
+
+While it might trigger logging or caching, the actual implementation of these concerns should be handled by infrastructure components, not embedded in presentation logic.
+
+
+
+
+#### API Controllers and Endpoints
 
 
 
@@ -1137,19 +1216,26 @@ var booking = Booking.Reserve(
 - 
 
 
+### Presentation Layer .NET Tips
+
+- Create `Wintermute.Api`, either as a minimal web API or full blown MVC API. Add references to the `Wintermute.Infrastructure` and `Wintermute.Application` projects.
+- In API's `Program.cs` where the `WebApplicationBuilder` is bootstrapped and configured, register the **Infrastructure** and **Application** layers DI setup, but calling their respective builder extension methods, `builder.Services.AddInfrastructure(builder.Configuration)` and `builder.Services.AddApplication()` respectively.
+
+
+
 ## Bonus: Contemporary .NET gems
 
 - `DateOnly` and `TimeOnly` structs (.NET6)
 - Init properties (C#9) `public DateOnly End { get; init; }` can only be set during object initialization
-- Primary Constructors (C#11) combines constructor parameters such as `public class User(string firstName)` directly with property initialization `public string FirstName { get; } = firstName;`. The optional constructor body uses the => syntax for any additional initialization logic.
-- `switch` expressions (C#8)
+- Primary Constructors (C#11) combines constructor parameters such as `public class User(string firstName)` directly with property initialization `public string FirstName { get; } = firstName;`. The optional constructor body uses the => syntax for any additional initialization logic, see [Primary Constructors](#primary-constructors)
+- `switch` expressions (C#8) see [Switch Expressions](#switch-expressions)
 - `null` forgiving operator e.g. `_value!` tells the compiler not to warn about `_value` possibly being `null`.
 - The `implicit operator` in C# defines an implicit conversion between types, e.g. `public static implicit operator Result<T>(T? value) => Create(value)` allows assignment of a value of type `T` directly to a variable of type `Result<T>`, and the compiler will automatically convert it using the `Create` method. This simple assignment `Result<string> result = "hello";` implicitly calls `Result<string>.Create("hello")`
 - `with` expressions: TODO
 - Extension methods: TODO see `Wintermute.Application/DependencyInjection.cs`
 
 
-**Primary Constructors:**
+### Primary Constructors
 
 ```csharp
 // PRIMARY CONSTRUCTORS in C# 11
@@ -1163,7 +1249,7 @@ public class User(string firstName, string lastName)
 }
 ```
 
-**Switch Expressions**:
+### Switch Expressions
 
 ```csharp
 // SWITCH EXPRESSIONS in C# 8
@@ -1272,6 +1358,25 @@ public record Currency
 ```
 
 
+### Async Tips
+
+- Always use `async Task<T>` or `async Task` for async methods
+- Accept `CancellationToken` in all async APIs, which enables cooperative cancellation
+- Pass `CancellationToken` down call chain
+- Avoid `async void` (except event handlers)
+- Use `ConfigureAwait(false)` to avoid capturing context (library code, non-UI), known as a continuation.
+- Never block on async code (`.Result`, `.Wait()`), which causes deadlocks
+- Prefer `ValueTask<T>` for high-frequency, allocation-sensitive paths
+- Use `Task.WhenAll` for parallelism, not `Task.WaitAll`
+- Return completed tasks for sync paths: `Task.CompletedTask`, `Task.FromResult(value)`
+- Avoid fire-and-forget unless handled (log, observe exceptions), i.e. starting a `Task` without awaiting or tracking it
+  - If the `Task` fails, exceptions are unobserved (can crash process or be lost)
+  - No way to know if/when the work completed or failed
+  - Always log, observe, or attach a continuation to handle errors
+
+
+
+
 ### MediatR
 
 MediatR is a .NET library that implements the Mediator pattern. It acts as an in-process messaging framework that decouples components by providing a simple way to publish commands, queries, and notifications without having direct dependencies between classes.
@@ -1292,18 +1397,43 @@ In clean architecture, MediatR is particularly valuable:
 - Domain Events: Perfect for publishing domain events when business rules are triggered
 
 
-
-#### INotification and INotificationHandler
-
-`INotificationHandler<TNotification>` handles notifications (events) that may have multiple handlers, or in other words the publish/subscribe pattern. Used for domain or integration events. When a notification is published, all registered handlers are invoked. Examples: Sending an email, logging, or updating a read model after something happens.
-
-`INotification` types can be published using an `IPublisher`.
-
-#### IRequest and IRequestHandler
+#### IRequest and IRequestHandler - Request/Response
 
 `IRequestHandler<TRequest, TResponse>` handles requests (commands or queries) that expect a single response, implementing the request/response pattern. Used for commands (write operations) or queries (read operations) where only one handler processes the request and returns a result. Examples: Creating a booking, fetching booking details.
 
-`IRequest` types can be sent using `IMediator.Send`.
+##### Publishing
+
+`IRequest` types can be sent using `IMediator.Send`. The cleanest approach, for decoupling and testability, is to dependency inject an `ISender` into the call sites that need to publish requests.
+
+```csharp
+private readonly ISender _sender;
+
+public ApartmentsController(ISender sender)
+{
+    _sender = sender;
+}
+
+[HttpGet]
+public async Task<IActionResult> SearchApartments(
+    DateOnly startDate,
+    DateOnly endDate,
+    CancellationToken cancellationToken = default
+)
+{
+    var query = new SearchApartmentsQuery(startDate, endDate);
+    var result = await _sender.Send(query, cancellationToken).ConfigureAwait(false);
+    // result is Task<Domain.Abstractions.Result<IReadOnlyList<ApartmentResponse>>>
+}
+```
+
+#### INotification and INotificationHandler - Pub/Sub
+
+`INotificationHandler<TNotification>` handles notifications (events) that may have multiple handlers, or in other words the publish/subscribe pattern. Used for domain or integration events. When a notification is published, all registered handlers are invoked. Examples: Sending an email, logging, or updating a read model after something happens.
+
+##### Publishing
+
+`INotification` types can be published using an `IPublisher`.
+
 
 
 #### MediatR.Contracts Package
@@ -1337,3 +1467,39 @@ public class GymCreatedEvent : INotification
 
 The `Directory.Build.props` file allows you to define default dependencies for all your projects. Such as treating compiler warnings as errors (so you'll have to fix them) and to install the `SonarAnalyzer.CSharp` library that introduces additional source code analyzers.
 
+
+
+
+### dotnet CLI Tips
+
+```sh
+# add NuGet package to project
+dotnet add src/Bookify.Api/Bookify.Api.csproj package Microsoft.AspNetCore.Mvc
+
+# restore NuGet packages
+dotnet restore
+
+# build the solution/project
+dotnet build
+
+# run the app (from project dir)
+dotnet run --project src/Bookify.Api/Bookify.Api.csproj
+
+# run all tests in solution
+dotnet test
+
+# publish for deployment (self-contained, release)
+dotnet publish src/Bookify.Api/Bookify.Api.csproj -c Release -r win-x64 --self-contained true -o ./publish
+
+# update all NuGet packages in a project
+dotnet outdated src/Bookify.Api/Bookify.Api.csproj
+
+# install tools from .config/dotnet-tools.json
+dotnet tool restore
+
+# list installed tools
+dotnet tool list --local
+
+# run a tool (ex: Cake build)
+dotnet cake build.cake --target="$Target" --configuration="$Configuration"
+```
