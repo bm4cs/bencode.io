@@ -22,13 +22,13 @@ categories:
 | **Ask**                | The lowest price a seller is willing to accept for a security                                           |
 | **ASX**                | Australian Securities Exchange - Australia's primary stock exchange                                     |
 | **ATR**                | Average True Range - measures volatility over a specified period                                        |
+| **Bear market**        | Prices of securities are falling, or are expected to fall                                               |
 | **Bid**                | The highest price a buyer is willing to pay for a security                                              |
 | **Breakout**           | When price moves beyond a defined support or resistance level                                           |
-| **Bull/Bear Market**   | Bull = rising market, Bear = falling market                                                             |
-| **Bullish Market**     | Market characterized by rising prices and investor optimism                                             |
+| **Bull market**        | Market characterised by rising prices and investor optimism                                             |
 | **CFD**                | Contract for Difference - derivative for speculating on price movements without owning underlying asset |
 | **Chi-X**              | Alternative stock exchange operating in Australia                                                       |
-| **Derivative**         | TODO                                                                                                    |
+| **Derivative**         | Financial contract whose value is anchored to price of an underlying asset (stock, index, or commodity) |
 | **DMA**                | Direct Market Access - electronic trading without broker intermediation                                 |
 | **ECN**                | Electronic Communication Network - automated system matching buy/sell orders                            |
 | **EMA**                | Exponential Moving Average - gives more weight to recent prices                                         |
@@ -48,7 +48,7 @@ categories:
 | **P&L**                | Profit and Loss statement                                                                               |
 | **Pullback**           | Temporary reversal in the direction of a trend                                                          |
 | **Resistance**         | Price level where selling pressure historically emerges                                                 |
-| **Retracement**        | TODO                                                                                                    |
+| **Retracement**        | Temporary reversal in the direction of a price trend, followed by a return to the original trend        |
 | **RSI**                | Relative Strength Index - momentum oscillator measuring speed and change of price movements             |
 | **Scalping**           | Very short-term trading strategy holding positions for seconds to minutes                               |
 | **SMA**                | Simple Moving Average - arithmetic mean of prices over specified periods                                |
@@ -69,9 +69,9 @@ categories:
 
 ## Indicators
 
-| Term                | Definition                                                                                                    |
-| ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| **Bollinger Bands** | Technical indicator using moving averages and standard deviations to identify overbought/oversold conditions. |
-| **MACD**            | Moving Average Convergence Divergence - momentum indicator                                                    |
-| **Stochastic**      | TODO Developed by George Lane                                                                                 |
-| **Volume**          | Number of shares or contracts traded in a given period                                                        |
+| Indicator           | Definition                                                                                               |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Bollinger Bands** | Momentum indicator of moving averages and standard deviations to identify overbought/oversold conditions |
+| **MACD**            | Moving Average Convergence Divergence                                                                    |
+| **Stochastic**      | Momentum indicator comparing a security's closing price to its price range over a set period             |
+| **Volume**          | Number of shares or contracts traded in a given period                                                   |
