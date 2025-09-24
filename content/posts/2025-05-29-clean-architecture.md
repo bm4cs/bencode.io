@@ -4,7 +4,7 @@ draft: false
 title: "Clean Architecture"
 slug: "cleanarch"
 date: "2025-05-29 20:14:01+1000"
-lastmod: "2025-05-29 20:14:01+1000"
+lastmod: "2025-09-13 13:13:01+1000"
 comments: false
 categories:
   - software
@@ -66,6 +66,7 @@ Domain centric architectures, like clean architecture, have inner architectural 
       - [State Management](#state-management)
       - [Cross-Cutting Concerns Implementation](#cross-cutting-concerns-implementation-1)
     - [API Controllers and Endpoints](#api-controllers-and-endpoints)
+    - [Seed Data and EF Migrations](#seed-data-and-ef-migrations)
 - [.NET Implementation Tips](#net-implementation-tips)
   - [General .NET Tips](#general-net-tips)
   - [Domain Layer .NET Tips](#domain-layer-net-tips)
@@ -163,7 +164,6 @@ To centralise common entity concerns like this, will build out `abstract` class 
 
 Entities should not expose their constructor and instead provide a static factory method, for example called `Create()`. This keeps the constructor pure in that there is less pressure to overwhelm it with non-constructor concerns (because its a convenient lifecycle hook). The killer reason however, is because a factory method is likely to be laden with side effects in the form of domain events.
 
-
 For a robust and consistent equality its best practice is to:
 
 - Override `Equals(object?)` to compare entities by their identity.
@@ -171,17 +171,13 @@ For a robust and consistent equality its best practice is to:
 - Optionally, implement `IEquatable<Entity>` for type safety and performance.
 - Overload the `==` and `!=` operators for convenience.
 
-
-
-
-
 💀 Be wary of **anemic domain models** where domain objects (entities) primarily serve as data containers with little to no embedded business logic. The business logic is instead typically placed in separate service layers or managers, leading to a procedural programming style. This contrasts with a _rich domain model_ where entities encapsulate both data and behavior.
 
 💀 **[Primitive obsession](https://luzkan.github.io/smells/primitive-obsession)** is a code smell where you overuse basic types (like `int`, `string`, `bool`, etc.) to represent domain concepts, instead of creating dedicated types or classes. For example, using a `string` for an email address or a `decimal` for money everywhere, rather than defining `EmailAddress` or `Money` value objects. Leading to lack of encapsulation for validation and behavior, increased risk of bugs (mixing up values, invalid data) and harder to understand and maintain code. In clean architecture and DDD, you avoid primitive obsession by modeling important domain concepts as their own types, making the code more expressive, safe, and maintainable.
 
 #### Value Objects
 
-An object that describes characteristics or attributes but has no conceptual identity. It instead is uniquely identified by its values. Structural equality, like this, is a first-class feature of a `record` type. Some value object examples coudl be `Name`, `Desciption` and `Address` properties on an entity. Each value object can encapsulate what it means for it to be empty, null, a single character and other validity conditions and so on. 
+An object that describes characteristics or attributes but has no conceptual identity. It instead is uniquely identified by its values. Structural equality, like this, is a first-class feature of a `record` type. Some value object examples coudl be `Name`, `Desciption` and `Address` properties on an entity. Each value object can encapsulate what it means for it to be empty, null, a single character and other validity conditions and so on.
 
 Desirable design traits:
 
@@ -206,7 +202,6 @@ Event driven architectures are a powerful way to keep components loosely coupled
 - **Extensibility**: Easy to add new handlers without modifying existing code
 - **Testability**: Handlers can be tested independently
 - **Cross-Cutting Concerns**: Logging, caching, and validation can be added through MediatR behaviors
-
 
 An interface called `IDomainEvent` and in-turn Mediatr's `INotification`, will be used to represent such events. For example a `SubscriptionExpiredEvent` domain event could be triggered when a customer subscription reaches expiration:
 
@@ -247,7 +242,6 @@ public abstract class Entity(Guid id) : IEquatable<Entity>
 }
 ```
 
-
 Now **Entities** and **Domain Services** have a consistent way of publishing **Domain Events**, in a clean agnostic manner. For example here the `Booking` entity hooks in domain eventing:
 
 ```csharp
@@ -279,7 +273,6 @@ public static Booking Reserve(
 }
 ```
 
-
 #### Domain Services
 
 **Domain Services** exist to handle business logic that doesn't naturally belong to any single **Entity** or **Value Object**, but is still core domain knowledge. They represent pure business operations that coordinate between multiple domain objects or perform calculations that require specialised domain expertise.
@@ -290,7 +283,6 @@ Create **Domain Services** when you have business logic that:
 1. Doesn't conceptually belong to any single **Entity**
 1. Represents a significant business operation or calculation
 1. Requires domain expertise that would be awkward to place in an **Entity**
-
 
 Such as a pricing calculator for AirBnb type booking service:
 
@@ -305,7 +297,7 @@ public class PricingService
         // - Date range factors (seasonality, demand, holidays)
         // - Market conditions, dynamic pricing rules
         // - Promotional discounts, loyalty programs
-        
+
         return new PricingDetails(basePrice, adjustments, finalPrice);
     }
 }
@@ -317,8 +309,6 @@ public class PricingService
 - **Complex business rules**: Pricing logic is sophisticated domain knowledge
 - **Doesn't belong to Apartment**: An apartment doesn't "calculate its own price" - pricing is a higher order business concern
 - **Pure domain logic**: No infrastructure dependencies
-
-
 
 **Key Traits of a Domain Service**
 
@@ -333,7 +323,6 @@ Common examples:
 - `ShippingCalculatorService` that determines shipping for e-commerce orders, that considers weight, distance, carriers, promotions, etc.
 - `DosageCalculationService` for a healthcare provider that calculates a clients dosage needs based on age, weight, medical history, intolerances, etc.
 
-
 #### Interfaces
 
 The **Repository** and **Unit Of Work** patterns, and their associated abstractions need to live in the domain, this is critical for defining a rich domain model. The definition of "repository" can be further tightened to **Entity Repository**, each concerned with one type of domain entity - which has a few architectural benefits:
@@ -341,7 +330,6 @@ The **Repository** and **Unit Of Work** patterns, and their associated abstracti
 - Single Responsibility: Each repository has clear, focused methods for one type of aggregate
 - Encapsulation: Repository methods can express domain specific concepts e.g. `FindOverdueOrders()` vs generic `Find()`
 - Testability: Easy to mock specific entity repositories for unit testing
-
 
 **What problem does the Repository Pattern actually solve?**
 
@@ -380,9 +368,7 @@ There will be repositories that sit across functional boundaries. A business int
 - Performance: Batches database operations instead of individual saves
 - Transaction Management: Handles complex business processes that span multiple entities
 
-
 #### Results and Exceptions
-
 
 **Errors** represents something that went wrong:
 
@@ -393,7 +379,6 @@ public record Error(string Code, string Name)
     public static Error NullValue = new("Error.NullValue", "Null value encountered");
 }
 ```
-
 
 **Result** represents a domain layer outcome:
 
@@ -420,7 +405,7 @@ public class Result
     public static Result Failure(Error error) => new(false, Error.None);
     public static Result<T> Success<T>(T value) => new(value, true, Error.None);
     public static Result<T> Failure<T>(Error error) => new (default, false, error);
-    public static Result<T> Create<T>(T? value) => 
+    public static Result<T> Create<T>(T? value) =>
         value is not null ? Success(value) : Failure<T>(Error.NullValue);
 }
 
@@ -442,12 +427,9 @@ public class Result<T> : Result
 }
 ```
 
-
-
 ### Application layer: The Use Case Orchestrator
 
 Housed in class library `src/Wintermute.Application`, the **Application Layer** is the middle layer that defines **Use Cases** by orchestrating the **Rich Domain Model**. It's the "conductor" that coordinates domain objects to fulfill business scenarios. This layer has no external concerns of its own. **CQRS** (Command Query Responsibility Segregation) is a powerful approach to organising this layer, in a nutshell split data reads (queries) and writes (commands) apart. Cross-cutting concerns will be elegantly managed using the **Decorator Pattern** with MediatR pipeline behaviours (middleware).
-
 
 #### Application Layer Key Responsibilities
 
@@ -457,13 +439,11 @@ Defines the "what" of business operations without caring about "how", by coordin
 
 Example: `BookApartmentUseCase` orchestrates apartment availability checking, pricing calculation, booking creation, and payment processing.
 
-
 ##### Higher Order Business Logic
 
 Workflow logic that spans multiple aggregates (e.g. bookings, users, apartments, etc) by defining business rules that don't belong in any single domain entity. As this layer is now responsible for cross-aggregate interactions, it takes on the challenge of managing transactions and consistency rules.
 
 Example: "Cancel booking if payment fails after 3 attempts" is business logic but involves multiple domains
-
 
 ##### Cross Cutting Concerns
 
@@ -474,18 +454,15 @@ Example: "Cancel booking if payment fails after 3 attempts" is business logic bu
 
 Examples: Log all booking attempts, validate user permissions, cache pricing calculations.
 
-
 ##### Exception Translation & Handling
 
 Translates domain exceptions into application appropriate responses. The app layer needs to deal with infrastructure failures gracefully and provides meaningful error context for upper layers.
 
 Example: Convert `DomainExceptionXYZ` to `ApplicationExceptionXYZ` with business contextual messaging.
 
-
 ##### Dependency Injection Hub
 
 Due to its higher order nature, **Application Services** typically composite many pieces from the rich domain model. Given Clean Architecture embraces the **Dependency Inversion Principle** this is first touch point in the architecture to start defining **Depending Injection** policies, including infrastructure abstractions (repositories, external services) and cross-cutting concern behaviors.
-
 
 #### What the Application Layer Does NOT Do
 
@@ -493,7 +470,6 @@ Due to its higher order nature, **Application Services** typically composite man
 - No infrastructure concerns (database, external APIs, UI)
 - No presentation logic (formatting, UI concerns)
 - No low-level technical details
-
 
 #### Example Application Service
 
@@ -509,7 +485,6 @@ public class BookingApplicationService
 }
 ```
 
-
 CQRS with MediatR:
 
 ```csharp
@@ -522,7 +497,6 @@ public class BookApartmentCommandHandler : IRequestHandler<BookApartmentCommand,
 }
 ```
 
-
 **Example Use Case Flow:**
 
 ```csharp
@@ -532,21 +506,21 @@ public class BookApartmentUseCase
     {
         // 1. Validate input (Application concern)
         await _validator.ValidateAsync(request);
-        
+
         // 2. Check availability (Domain orchestration)
         var apartment = await _apartmentRepository.GetByIdAsync(request.ApartmentId);
         var availability = _availabilityService.CheckAvailability(apartment, request.DateRange);
-        
+
         // 3. Calculate pricing (Domain service)
         var pricing = _pricingService.CalculatePrice(apartment, request.DateRange);
-        
+
         // 4. Create booking (Domain operation)
         var booking = apartment.CreateBooking(request.GuestId, request.DateRange, pricing);
-        
+
         // 5. Save and publish events (Application orchestration)
         await _unitOfWork.SaveAsync();
         await _mediator.Publish(new BookingCreatedEvent(booking.Id));
-        
+
         // 6. Return result (Application concern)
         return new BookingResult(booking.Id, pricing.Total);
     }
@@ -581,7 +555,6 @@ public static class DependencyInjection
 **CQRS** (Command Query Responsibility Segregation) is a powerful approach to organising this layer, which in a nutshell splits data reads (queries) and writes (commands) apart.
 
 Here we define abstractions `IQuery` and `ICommand` to represent reads and writes respectively.
-
 
 ```csharp
 // query request
@@ -629,7 +602,6 @@ Considerations:
 2. Place each individual **Domain Handler** in the same directory where the respective `ICommand` and `ICommandHandler` lives, that is responsible for triggering the event. This keeps these mediation types semantically clumped together.
 3. Naming convension suggestion, add the `Handler` suffix to the OG domain event name. Like this: `BookingReservedDomainEvent => BookingReservedDomainEventHandler`
 
-
 ```
 .
 ├── Bookify.Application
@@ -650,9 +622,7 @@ One of the design traits of having all `ICommand` variations implement `IBaseCom
 2. Create the MediatR pipeline class [LoggingBehavior.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Application/Abstractions/Behaviors/LoggingBehavior.cs)
 3. Register the pipeline with the dependency injection setup.
 
-
 Pipeline behavior:
-
 
 ```csharp
 public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
@@ -701,7 +671,6 @@ services.AddMediatR(configuration =>
 - At runtime, you resolve and use validators to validate objects, receiving a result that lists any validation failures.
 
 [ValidationBehavior.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Application/Abstractions/Behaviors/ValidationBehavior.cs) is a working example.
-
 
 **Step 1: MediatR pipeline that evaluates FluentValidation validators**
 
@@ -787,7 +756,6 @@ internal class ReserveBookingCommandValidator : AbstractValidator<ReserveBooking
 
 **Step 4 Register Validators with DI:**
 
-
 ```csharp
 using Microsoft.Extensions.DependencyInjection;
 
@@ -802,8 +770,6 @@ public static class DependencyInjection
 }
 
 ```
-
-
 
 ### Infrastructure layer
 
@@ -834,7 +800,6 @@ Logging frameworks (Serilog, NLog), security implementations (JWT handling, encr
 
 The concern of domain event publishing. This includes event bus implementations, outbox pattern for reliable messaging, event serialization, and integration event handling for communication between bounded contexts.
 
-
 #### What the Infrastructure Layer Does NOT Do
 
 - **Business Logic or Domain Rules**: The infrastructure layer should never contain business validation, calculations, or decision-making logic. If you find yourself writing "if the customer is premium, then..." in a repository or service client, that logic belongs in the domain or application layer.
@@ -843,9 +808,7 @@ The concern of domain event publishing. This includes event bus implementations,
 - **Cross-Boundary Business Validation**: Infrastructure components shouldn't validate business rules that span multiple aggregates or enforce complex business constraints. They can handle technical validation (like "is this a valid email format") but not business validation (like "can this customer place this order").
 - **Application State Management**: It shouldn't maintain application session state, user context, or coordinate between different parts of your application flow. Infrastructure provides services to the application layer but doesn't manage the application's logical state or progression.
 
-
 #### Example Concrete Provider for IDateTimeProvider
-
 
 **Step 1: Application Layer Abstract Provider**
 
@@ -917,10 +880,9 @@ In our clean architecture, EF Core typically lives in the infrastructure layer a
 3. Parse the DB connection string from config and bind it to `DbContext` using the database specific driver, in this case `services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));`.
 4. Database specific tweaks. In the case of PostgreSQL it is common practice to always use snake casing name for tables. Add NuGet package `EFCore.NamingConventions`, which adds a `UseSnakeCaseNamingConvention` extension method to the `DbContextOptionsBuilder`.
 
-
 #### Integrating Domain Entities with EF Core
 
-This is where two worlds collide, the pure rich domain model and the storage concerns that EF core is concerned with. EF Core's *code first* approach involves using an `EntityTypeBuilder` to express how the model works relationally and other DB enforcable traits that may apply to each domain model, all using a fluent style syntax. For example, here's the configuration for the `Apartment` domain model:
+This is where two worlds collide, the pure rich domain model and the storage concerns that EF core is concerned with. EF Core's _code first_ approach involves using an `EntityTypeBuilder` to express how the model works relationally and other DB enforcable traits that may apply to each domain model, all using a fluent style syntax. For example, here's the configuration for the `Apartment` domain model:
 
 ```csharp
 // Wintermute.Infrastructure/Configurations/ApartmentConfiguration.cs
@@ -982,7 +944,6 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 }
 ```
 
-
 #### Publishing Domain Events in the Unit of Work
 
 A common place (choak point) to evaluate and publish domain events is within the Unit Of Work, which in the case of EF Core is the `DbContext`. TL;DR add `PublishDomainEventsAsync` (see below) and invoke it in an override of `SaveChangesAsync`.
@@ -1015,13 +976,11 @@ private async Task PublishDomainEventsAsync()
 }
 ```
 
-
 #### Handling Race Conditions with Optimistic Concurrency
 
 > In EF Core, [optimistic concurrency](https://learn.microsoft.com/en-us/ef/core/saving/concurrency?tabs=data-annotations) is implemented by configuring a property as a concurrency token. The concurrency token is loaded and tracked when an entity is queried. Then, when an update or delete operation is performed during `SaveChanges()`, the value of the concurrency token on the database is compared against the original value read by EF Core.
 
 Here can leverage EF Core's `DbUpdateConcurrencyException`. So that the **Application Layer** remains insulated from infrastructure level concerns, publish a custom `ConcurrencyException` defined in the **Domain Layer**.
-
 
 ```csharp
 // Wintermute.Infrastructure/ApplicationDbContext.cs
@@ -1077,11 +1036,10 @@ Npgsql will create a [concurrency token](https://www.npgsql.org/efcore/modeling/
 ### Presentation layer
 
 The bridge between the core business logic and the outside world. Its a receptionist; greets visitors, checks if they have appointments, direct them to the right department, and communicate responses back. They don't make business decisions or handle the actual work.
- 
+
 By separating the concern of how data is displayed/received and how business logic operates, allows change to occur in user interfaces, API formats, or communication protocols without impacting core business rules. For example, you could switch from a web API to a desktop application, or from REST to GraphQL, while keeping all your business logic intact.
 
 Even more compelling, it encourages multiple presentation formats for the same underlying functionality. Such as serving web APIs, mobile apps, console applications, and background services simultaneously, each with their own presentation layer implementation.
-
 
 #### Presentation Layer Key Responsibilities
 
@@ -1109,8 +1067,6 @@ Catches exceptions from inner layers and translates them into appropriate respon
 
 Often responsible for wiring up the dependency injection container and configuring how different layers glue together.
 
-
-
 #### What the Presentation Layer Does NOT Do
 
 ##### Business Logic
@@ -1132,7 +1088,6 @@ Shouldn't maintain business state between requests (beyond basic session/authent
 ##### Cross-Cutting Concerns Implementation
 
 While it might trigger logging or caching, the actual implementation of these concerns should be handled by infrastructure components, not embedded in presentation logic.
-
 
 #### API Controllers and Endpoints
 
@@ -1178,17 +1133,39 @@ public class BookingsController : ControllerBase
 
 When dealing with more complex objects in the API's, its important to create a layer of DTO's that glue between the MVC API and **Query** or **Command** that is delegated to internally with the API. These simple .NET records should be placed next to the `Controller` classes, so they are nearby, as they are semantically related.
 
+#### Seed Data and EF Migrations
 
+ASP.NET core's `IApplicationBuilder` is abstracts the bootstrapping concerns of the underlying environment and provides a bunch of levers you can pull, such as access to the dependency injected services, bind middleware and more. Create a neat collection of `IApplicationBuilder` extension methods in `src\Bookify.Api\Extensions\ApplicationBuilderExtensions.cs`.
 
+For example, this one will invoke an EF migration:
+
+```csharp
+public static void ApplyMigrations(this IApplicationBuilder app)
+{
+    using IServiceScope scope = app.ApplicationServices.CreateScope();
+    using ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
+```
+
+Glue it up in the APIs entry point:
+
+```csharp
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+    app.ApplyMigrations();
+    app.SeedData();
+}
+```
 
 ## .NET Implementation Tips
-
 
 ### General .NET Tips
 
 - Simple source tree organisation with 2 top tier solution folders `src` and `test`
 - Using `DateTime.UtcNow` directly is a DRY-ness code smell. For testability and maintainability, much better option is to define a common `IDateTimeProvider` abstraction.
-
 
 ```csharp
 public interface IDateTimeProvider  // Wintermute.Application/Abstractions/Clock/IDateTimeProvider.cs
@@ -1217,7 +1194,6 @@ var booking = Booking.Reserve(
 );
 ```
 
-
 ### Domain Layer .NET Tips
 
 - House domain entities in its own class library `Wintermute.Domain`. Source should be organised into directories that represent each domain function, such as `Trades`, `Investments`, `Bookings` and so on. Shared **Entity** or **Value Objects** such as `Money`, should be placed into a `Shared` directory.
@@ -1231,39 +1207,37 @@ var booking = Booking.Reserve(
 - For saving changes (i.e. mutating) an underlying data store, the **Unit Of Work Pattern** is a good fit, with its abstraction living in the domain model as `IUnitOfWork`.
 - For inter **Entity** interactions, specifically when one entity needs to modify another entity, `private set` properties are too restrictive to permit this. An interesting design choice is to leverage `internal set`, which allows types within an assembly to change each others properties. In the context of the domain assembly, this is a nice fit.
 
-
-
 ### Application Layer .NET Tips
 
 - The **Application Layer** can enjoy more concrete couplings to packages such as MediatR and Dapper for example, for concrete `IRequestHandler` and `INotification` implementations.
 - The **Application Layer** will enjoy loose coupling to the **Domain Layer** by adopting CQRS using MediatR.
 - Contravariant generic arguments in C# are specified with the `in` keyword, e.g: `public interface IQueryHandler<in TQuery, TResponse> : IRequestHandler<TQuery, Result<TResponse>>`. **Contravariance** allows you to use a less derived (more general) type than originally specified. Meaning its possible to assign an `IQueryHandler<BaseQuery, TResponse>` to a variable of type `IQueryHandler<DerivedQuery, TResponse>`, where `DerivedQuery` inherits from `BaseQuery`.
 - Having the different `ICommand` variations implement a common interface `IBaseCommand`, is useful, for expressing MediatR pipeline subscriptions with generic typing constraints, which will be handy when dealing with cross-cutting concerns. Its also just a handy potential maintainablilty point.
-- .NET `record` types in combination with a **Primary Constructors** are an elegant way to represent concrete `IQuery` implementations, which in-turn implement MediatR `IRequest`. The  (i.e. the requests, not the handlers).
+- .NET `record` types in combination with a **Primary Constructors** are an elegant way to represent concrete `IQuery` implementations, which in-turn implement MediatR `IRequest`. The (i.e. the requests, not the handlers).
 - `IRequestHandler` implementation should be `internal sealed` to prevent undesirable misuse or extension outside of the **Application Layer** assembly.
 - **Queries** and **Commands** will need to accept and return data respectively. These data transport definitions (e.g. `BookingResponse`) should live in the Application Layer, close-by to the query or commands that work with them. As this layer will be marshalling the data between queries/commands, these DTO's should be as plain as possible (POCOs), comprising of primtive types and flat non-nested hierarchical structures.
 - CQRS sets out the architectural bluebrint for keeping query and command logic separate. Its often desirable to exploit differing techniques for querying the data versus modifying it. For example, using a micro ORM like Dapper for fast reads, but leaning into unit of work, repositories and entity framework for managing writes.
 - MediatR provides `IPipelineBehavior` which is an elegant middleware like implementation, that allows you to hook and wrap `IRequest` and `INotification` events as they occur. Put these in `Wintermute.Application/Abstractions/Behaviors/`.
 - An incredibly elegant way to integrate cross cutting validation is by combining MediatR pipelines and FluentValidation, see [Validation Pipeline with FluentValidation](#validation-pipeline-with-fluentvalidation). TL;DR an `IPipelineBehavior` that applies to only `IBaseCommand` types (i.e. commands not queries), that through dependency injection only receives an applicable collection of `IValidator` implementations.
 
-
-
 ### Infrastructure Layer .NET Tips
 
 - Create a `Wintermute.Infrastructure` class library. The **Infrastructure Layer**, as one of two bottom layers (outer layers of the onion), can leverge the **Application** and **Domain** layers. Add a project reference to `Wintermute.Application`.
-- Like the **Application Layer**, will take care of dependency injection concerns that relate to infrastructure. Add a top level `DependencyInjection.cs`. Using `Microsoft.Extensions.DependencyInjection`, in addition to defining the  `this IServiceCollection services` extension method, at this layer will want to bind in externally defined configuration via `IConfiguration`. Not a base class library, add a NuGet package for `Microsoft.Extensions.Configuration.Abstractions`.
+- Like the **Application Layer**, will take care of dependency injection concerns that relate to infrastructure. Add a top level `DependencyInjection.cs`. Using `Microsoft.Extensions.DependencyInjection`, in addition to defining the `this IServiceCollection services` extension method, at this layer will want to bind in externally defined configuration via `IConfiguration`. Not a base class library, add a NuGet package for `Microsoft.Extensions.Configuration.Abstractions`.
 - [Wintermute.Infrastructure/ApplicationDbContext.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/ApplicationDbContext.cs) the specific `DbContext` implementation already satisfies the `IUnitOfWork` contract out of the box, and can literally be injected as the `IUnitOfWork` implementation `services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());`
-- Dapper by default doesn't know how to encode `DateOnly` types, a [DateOnlyTypeHandler](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Data/DateOnlyTypeHandler.cs) Dapper `TypeHandler` is used. Finally Dapper knows about it at bootstrapping time (for example during DI setup) `SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());`
-- 
-
+- Dapper by default doesn't know how to encode `DateOnly` types, a [DateOnlyTypeHandler](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Data/DateOnlyTypeHandler.cs) Dapper `TypeHandler` is used. Finally Dapper needs to know about it at bootstrapping time (for example during DI setup) `SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());`
 
 ### Presentation Layer .NET Tips
 
 - Create `Wintermute.Api`, either as a minimal web API or full blown MVC API. Add references to the `Wintermute.Infrastructure` and `Wintermute.Application` projects.
 - In API's `Program.cs` where the `WebApplicationBuilder` is bootstrapped and configured, register the **Infrastructure** and **Application** layers DI setup, but calling their respective builder extension methods, `builder.Services.AddInfrastructure(builder.Configuration)` and `builder.Services.AddApplication()` respectively.
 - When dealing with more complex objects in the API's, its important to create a layer of DTO's that glue between the MVC API and **Query** or **Command** that is delegated to internally with the API. These simple .NET records should be placed next to the `Controller` classes, so they are nearby, as they are semantically related.
-- In API's that create data, its RESTful to return an HTTP 201, with a `Location` header to the URI of the complimentary API responsible for reading the object. MVC provides `CreatedAtAction` for this, for example: `return CreatedAtAction(nameof(GetBooking), new { id = result.Value }, result.Value)`.
-
+- In API's that create data, its RESTful to return an HTTP 201, with a `Location` header to the URI of the complimentary API responsible for retrieving the object. MVC provides `CreatedAtActionResult` to encapsulating this, for example: `return CreatedAtAction(nameof(GetBooking), new { id = result.Value }, result.Value)`.
+- As an outer layer, the presentation is a good candidate for driving the architecture. It has concrete configuration i.e. `appsettings.json`, connection strings to DBs, etc. Lifecycle hooks are available here, such as the `IApplicationBuilder` in an MVC web API.
+- Create a collection of extension methods `src\Bookify.Api\Extensions\ApplicationBuilderExtensions.cs`. Handy for hooking up exception and logging middleware, and running EF migrations to seed the DB when in development mode.
+- Time to hook up EF migrations and seed data. Two recommendations here: (1) The `Bogus` NuGet package for creating synthetic test data, and (2) `dotnet tool install dotnet-ef` for CLI tooling for EF Core, and (3) the `Microsoft.EntityFrameworkCore.Design` NuGet package to the API project which glues up with the EF CLI tools.
+- The `ef` tool must be run in context of the project repsonsible for the migrations, the `Wintermute.Infrastructure`. Additionally a `IDesignTimeDbContextFactory<ApplicationDbContext>` implementation needs to exist, which the EF tool will scan for in the assembly. This is purely intended as a design time concern, and does not have the overheads of dependency injection or config management, etc. It's common to no-op these runtime concerns, see [ApplicationDesignTimeDbContextFactory.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/ApplicationDesignTimeDbContextFactory.cs)
+- Middleware here, is a great way to deal with cross-cutting concerns.
 
 ## Bonus: Contemporary .NET gems
 
@@ -1276,7 +1250,6 @@ var booking = Booking.Reserve(
 - `with` expressions: TODO
 - Extension methods: TODO see `Wintermute.Application/DependencyInjection.cs`
 
-
 ### Primary Constructors
 
 ```csharp
@@ -1285,7 +1258,7 @@ public class User(string firstName, string lastName)
 {
     public string FirstName { get; } = firstName;
     public string LastName { get; } = lastName;
-    
+
     // Optional constructor body
     => Console.WriteLine($"Created user: {firstName} {lastName}");
 }
@@ -1334,7 +1307,6 @@ public static class SwitchExample
 }
 ```
 
-
 ### Records
 
 A `record` is a special reference type designed for immutable data and value-based equality. Its main purposes are:
@@ -1354,7 +1326,6 @@ Differences from `struct`:
 - Is a reference type; struct is a value type.
 - `record struct` exists, but a plain record is a reference type.
 - `struct` is stored on the stack (when not boxed), while `record` (reference type) is stored on the heap.
-
 
 ```csharp
 // simple record
@@ -1381,14 +1352,14 @@ public record Currency
     public static readonly Currency GBP = new("GBP");
     public static readonly Currency JPY = new("JPY");
     public static readonly Currency AUD = new("AUD");
-    
+
     private Currency(string code) => Code = code;
 
     public string Code { get; init; }
 
     public static Currency FromCode(string code)
     {
-        return All.FirstOrDefault(c => c.Code == code) ?? 
+        return All.FirstOrDefault(c => c.Code == code) ??
             throw new ArgumentException($"Unsupported currency: {code}", nameof(code));
     }
 
@@ -1398,7 +1369,6 @@ public record Currency
     ];
 }
 ```
-
 
 ### Async Tips
 
@@ -1415,9 +1385,6 @@ public record Currency
   - If the `Task` fails, exceptions are unobserved (can crash process or be lost)
   - No way to know if/when the work completed or failed
   - Always log, observe, or attach a continuation to handle errors
-
-
-
 
 ### MediatR
 
@@ -1437,7 +1404,6 @@ In clean architecture, MediatR is particularly valuable:
 - Single Responsibility: Each handler does one thing
 - Cross-cutting Concerns: You can add behaviors like logging, validation, or caching through MediatR's pipeline behaviors
 - Domain Events: Perfect for publishing domain events when business rules are triggered
-
 
 #### IRequest and IRequestHandler - Request/Response
 
@@ -1476,8 +1442,6 @@ public async Task<IActionResult> SearchApartments(
 
 `INotification` types can be published using an `IPublisher`.
 
-
-
 #### MediatR.Contracts Package
 
 The `MediatR.Contracts` package contains just the core interfaces and contracts without the full implementation. This is good practice for a few reasons:
@@ -1486,13 +1450,12 @@ The `MediatR.Contracts` package contains just the core interfaces and contracts 
 1. You're building libraries that need to expose MediatR contracts
 1. You want to keep your domain layer lightweight, keeping your domain events clean and framework-agnostic while still leveraging MediatR's powerful dispatching capabilities in your infrastructure layer
 
-
 ```csharp
 public class GymCreatedEvent : INotification
 {
     public Guid GymId { get; }
     public string Email { get; }
-    
+
     public GymCreatedEvent(Guid gymId, string email)
     {
         GymId = gymId;
@@ -1501,16 +1464,11 @@ public class GymCreatedEvent : INotification
 }
 ```
 
-
-
 ### Visual Studio and Roslyn Code Quality Level Ups
 
 `.editorconfig` allows you to configure the default code style rules you want to apply to your C# code. This [.editorconfig](#TODO) provides a set of sensible defaults to get started with.
 
 The `Directory.Build.props` file allows you to define default dependencies for all your projects. Such as treating compiler warnings as errors (so you'll have to fix them) and to install the `SonarAnalyzer.CSharp` library that introduces additional source code analyzers.
-
-
-
 
 ### dotnet CLI Tips
 
