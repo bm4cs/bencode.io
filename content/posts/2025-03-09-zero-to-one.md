@@ -73,7 +73,6 @@ _Zero to One_ is a book by Peter Thiel and Blake Masters about the value of true
   - [The Power Law Distribution](#the-power-law-distribution)
   - [Selling to Non-Customers](#selling-to-non-customers)
   - [Everybody Sells](#everybody-sells)
-- [Glossary](#glossary)
 
 ## Key insights
 
@@ -677,11 +676,3 @@ Any prospective employee worth hiring will do their own due diligence, what he f
 ### Everybody Sells
 
 If you don’t see the salesperson, you are the salesperson.
-
-## Glossary
-
-| Term | Definition                                                    |
-| ---- | ------------------------------------------------------------- |
-| CAC  | Customer Acquisition Cost                                     |
-| CLV  | Customer Lifetime Value: See LTV                              |
-| LTV  | Lifetime Value: Average revenue that a customer will generate |
