@@ -1,6 +1,6 @@
-.PHONY: deploy run run-drafts stop
+.PHONY: push run run-drafts kill
 
-deploy:
+push:
 	hugo
 	aws s3 sync ./public/ s3://www.bencode.net --acl public-read
 	aws cloudfront create-invalidation --distribution-id=E1AOP3LBMEJ3M9 --paths "/*"
@@ -11,6 +11,5 @@ run:
 run-drafts:
 	hugo server -D
 
-stop:
+kill:
 	killall hugo
-

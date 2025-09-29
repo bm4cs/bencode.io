@@ -1,7 +1,7 @@
 ---
 layout: post
 draft: false
-title: "Retrospective"
+title: "18 Month Software Project Retrospective"
 slug: "retro25"
 date: "2025-06-20 13:13:00+1000"
 lastmod: "2025-06-20 13:13:00+1000"
