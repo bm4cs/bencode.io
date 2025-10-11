@@ -1,19 +1,34 @@
 ---
 layout: post
 draft: true
-title: "Trading"
+title: "Derivatives Trading"
 slug: "trading"
 date: "2025-06-20 20:10:00+1000"
-lastmod: "2025-10-10 16:53:00+1000"
+lastmod: "2025-10-11 09:34:00+1000"
 comments: false
 categories:
-  - stockmarket
+  - stocks
   - trading
   - shares
   - minis
   - warrants
   - options
 ---
+
+This post captures foundational knowledge that will help master Australian derivates trading.
+
+- [Options Fundamentals](#options-fundamentals)
+  - [Call Option Analogy: Renting the Right to Buy a House Later](#call-option-analogy-renting-the-right-to-buy-a-house-later)
+  - [Put Option Analogy: Renting the Right to Sell a House Later](#put-option-analogy-renting-the-right-to-sell-a-house-later)
+  - [Buyer vs Seller](#buyer-vs-seller)
+  - [Options Bring Flexibility](#options-bring-flexibility)
+  - [The Value of an Option](#the-value-of-an-option)
+  - [Option Premiums](#option-premiums)
+- [Spread Trading](#spread-trading)
+- [Portfolio Strategies - Covered Calls](#portfolio-strategies---covered-calls)
+- [Options Cheatsheet](#options-cheatsheet)
+- [Glossary](#glossary)
+- [Indicators](#indicators)
 
 ## Options Fundamentals
 
@@ -26,7 +41,7 @@ There are two types:
 | Call        | Buy at a fixed price   | Price goes up   |
 | Put         | Sell at a fixed price  | Price goes down |
 
-### Call Option = Renting the Right to Buy a House Later
+### Call Option Analogy: Renting the Right to Buy a House Later
 
 Imagine you're dealing with houses instead of stocks.
 
@@ -36,7 +51,7 @@ If the house’s market value jumps to $120,000, you still get to buy it for $10
 
 If the house’s value drops to $90,000, you can walk away. You lose the $500, but you’re not forced to buy.
 
-### Put Option = Renting the Right to Sell a House Later
+### Put Option Analogy: Renting the Right to Sell a House Later
 
 Now imagine you own a house and you’re worried its value might drop. You pay $500 for the option to sell it for $100,000 anytime in the next 3 months.
 
@@ -65,27 +80,27 @@ Notes:
 - `Premium` = `IntrinsicValue` + `TimeValue`
 - Its rare that you want options to be exercised, except for **Covered Calls** or **Covered Puts**.
 
-### Flexible strategies
+### Options Bring Flexibility
 
 Several strategies that allow you to profit from different market scenarios:
 
-Directional plays:
+**Directional plays**:
 
-- **Bullish**: Buy calls to profit from price increases
-- **Bearish**: Buy puts to profit from price decreases
+- Bullish: Buy calls to profit from price increases
+- Bearish: Buy puts to profit from price decreases
 
-Non-directional strategies:
+**Non-directional strategies**:
 
-- **Straddle**: Buy both a call and put at the same strike price. You profit if the stock makes a large move in _either_ direction, regardless of which way it goes. This bets on volatility, not direction.
-- **Sideways/range-bound**: Sell options (like iron condors or strangles) to collect premiums when you expect the stock to stay relatively flat
+- Straddle: Buy both a call and put at the same strike price. You profit if the stock makes a large move in _either_ direction, regardless of which way it goes. This bets on volatility, not direction.
+- Sideways: Sell options (like iron condors or strangles) to collect premiums when you expect the stock to stay relatively flat
 
-Risk management:
+**Risk management**:
 
 - Hedge existing stock positions against losses
 - Cap your downside to just the premium paid (when buying options)
 - Generate income by selling options against stocks you own (covered calls)
 
-Leverage:
+**Leverage**:
 
 - Control large amounts of stock with relatively small capital
 - Amplify gains (and losses) compared to owning the stock directly
@@ -113,9 +128,7 @@ The extra amount people pay for the possibility that the option becomes more val
 
 Time value erodes as expiration approaches. This is known as **Time decay (theta)**. The closer you get to expiration, the less time there is for the stock to make a favorable move, so the time value decreases.
 
-Time value doesn't disappear linearly. It erodes slowly at first, then accelerates rapidly in the final 30-60 days, with the steepest drop in the last few weeks.
-
-Think logarithmic.
+Time value doesn't disappear linearly. It erodes slowly at first, then accelerates rapidly in the final 30-60 days, with the steepest drop in the last few weeks. **Think logarithmic decay**.
 
 Time decay example:
 
@@ -123,6 +136,82 @@ Time decay example:
 - A $100 call option with 6 months until expiration costs $8
 - Since the stock is exactly at the strike price, intrinsic value = $0
 - The entire $8 is time value. You're paying for the chance the stock rises above $100 before expiration.
+
+**Call Value Example**:
+
+```
+=== Call Option ===
+Share price: $31.00
+Strike price: $30.50
+Expiry: 25 November
+Option Value: $0.72
+```
+
+- Intinsic value = $0.50 ($31.00 - $30.50)
+- Time value = $0.22 ($0.72 - $0.50)
+
+**Scenario 1: One week later, share price increase**:
+
+```
+=== Call Option ===
+Share price: $32.00
+Strike price: $30.50
+Option Value: $1.68
+```
+
+- Intinsic value = $1.50 ($32.00 - $30.50)
+- Time value = $0.18 ($1.68 - $1.50)
+- Profit = 233% = 2.3X = ($1.68 / $0.72 × 100)
+
+A 233% profit off a ~3% increase in share price.
+
+**Scenario 2: One week later, share price decrease**:
+
+```
+=== Call Option ===
+Share price: $29.50
+Strike price: $30.50
+Option Value: $0.18
+```
+
+- Intinsic value = -$1.00 ($29.50 - $30.50)
+- Time value = $0.18 ($0.18 - 0)
+- Loss = -75% = 0.25X = ($0.18 / $0.72 × 100)
+
+A 75% loss off a ~5% decrease in share price.
+
+### Option Premiums
+
+The premium listed is the per-share price, but you must buy options in contracts of 100 shares.
+
+If you see a _Call Option_ quoted at $3.50, that's the price per share. To calculate your actual cost:
+
+Total cost = Premium × 100 shares per contract × Number of contracts
+
+Example:
+
+- Option premium listed: $3.50
+- You buy 1 contract
+- Total code = $350 = $3.50 × 100
+
+If you bought 5 contracts at $3.50:
+
+- Total cost = $1750 = $3.50 × 100 × 5
+
+This standardisation means even "cheap" options can require meaningful capital. A $0.50 option still costs you $50 per contract. It also means your profit and loss calculations scale by 100. If that $3.50 option increases to $5.00, you don't make $1.50, you make $150 per contract (minus the premium you paid).
+
+This is part of the leverage component of options; you control 100 shares of stock for a fraction of what it would cost to buy them outright.
+
+## Spread Trading
+
+Iron Condor
+
+## Portfolio Strategies - Covered Calls
+
+## Options Cheatsheet
+
+1. Options are bought in contracts; contract size is usually 100 shares per contract.
+1. Calculate **break even** by adding (call) or subtracting (put), the **option value** from the **strike price**.
 
 ## Glossary
 
@@ -140,6 +229,7 @@ Time decay example:
 | **DMA**                | Direct Market Access - electronic trading without broker intermediation                          |
 | **ECN**                | Electronic Communication Network - automated system matching buy/sell orders                     |
 | **EMA**                | Exponential Moving Average - gives more weight to recent prices                                  |
+| **Exercise Price**     | See _Strike Price_                                                                               |
 | **Forex/FX**           | Foreign Exchange - trading currency pairs                                                        |
 | **Futures**            | Contracts to buy/sell an asset at a predetermined price on a future date                         |
 | **Gap**                | Price difference between consecutive trading periods                                             |
