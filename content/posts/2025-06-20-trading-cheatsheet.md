@@ -20,6 +20,7 @@ This post captures foundational knowledge that will help master Australian deriv
 - [Options Fundamentals](#options-fundamentals)
   - [Call Option Analogy: Renting the Right to Buy a House Later](#call-option-analogy-renting-the-right-to-buy-a-house-later)
   - [Put Option Analogy: Renting the Right to Sell a House Later](#put-option-analogy-renting-the-right-to-sell-a-house-later)
+  - [American vs European](#american-vs-european)
   - [Buyer vs Seller](#buyer-vs-seller)
   - [Options Bring Flexibility](#options-bring-flexibility)
   - [The Value of an Option](#the-value-of-an-option)
@@ -58,6 +59,26 @@ Now imagine you own a house and you’re worried its value might drop. You pay $
 If the market crashes and the house is only worth $80,000, you still get to sell it for $100,000, you just saved $20,000.
 
 If the house goes up to $110,000, you ignore the option and sell it at market price. You lose the $500, but that’s okay.
+
+### American vs European
+
+It comes down to WHEN the option can be exercised.
+
+American Options:
+
+- Can be exercised at any time before or on the expiration date
+- More flexible for the buyer
+- Most stock options in the US are American-style
+
+European Options:
+
+- Can only be exercised on the expiration date itself
+- No early exercise allowed
+- Common for index options (like SPX)
+
+The difference matters most when you want to lock in profits or cut losses before expiration. With American options, you have that choice. With European options, you're locked in until expiration day. Though you can still sell the option in the market before then to exit your position.
+
+American options are generally slightly more valuable due to this added flexibility, though in practice most option holders close positions by selling rather than exercising anyway.
 
 ### Buyer vs Seller
 
@@ -140,11 +161,16 @@ Time decay example:
 **Call Value Example**:
 
 ```
-=== Call Option ===
-Share price: $31.00
-Strike price: $30.50
-Expiry: 25 November
-Option Value: $0.72
+╔════════════════════════════════════╗
+║                                    ║
+║        === Call Option ===         ║
+║                                    ║
+║        Share price: $31.00         ║
+║        Strike price: $30.50        ║
+║        Expiry: 25 November         ║
+║        Option Value: $0.72         ║
+║                                    ║
+╚════════════════════════════════════╝
 ```
 
 - Intinsic value = $0.50 ($31.00 - $30.50)
@@ -153,10 +179,16 @@ Option Value: $0.72
 **Scenario 1: One week later, share price increase**:
 
 ```
-=== Call Option ===
-Share price: $32.00
-Strike price: $30.50
-Option Value: $1.68
+╔════════════════════════════════════╗
+║                                    ║
+║        === Call Option ===         ║
+║                                    ║
+║        Share price: $32.00         ║
+║        Strike price: $30.50        ║
+║        Expiry: 25 November         ║
+║        Option Value: $1.68         ║
+║                                    ║
+╚════════════════════════════════════╝
 ```
 
 - Intinsic value = $1.50 ($32.00 - $30.50)
@@ -168,10 +200,16 @@ A 233% profit off a ~3% increase in share price.
 **Scenario 2: One week later, share price decrease**:
 
 ```
-=== Call Option ===
-Share price: $29.50
-Strike price: $30.50
-Option Value: $0.18
+╔════════════════════════════════════╗
+║                                    ║
+║        === Call Option ===         ║
+║                                    ║
+║        Share price: $29.50         ║
+║        Strike price: $30.50        ║
+║        Expiry: 25 November         ║
+║        Option Value: $0.18         ║
+║                                    ║
+╚════════════════════════════════════╝
 ```
 
 - Intinsic value = -$1.00 ($29.50 - $30.50)
