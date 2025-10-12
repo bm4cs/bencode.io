@@ -1,10 +1,10 @@
 ---
 layout: post
-draft: true
+draft: false
 title: "Derivatives Trading"
 slug: "trading"
-date: "2025-06-20 20:10:00+1000"
-lastmod: "2025-10-11 09:34:00+1000"
+date: "2025-10-11 08:34:00+1000"
+lastmod: "2025-10-11 08:34:00+1000"
 comments: false
 categories:
   - stocks
@@ -24,12 +24,14 @@ This post captures foundational knowledge that will help master Australian deriv
   - [Buyer vs Seller](#buyer-vs-seller)
   - [Options Bring Flexibility](#options-bring-flexibility)
   - [The Value of an Option](#the-value-of-an-option)
+    - [Call Value Example](#call-value-example)
   - [Option Premiums](#option-premiums)
+- [Complete Call Walkthrough](#complete-call-walkthrough)
 - [Spread Trading](#spread-trading)
 - [Portfolio Strategies - Covered Calls](#portfolio-strategies---covered-calls)
-- [Options Cheatsheet](#options-cheatsheet)
+- [Options Cheat Sheet](#options-cheat-sheet)
+- [FAQ](#faq)
 - [Glossary](#glossary)
-- [Indicators](#indicators)
 
 ## Options Fundamentals
 
@@ -69,12 +71,14 @@ American Options:
 - Can be exercised at any time before or on the expiration date
 - More flexible for the buyer
 - Most stock options in the US are American-style
+- On the ASX are distinguished by round strike prices e.g. `$4.40`
 
 European Options:
 
 - Can only be exercised on the expiration date itself
 - No early exercise allowed
 - Common for index options (like SPX)
+- On the ASX are distinguished with 1 cent offsets on strike prices e.g. `$4.41`
 
 The difference matters most when you want to lock in profits or cut losses before expiration. With American options, you have that choice. With European options, you're locked in until expiration day. Though you can still sell the option in the market before then to exit your position.
 
@@ -158,7 +162,7 @@ Time decay example:
 - Since the stock is exactly at the strike price, intrinsic value = $0
 - The entire $8 is time value. You're paying for the chance the stock rises above $100 before expiration.
 
-**Call Value Example**:
+#### Call Value Example
 
 ```
 ╔════════════════════════════════════╗
@@ -240,80 +244,161 @@ This standardisation means even "cheap" options can require meaningful capital. 
 
 This is part of the leverage component of options; you control 100 shares of stock for a fraction of what it would cost to buy them outright.
 
+## Complete Call Walkthrough
+
+Assuming a bullish (uptrending) assessment.
+
+**Entry signals**:
+
+1. Is the open and close in opposite thirds?
+2. Does it have a higher high and a higher low?
+3. Is it day one or two of the movement?
+
+**Technical analysis**:
+
+1. Model trend lines, support and resistance.
+2. Is there enough profit to resistance?
+3. Is the stochastic pointing up?
+4. Is the share price within bollinger bands?
+
+Resulting analysis:
+
+```
+╔══════════════════════════╗
+║                          ║
+║   Share price:  $4.32    ║
+║   Resistance:   $4.45    ║
+║   Support:      $4.20    ║
+║   Date:        19-Sep    ║
+║                          ║
+╚══════════════════════════╝
+```
+
+**Setting up an In-The-Money (ITM) Call**:
+
+1. Enter the share ticker into _Options Calculator_.
+2. Pick a contract with an expiry 6-8 weeks away: 30-Oct
+3. Pick a strike 1-2 strike levels below the current price: $4.10
+4. Let's say the option is valued at 0.29 or 29 cents per share.
+5. Enter a quantity (number of contacts) working back from the overall target risk for the trade e.g. $2500: 2500 / (0.29 × 100) = 86.206 = 86 contracts
+6. Calculate the break-even share price: $4.39 (4.10 + 0.29)
+
+**Payoff and technical stops**:
+
+1. Using the _Options Calculator_, determine 20-25% profit thresholds.
+2. A resistance of 4.44 would yield $760-800 profit, or 30% (760 / 2494)
+3. A support of 4.20 would bleed out a $500-700 loss, or 28% (700 / 2494)
+
+**Entering**:
+
+If you have reached this point, all rules have checked out.
+
+1. Buy options between 3-4pm, unless its the second day of move.
+
+**Exiting**:
+
+1. The next day the stock price rose to $4.43 (i.e. almost at resistance)
+2. The option is now worth 0.38.
+3. Calculate profit: 0.38 - 0.29 = 0.09 or 9 cents = 31% (0.09 / 0.29)
+4. Multiplied out by 86 contracts = 0.09 × 100 shares per contact × 85 contracts = $774
+
 ## Spread Trading
 
 Iron Condor
 
 ## Portfolio Strategies - Covered Calls
 
-## Options Cheatsheet
+## Options Cheat Sheet
 
 1. Options are bought in contracts; contract size is usually 100 shares per contract.
-1. Calculate **break even** by adding (call) or subtracting (put), the **option value** from the **strike price**.
+2. Calculate **break even** by adding (call) or subtracting (put), the **option value** from the **strike price**.
+3. When buying a **Call** always pick the first strike price below the current share price.
+4. ASX traded ETO's expire on a Thursday, as per their [expiry date calendar](https://www.asx.com.au/markets/trade-our-derivatives-market/overview/equity-derivatives/single-stock-derivatives/expiry-calendar.html).
+5. Due to time decay, pick an expiry 6-8 weeks out, minimum of 4 weeks, and never hold with less than 3 weeks to expiry.
+6. Set technical stops at ~20% support (for a call) or resistance (for a put).
+7. Monitor daily.
+8. Exit signals: for directional stay in the trade no longer than seven trading days, bollinger band breakout, no more than 3 weeks out from expiry
+
+## FAQ
+
+Why is having real-time market data important when trading options?
+
+What are common repair strategies?
+
+When should I close a trade?
+
+To what unit does an option premium apply?
+
+What differentiates European and American options?
+
+What are the basic entry signals for a bullish day?
+
+What are the basic entry signals for a bearish day?
+
+When is the maximum risk realised for a call option, for a share that falls below its strike price?
+
+How many options are usually bundled into a contract?
 
 ## Glossary
 
-| Term                   | Definition                                                                                       |
-| ---------------------- | ------------------------------------------------------------------------------------------------ |
-| **Ask**                | The lowest price a seller is willing to accept for a security                                    |
-| **ASX**                | Australian Securities Exchange - Australia's primary stock exchange                              |
-| **ATR**                | Average True Range - measures volatility over a specified period                                 |
-| **Bear market**        | Prices of securities are falling, or are expected to fall                                        |
-| **Bid**                | The highest price a buyer is willing to pay for a security                                       |
-| **Breakout**           | When price moves beyond a defined support or resistance level                                    |
-| **Bull market**        | Market characterised by rising prices and investor optimism                                      |
-| **CFD**                | Contract for Difference - derivative for speculating on price movements                          |
-| **Derivative**         | Financial contract whose value is anchored to price of an underlying asset                       |
-| **DMA**                | Direct Market Access - electronic trading without broker intermediation                          |
-| **ECN**                | Electronic Communication Network - automated system matching buy/sell orders                     |
-| **EMA**                | Exponential Moving Average - gives more weight to recent prices                                  |
-| **Exercise Price**     | See _Strike Price_                                                                               |
-| **Forex/FX**           | Foreign Exchange - trading currency pairs                                                        |
-| **Futures**            | Contracts to buy/sell an asset at a predetermined price on a future date                         |
-| **Gap**                | Price difference between consecutive trading periods                                             |
-| **Going Long**         | Buying a security expecting price to rise                                                        |
-| **Going Short**        | Selling a security expecting price to fall (often borrowed shares)                               |
-| **Iron Condor**        | See _Strangle_                                                                                   |
-| **ITM**                | In The Money - options that have intrinsic value                                                 |
-| **Leverage**           | Using borrowed capital to increase potential returns (and risks)                                 |
-| **Liquidity**          | How easily an asset can be bought or sold without affecting its price                            |
-| **Margin Call**        | Demand for additional funds when losses exceed available margin                                  |
-| **Margin**             | Money required to open a leveraged position                                                      |
-| **Market Maker**       | Entity providing liquidity by continuously buying and selling                                    |
-| **Market Order**       | Order to buy/sell immediately at current market price                                            |
-| **Moving Average**     | Average price over a specific number of periods                                                  |
-| **Options**            | Contracts giving the right (not obligation) to buy/sell at a specific price                      |
-| **OTM**                | Out of The Money - options without intrinsic value                                               |
-| **P&L**                | Profit and Loss statement                                                                        |
-| **Pullback**           | Temporary reversal in the direction of a trend                                                   |
-| **Resistance**         | Price level where selling pressure historically emerges                                          |
-| **Retracement**        | Temporary reversal in the direction of a price trend, followed by a return to the original trend |
-| **RSI**                | Relative Strength Index - momentum oscillator measuring speed and change of price movements      |
-| **Scalping**           | Very short-term trading strategy holding positions for seconds to minutes                        |
-| **SMA**                | Simple Moving Average - arithmetic mean of prices over specified periods                         |
-| **SPI**                | Share Price Index Futures - derivative contracts based on ASX 200 index                          |
-| **Spread**             | Difference between bid and ask prices                                                            |
-| **Stop Loss**          | Order to sell when price falls to a predetermined level to limit losses                          |
-| **Straddle**           | Buy both a call and put at the same strike price                                                 |
-| **Strangle**           | Sell options to collect premiums when you expect the stock to stay flat                          |
-| **Strike Price**       | TODO                                                                                             |
-| **Support**            | Price level where buying interest historically emerges                                           |
-| **Swing Trading**      | Holding positions for days to weeks to capture price swings                                      |
-| **Take Profit**        | Order to sell when price reaches a predetermined profit level                                    |
-| **Technical Analysis** | Analyzing price charts and patterns to predict future movements                                  |
-| **Tick**               | Minimum price movement of a trading instrument                                                   |
-| **Timeframe**          | Period used for chart analysis (1min, 5min, 1hr, daily, etc.)                                    |
-| **Trading Range**      | Price band between support and resistance levels where a security trades                         |
-| **Uptrend Line**       | Technical analysis line connecting successive higher troughs in an upward price trend            |
-| **Volatility**         | Degree of price variation over time                                                              |
-| **Whipsaw**            | Rapid price movements in opposite directions causing losses                                      |
-| **XJO**                | S&P/ASX 200 Index - benchmark Australian stock market index of top 200 companies                 |
-
-## Indicators
-
-| Indicator           | Definition                                                                                               |
-| ------------------- | -------------------------------------------------------------------------------------------------------- |
-| **Bollinger Bands** | Momentum indicator of moving averages and standard deviations to identify overbought/oversold conditions |
-| **MACD**            | Moving Average Convergence Divergence                                                                    |
-| **Stochastic**      | Momentum indicator comparing a security's closing price to its price range over a set period             |
-| **Volume**          | Number of shares or contracts traded in a given period                                                   |
+| Term                   | Definition                                                                                               |
+| ---------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Ask**                | The lowest price a seller is willing to accept for a security                                            |
+| **ASX**                | Australian Securities Exchange - Australia's primary stock exchange                                      |
+| **ATR**                | Average True Range - measures volatility over a specified period                                         |
+| **Bear market**        | Prices of securities are falling, or are expected to fall                                                |
+| **Bid**                | The highest price a buyer is willing to pay for a security                                               |
+| **Bollinger Bands**    | Momentum indicator of moving averages and standard deviations to identify overbought/oversold conditions |
+| **Breakout**           | When price moves beyond a defined support or resistance level                                            |
+| **Bull market**        | Market characterised by rising prices and investor optimism                                              |
+| **CFD**                | Contract for Difference - derivative for speculating on price movements                                  |
+| **Derivative**         | Financial contract whose value is anchored to price of an underlying asset                               |
+| **DMA**                | Direct Market Access - electronic trading without broker intermediation                                  |
+| **ECN**                | Electronic Communication Network - automated system matching buy/sell orders                             |
+| **EMA**                | Exponential Moving Average - gives more weight to recent prices                                          |
+| **Exercise Price**     | See _Strike Price_                                                                                       |
+| **Forex/FX**           | Foreign Exchange - trading currency pairs                                                                |
+| **Futures**            | Contracts to buy/sell an asset at a predetermined price on a future date                                 |
+| **Gap**                | Price difference between consecutive trading periods                                                     |
+| **Going Long**         | Buying a security expecting price to rise                                                                |
+| **Going Short**        | Selling a security expecting price to fall (often borrowed shares)                                       |
+| **Iron Condor**        | See _Strangle_                                                                                           |
+| **ITM**                | In The Money - options that have intrinsic value                                                         |
+| **LEPO**               | Low Exercise Price Option (LEPO) is an ASX traded option designed to be traded on margin                 |
+| **Leverage**           | Using borrowed capital to increase potential returns (and risks)                                         |
+| **Liquidity**          | How easily an asset can be bought or sold without affecting its price                                    |
+| **MACD**               | Moving Average Convergence Divergence                                                                    |
+| **Margin Call**        | Demand for additional funds when losses exceed available margin                                          |
+| **Margin**             | Money required to open a leveraged position                                                              |
+| **Market Maker**       | Entity providing liquidity by continuously buying and selling                                            |
+| **Market Order**       | Order to buy/sell immediately at current market price                                                    |
+| **Moving Average**     | Average price over a specific number of periods                                                          |
+| **Options**            | Contracts giving the right (not obligation) to buy/sell at a specific price                              |
+| **OTM**                | Out of The Money - options without intrinsic value                                                       |
+| **P&L**                | Profit and Loss statement                                                                                |
+| **Pullback**           | Temporary reversal in the direction of a trend                                                           |
+| **Resistance**         | Price level where selling pressure historically emerges                                                  |
+| **Retracement**        | Temporary reversal in the direction of a price trend, followed by a return to the original trend         |
+| **RSI**                | Relative Strength Index - momentum oscillator measuring speed and change of price movements              |
+| **Scalping**           | Very short-term trading strategy holding positions for seconds to minutes                                |
+| **SMA**                | Simple Moving Average - arithmetic mean of prices over specified periods                                 |
+| **SPC**                | Shares Per Contract - the number of shares of the underlying asset that one option contract represents   |
+| **SPI**                | Share Price Index Futures - derivative contracts based on ASX 200 index                                  |
+| **Spread**             | Difference between bid and ask prices                                                                    |
+| **Stochastic**         | Momentum indicator comparing a security's closing price to its price range over a set period             |
+| **Stop Loss**          | Order to sell when price falls to a predetermined level to limit losses                                  |
+| **Straddle**           | Buy both a call and put at the same strike price                                                         |
+| **Strangle**           | Sell options to collect premiums when you expect the stock to stay flat                                  |
+| **Strike Price**       | TODO                                                                                                     |
+| **Support**            | Price level where buying interest historically emerges                                                   |
+| **Swing Trading**      | Holding positions for days to weeks to capture price swings                                              |
+| **Take Profit**        | Order to sell when price reaches a predetermined profit level                                            |
+| **Technical Analysis** | Analyzing price charts and patterns to predict future movements                                          |
+| **Tick**               | Minimum price movement of a trading instrument                                                           |
+| **Timeframe**          | Period used for chart analysis (1min, 5min, 1hr, daily, etc.)                                            |
+| **Trading Range**      | Price band between support and resistance levels where a security trades                                 |
+| **Uptrend Line**       | Technical analysis line connecting successive higher troughs in an upward price trend                    |
+| **Volatility**         | Degree of price variation over time                                                                      |
+| **Volume**             | Number of shares or contracts traded in a given period                                                   |
+| **Whipsaw**            | Rapid price movements in opposite directions causing losses                                              |
+| **XJO**                | S&P/ASX 200 Index - benchmark Australian stock market index of top 200 companies                         |
