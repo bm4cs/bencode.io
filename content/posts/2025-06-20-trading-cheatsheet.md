@@ -26,10 +26,12 @@ This post captures foundational knowledge that will help master Australian deriv
   - [The Value of an Option](#the-value-of-an-option)
     - [Call Value Example](#call-value-example)
   - [Option Premiums](#option-premiums)
-- [Complete Call Walkthrough](#complete-call-walkthrough)
+- [End-To-End Call Walkthrough](#end-to-end-call-walkthrough)
+- [Portfolio Strategies](#portfolio-strategies)
+  - [Covered Calls](#covered-calls)
+  - [Covered Puts](#covered-puts)
 - [Spread Trading](#spread-trading)
-- [Portfolio Strategies - Covered Calls](#portfolio-strategies---covered-calls)
-- [Options Cheat Sheet](#options-cheat-sheet)
+- [Options Trading Cheat Sheet](#options-trading-cheat-sheet)
 - [FAQ](#faq)
 - [Glossary](#glossary)
 
@@ -244,7 +246,7 @@ This standardisation means even "cheap" options can require meaningful capital. 
 
 This is part of the leverage component of options; you control 100 shares of stock for a fraction of what it would cost to buy them outright.
 
-## Complete Call Walkthrough
+## End-To-End Call Walkthrough
 
 Assuming a bullish (uptrending) assessment.
 
@@ -302,22 +304,72 @@ If you have reached this point, all rules have checked out.
 3. Calculate profit: 0.38 - 0.29 = 0.09 or 9 cents = 31% (0.09 / 0.29)
 4. Multiplied out by 86 contracts = 0.09 × 100 shares per contact × 85 contracts = $774
 
+
+
+
+## Portfolio Strategies
+
+### Covered Calls
+
+A strategy to profit from sideways or bullish movement, by writing calls against shares you already own.
+
+For example, you own 100 shares of a stock and sell a call option against those shares:
+
+- You own 100 shares of XYZ at $50/share ($5,000 invested)
+- You sell a call option with a $55 strike price expiring in 30 days
+- You collect $200 premium upfront
+
+Two possible outcomes:
+
+1. Stock stays below $55: The option expires worthless. You keep your shares, keep the $200 premium, and can sell another call next month.
+2. Stock rises above $55: Your shares get exercised at $55. You keep the $200 premium plus the $5/share gain ($500), totaling $700 profit. You miss out on any gains above $55.
+
+Benefits:
+
+- **Generate income**: Earn regular premium income from stocks you're holding long-term, especially in flat or mildly bullish markets.
+- **Lower cost base**: The premiums collected reduce your effective purchase price of the stock over time.
+- **Accept capped upside**: You're willing to sell your shares at the strike price and forgo unlimited upside in exchange for immediate income.
+
+### Covered Puts
+
+A strategy that aims to profit from sideways and bearish movement, by writing puts against a short, giving someone the right to sell stock to us.
+
+An example, you short 100 shares of a stock (borrowing and selling shares you don't own) and sell a put option against that short position.
+
+- You short 100 shares of XYZ at $50/share (you sold borrowed shares for $5,000)
+- You sell a put option with a $45 strike price expiring in 30 days
+- You collect $200 premium upfront
+
+Two possible outcomes:
+
+- Stock stays above $45: The option expires worthless. You keep the $200 premium, maintain your short position, and can sell another put next month.
+- Stock falls below $45: You're obligated to buy shares at $45 to close your short. You keep the $200 premium plus the $5/share gain from shorting at $50 ($500), totaling $700 profit. You miss out on any further downside below $45.
+
+Benefits:
+
+- **Generate income on short positions**: Earn premium income while betting against a stock you think will decline or stay flat.
+- **Lower short position risk**: The premium collected provides a small buffer and reduces your effective short price.
+- **Accept capped downside profit**: You're willing to buy back shares at the strike price, forgoing unlimited profit if the stock crashes, in exchange for immediate premium income.
+
+This is much riskier than a covered call because shorting stock carries unlimited loss potential if the stock rises sharply.
+
 ## Spread Trading
 
-Iron Condor
+TODO: Iron Condor
 
-## Portfolio Strategies - Covered Calls
-
-## Options Cheat Sheet
+## Options Trading Cheat Sheet
 
 1. Options are bought in contracts; contract size is usually 100 shares per contract.
-2. Calculate **break even** by adding (call) or subtracting (put), the **option value** from the **strike price**.
-3. When buying a **Call** always pick the first strike price below the current share price.
-4. ASX traded ETO's expire on a Thursday, as per their [expiry date calendar](https://www.asx.com.au/markets/trade-our-derivatives-market/overview/equity-derivatives/single-stock-derivatives/expiry-calendar.html).
-5. Due to time decay, pick an expiry 6-8 weeks out, minimum of 4 weeks, and never hold with less than 3 weeks to expiry.
-6. Set technical stops at ~20% support (for a call) or resistance (for a put).
-7. Monitor daily.
-8. Exit signals: for directional stay in the trade no longer than seven trading days, bollinger band breakout, no more than 3 weeks out from expiry
+2. Only place 20% of capital at risk on any one trade (e.g. $2,000 per trade for a $10,000 trading bank).
+3. Only have 3 trades open at any one time.
+4. Limit losses at 20% on any one trade.
+6. Calculate **break even** by adding (call) or subtracting (put), the **option value** from the **strike price**.
+7. When buying a **Call** always pick the first strike price below the current share price.
+8. ASX traded ETO's expire on a Thursday, as per their [expiry date calendar](https://www.asx.com.au/markets/trade-our-derivatives-market/overview/equity-derivatives/single-stock-derivatives/expiry-calendar.html).
+9. Due to time decay, pick an expiry 6-8 weeks out, minimum of 4 weeks, and never hold with less than 3 weeks to expiry.
+10. Set technical stops at ~20% support (for a call) or resistance (for a put).
+11. Monitor daily.
+12. Exit signals: for directional stay in the trade no longer than seven trading days, bollinger band breakout, no more than 3 weeks out from expiry, when 20-30% profit is reached
 
 ## FAQ
 
