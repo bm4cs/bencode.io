@@ -31,6 +31,17 @@ This post captures foundational knowledge that will help master Australian deriv
   - [Covered Calls](#covered-calls)
   - [Covered Puts](#covered-puts)
 - [Spread Trading](#spread-trading)
+  - [Bull Call (debit)](#bull-call-debit)
+  - [Bull Put (credit)](#bull-put-credit)
+  - [Bear Put (debit)](#bear-put-debit)
+  - [Bear Call (credit)](#bear-call-credit)
+  - [Condor (debit)](#condor-debit)
+  - [Iron Condor (credit)](#iron-condor-credit)
+- [Indicators](#indicators)
+  - [Stochastics](#stochastics)
+  - [Bollinger Bands](#bollinger-bands)
+  - [50-Day Moving Average (50-DMA)](#50-day-moving-average-50-dma)
+  - [Volume](#volume)
 - [Options Trading Cheat Sheet](#options-trading-cheat-sheet)
 - [FAQ](#faq)
 - [Glossary](#glossary)
@@ -92,10 +103,10 @@ You pay a premium upfront to purchase this right. The option's value fluctuates 
 
 The traits of a Call or Put invert depending if you are the buyer or the seller (aka writer):
 
-| Option Type | Buyer                                                     | Seller                                                           |
-| ----------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
-| Call        | Pay premium, for a right to **BUY** stock at strike price | Receive the premium, obligated to **SELL** stock at strike price |
-| Put         | Pay premium, for right to **SELL** stock at strike price  | Receive the premium, obligated to **BUY** stock at strike price  |
+| Option Type | Buyer                                                    | Seller                                                           |
+| ----------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
+| Call        | Pay premium, for right to **BUY** stock at strike price  | Receive the premium, obligated to **SELL** stock at strike price |
+| Put         | Pay premium, for right to **SELL** stock at strike price | Receive the premium, obligated to **BUY** stock at strike price  |
 
 Time decay impacts the buyer and seller in opposite ways:
 
@@ -293,9 +304,10 @@ Resulting analysis:
 
 **Entering**:
 
-If you have reached this point, all rules have checked out.
+If you have reached this point, all prior rules must have checked out.
 
-1. Buy options between 3-4pm, unless its the second day of move.
+1. In the _Options Calculator_ label the strategy to help track it `ANZ COST 0.45 PROFIT (1.2X) 34.80 0.54 LOSS (0.8X) 33.60 0.36`
+2. Buy options between 1500-1600 (typically lowest cost in the day), unless its the second day of move.
 
 **Exiting**:
 
@@ -303,9 +315,6 @@ If you have reached this point, all rules have checked out.
 2. The option is now worth 0.38.
 3. Calculate profit: 0.38 - 0.29 = 0.09 or 9 cents = 31% (0.09 / 0.29)
 4. Multiplied out by 86 contracts = 0.09 × 100 shares per contact × 85 contracts = $774
-
-
-
 
 ## Portfolio Strategies
 
@@ -355,41 +364,133 @@ This is much riskier than a covered call because shorting stock carries unlimite
 
 ## Spread Trading
 
-TODO: Iron Condor
+Strategies are categorised as debit or credit, which means they either cost you money upfront to enter (i.e. you pay a net debit), or you collect money upfront (receive a net credit).
+
+### Bull Call (debit)
+
+A bull call spread costs money but you control when you profit.
+
+You want to bet the stock goes up, but buying a call is expensive. So you sell a higher call to someone else to help pay for it. It's like getting a discount coupon; you save money upfront, but you agree to share some of your winnings if the stock really takes off.
+
+You **buy a call** at a lower strike price and **sell a call** at a higher strike price (same expiration). You profit if the stock goes up, but your gains are capped at the higher strike.
+
+You pay a net debit (costs money upfront) because you're buying the more expensive lower-strike call.
+
+### Bull Put (credit)
+
+A bull put spread pays you money upfront but you're taking on an obligation.
+
+Someone pays you money to promise you'll buy their stock at a certain price if it drops. You're nervous about that promise, so you buy insurance (a lower put) in case the stock really crashes. You keep the difference between what they paid you and what your insurance cost. You win as long as the stock doesn't fall too much.
+
+You sell a put at a higher strike price and buy a put at a lower strike price (same expiration). You profit if the stock stays flat or goes up, keeping the premium difference.
+
+You receive a net credit (collect money upfront) because you're selling the more expensive higher-strike put.
+
+### Bear Put (debit)
+
+A bear put spread costs money but lets you profit from declines.
+
+You think the stock will fall, so you buy the right to sell it at a high price. But puts are expensive, so you sell someone else the right to sell at an even lower price to help pay for yours. It's like betting on a team to lose, but agreeing to share some winnings if they lose really badly; you get a discount on your bet upfront.
+
+You buy a put at a higher strike price and sell a put at a lower strike price (same expiration). You profit if the stock goes down, but your gains are capped at the lower strike.
+
+You pay a net debit (costs money upfront) because you're buying the more expensive higher-strike put.
+
+### Bear Call (credit)
+
+A bear call spread pays you money upfront but you're betting the stock won't rise.
+
+Someone pays you money to let them buy stock from you at a certain price if it goes up. You're worried the stock might really shoot up, so you buy insurance (a higher call) to protect yourself. You keep the difference between what they paid you and what your insurance cost. You win as long as the stock doesn't rise too much.
+
+You sell a call at a lower strike price and buy a call at a higher strike price (same expiration). You profit if the stock stays flat or goes down, keeping the premium difference.
+
+You receive a net credit (collect money upfront) because you're selling the more expensive lower-strike call.
+
+### Condor (debit)
+
+You're betting the stock will stay calm and not move too much in either direction. You set up four price levels like fence posts. If the stock stays between the two middle posts, you win. If it runs wild past the outer posts, you lose (but only what you paid). It's like betting a dog will stay in the yard; not too far left, not too far right.
+
+You combine a bull spread and a bear spread using all calls OR all puts. You buy options at the outer strikes and sell options at the inner strikes. You profit if the stock stays within a range between the two middle strikes.
+
+You pay a net debit (costs money upfront).
+
+### Iron Condor (credit)
+
+Two people pay you money; one bets the stock goes way up, another bets it goes way down. You take their money and buy cheap insurance on both sides in case they're right. As long as the stock stays boring and doesn't move much, you keep all the money. It's like being paid to bet that nothing exciting happens; you win if things stay calm.
+
+You combine a **Bull Put** spread (lower strikes) and a **Bear Call** spread (higher strikes). You sell options at the inner strikes and buy options at the outer strikes for protection. You profit if the stock stays within the range between the two short strikes.
+
+You receive a net credit (collect money upfront).
+
+## Indicators
+
+### Stochastics
+
+TODO
+
+### Bollinger Bands
+
+TODO
+
+### 50-Day Moving Average (50-DMA)
+
+The average closing price of a stock over the past 50 trading days. It's recalculated daily, creating a smoothed line on a chart that filters out short-term price noise.
+
+- Trend identification: Shows the intermediate-term direction of a stock. If price is above the 50-DMA, it suggests an uptrend; below suggests a downtrend.
+- Support and resistance: The 50-DMA often acts as a support level in uptrends (stock bounces off it) or resistance in downtrends (stock struggles to break above it).
+
+Trading signals:
+
+- Stock crossing above the 50-DMA can signal bullish momentum
+- Stock crossing below can signal bearish momentum
+
+Traders often watch when the 50-DMA crosses the 200-DMA (called a "Golden Cross" when 50 crosses above, or "Death Cross" when it crosses below).
+In the context of options:
+Traders use the 50-DMA to time entries and exits. For example:
+
+Buying calls when a stock bounces off its 50-DMA in an uptrend
+Selling calls or buying puts when a stock fails to break above its 50-DMA
+Setting strike prices relative to where the 50-DMA sits
+
+It's a popular technical indicator because 50 days represents roughly 2-3 months of trading, capturing medium-term momentum without being too reactive to daily swings.
+
+### Volume
+
+TODO
+
 
 ## Options Trading Cheat Sheet
 
+1. Start looking for trades 1430-1500.
 1. Options are bought in contracts; contract size is usually 100 shares per contract.
-2. Only place 20% of capital at risk on any one trade (e.g. $2,000 per trade for a $10,000 trading bank).
-3. Only have 3 trades open at any one time.
-4. Limit losses at 20% on any one trade.
-6. Calculate **break even** by adding (call) or subtracting (put), the **option value** from the **strike price**.
-7. When buying a **Call** always pick the first strike price below the current share price.
-8. ASX traded ETO's expire on a Thursday, as per their [expiry date calendar](https://www.asx.com.au/markets/trade-our-derivatives-market/overview/equity-derivatives/single-stock-derivatives/expiry-calendar.html).
-9. Due to time decay, pick an expiry 6-8 weeks out, minimum of 4 weeks, and never hold with less than 3 weeks to expiry.
-10. Set technical stops at ~20% support (for a call) or resistance (for a put).
-11. Monitor daily.
-12. Exit signals: for directional stay in the trade no longer than seven trading days, bollinger band breakout, no more than 3 weeks out from expiry, when 20-30% profit is reached
+1. Only place 20% of capital at risk on any one trade (e.g. $2,000 per trade for a $10,000 trading bank).
+1. Do not do more than 60 contracts per trade.
+1. Only have 3 trades open at any one time.
+1. To maximise profit always look at selling at market open (1000-1030), as market tends to open high and stoops over the day.
+1. To minimise loss, wait to sell until afternoon.
+1. Limit losses at 20% on any one trade.
+1. Calculate **break even** by adding (call) or subtracting (put), the **option value** from the **strike price**.
+1. When buying a **Call** always pick the first strike price below the current share price.
+1. ASX traded ETO's expire on a Thursday, as per their [expiry date calendar](https://www.asx.com.au/markets/trade-our-derivatives-market/overview/equity-derivatives/single-stock-derivatives/expiry-calendar.html).
+1. Due to time decay, pick an expiry 6-8 weeks out, minimum of 4 weeks, and never hold with less than 3 weeks to expiry.
+1. Spreads don't suffer from time decay.
+1. Set technical stops at ~20% support (for a call) or resistance (for a put).
+1. Monitor daily.
+1. Exit signals: for directional stay in the trade no longer than seven trading days, bollinger band breakout, no more than 3 weeks out from expiry, when 20-30% profit is reached
 
 ## FAQ
 
-Why is having real-time market data important when trading options?
-
-What are common repair strategies?
-
-When should I close a trade?
-
-To what unit does an option premium apply?
-
-What differentiates European and American options?
-
-What are the basic entry signals for a bullish day?
-
-What are the basic entry signals for a bearish day?
-
-When is the maximum risk realised for a call option, for a share that falls below its strike price?
-
-How many options are usually bundled into a contract?
+- Why is having real-time market data important when trading options
+- What are common repair strategies
+- When should I close a trade
+- To what unit does an option premium apply
+- What differentiates European and American options
+- What are the basic entry signals for a bullish day
+- What are the basic entry signals for a bearish day
+- When is the maximum risk realised for a call option, for a share that falls below its strike price
+- How many options are usually bundled into a contract?
+- When is a mini warrant a preferrable instrument to an option? When the exit thresholds on an option sit above the support. In this case you want to take advantage of a support bounce (trampoline).
+- How much is brokerage? AUD$75 per strike or 0.55% (whichever is higher)
 
 ## Glossary
 
