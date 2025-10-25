@@ -51,22 +51,17 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [Integrating Domain Entities with EF Core](#integrating-domain-entities-with-ef-core)
     - [Publishing Domain Events in the Unit of Work](#publishing-domain-events-in-the-unit-of-work)
     - [Handling Race Conditions with Optimistic Concurrency](#handling-race-conditions-with-optimistic-concurrency)
+    - [Distributed Cache Service](#distributed-cache-service)
   - [Presentation layer](#presentation-layer)
     - [Presentation Layer Key Responsibilities](#presentation-layer-key-responsibilities)
-      - [Input Handling and Validation](#input-handling-and-validation)
-      - [Request Translation](#request-translation)
-      - [Response Formatting](#response-formatting)
-      - [Authentication and Authorization](#authentication-and-authorization)
-      - [Error Handling and Translation](#error-handling-and-translation)
-      - [Dependency Injection Configuration](#dependency-injection-configuration)
     - [What the Presentation Layer Does NOT Do](#what-the-presentation-layer-does-not-do)
-      - [Business Logic](#business-logic)
-      - [Data Access](#data-access)
-      - [Complex Validation](#complex-validation)
-      - [State Management](#state-management)
-      - [Cross-Cutting Concerns Implementation](#cross-cutting-concerns-implementation-1)
     - [API Controllers and Endpoints](#api-controllers-and-endpoints)
     - [Seed Data and EF Migrations](#seed-data-and-ef-migrations)
+    - [Authentication (authn) with Keycloak](#authentication-authn-with-keycloak)
+    - [Authorization (authz)](#authorization-authz)
+      - [Role-based Authorization](#role-based-authorization)
+      - [Permission-based (Policy) Authorization](#permission-based-policy-authorization)
+      - [Resource-based Authorization](#resource-based-authorization)
 - [.NET Implementation Tips](#net-implementation-tips)
   - [General .NET Tips](#general-net-tips)
   - [Domain Layer .NET Tips](#domain-layer-net-tips)
@@ -1033,6 +1028,21 @@ builder.Property<uint>("Version").IsRowVersion();  // adds a shadow state proper
 
 Npgsql will create a [concurrency token](https://www.npgsql.org/efcore/modeling/concurrency.html) that is backed with an `xmin` system column, which holds the ID of the last transaction that updated the row.
 
+#### Distributed Cache Service
+
+A cache that can be shared by multiple app servers, typically maintained as an external service to the app servers that access it. Some key traits of a distributed cache vs a simple in-memory cache:
+
+- Is coherent (consistent) across requests to multiple servers
+- Survives server restarts and app deployments
+- Doesn't use local memory
+
+.NET now provides an [IDistributedCache](https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.caching.distributed.idistributedcache?view=net-9.0-pp) interface. Popular providers are provided for Redis, Postgres, SQL Server, NCache and more. I'm going with Postgres.
+
+1. Add NuGet [Microsoft.Extensions.Caching.Postgres](https://www.nuget.org/packages/Microsoft.Extensions.Caching.Postgres) package to the infrastructure layer.
+2. Create an `ICacheService` contract in the application layer.
+3. Create an `ICacheService` implementation, `CacheService` in the infrastructure layer. This concrete leverages an `IDistributedCache` dependency, which defines basic async CRUD operations.
+4. Setup dependency injection using [`DependencyInjection.cs`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/DependencyInjection.cs) in `Wintermute.Infrastructure`, create new extension method `AddCaching` to encapsulate this setup. This will include defining the various parameters to feed to the[ `AddDistributedPostgresCache`](https://www.nuget.org/packages/Microsoft.Extensions.Caching.Postgres) extension method, such as connection string, schema and table names, disable writeahead log (WAL) and more. Refer to package docs.
+
 ### Presentation layer
 
 The bridge between the core business logic and the outside world. Its a receptionist; greets visitors, checks if they have appointments, direct them to the right department, and communicate responses back. They don't make business decisions or handle the actual work.
@@ -1043,51 +1053,20 @@ Even more compelling, it encourages multiple presentation formats for the same u
 
 #### Presentation Layer Key Responsibilities
 
-##### Input Handling and Validation
-
-The presentation layer receives requests from external sources (HTTP requests, user input, messages) and performs initial validation like format checking, required field validation, and basic data type conversion. This is only structural validation, not business rule validation.
-
-##### Request Translation
-
-It converts external requests into commands, queries, or DTOs that your application layer understands. For instance, transforming HTTP POST data into a `CreateGymMemberCommand` object.
-
-##### Response Formatting
-
-Takes the results from your application layer and formats them appropriately for the consumer, serializing to JSON, rendering HTML views, formatting console output, so on.
-
-##### Authentication and Authorization
-
-Handles user authentication (verifying identity) and often the first level of authorization (checking if a user can access an endpoint), though business level authorization should remain in deeper layers.
-
-##### Error Handling and Translation
-
-Catches exceptions from inner layers and translates them into appropriate responses for the consumer (HTTP status codes, user-friendly error messages, etc).
-
-##### Dependency Injection Configuration
-
-Often responsible for wiring up the dependency injection container and configuring how different layers glue together.
+- **Input Handling and Validation**: The presentation layer receives requests from external sources (HTTP requests, user input, messages) and performs initial validation like format checking, required field validation, and basic data type conversion. This is only structural validation, not business rule validation.
+- **Request Translation**: It converts external requests into commands, queries, or DTOs that your application layer understands. For instance, transforming HTTP POST data into a `CreateGymMemberCommand` object.
+- **Response Formatting**: Takes the results from your application layer and formats them appropriately for the consumer, serializing to JSON, rendering HTML views, formatting console output, so on.
+- **Authentication and Authorization**: Handles user authentication (verifying identity) and often the first level of authorization (checking if a user can access an endpoint), though business level authorization should remain in deeper layers.
+- **Error Handling and Translation**: Catches exceptions from inner layers and translates them into appropriate responses for the consumer (HTTP status codes, user-friendly error messages, etc).
+- **Dependency Injection Configuration**: Often responsible for wiring up the dependency injection container and configuring how different layers glue together.
 
 #### What the Presentation Layer Does NOT Do
 
-##### Business Logic
-
-Never implement business rules, calculations, or domain-specific operations. The presentation layer shouldn't know that "premium customers get 10% discount" or "orders over $100 qualify for free shipping."
-
-##### Data Access
-
-Should never directly query databases, call external APIs, or handle data persistence. All data operations should flow through the application layer.
-
-##### Complex Validation
-
-While it can check if an email field contains an "@" symbol, it shouldn't validate business rules like "users can only have 5 active subscriptions."
-
-##### State Management
-
-Shouldn't maintain business state between requests (beyond basic session/authentication data). Each request should be stateless from a business perspective.
-
-##### Cross-Cutting Concerns Implementation
-
-While it might trigger logging or caching, the actual implementation of these concerns should be handled by infrastructure components, not embedded in presentation logic.
+- **Business Logic**: Never implement business rules, calculations, or domain-specific operations. The presentation layer shouldn't know that "premium customers get 10% discount" or "orders over $100 qualify for free shipping."
+- **Data Access**: Should never directly query databases, call external APIs, or handle data persistence. All data operations should flow through the application layer.
+- **Complex Validation**: While it can check if an email field contains an "@" symbol, it shouldn't validate business rules like "users can only have 5 active subscriptions."
+- **State Management**: Shouldn't maintain business state between requests (beyond basic session/authentication data). Each request should be stateless from a business perspective.
+- **Cross-Cutting Concerns Implementation**: While it might trigger logging or caching, the actual implementation of these concerns should be handled by infrastructure components, not embedded in presentation logic.
 
 #### API Controllers and Endpoints
 
@@ -1159,6 +1138,179 @@ if (app.Environment.IsDevelopment())
     app.SeedData();
 }
 ```
+
+#### Authentication (authn) with Keycloak
+
+Deals with the problem of "who" is accessing the system.
+
+TODO: write up implementation notes
+
+Problems to be solved:
+
+1. Model pure concept of a **User** into the domain layer.
+
+#### Authorization (authz)
+
+Deals with the "what" the identity is permitted to do. The big 3 types of authz: role-based, permission-based and resource-based based.
+
+##### Role-based Authorization
+
+When an identity is created it may belong to one or more roles. For example, Alice may belong to the `Administrator` and `User` roles while Scott may only belong to the `User` role. How these roles are created and managed depends on the backing store. Unlike authentication, will not be leveraging keycloak for roles based access, and will instead handle them in the app directly, providing greater flexibility.
+
+Plan of attack:
+
+1. Secure routes to specific roles in the presentation layer.
+2. Model the pure concept of a `Role` into the domain layer, and integrate into the `User` domain model.
+3. Update the user registration components, to make use of the new `user.Roles`, and update repository persistence so that these roles get stored and queried appropriately.
+4. Create an `IClaimsTransformation` implementation to inject custom managed roles into the `ClaimsPrincipal`, an extensiblility point provided by the .NET security components, allowing the foundational authz to work as is.
+
+**Secure API Routes**:
+
+In the case of ASP.NET, the `[Authorize(Roles = "PowerUser,Affiliate")]` custom attribute is provided, which can decorate routes, or the entire controller itself. Hard coding magic role strings into the attribute violates DRY, pop these into constants instead.
+
+```csharp
+[HttpGet("me")]
+[Authorize(Roles = Roles.Registered)]
+public async Task<IActionResult> GetLoggedInUser(CancellationToken cancellationToken) { }
+```
+
+**Domain Modelling**:
+
+The [`Role`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Domain/Users/Role.cs):
+
+```csharp
+public sealed class Role(int id, string name)
+{
+    public static readonly Role Registered = new(1, "Registered");
+    public int Id { get; init; } = id;
+    public string Name { get; init; } = name;
+    public ICollection<User> Users { get; init; } = new List<User>();
+    public ICollection<Permission> Permissions { get; init; } = new List<Permission>();
+}
+```
+
+And the [`User`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Domain/Users/User.cs):
+
+```csharp
+public sealed class User : Entity
+{
+    private User(Guid id, FirstName firstName, LastName lastName, Email email)
+        : base(id)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+    }
+
+    private User() { }
+    private readonly List<Role> _roles = new();
+
+    public FirstName FirstName { get; private set; }
+    public LastName LastName { get; private set; }
+    public Email Email { get; private set; }
+    public string IdentityId { get; private set; } = string.Empty;
+    public IReadOnlyCollection<Role> Roles => _roles.ToList();
+
+    public static User Create(FirstName firstName, LastName lastName, Email email)
+    {
+        var user = new User(Guid.NewGuid(), firstName, lastName, email);
+        user.RegisterDomainEvent(new UserCreatedDomainEvent(user.Id));
+        user._roles.Add(Role.Registered);
+        return user;
+    }
+
+    public void SetIdentityId(string identityId)
+    {
+        IdentityId = identityId;
+    }
+}
+
+```
+
+##### Permission-based (Policy) Authorization
+
+Under the hood, role-based authorization and claims-based authorization use a requirement, a requirement handler, and a policy. These building blocks support the expression of authorization evaluations in code. The result is a richer (fine grained), reusable, testable authorization structure. An authorization policy is made up of one or more requirements.
+
+Plan of attack:
+
+1. Domain model the [`Permission`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Domain/Users/Permission.cs) concept into the domain layer.
+2. Enhance the [`Role`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Domain/Users/Role.cs) domain model to support a collection of permissions.
+3. Create a domain model to represent the many to many relationship between a Role and a Permission, called [`RolePermission`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Domain/Users/RolePermission.cs)
+4. Create supporting entity framework (EF) configurations that support these domain models. This includes [`PermissionConfiguration`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Configurations/PermissionConfiguration.cs), [`RolePermissionConfiguration`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Configurations/RolePermissionConfiguration.cs) and updates to the [`RoleConfiguration`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Configurations/RoleConfiguration.cs) to support it having a 1:\* of permissions.
+5. Secure the API routes using `[Authorize(Roles="users:read")]` custom attribute.
+6. Implement a custom `IAuthorizationHandler` to evaluate the custom permission scheme (`users:read` and so on). See [`PermissionAuthorizationHandler`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Authorization/PermissionAuthorizationHandler.cs).
+7. Implement a custom `AuthorizationPolicyProvider` glue up authz handler based on its supported requirement type. See [`PermissionAuthorizationPolicyProvider`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Authorization/PermissionAuthorizationPolicyProvider.cs).
+8. Dependency inject these two implementations, to plumb the handler into the overarching authorization system. See `AddAuthorization` in [`DependencyInjection.cs`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/DependencyInjection.cs), providing implementations for `IClaimsTransformation`, `IAuthorizationHandler` and `IAuthorizationPolicyProvider`.
+
+**Secure API Routes**:
+
+Instead of hard coding magic strings into `Authorize[]` an elegant pattern is to subclass a custom `AuthorizeAttribute`.
+
+```csharp
+public sealed class HasPermissionAttribute : AuthorizeAttribute
+{
+    public HasPermissionAttribute(string permission)
+        : base(permission) { }
+}
+```
+
+Define all permissions as constants:
+
+```csharp
+internal static class Permissions
+{
+    public const string UsersRead = "users:read";
+}
+```
+
+Hook them up to routes as you would a standard `Authorize` attribute:
+
+```csharp
+[ApiController]
+public class UsersController : ControllerBase
+{
+    [HttpGet("me")]
+    [HasPermission(Permissions.UsersRead)]
+    public async Task<IActionResult> GetLoggedInUser(CancellationToken cancellationToken)
+    {
+        ...
+    }
+}
+```
+
+**IAuthorizationHandler Implementation**:
+
+An authorization handler is responsible for the evaluation of requirements, by marking the `AuthorizationHandlerContext` if they have been satisfied e.g. `context.Succeed(requirement)`. Here [`PermissionAuthorizationHandler`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Authorization/PermissionAuthorizationHandler.cs) will employ the `AuthorizationService` to surface up any permissions for the active user from the database. Note ceremony of creating `PermissionRequirement` marker interface, which in turn implements `IAuthorizationRequirement`. This marker interface is used to glue the handler up based on the requirement type.
+
+```csharp
+internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
+{
+    protected override async Task HandleRequirementAsync(
+        AuthorizationHandlerContext context,
+        PermissionRequirement requirement
+    )
+    {
+        if (context.User.Identity is not { IsAuthenticated: true }) return;
+        using var scope = _serviceProvider.CreateScope();
+        var authorizationService = scope.ServiceProvider.GetRequiredService<AuthorizationService>();
+        var identityId = context.User.GetIdentityId();
+        var permissions = await authorizationService.GetPermissionsForUserAsync(identityId);
+        if (permissions.Contains(requirement.Permission))
+        {
+            context.Succeed(requirement);
+        }
+    }
+}
+```
+
+
+##### Resource-based Authorization
+
+Although controllers and routes may enforce authenticated identities, resource-based authz is concerned with access to resources such as data, S3 objects, media files, and so on. For example although Alice and Bob are legitimate identities that are permitted to authenticate to the system, Alice should not be allowed to query Bob's data in the system, such as his bookings.
+
+See [`GetBookingQueryHandler`](), which post validates if the active user matches the retrieved booking.
+
+
 
 ## .NET Implementation Tips
 
@@ -1241,6 +1393,7 @@ var booking = Booking.Reserve(
 
 ## Bonus: Contemporary .NET gems
 
+- Destructured conditionals: `if (context.User.Identity is not { IsAuthenticated: true })`
 - `DateOnly` and `TimeOnly` structs (.NET6)
 - Init properties (C#9) `public DateOnly End { get; init; }` can only be set during object initialization
 - Primary Constructors (C#11) combines constructor parameters such as `public class User(string firstName)` directly with property initialization `public string FirstName { get; } = firstName;`. The optional constructor body uses the => syntax for any additional initialization logic, see [Primary Constructors](#primary-constructors)
@@ -1249,6 +1402,8 @@ var booking = Booking.Reserve(
 - The `implicit operator` in C# defines an implicit conversion between types, e.g. `public static implicit operator Result<T>(T? value) => Create(value)` allows assignment of a value of type `T` directly to a variable of type `Result<T>`, and the compiler will automatically convert it using the `Create` method. This simple assignment `Result<string> result = "hello";` implicitly calls `Result<string>.Create("hello")`
 - `with` expressions: TODO
 - Extension methods: TODO see `Wintermute.Application/DependencyInjection.cs`
+- `ArgumentNullException.ThrowIfNull(foo)`
+- An EF gem I like is `HasData`, which is a code-first approach to reference data seeding e.g. `builder.HasData(Permission.UsersRead)`
 
 ### Primary Constructors
 
