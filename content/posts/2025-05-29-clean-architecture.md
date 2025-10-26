@@ -4,7 +4,7 @@ draft: false
 title: "Clean Architecture"
 slug: "cleanarch"
 date: "2025-05-29 20:14:01+1000"
-lastmod: "2025-09-13 13:13:01+1000"
+lastmod: "2025-10-26 13:13:01+1000"
 comments: false
 categories:
   - software
@@ -62,6 +62,8 @@ Domain centric architectures, like clean architecture, have inner architectural 
       - [Role-based Authorization](#role-based-authorization)
       - [Permission-based (Policy) Authorization](#permission-based-policy-authorization)
       - [Resource-based Authorization](#resource-based-authorization)
+    - [Structured Logging](#structured-logging)
+    - [Health Checks](#health-checks)
 - [.NET Implementation Tips](#net-implementation-tips)
   - [General .NET Tips](#general-net-tips)
   - [Domain Layer .NET Tips](#domain-layer-net-tips)
@@ -79,9 +81,19 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [INotification and INotificationHandler - Pub/Sub](#inotification-and-inotificationhandler---pubsub)
       - [Publishing](#publishing-1)
     - [MediatR.Contracts Package](#mediatrcontracts-package)
-  - [Structured Logging](#structured-logging)
+  - [Structured Logging](#structured-logging-1)
     - [Serilog](#serilog)
       - [Serilog and Seq Setup Guide](#serilog-and-seq-setup-guide)
+  - [Outbox Pattern](#outbox-pattern)
+    - [The Problem](#the-problem)
+    - [The Solution](#the-solution)
+    - [Key Benefits](#key-benefits)
+    - [Outbox with Domain Events](#outbox-with-domain-events)
+    - [Outbox .NET Implementation](#outbox-net-implementation)
+      - [Outbox Message Definition](#outbox-message-definition)
+      - [Transactionally Publish Domain Events as Outbox Messages](#transactionally-publish-domain-events-as-outbox-messages)
+      - [Background Worker with Quartz.NET](#background-worker-with-quartznet)
+      - [Setup Dependency Injection:](#setup-dependency-injection)
   - [Visual Studio and Roslyn Code Quality Level Ups](#visual-studio-and-roslyn-code-quality-level-ups)
   - [dotnet CLI Tips](#dotnet-cli-tips)
 
@@ -1312,6 +1324,110 @@ Although controllers and routes may enforce authenticated identities, resource-b
 
 See [`GetBookingQueryHandler`](), which post validates if the active user matches the retrieved booking.
 
+#### Structured Logging
+
+As the top most layer, is the place to establish logging policy. See dedicated chapter in this post [Structured Logging](#structured-logging).
+
+#### Health Checks
+
+Adding [health checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-9.0) to an ASP.NET Core application involves registering health check services and mapping a health check endpoint.
+
+**Registering Health Check Services**:
+
+In `Program.cs` add the health check services to the dependency injection container, using the `AddHealthChecks()` extension method:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks()
+    .AddCheck<SampleHealthCheck>(
+        "sample",
+        failureStatus: HealthStatus.Degraded,
+        tags: new[] { "sample" });
+var app = builder.Build();
+```
+
+Many common checks are provided, NuGet search for `AspNetCore.HealthChecks`. Add `AspNetCore.HealthChecks.NpgSql` and `AspNetCore.HealthChecks.Uris` to the API project.
+
+**Mapping the Health Check Endpoint**:
+
+Map an endpoint that will expose the health check results. This is typically done using `MapHealthChecks()`:
+
+```csharp
+var app = builder.Build();
+app.MapHealthChecks("/health"); // You can choose any path, like "/hc" or "/healthz"
+app.Run();
+```
+
+**Build Custom Health Checks**:
+
+Implement `IHealthCheck`:
+
+```csharp
+public class SampleHealthCheck : IHealthCheck
+{
+    public Task<HealthCheckResult> CheckHealthAsync(
+        HealthCheckContext context, CancellationToken cancellationToken = default)
+    {
+        var isHealthy = true;
+
+        // ...
+
+        if (isHealthy)
+        {
+            return Task.FromResult(
+                HealthCheckResult.Healthy("A healthy result."));
+        }
+
+        return Task.FromResult(
+            new HealthCheckResult(
+                context.Registration.FailureStatus, "An unhealthy result."));
+    }
+}
+```
+
+**Configure JSON ResponseWriter**:
+
+The result is written as a plaintext response with a configurable status code.
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Sun, 26 Oct 2025 04:17:29 GMT
+Server: Kestrel
+Cache-Control: no-store, no-cache
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Pragma: no-cache
+Transfer-Encoding: chunked
+
+Healthy
+```
+
+Let's improve that. Add ``AspNetCore.HealthChecks.UI.Client` NuGet and bind the `ResponseWriter` delegate to `UIResponseWriter.WriteHealthCheckUIResponse`:
+
+```csharp
+app.MapHealthChecks(
+    "/health",
+    new HealthCheckOptions { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse }
+);
+```
+
+`/health` now returns structured JSON:
+
+```json
+{
+  "status": "Healthy",
+  "totalDuration": "00:00:00.0191645",
+  "entries": {
+    "pgsql": {
+      "data": {},
+      "duration": "00:00:00.0145602",
+      "status": "Healthy",
+      "tags": ["db"]
+    }
+  }
+}
+```
+
 ## .NET Implementation Tips
 
 ### General .NET Tips
@@ -1765,6 +1881,161 @@ app.Use(async (ctx, next) =>
         await next();
     }
 });
+```
+
+### Outbox Pattern
+
+#### The Problem
+
+The outbox pattern solves a fundamental distributed systems problem of ensuring data consistency between your database and external systems (like message brokers, APIs, or event streams) when both need to be updated as part of the same business operation.
+
+Imagine you're building an e-commerce system. When an order is placed, you need to:
+
+1. Save the order to your database
+2. Publish an "OrderPlaced" event to a message broker so other services can react (inventory, shipping, notifications, etc.)
+
+The naive approach is to do both operations sequentially:
+
+```csharp
+await _dbContext.SaveChangesAsync();
+await _messageBroker.PublishAsync(orderPlacedEvent);
+```
+
+Fail Scenario 1: Database succeeds, message broker fails
+
+- The order is saved but no event is published
+- Other services never learn about the order
+- Inventory isn't reserved, customers don't get emails, shipping never happens
+- Your system is now in an inconsistent state
+
+Fail Scenario 2: Message broker succeeds, database fails
+
+- The event is published but the order isn't saved
+- Other services start processing an order that doesn't exist
+- You can't roll back a published message
+
+Fail Scenario 3: Partial success with retries
+
+- The message is published, but you get a timeout waiting for confirmation
+- You retry, publishing the same event multiple times
+- Duplicate processing occurs downstream
+
+You cannot wrap these two operations in a traditional database transaction because the message broker is external to your database. This is the classic dual-write (2PC) problem.
+
+#### The Solution
+
+The outbox pattern solves this by converting the distributed transaction into a single local transaction:
+
+First up, bundle the writes to your database AND an "outbox" table in the same transaction:
+
+- Save your order
+- Insert a message record into the outbox table
+- Both succeed or fail atomically
+
+Have a separate background process read from the outbox table and publishes messages:
+
+- Reads unpublished messages from the outbox table
+- Publishes them to the message broker
+- Marks them as published
+
+#### Key Benefits
+
+- **Guaranteed consistency**: Your database and eventual message delivery are always in sync. If the order is saved, the event will eventually be published.
+- **Reliability without distributed transactions**: You get transactional guarantees using only local database transactions, avoiding the complexity and performance cost of two-phase commit protocols.
+- **Resilience to outages**: If your message broker is down, messages queue up in the outbox. When it recovers, they're processed. Your core business operations continue uninterrupted.
+- **At-least-once delivery**: Messages will be delivered at least once, even if the publishing process crashes mid-flight. (Consumers should be idempotent to handle potential duplicates.)
+- **Auditability**: The outbox table provides a permanent log of all events that occurred in your system.
+
+#### Outbox with Domain Events
+
+I personally use domain events to front-end outbox maintenance, for clean separation, decoupling the domain logic which can raise events without knowing about messaging infrastructure, and then also the great testability and extensibility benefits that this brings.
+
+In a nutshell the domain raises events about what happened, MediatR handlers translate those into outbox messages, and the outbox processor handles the messy details of reliable message delivery.
+
+#### Outbox .NET Implementation
+
+##### Outbox Message Definition
+
+```csharp
+public sealed class OutboxMessage
+{
+    public Guid Id { get; init; }
+    public DateTime OccurredOnUtc { get; init; }
+    public string Type { get; init; }
+    public string Content { get; init; }
+    public DateTime? ProcessedOnUtc { get; init; }
+    public string? Error { get; init; }
+}
+```
+
+`Content` will be JSON, and `ProcessedOnUtc` null is it hasn't been processed.
+
+##### Transactionally Publish Domain Events as Outbox Messages
+
+See [`ApplicationDbContext.cs`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/ApplicationDbContext.cs), which leverages a custom Entity Framework Core `DbContext.SaveChangesAsync` as the choke point to emit domain events. Note its important to write the outbox message prior to the inner `SaveChangesAsync`, getting consistency guarantees of all transactions working as a whole, or being completely rolled back.
+
+```csharp
+public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+{
+    await PublishDomainEventsAsOutboxMessagesAsync().ConfigureAwait(false);
+    var result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    return result;
+}
+
+private async Task PublishDomainEventsAsOutboxMessagesAsync()
+{
+    var outboxMessages = ChangeTracker
+        .Entries<Entity>()
+        .Select(e => e.Entity)
+        .SelectMany(e =>
+        {
+            var domainEvents = e.GetDomainEvents();
+            e.ClearDomainEvents();
+            return domainEvents;
+        })
+        .Select(domainEvent => new OutboxMessage(
+            Guid.NewGuid(),
+            _dateTimeProvider.UtcNow,
+            domainEvent.GetType().Name,
+            JsonConvert.SerializeObject(domainEvent, JsonSerializerSettings)
+        ))
+        .ToList();
+
+    await AddRangeAsync(outboxMessages);
+}
+```
+
+##### Background Worker with Quartz.NET
+
+> Quartz.NET is a full-featured, open source job scheduling system that can be used from smallest apps to large scale enterprise systems.
+
+Add `Quartz.Extensions.Hosting` NuGet to infrastructure layer.
+
+Create an `OutboxOptions` DTO and `appsettings.json`, to allow the background work to be configured.
+
+```json
+"Outbox": {
+  "IntervalInSeconds": 10,
+  "BatchSize": 10
+}
+```
+
+The meat is defining an `IJob` quartz job [`ProcessOutboxMessagesJob`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Outbox/ProcessOutboxMessagesJob.cs), that will query the outbox messages, deserialize the JSON body as a typed domain event, publish the event using MediatR and finally mark each outbox message as processed. Some interesting design traits:
+
+- Explicitly uses `IDbConnection.BeginTransaction()` for those crisp DB ACID properties
+- The powerful `JSONB` postgres specific type is leveraged in the EF configuration for the outbox message.
+- A `SELECT ... FOR UPDATE` is used to exclusively lock affected rows until the transaction it is a part of is committed.
+
+##### Setup Dependency Injection:
+
+```csharp
+private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
+{
+    services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
+    services.AddQuartz();
+    services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+    services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
+}
 ```
 
 ### Visual Studio and Roslyn Code Quality Level Ups
