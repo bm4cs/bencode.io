@@ -1,7 +1,7 @@
 ---
 layout: post
 draft: false
-title: "Clean Architecture"
+title: ".NET Clean Architecture"
 slug: "cleanarch"
 date: "2025-05-29 20:14:01+1000"
 lastmod: "2025-10-26 13:13:01+1000"
@@ -88,12 +88,11 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [The Problem](#the-problem)
     - [The Solution](#the-solution)
     - [Key Benefits](#key-benefits)
-    - [Outbox with Domain Events](#outbox-with-domain-events)
     - [Outbox .NET Implementation](#outbox-net-implementation)
       - [Outbox Message Definition](#outbox-message-definition)
       - [Transactionally Publish Domain Events as Outbox Messages](#transactionally-publish-domain-events-as-outbox-messages)
-      - [Background Worker with Quartz.NET](#background-worker-with-quartznet)
-      - [Setup Dependency Injection:](#setup-dependency-injection)
+      - [Background Worker Job with Quartz.NET](#background-worker-job-with-quartznet)
+      - [Hookup Dependency Injection:](#hookup-dependency-injection)
   - [Visual Studio and Roslyn Code Quality Level Ups](#visual-studio-and-roslyn-code-quality-level-ups)
   - [dotnet CLI Tips](#dotnet-cli-tips)
 
@@ -1901,20 +1900,20 @@ await _dbContext.SaveChangesAsync();
 await _messageBroker.PublishAsync(orderPlacedEvent);
 ```
 
-Fail Scenario 1: Database succeeds, message broker fails
+**Fail Scenario 1**: Database succeeds, message broker fails
 
 - The order is saved but no event is published
 - Other services never learn about the order
 - Inventory isn't reserved, customers don't get emails, shipping never happens
 - Your system is now in an inconsistent state
 
-Fail Scenario 2: Message broker succeeds, database fails
+**Fail Scenario 2**: Message broker succeeds, database fails
 
 - The event is published but the order isn't saved
 - Other services start processing an order that doesn't exist
 - You can't roll back a published message
 
-Fail Scenario 3: Partial success with retries
+**Fail Scenario 3**: Partial success with retries
 
 - The message is published, but you get a timeout waiting for confirmation
 - You retry, publishing the same event multiple times
@@ -1945,12 +1944,6 @@ Have a separate background process read from the outbox table and publishes mess
 - **Resilience to outages**: If your message broker is down, messages queue up in the outbox. When it recovers, they're processed. Your core business operations continue uninterrupted.
 - **At-least-once delivery**: Messages will be delivered at least once, even if the publishing process crashes mid-flight. (Consumers should be idempotent to handle potential duplicates.)
 - **Auditability**: The outbox table provides a permanent log of all events that occurred in your system.
-
-#### Outbox with Domain Events
-
-I personally use domain events to front-end outbox maintenance, for clean separation, decoupling the domain logic which can raise events without knowing about messaging infrastructure, and then also the great testability and extensibility benefits that this brings.
-
-In a nutshell the domain raises events about what happened, MediatR handlers translate those into outbox messages, and the outbox processor handles the messy details of reliable message delivery.
 
 #### Outbox .NET Implementation
 
@@ -2005,13 +1998,13 @@ private async Task PublishDomainEventsAsOutboxMessagesAsync()
 }
 ```
 
-##### Background Worker with Quartz.NET
+##### Background Worker Job with Quartz.NET
 
 > Quartz.NET is a full-featured, open source job scheduling system that can be used from smallest apps to large scale enterprise systems.
 
 Add `Quartz.Extensions.Hosting` NuGet to infrastructure layer.
 
-Create an `OutboxOptions` DTO and `appsettings.json`, to allow the background work to be configured.
+Create an `OutboxOptions` config DTO and `appsettings.json`, for configuring and tuning how background work is managed in the app:
 
 ```json
 "Outbox": {
@@ -2022,11 +2015,11 @@ Create an `OutboxOptions` DTO and `appsettings.json`, to allow the background wo
 
 The meat is defining an `IJob` quartz job [`ProcessOutboxMessagesJob`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Outbox/ProcessOutboxMessagesJob.cs), that will query the outbox messages, deserialize the JSON body as a typed domain event, publish the event using MediatR and finally mark each outbox message as processed. Some interesting design traits:
 
-- Explicitly uses `IDbConnection.BeginTransaction()` for those crisp DB ACID properties
+- Explicitly creates a transaction with `IDbConnection.BeginTransaction()` and commits it for those crisp DB ACID properties.
 - The powerful `JSONB` postgres specific type is leveraged in the EF configuration for the outbox message.
 - A `SELECT ... FOR UPDATE` is used to exclusively lock affected rows until the transaction it is a part of is committed.
 
-##### Setup Dependency Injection:
+##### Hookup Dependency Injection:
 
 ```csharp
 private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
