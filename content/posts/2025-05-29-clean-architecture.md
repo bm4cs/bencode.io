@@ -79,6 +79,9 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [INotification and INotificationHandler - Pub/Sub](#inotification-and-inotificationhandler---pubsub)
       - [Publishing](#publishing-1)
     - [MediatR.Contracts Package](#mediatrcontracts-package)
+  - [Structured Logging](#structured-logging)
+    - [Serilog](#serilog)
+      - [Serilog and Seq Setup Guide](#serilog-and-seq-setup-guide)
   - [Visual Studio and Roslyn Code Quality Level Ups](#visual-studio-and-roslyn-code-quality-level-ups)
   - [dotnet CLI Tips](#dotnet-cli-tips)
 
@@ -1303,14 +1306,11 @@ internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<Perm
 }
 ```
 
-
 ##### Resource-based Authorization
 
 Although controllers and routes may enforce authenticated identities, resource-based authz is concerned with access to resources such as data, S3 objects, media files, and so on. For example although Alice and Bob are legitimate identities that are permitted to authenticate to the system, Alice should not be allowed to query Bob's data in the system, such as his bookings.
 
 See [`GetBookingQueryHandler`](), which post validates if the active user matches the retrieved booking.
-
-
 
 ## .NET Implementation Tips
 
@@ -1617,6 +1617,154 @@ public class GymCreatedEvent : INotification
         Email = email;
     }
 }
+```
+
+### Structured Logging
+
+The value prop of structured logging is all about having logs become records with named fields (properties) you can filter, sort, and aggregate in log stores (Seq, Elasticsearch, Splunk, etc.).
+
+This creates a ton of cool benefits:
+
+- **Reliable parsing**: machines read fields reliably (no brittle regexes), enabling dashboards and alerts.
+- **Rich context & correlation**: attach request IDs, user IDs, operation durations as typed properties that persist across call stacks.
+- **Better diagnostics**: numeric and boolean fields let you compute metrics (error rates, latencies) directly from logs.
+- **Consistent schema**: message templates produce stable keys (e.g., UserId) instead of ad‑hoc text.
+- **Safer formatting & performance**: templated properties avoid expensive string concatenation and make heavy formatting optional.
+- **Easier downstream processing**: structured logs allow automatic enrichment, sampling, and routing to different sinks.
+
+#### Serilog
+
+Serilog is an opinionated logging package that offers deep .NET ecosystem integration.
+
+```csharp
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .MinimumLevel.Information()
+    .WriteTo.Console()                       // developer-friendly
+    .WriteTo.File("logs/log-.json", rollingInterval: RollingInterval.Day, formatter: new Serilog.Formatting.Compact.CompactJsonFormatter())
+    .WriteTo.Seq("http://localhost:5341")    // searchable sink
+    .CreateLogger();
+
+builder.Host.UseSerilog(); // replaces default logging
+
+Log.ForContext("Feature", "Payments")
+   .Information("Order {OrderId} for {Amount:C} processed by {User}", orderId, amount, userEmail);
+```
+
+**Message Templates**:
+
+```csharp
+logger.LogInformation("Order {OrderId} processed in {Elapsed:0.00}ms", orderId, elapsed)
+```
+
+Serilog parses the template and stores `OrderId` and `Elapsed` as named properties.
+
+Serializing complex objects into properties (use `@` in templates) so you can inspect object graphs without custom string formatting.
+
+```csharp
+logger.LogError("Request {Request} failed with {@Error}", name, result.Error);
+```
+
+However I prefer to leverage `LogContext` for conplex objects.
+
+```csharp
+using (LogContext.PushProperty("Error", result.Error, true))
+{
+    logger.LogError("Request {Request} failed with", name);
+}
+```
+
+**Wide sink ecosystem**:
+
+Write to console, rolling files, Seq, Elasticsearch, Splunk, Datadog, ApplicationInsights, databases, and many community sinks.
+
+**Enrichers**:
+
+Add contextual properties automatically (machine name, process id, thread id, environment, custom properties). Use `Enrich.FromLogContext()` + `LogContext.PushProperty(...)` to scope properties per logical operation.
+
+Easy to attach correlation IDs and user info across async flows using `LogContext` or middleware.
+
+**Powerful configuration**
+
+Configure via code or `appsettings.json` (`Serilog.Settings.Configuration`) and control sinks, levels, and enrichers declaratively.
+
+**Integration**:
+
+Integration with `Microsoft.Extensions.Logging` and ASP.NET Core. Replace or bridge the default `ILogger` so framework logs become structured Serilog events (`Serilog.AspNetCore`, `UseSerilog()`).
+
+##### Serilog and Seq Setup Guide
+
+1. Add the `Serilog.AspNetCore` and `Serilog.Sinks.Seq` NuGet packages to the presentation layer (i.e. API).
+2. Hijack the logger that gets setup by the `HostBuilder` with `UseSerilog()` extension method and setup it up to pull its config from `appsettings.json` (see snippet below).
+3. Add serilog config to `appsettings.json`.
+4. Create custom middleware to manage correlation tokens. See [`RequestContextLoggingMiddleware.cs`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Api/MIddleware/RequestContextLoggingMiddleware.cs)
+
+**Serilog HostBuilder Setup**:
+
+```csharp
+builder.Host.UseSerilog(
+    (context, configuration) =>
+    {
+        configuration.ReadFrom.Configuration(context.Configuration);
+    }
+);
+
+// ...
+
+app.UseSerilogRequestLogging();
+```
+
+**Serilog App Configuration**:
+
+```json
+"Serilog": {
+"Using": [
+    "Serilog.Sinks.Console",
+    "Serilog.Sinks.Seq"
+],
+"MinimumLevel": {
+    "Default": "Information",
+    "Override": {
+    "Microsoft": "Information"
+}
+},
+"WriteTo": [
+    { "Name": "Console" },
+    {
+    "Name": "Seq",
+    "Args": { "serverUrl": "http://localhost:5341" }
+    }
+],
+"Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId" ]
+}
+```
+
+The enrichers are noteworthy:
+
+- `FromLogContext`: Pulls any properties pushed into Serilog's ambient `LogContext` (`LogContext.PushProperty(...)`) into every log event emitted while those properties are in scope. Don't worry, `LogContext` uses an async-local ambient storage (so values flow across async/await).
+- `WithMachineName`: Adds a `MachineName` property containing the machine/host name where the process runs. Handy for multi-host cloud native deployments where you need to identify which host emitted a given event.
+- `WithThreadId`: Adds a `ThreadId` property with the current thread's managed id (`Thread.CurrentThread.ManagedThreadId`).
+
+```csharp
+using (LogContext.PushProperty("CorrelationId", correlationId))
+{
+    Log.Information("Handling request");
+    // further logs inside scope include CorrelationId property
+}
+```
+
+Even better, centralise this concern into middleware - see [`RequestContextLoggingMiddleware.cs`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Api/MIddleware/RequestContextLoggingMiddleware.cs):
+
+```csharp
+app.Use(async (ctx, next) =>
+{
+    var correlationId = ctx.TraceIdentifier;
+    using (LogContext.PushProperty("CorrelationId", correlationId))
+    {
+        await next();
+    }
+});
 ```
 
 ### Visual Studio and Roslyn Code Quality Level Ups
