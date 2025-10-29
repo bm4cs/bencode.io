@@ -85,8 +85,11 @@ Domain centric architectures, like clean architecture, have inner architectural 
   - [Controller to Minimal API Conversion Cookbook](#controller-to-minimal-api-conversion-cookbook)
   - [Centralising Route Opinions with Route Groups](#centralising-route-opinions-with-route-groups)
 - [Testing](#testing)
-  - [Domain Layer Testing](#domain-layer-testing)
-  - [Application Layer Testing](#application-layer-testing)
+  - [Domain Layer Unit Testing](#domain-layer-unit-testing)
+  - [Application Layer Unit Testing](#application-layer-unit-testing)
+    - [Mocking with NSubstitute](#mocking-with-nsubstitute)
+  - [Application Layer Integration Testing with TestContainers](#application-layer-integration-testing-with-testcontainers)
+    - [Accessing Internal Symbols](#accessing-internal-symbols)
 - [Bonus: Contemporary .NET gems](#bonus-contemporary-net-gems)
   - [Primary Constructors](#primary-constructors)
   - [Switch Expressions](#switch-expressions)
@@ -1880,7 +1883,7 @@ public static IEndpointRouteBuilder MapBookingEndpoints(this IEndpointRouteBuild
 
 ## Testing
 
-### Domain Layer Testing
+### Domain Layer Unit Testing
 
 Idioms:
 
@@ -1896,17 +1899,97 @@ Focus on:
 - Covering as much behaviour as possible `User.Create()`, `Booking.Reserve()`, `Booking.Confirm()`
 - Domain services, such as `PricingService`
 
-### Application Layer Testing
+### Application Layer Unit Testing
 
 Idioms:
 
-- Inject dependencies, such as repositories, as mocks.
+- Application layer code is higher order in nature, so will need to tackle injecting dependencies, such as repositories, around the system under test (SUT).
+- Mock needed dependencies to allow the use-cases to be exercised in a deterministically.
+- Dealing with encapsulated symbols is common, such as `internal sealed` classes, `protected` and `private` members. See [Accessing Internal Symbols]().
 
 
 Focus on:
 
-- Use-cases, such as `Bookings/CancelBooking`, `Bookings/GetBooking` etc
+- Higher level use-cases, such as `Bookings/ReserveBooking`, `Bookings/CancelBooking`, `Bookings/GetBooking` etc
 - 
+
+
+
+#### Mocking with NSubstitute
+
+A fake implementation of a contract or service, allowing us to build an emulated test harness around the system under test (SUT).
+
+Here `ReserveBookingCommand` is the SUT.
+
+```csharp
+private readonly ReserveBookingCommandHandler _handler;
+
+// private dependencies needed by ReserveBookingCommandHandler
+private readonly IUserRepository _userRepositoryMock;
+private readonly IBookingRepository _bookingRepositoryMock;
+private readonly IApartmentRepository _apartmentRepositoryMock;
+private readonly IUnitOfWork _unitOfWorkMock;
+private readonly PricingService _pricingService;
+private readonly IDateTimeProvider _dateTimeProviderMock;
+
+public ReserveBookingTests()
+{
+    _userRepositoryMock = Substitute.For<IUserRepository>();
+    _bookingRepositoryMock = Substitute.For<IBookingRepository>();
+    _apartmentRepositoryMock = Substitute.For<IApartmentRepository>();
+    _unitOfWorkMock = Substitute.For<IUnitOfWork>();
+    _dateTimeProviderMock = Substitute.For<IDateTimeProvider>();
+    _dateTimeProviderMock.UtcNow.Returns(UtcNow);
+
+    _handler = new ReserveBookingCommandHandler(
+        _userRepositoryMock,
+        _bookingRepositoryMock,
+        _apartmentRepositoryMock,
+        _unitOfWorkMock,
+        _pricingService,
+        _dateTimeProviderMock
+    );
+}
+
+[Fact]
+public async Task Handle_Should_ReturnFailure_WhenUserIsNull()
+{
+    // Arrange
+    _userRepositoryMock
+        .GetByIdAsync(Command.UserId, Arg.Any<CancellationToken>())
+        .Returns(Task.FromResult<User?>(null));
+
+    // Act
+    var result = await _handler.Handle(Command, default);
+
+    // Assert
+    result.Error.Should().Be(UserErrors.NotFound);
+}
+```
+
+
+### Application Layer Integration Testing with TestContainers
+
+
+1. Add packages `Testcontainers.PostgreSql` and `Testcontainers.Keycloak`.
+2. Add `Microsoft.AspNetCore.Mvc.Testing` to allow in-memory instance of the API.
+3. Add `public partial class Program;` to Program.cs to allow the API to be setup as a harness.
+4. Create class `public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>`
+5. Rewire dependencies that need to work with any infrastructure, to update their connection configurations to bind against the temporary testcontainer based containers instead.
+
+
+
+#### Accessing Internal Symbols
+
+In the project that owns the internal symbols, you can expose these symbols to named consumer projects, such as tests. Add a `InternalsVisibleTo` fragment to the `csproj`, example:
+
+```xml
+<ItemGroup>
+  <InternalsVisibleTo Include="Bookify.Application.UnitTests" />
+</ItemGroup>
+```
+
+Roslyn will no longer mark use of this symbol as an error.
 
 
 ## Bonus: Contemporary .NET gems
@@ -1922,6 +2005,8 @@ Focus on:
 - Extension methods: TODO see `Wintermute.Application/DependencyInjection.cs`
 - `ArgumentNullException.ThrowIfNull(foo)`
 - An EF gem I like is `HasData`, which is a code-first approach to reference data seeding e.g. `builder.HasData(Permission.UsersRead)`
+- Implicit operators FTW `implicit operator Result<T>(T? value) => Create(value);`
+
 
 ### Primary Constructors
 
