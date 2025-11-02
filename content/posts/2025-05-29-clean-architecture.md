@@ -89,6 +89,7 @@ Domain centric architectures, like clean architecture, have inner architectural 
   - [Application Layer Unit Testing](#application-layer-unit-testing)
     - [Mocking with NSubstitute](#mocking-with-nsubstitute)
   - [Application Layer Integration Testing with TestContainers](#application-layer-integration-testing-with-testcontainers)
+    - [Troubleshooting](#troubleshooting)
     - [Accessing Internal Symbols](#accessing-internal-symbols)
 - [Bonus: Contemporary .NET gems](#bonus-contemporary-net-gems)
   - [Primary Constructors](#primary-constructors)
@@ -1907,13 +1908,10 @@ Idioms:
 - Mock needed dependencies to allow the use-cases to be exercised in a deterministically.
 - Dealing with encapsulated symbols is common, such as `internal sealed` classes, `protected` and `private` members. See [Accessing Internal Symbols]().
 
-
 Focus on:
 
 - Higher level use-cases, such as `Bookings/ReserveBooking`, `Bookings/CancelBooking`, `Bookings/GetBooking` etc
-- 
-
-
+-
 
 #### Mocking with NSubstitute
 
@@ -1967,17 +1965,60 @@ public async Task Handle_Should_ReturnFailure_WhenUserIsNull()
 }
 ```
 
-
 ### Application Layer Integration Testing with TestContainers
 
+1. Create new project e.g. `Wintermute.Application.IntegrationTests`
+2. Add a project reference to the API ASP.NET Core project
+3. Add packages `Testcontainers.PostgreSql` and `Testcontainers.Keycloak`.
+4. Add `Microsoft.AspNetCore.Mvc.Testing` to allow in-memory instance of the API.
+5. Add `public partial class Program;` to Program.cs to allow the API to be setup as a harness.
+6. Create an in-memory web environment `public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>` we can bootstrap the API code into. Rewire any dependencies that need to work against infrastructure, by updating their connection configurations to bind against the temporary testcontainer based infra. See [IntegrationTestWebAppFactory.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/test/Bookify.Application.IntegrationTests/Infrastructure/IntegrationTestWebAppFactory.cs)
+7. Have the [`IntegrationTestWebAppFactory`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/test/Bookify.Application.IntegrationTests/Infrastructure/IntegrationTestWebAppFactory.cs) implement xUnit's [`IAsyncLifetime`](https://api.xunit.net/v3/2.0.1/Xunit.IAsyncLifetime.html) which provide async lifecycle hooks `InitializeAsync` and `DisposeAsync` (e.g. after class is instanced, but before its used). Start and dispose of Testcontainers here. Also a good place to initialise any test seed data.
+8. Test seed data can also be initialised in the web environment bootstrapping code e.g. within the `app.Environment.IsDevelopment()` check.
+9. Create an integration base class [`BaseIntegrationTest`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/test/Bookify.Application.IntegrationTests/Infrastructure/BaseIntegrationTest.cs) that will distribute the above Testcontainer bootstrapping code to each integration test fixture, by implementing xUnit's handy `IClassFixture<IntegrationTestWebAppFactory>`. Note, this means that any xUnit fixture that inherit this, that all their tests will share container instances.
+10. From here, create integration test class fixtures that inherit `BaseIntegrationTest`, write tests and profit. To populate data scenarios seed data as needed, create/update/delete data with commands (or a `DbContext` directly) as part of the arrange step.
 
-1. Add packages `Testcontainers.PostgreSql` and `Testcontainers.Keycloak`.
-2. Add `Microsoft.AspNetCore.Mvc.Testing` to allow in-memory instance of the API.
-3. Add `public partial class Program;` to Program.cs to allow the API to be setup as a harness.
-4. Create class `public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>`
-5. Rewire dependencies that need to work with any infrastructure, to update their connection configurations to bind against the temporary testcontainer based containers instead.
+```csharp
+public class SearchApartmentsTests : BaseIntegrationTest
+{
+    public SearchApartmentsTests(IntegrationTestWebAppFactory factory)
+        : base(factory) { }
 
+    [Fact]
+    public async Task SearchApartments_ShouldReturnApartments_WhenDateRangeIsValid()
+    {
+        // Arrange
+        var query = new SearchApartmentsQuery(new DateOnly(2025, 9, 1), new DateOnly(2025, 9, 9));
 
+        // Act
+        var result = await Sender.Send(query);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeEmpty();
+    }
+}
+```
+
+#### Troubleshooting
+
+**Cant find testhost.deps.json**:
+
+```
+System.InvalidOperationException: Can't find 'source\Bookify\test\Bookify.Application.IntegrationTests\b...
+System.InvalidOperationException
+Can't find 'source\Bookify\test\Bookify.Application.IntegrationTests\bin\Debug\net9.0\testhost.deps.json'. This file is required for functional tests to run properly. There should be a copy of the file on your source project bin folder. If that is not the case, make sure that the property PreserveCompilationContext is set to true on your project file. E.g '<PreserveCompilationContext>true</PreserveCompilationContext>'. For functional tests to work they need to either run from the build output folder or the testhost.deps.json file from your application's output directory must be copied to the folder where the tests are running on. A common cause for this error is having shadow copying enabled when the tests run.
+
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory1.EnsureDepsFile()
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory1.EnsureServer()
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory1.get_Services()
+   at Bookify.Application.IntegrationTests.Infrastructure.BaseIntegrationTest..ctor(IntegrationTestWebAppFactory factory) in C:\shnerg\source\Bookify\test\Bookify.Application.IntegrationTests\Infrastructure\BaseIntegrationTest.cs:line 15
+   at Bookify.Application.IntegrationTests.Apartments.SearchApartmentsTests..ctor(IntegrationTestWebAppFactory factory) in C:\shnerg\source\Bookify\test\Bookify.Application.IntegrationTests\Apartments\SearchApartmentsTests.cs:line 10
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span1 copyOfArgs, BindingFlags invokeAttr)
+```
+
+Solution: Add a project reference the ASP.NET Core project.
 
 #### Accessing Internal Symbols
 
@@ -1990,7 +2031,6 @@ In the project that owns the internal symbols, you can expose these symbols to n
 ```
 
 Roslyn will no longer mark use of this symbol as an error.
-
 
 ## Bonus: Contemporary .NET gems
 
@@ -2006,7 +2046,6 @@ Roslyn will no longer mark use of this symbol as an error.
 - `ArgumentNullException.ThrowIfNull(foo)`
 - An EF gem I like is `HasData`, which is a code-first approach to reference data seeding e.g. `builder.HasData(Permission.UsersRead)`
 - Implicit operators FTW `implicit operator Result<T>(T? value) => Create(value);`
-
 
 ### Primary Constructors
 

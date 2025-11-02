@@ -1,7 +1,7 @@
 ---
 layout: post
 draft: false
-title: "18 Month Software Project Retrospective"
+title: "What Two Years Taught Us"
 slug: "retro25"
 date: "2025-06-20 13:13:00+1000"
 lastmod: "2025-06-20 13:13:00+1000"
@@ -12,16 +12,16 @@ categories:
   - develeloper
 ---
 
-This retrospective reflects my observations about technology and human matters as a result of working on a complex 2 year software development project in a geographically dispersed team.
+What worked, what didn't, and concrete recommendations for future projects. My in the trenches opinions, observations and reflections of building a complex distributed software system across multiple geographically dispersed teams.
 
 - [Key Successes](#key-successes)
   - [Technical Achievements](#technical-achievements)
   - [Process Improvements](#process-improvements)
 - [Project Management Challenges](#project-management-challenges)
-  - [Individuals and Interactions over Processes and Tools](#individuals-and-interactions-over-processes-and-tools)
-  - [Working Software over Comprehensive Documentation](#working-software-over-comprehensive-documentation)
-  - [Customer Collaboration over Contract Negotiation](#customer-collaboration-over-contract-negotiation)
-  - [Responding to Change over Following a Plan](#responding-to-change-over-following-a-plan)
+  - [Forgotten Agile Principle 1: Individuals and Interactions over Processes and Tools](#forgotten-agile-principle-1-individuals-and-interactions-over-processes-and-tools)
+  - [Forgotten Agile Principle 2: Working Software over Comprehensive Documentation](#forgotten-agile-principle-2-working-software-over-comprehensive-documentation)
+  - [Forgotten Agile Principle 3: Customer Collaboration over Contract Negotiation](#forgotten-agile-principle-3-customer-collaboration-over-contract-negotiation)
+  - [Forgotten Agile Principle 4: Responding to Change over Following a Plan](#forgotten-agile-principle-4-responding-to-change-over-following-a-plan)
 - [Challenges and Learnings](#challenges-and-learnings)
   - [Technical Challenges](#technical-challenges)
   - [Team and Communication](#team-and-communication)
@@ -62,7 +62,9 @@ This retrospective reflects my observations about technology and human matters a
 
 ## Project Management Challenges
 
-### Individuals and Interactions over Processes and Tools
+This project mangaged to defy every [Agile Manifesto Principle](https://agilemanifesto.org/principles.html).
+
+### Forgotten Agile Principle 1: Individuals and Interactions over Processes and Tools
 
 Team structure and collaboration issues:
 
@@ -71,7 +73,7 @@ Team structure and collaboration issues:
 - No regular showcases or knowledge sharing sessions, creating a culture of us vs them, broken window syndrome and morale issues
 - Missed tremendous opportunities for team growth and cross-pollination of ideas
 
-### Working Software over Comprehensive Documentation
+### Forgotten Agile Principle 2: Working Software over Comprehensive Documentation
 
 Release and Quality Issues:
 
@@ -84,7 +86,7 @@ Release and Quality Issues:
   - No strategy for database schema migrations
   - Limited consideration for data evolution over time
 
-### Customer Collaboration over Contract Negotiation
+### Forgotten Agile Principle 3: Customer Collaboration over Contract Negotiation
 
 Stakeholder Engagement Gaps:
 
@@ -94,7 +96,7 @@ Stakeholder Engagement Gaps:
 - Limited understanding of real-world usage patterns
 - No continuous validation of features against user needs
 
-### Responding to Change over Following a Plan
+### Forgotten Agile Principle 4: Responding to Change over Following a Plan
 
 Process Inflexibility:
 
@@ -103,6 +105,7 @@ Process Inflexibility:
 - Long release cycles prevented quick adjustments
 - Limited ability to incorporate feedback and learnings
 - Adding large features went through a double litigation review process, resulting in double handling, unnessary time lag to getting good enough code merged
+- Even after all the so called _quality measures_, quality issues plagued the project throughout, with bugs being constantly discovered on live customer deployments
 
 ## Challenges and Learnings
 
@@ -154,6 +157,7 @@ Process Inflexibility:
 ### Technology Stack
 
 - Python's cross-platform compatibility
+- Having opinionated tooling helps enforce "standards" and lift one small burden off the developers shoulders, e.g. `ruff` was amazing
 - VSCode with Python extensions
 - Kubernetes for scalability
 - Elasticsearch expertise development:
@@ -161,7 +165,7 @@ Process Inflexibility:
   - Mastery of search optimization techniques
   - Successful implementation of complex search requirements
 - Make for development automation
-- Poetry for dependency management
+- Poetry (and later `uv`) for dependency management
 
 ### Team Dynamics
 
@@ -203,9 +207,9 @@ Agile Implementation
 - Plan for system evolution and data migration
 - Foster team ownership through collaborative practices
 
-Architecture Foundation
+Architecture
 
-- Design security model from day one
+- Design security model from day one; in particular seriously consider complex resource-based authz requirements
 - Implement field-level security patterns early
 - Consider security implications in data store choices
 - Plan for scale in security implementation
@@ -233,3 +237,4 @@ Architecture Foundation
 - Field-level security needs early design consideration
 - Data store choices must account for security requirements
 - Clean architecture principles enable security evolution
+- Never use Python for large complex software products i.e. systems that need to be maintained and endure, be correct, be fast, be reliably packaged and distributed
