@@ -1,10 +1,10 @@
 ---
 layout: post
 draft: false
-title: "Clean Architecture"
+title: ".NET Clean Architecture"
 slug: "cleanarch"
 date: "2025-05-29 20:14:01+1000"
-lastmod: "2025-09-13 13:13:01+1000"
+lastmod: "2025-10-26 13:13:01+1000"
 comments: false
 categories:
   - software
@@ -14,7 +14,6 @@ categories:
 
 Domain centric architectures, like clean architecture, have inner architectural cores that model the domain. Dependency inversion is king, with inner layers defining abstractions and interfaces and outer layers implementing them. Clean architecture is a good fit when aligning to Domain Driven Design (DDD), dealing with complex business logic, high testability is desirable and/or working in a large team, as the architecture can enforce design policies.
 
-- [Glossary](#glossary)
 - [Guiding Principles](#guiding-principles)
 - [Clean Architecture Layers](#clean-architecture-layers)
   - [Domain layer](#domain-layer)
@@ -62,12 +61,36 @@ Domain centric architectures, like clean architecture, have inner architectural 
       - [Role-based Authorization](#role-based-authorization)
       - [Permission-based (Policy) Authorization](#permission-based-policy-authorization)
       - [Resource-based Authorization](#resource-based-authorization)
+    - [Structured Logging](#structured-logging)
+    - [Health Checks](#health-checks)
 - [.NET Implementation Tips](#net-implementation-tips)
   - [General .NET Tips](#general-net-tips)
   - [Domain Layer .NET Tips](#domain-layer-net-tips)
   - [Application Layer .NET Tips](#application-layer-net-tips)
   - [Infrastructure Layer .NET Tips](#infrastructure-layer-net-tips)
   - [Presentation Layer .NET Tips](#presentation-layer-net-tips)
+- [Structured Logging](#structured-logging-1)
+  - [Serilog](#serilog)
+    - [Serilog and Seq Setup Guide](#serilog-and-seq-setup-guide)
+- [Outbox Pattern](#outbox-pattern)
+  - [The Problem](#the-problem)
+  - [The Solution](#the-solution)
+  - [Key Benefits](#key-benefits)
+  - [Outbox .NET Implementation](#outbox-net-implementation)
+    - [Outbox Message Definition](#outbox-message-definition)
+    - [Transactionally Publish Domain Events as Outbox Messages](#transactionally-publish-domain-events-as-outbox-messages)
+    - [Background Worker Job with Quartz.NET](#background-worker-job-with-quartznet)
+    - [Hookup Dependency Injection](#hookup-dependency-injection)
+- [ASP.NET Core Minimal APIs](#aspnet-core-minimal-apis)
+  - [Controller to Minimal API Conversion Cookbook](#controller-to-minimal-api-conversion-cookbook)
+  - [Centralising Route Opinions with Route Groups](#centralising-route-opinions-with-route-groups)
+- [Testing](#testing)
+  - [Domain Layer Unit Testing](#domain-layer-unit-testing)
+  - [Application Layer Unit Testing](#application-layer-unit-testing)
+    - [Mocking with NSubstitute](#mocking-with-nsubstitute)
+  - [Application Layer Integration Testing with TestContainers](#application-layer-integration-testing-with-testcontainers)
+    - [Troubleshooting](#troubleshooting)
+    - [Accessing Internal Symbols](#accessing-internal-symbols)
 - [Bonus: Contemporary .NET gems](#bonus-contemporary-net-gems)
   - [Primary Constructors](#primary-constructors)
   - [Switch Expressions](#switch-expressions)
@@ -81,39 +104,6 @@ Domain centric architectures, like clean architecture, have inner architectural 
     - [MediatR.Contracts Package](#mediatrcontracts-package)
   - [Visual Studio and Roslyn Code Quality Level Ups](#visual-studio-and-roslyn-code-quality-level-ups)
   - [dotnet CLI Tips](#dotnet-cli-tips)
-
-## Glossary
-
-| Term                       | Definition                                                                                                                                 |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Aggregate**              | A cluster of domain objects that can be treated as a single unit. An aggregate has one aggregate root and enforces consistency boundaries. |
-| **Aggregate Root**         | The only member of an aggregate that outside objects are allowed to hold references to. It controls access to the aggregate's internals.   |
-| **Anemic Domain Model**    | An anti-pattern where domain objects contain little or no business logic, acting mainly as data containers with getters and setters.       |
-| **Application Service**    | A service in the application layer that orchestrates domain objects and infrastructure to fulfill use cases.                               |
-| **Bounded Context**        | A central pattern in DDD that defines explicit boundaries within which a domain model is valid and consistent.                             |
-| **Clean Architecture**     | An architectural pattern that separates concerns into concentric layers, with dependencies pointing inward toward the domain.              |
-| **Command**                | An object that represents a request to perform an action, often used in CQRS to separate write operations.                                 |
-| **Context Map**            | A visual representation showing the relationships and integration patterns between different bounded contexts.                             |
-| **CQRS**                   | Separating read and write operations into different models and potentially different databases.                                            |
-| **Dependency Inversion**   | A principle stating that high-level modules should not depend on low-level modules; both should depend on abstractions.                    |
-| **Domain**                 | The subject area or sphere of knowledge and activity around which the application logic revolves.                                          |
-| **Domain Event**           | Something that happened in the domain that domain experts care about and that triggers side effects.                                       |
-| **Domain Model**           | An object model of the domain that incorporates both behavior and data, representing the business concepts and rules.                      |
-| **Domain Service**         | A service that encapsulates domain logic that doesn't naturally fit within a single entity or value object.                                |
-| **Entity**                 | A domain object that has a distinct identity that runs through time and different states.                                                  |
-| **Event Sourcing**         | A pattern where state changes are stored as a sequence of events rather than just the current state.                                       |
-| **Hexagonal Architecture** | Also known as Ports and Adapters, isolates the core business logic from external concerns through well-defined interfaces.                 |
-| **Infrastructure Layer**   | The outermost layer containing technical details like databases, external APIs, and frameworks.                                            |
-| **Onion Architecture**     | Similar to Clean Architecture, organizing code in concentric layers with dependencies pointing inward.                                     |
-| **Port**                   | An interface that defines how the application core communicates with external systems (part of Hexagonal Architecture).                    |
-| **Query**                  | In CQRS, a request for data that doesn't change system state, optimized for reading operations.                                            |
-| **Repository**             | A pattern that encapsulates the logic needed to access data sources, centralising common data access functionality.                        |
-| **Rich Domain Model**      | A domain model where business logic is encapsulated within domain objects rather than external services.                                   |
-| **Saga**                   | A pattern for managing long-running business processes that span multiple aggregates or bounded contexts.                                  |
-| **Specification Pattern**  | A pattern used to encapsulate business rules and criteria that can be combined and reused.                                                 |
-| **Ubiquitous Language**    | A common language shared by developers and domain experts within a bounded context.                                                        |
-| **Use Case**               | A specific way the system is used by actors to achieve a goal, often implemented as application services.                                  |
-| **Value Object**           | An object that describes characteristics or attributes but has no conceptual identity.                                                     |
 
 ## Guiding Principles
 
@@ -1303,14 +1293,115 @@ internal sealed class PermissionAuthorizationHandler : AuthorizationHandler<Perm
 }
 ```
 
-
 ##### Resource-based Authorization
 
 Although controllers and routes may enforce authenticated identities, resource-based authz is concerned with access to resources such as data, S3 objects, media files, and so on. For example although Alice and Bob are legitimate identities that are permitted to authenticate to the system, Alice should not be allowed to query Bob's data in the system, such as his bookings.
 
 See [`GetBookingQueryHandler`](), which post validates if the active user matches the retrieved booking.
 
+#### Structured Logging
 
+As the top most layer, is the place to establish logging policy. See dedicated chapter in this post [Structured Logging](#structured-logging).
+
+#### Health Checks
+
+Adding [health checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-9.0) to an ASP.NET Core application involves registering health check services and mapping a health check endpoint.
+
+**Registering Health Check Services**:
+
+In `Program.cs` add the health check services to the dependency injection container, using the `AddHealthChecks()` extension method:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks()
+    .AddCheck<SampleHealthCheck>(
+        "sample",
+        failureStatus: HealthStatus.Degraded,
+        tags: new[] { "sample" });
+var app = builder.Build();
+```
+
+Many common checks are provided, NuGet search for `AspNetCore.HealthChecks`. Add `AspNetCore.HealthChecks.NpgSql` and `AspNetCore.HealthChecks.Uris` to the API project.
+
+**Mapping the Health Check Endpoint**:
+
+Map an endpoint that will expose the health check results. This is typically done using `MapHealthChecks()`:
+
+```csharp
+var app = builder.Build();
+app.MapHealthChecks("/health"); // You can choose any path, like "/hc" or "/healthz"
+app.Run();
+```
+
+**Build Custom Health Checks**:
+
+Implement `IHealthCheck`:
+
+```csharp
+public class SampleHealthCheck : IHealthCheck
+{
+    public Task<HealthCheckResult> CheckHealthAsync(
+        HealthCheckContext context, CancellationToken cancellationToken = default)
+    {
+        var isHealthy = true;
+
+        // ...
+
+        if (isHealthy)
+        {
+            return Task.FromResult(
+                HealthCheckResult.Healthy("A healthy result."));
+        }
+
+        return Task.FromResult(
+            new HealthCheckResult(
+                context.Registration.FailureStatus, "An unhealthy result."));
+    }
+}
+```
+
+**Configure JSON ResponseWriter**:
+
+The result is written as a plaintext response with a configurable status code.
+
+```
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Date: Sun, 26 Oct 2025 04:17:29 GMT
+Server: Kestrel
+Cache-Control: no-store, no-cache
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Pragma: no-cache
+Transfer-Encoding: chunked
+
+Healthy
+```
+
+Let's improve that. Add ``AspNetCore.HealthChecks.UI.Client` NuGet and bind the `ResponseWriter` delegate to `UIResponseWriter.WriteHealthCheckUIResponse`:
+
+```csharp
+app.MapHealthChecks(
+    "/health",
+    new HealthCheckOptions { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse }
+);
+```
+
+`/health` now returns structured JSON:
+
+```json
+{
+  "status": "Healthy",
+  "totalDuration": "00:00:00.0191645",
+  "entries": {
+    "pgsql": {
+      "data": {},
+      "duration": "00:00:00.0145602",
+      "status": "Healthy",
+      "tags": ["db"]
+    }
+  }
+}
+```
 
 ## .NET Implementation Tips
 
@@ -1391,6 +1482,556 @@ var booking = Booking.Reserve(
 - The `ef` tool must be run in context of the project repsonsible for the migrations, the `Wintermute.Infrastructure`. Additionally a `IDesignTimeDbContextFactory<ApplicationDbContext>` implementation needs to exist, which the EF tool will scan for in the assembly. This is purely intended as a design time concern, and does not have the overheads of dependency injection or config management, etc. It's common to no-op these runtime concerns, see [ApplicationDesignTimeDbContextFactory.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/ApplicationDesignTimeDbContextFactory.cs)
 - Middleware here, is a great way to deal with cross-cutting concerns.
 
+## Structured Logging
+
+The value prop of structured logging is all about having logs become records with named fields (properties) you can filter, sort, and aggregate in log stores (Seq, Elasticsearch, Splunk, etc.).
+
+This creates a ton of cool benefits:
+
+- **Reliable parsing**: machines read fields reliably (no brittle regexes), enabling dashboards and alerts.
+- **Rich context & correlation**: attach request IDs, user IDs, operation durations as typed properties that persist across call stacks.
+- **Better diagnostics**: numeric and boolean fields let you compute metrics (error rates, latencies) directly from logs.
+- **Consistent schema**: message templates produce stable keys (e.g., UserId) instead of ad‑hoc text.
+- **Safer formatting & performance**: templated properties avoid expensive string concatenation and make heavy formatting optional.
+- **Easier downstream processing**: structured logs allow automatic enrichment, sampling, and routing to different sinks.
+
+### Serilog
+
+Serilog is an opinionated logging package that offers deep .NET ecosystem integration.
+
+```csharp
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .MinimumLevel.Information()
+    .WriteTo.Console()                       // developer-friendly
+    .WriteTo.File("logs/log-.json", rollingInterval: RollingInterval.Day, formatter: new Serilog.Formatting.Compact.CompactJsonFormatter())
+    .WriteTo.Seq("http://localhost:5341")    // searchable sink
+    .CreateLogger();
+
+builder.Host.UseSerilog(); // replaces default logging
+
+Log.ForContext("Feature", "Payments")
+   .Information("Order {OrderId} for {Amount:C} processed by {User}", orderId, amount, userEmail);
+```
+
+**Message Templates**:
+
+```csharp
+logger.LogInformation("Order {OrderId} processed in {Elapsed:0.00}ms", orderId, elapsed)
+```
+
+Serilog parses the template and stores `OrderId` and `Elapsed` as named properties.
+
+Serializing complex objects into properties (use `@` in templates) so you can inspect object graphs without custom string formatting.
+
+```csharp
+logger.LogError("Request {Request} failed with {@Error}", name, result.Error);
+```
+
+However I prefer to leverage `LogContext` for conplex objects.
+
+```csharp
+using (LogContext.PushProperty("Error", result.Error, true))
+{
+    logger.LogError("Request {Request} failed with", name);
+}
+```
+
+**Wide sink ecosystem**:
+
+Write to console, rolling files, Seq, Elasticsearch, Splunk, Datadog, ApplicationInsights, databases, and many community sinks.
+
+**Enrichers**:
+
+Add contextual properties automatically (machine name, process id, thread id, environment, custom properties). Use `Enrich.FromLogContext()` + `LogContext.PushProperty(...)` to scope properties per logical operation.
+
+Easy to attach correlation IDs and user info across async flows using `LogContext` or middleware.
+
+**Powerful configuration**
+
+Configure via code or `appsettings.json` (`Serilog.Settings.Configuration`) and control sinks, levels, and enrichers declaratively.
+
+**Integration**:
+
+Integration with `Microsoft.Extensions.Logging` and ASP.NET Core. Replace or bridge the default `ILogger` so framework logs become structured Serilog events (`Serilog.AspNetCore`, `UseSerilog()`).
+
+#### Serilog and Seq Setup Guide
+
+1. Add the `Serilog.AspNetCore` and `Serilog.Sinks.Seq` NuGet packages to the presentation layer (i.e. API).
+2. Hijack the logger that gets setup by the `HostBuilder` with `UseSerilog()` extension method and setup it up to pull its config from `appsettings.json` (see snippet below).
+3. Add serilog config to `appsettings.json`.
+4. Create custom middleware to manage correlation tokens. See [`RequestContextLoggingMiddleware.cs`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Api/MIddleware/RequestContextLoggingMiddleware.cs)
+
+**Serilog HostBuilder Setup**:
+
+```csharp
+builder.Host.UseSerilog(
+    (context, configuration) =>
+    {
+        configuration.ReadFrom.Configuration(context.Configuration);
+    }
+);
+
+// ...
+
+app.UseSerilogRequestLogging();
+```
+
+**Serilog App Configuration**:
+
+```json
+"Serilog": {
+"Using": [
+    "Serilog.Sinks.Console",
+    "Serilog.Sinks.Seq"
+],
+"MinimumLevel": {
+    "Default": "Information",
+    "Override": {
+    "Microsoft": "Information"
+}
+},
+"WriteTo": [
+    { "Name": "Console" },
+    {
+    "Name": "Seq",
+    "Args": { "serverUrl": "http://localhost:5341" }
+    }
+],
+"Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId" ]
+}
+```
+
+The enrichers are noteworthy:
+
+- `FromLogContext`: Pulls any properties pushed into Serilog's ambient `LogContext` (`LogContext.PushProperty(...)`) into every log event emitted while those properties are in scope. Don't worry, `LogContext` uses an async-local ambient storage (so values flow across async/await).
+- `WithMachineName`: Adds a `MachineName` property containing the machine/host name where the process runs. Handy for multi-host cloud native deployments where you need to identify which host emitted a given event.
+- `WithThreadId`: Adds a `ThreadId` property with the current thread's managed id (`Thread.CurrentThread.ManagedThreadId`).
+
+```csharp
+using (LogContext.PushProperty("CorrelationId", correlationId))
+{
+    Log.Information("Handling request");
+    // further logs inside scope include CorrelationId property
+}
+```
+
+Even better, centralise this concern into middleware - see [`RequestContextLoggingMiddleware.cs`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Api/MIddleware/RequestContextLoggingMiddleware.cs):
+
+```csharp
+app.Use(async (ctx, next) =>
+{
+    var correlationId = ctx.TraceIdentifier;
+    using (LogContext.PushProperty("CorrelationId", correlationId))
+    {
+        await next();
+    }
+});
+```
+
+## Outbox Pattern
+
+### The Problem
+
+The outbox pattern solves a fundamental distributed systems problem of ensuring data consistency between your database and external systems (like message brokers, APIs, or event streams) when both need to be updated as part of the same business operation.
+
+Imagine you're building an e-commerce system. When an order is placed, you need to:
+
+1. Save the order to your database
+2. Publish an "OrderPlaced" event to a message broker so other services can react (inventory, shipping, notifications, etc.)
+
+The naive approach is to do both operations sequentially:
+
+```csharp
+await _dbContext.SaveChangesAsync();
+await _messageBroker.PublishAsync(orderPlacedEvent);
+```
+
+**Fail Scenario 1**: Database succeeds, message broker fails
+
+- The order is saved but no event is published
+- Other services never learn about the order
+- Inventory isn't reserved, customers don't get emails, shipping never happens
+- Your system is now in an inconsistent state
+
+**Fail Scenario 2**: Message broker succeeds, database fails
+
+- The event is published but the order isn't saved
+- Other services start processing an order that doesn't exist
+- You can't roll back a published message
+
+**Fail Scenario 3**: Partial success with retries
+
+- The message is published, but you get a timeout waiting for confirmation
+- You retry, publishing the same event multiple times
+- Duplicate processing occurs downstream
+
+You cannot wrap these two operations in a traditional database transaction because the message broker is external to your database. This is the classic dual-write (2PC) problem.
+
+### The Solution
+
+The outbox pattern solves this by converting the distributed transaction into a single local transaction:
+
+First up, bundle the writes to your database AND an "outbox" table in the same transaction:
+
+- Save your order
+- Insert a message record into the outbox table
+- Both succeed or fail atomically
+
+Have a separate background process read from the outbox table and publishes messages:
+
+- Reads unpublished messages from the outbox table
+- Publishes them to the message broker
+- Marks them as published
+
+### Key Benefits
+
+- **Guaranteed consistency**: Your database and eventual message delivery are always in sync. If the order is saved, the event will eventually be published.
+- **Reliability without distributed transactions**: You get transactional guarantees using only local database transactions, avoiding the complexity and performance cost of two-phase commit protocols.
+- **Resilience to outages**: If your message broker is down, messages queue up in the outbox. When it recovers, they're processed. Your core business operations continue uninterrupted.
+- **At-least-once delivery**: Messages will be delivered at least once, even if the publishing process crashes mid-flight. (Consumers should be idempotent to handle potential duplicates.)
+- **Auditability**: The outbox table provides a permanent log of all events that occurred in your system.
+
+### Outbox .NET Implementation
+
+#### Outbox Message Definition
+
+```csharp
+public sealed class OutboxMessage
+{
+    public Guid Id { get; init; }
+    public DateTime OccurredOnUtc { get; init; }
+    public string Type { get; init; }
+    public string Content { get; init; }
+    public DateTime? ProcessedOnUtc { get; init; }
+    public string? Error { get; init; }
+}
+```
+
+`Content` will be JSON, and `ProcessedOnUtc` null is it hasn't been processed.
+
+#### Transactionally Publish Domain Events as Outbox Messages
+
+See [`ApplicationDbContext.cs`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/ApplicationDbContext.cs), which leverages a custom Entity Framework Core `DbContext.SaveChangesAsync` as the choke point to emit domain events. Note its important to write the outbox message prior to the inner `SaveChangesAsync`, getting consistency guarantees of all transactions working as a whole, or being completely rolled back.
+
+```csharp
+public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+{
+    await PublishDomainEventsAsOutboxMessagesAsync().ConfigureAwait(false);
+    var result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    return result;
+}
+
+private async Task PublishDomainEventsAsOutboxMessagesAsync()
+{
+    var outboxMessages = ChangeTracker
+        .Entries<Entity>()
+        .Select(e => e.Entity)
+        .SelectMany(e =>
+        {
+            var domainEvents = e.GetDomainEvents();
+            e.ClearDomainEvents();
+            return domainEvents;
+        })
+        .Select(domainEvent => new OutboxMessage(
+            Guid.NewGuid(),
+            _dateTimeProvider.UtcNow,
+            domainEvent.GetType().Name,
+            JsonConvert.SerializeObject(domainEvent, JsonSerializerSettings)
+        ))
+        .ToList();
+
+    await AddRangeAsync(outboxMessages);
+}
+```
+
+#### Background Worker Job with Quartz.NET
+
+> Quartz.NET is a full-featured, open source job scheduling system that can be used from smallest apps to large scale enterprise systems.
+
+Add `Quartz.Extensions.Hosting` NuGet to infrastructure layer.
+
+Create an `OutboxOptions` config DTO and `appsettings.json`, for configuring and tuning how background work is managed in the app:
+
+```json
+"Outbox": {
+  "IntervalInSeconds": 10,
+  "BatchSize": 10
+}
+```
+
+The meat is defining an `IJob` quartz job [`ProcessOutboxMessagesJob`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/src/Bookify.Infrastructure/Outbox/ProcessOutboxMessagesJob.cs), that will query the outbox messages, deserialize the JSON body as a typed domain event, publish the event using MediatR and finally mark each outbox message as processed. Some interesting design traits:
+
+- Explicitly creates a transaction with `IDbConnection.BeginTransaction()` and commits it for those crisp DB ACID properties.
+- The powerful `JSONB` postgres specific type is leveraged in the EF configuration for the outbox message.
+- A `SELECT ... FOR UPDATE` is used to exclusively lock affected rows until the transaction it is a part of is committed.
+
+#### Hookup Dependency Injection
+
+```csharp
+private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
+{
+    services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
+    services.AddQuartz();
+    services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+    services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
+}
+```
+
+## ASP.NET Core Minimal APIs
+
+Introduced in .NET 6, is a streamlined approach to building HTTP APIs with significantly less boilerplate compared to traditional controller-based APIs.
+
+### Controller to Minimal API Conversion Cookbook
+
+Controller class patches:
+
+1. Make the class `static`
+2. Remove `ControllerBase` inheritance
+3. Remove all custom attributes for `Authorize`, `ApiController`, `ApiVersion` and `Route`
+4. Remove all its constructors, including removal of any dependencies and their associated members
+5. Add extension method `MapBookingsEndpoints` that takes an `IEndpointRouteBuilder` and registers routes with the new minimal API operations e.g. `MapGet()`, `MapPost()` etc. Ensure that `.RequireAuthorization()` is added to secure routes, and `.RequireApiVersionSet()` or `.HasApiVersion(1)` for API versioning. While this can be done on a per route basis, its not recommended. See [Centralising Route Opinions with Route Groups](#centralising-route-opinions-with-route-groups) to keep the code DRY.
+6. Rename the class to remove the controller association e.g. `BookingsController` becomes `BookingsEndpoints`
+
+Route definitions patches:
+
+1. Make methods `static`
+2. Adding any needed dependencies into their signature
+3. Update signature to return `Task<IResult>` over the old `Task<IActionResult>`
+4.
+
+Wire-up program entrypoint:
+
+1. Update `Program.cs` to
+
+**Old Controller-based API**:
+
+```csharp
+[Authorize]
+[ApiController]
+[ApiVersion(ApiVersions.V1)]
+[Route("api/v{version:apiVersion}/bookings")]
+public class BookingsController : ControllerBase
+{
+    private readonly ISender _sender;
+
+    public BookingsController(ISender sender)
+    {
+        _sender = sender;
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetBooking(
+        Guid id,
+        CancellationToken cancellationToken = default
+    )
+    {
+        // ...
+        return result.IsSuccess ? Ok(result.Value) : NotFound();
+    }
+}
+```
+
+**New Minimal API**:
+
+```csharp
+//TODO
+```
+
+### Centralising Route Opinions with Route Groups
+
+`RouteGroups` let you cluster routes and then apply policy to them in bulk, such as authorization, middleware, versioning and so on.
+
+**Program.cs**:
+
+```csharp
+ApiVersionSet apiVersionSet = app.NewApiVersionSet()
+    .HasApiVersion(new ApiVersion(1))
+    .ReportApiVersions()
+    .Build();
+
+var routeGroupBuilder = app.MapGroup("api/v{version:apiVersion}").WithApiVersionSet(apiVersionSet);
+
+routeGroupBuilder.MapBookingEndpoints();
+```
+
+**BookingsEndpoints**:
+
+```csharp
+public static IEndpointRouteBuilder MapBookingEndpoints(this IEndpointRouteBuilder builder)
+{
+    var apiVersionSet = builder
+        .NewApiVersionSet()
+        .HasApiVersion(new ApiVersion(1))
+        .ReportApiVersions()
+        .Build();
+
+    builder
+        .MapGet("api/v{version:apiVersion}/bookings/{id}", GetBooking)
+        .RequireAuthorization()
+        .WithName(nameof(GetBooking))
+        .WithApiVersionSet(apiVersionSet);
+
+    builder
+        .MapPost("api/v{version:apiVersion}/bookings", ReserveBooking)
+        .RequireAuthorization()
+        .WithApiVersionSet(apiVersionSet);
+
+    return builder;
+}
+```
+
+## Testing
+
+### Domain Layer Unit Testing
+
+Idioms:
+
+- Source tree layout, source code in `src`, tests in `test`
+- Directory structure within tests project should mirror source code
+- Name test projects clearly communicate **what** (domain, infrastructure, etc) and **how** (unit, integration, functional) they are testing e.g. `Bookify.Domain.UnitTests`
+- Test naming `What_Should_When` style e.g. `Create_Should_SetPropertyValues()`, `CalculatePrice_Should_ReturnCorrectTotalPrice_WhenCleaningFeeIsIncluded()`
+- Organise each test by AAA (arrange, act, assert)
+
+Focus on:
+
+- Aggregate roots, such as `User` and `Booking`
+- Covering as much behaviour as possible `User.Create()`, `Booking.Reserve()`, `Booking.Confirm()`
+- Domain services, such as `PricingService`
+
+### Application Layer Unit Testing
+
+Idioms:
+
+- Application layer code is higher order in nature, so will need to tackle injecting dependencies, such as repositories, around the system under test (SUT).
+- Mock needed dependencies to allow the use-cases to be exercised in a deterministically.
+- Dealing with encapsulated symbols is common, such as `internal sealed` classes, `protected` and `private` members. See [Accessing Internal Symbols]().
+
+Focus on:
+
+- Higher level use-cases, such as `Bookings/ReserveBooking`, `Bookings/CancelBooking`, `Bookings/GetBooking` etc
+-
+
+#### Mocking with NSubstitute
+
+A fake implementation of a contract or service, allowing us to build an emulated test harness around the system under test (SUT).
+
+Here `ReserveBookingCommand` is the SUT.
+
+```csharp
+private readonly ReserveBookingCommandHandler _handler;
+
+// private dependencies needed by ReserveBookingCommandHandler
+private readonly IUserRepository _userRepositoryMock;
+private readonly IBookingRepository _bookingRepositoryMock;
+private readonly IApartmentRepository _apartmentRepositoryMock;
+private readonly IUnitOfWork _unitOfWorkMock;
+private readonly PricingService _pricingService;
+private readonly IDateTimeProvider _dateTimeProviderMock;
+
+public ReserveBookingTests()
+{
+    _userRepositoryMock = Substitute.For<IUserRepository>();
+    _bookingRepositoryMock = Substitute.For<IBookingRepository>();
+    _apartmentRepositoryMock = Substitute.For<IApartmentRepository>();
+    _unitOfWorkMock = Substitute.For<IUnitOfWork>();
+    _dateTimeProviderMock = Substitute.For<IDateTimeProvider>();
+    _dateTimeProviderMock.UtcNow.Returns(UtcNow);
+
+    _handler = new ReserveBookingCommandHandler(
+        _userRepositoryMock,
+        _bookingRepositoryMock,
+        _apartmentRepositoryMock,
+        _unitOfWorkMock,
+        _pricingService,
+        _dateTimeProviderMock
+    );
+}
+
+[Fact]
+public async Task Handle_Should_ReturnFailure_WhenUserIsNull()
+{
+    // Arrange
+    _userRepositoryMock
+        .GetByIdAsync(Command.UserId, Arg.Any<CancellationToken>())
+        .Returns(Task.FromResult<User?>(null));
+
+    // Act
+    var result = await _handler.Handle(Command, default);
+
+    // Assert
+    result.Error.Should().Be(UserErrors.NotFound);
+}
+```
+
+### Application Layer Integration Testing with TestContainers
+
+1. Create new project e.g. `Wintermute.Application.IntegrationTests`
+2. Add a project reference to the API ASP.NET Core project
+3. Add packages `Testcontainers.PostgreSql` and `Testcontainers.Keycloak`.
+4. Add `Microsoft.AspNetCore.Mvc.Testing` to allow in-memory instance of the API.
+5. Add `public partial class Program;` to Program.cs to allow the API to be setup as a harness.
+6. Create an in-memory web environment `public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>` we can bootstrap the API code into. Rewire any dependencies that need to work against infrastructure, by updating their connection configurations to bind against the temporary testcontainer based infra. See [IntegrationTestWebAppFactory.cs](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/test/Bookify.Application.IntegrationTests/Infrastructure/IntegrationTestWebAppFactory.cs)
+7. Have the [`IntegrationTestWebAppFactory`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/test/Bookify.Application.IntegrationTests/Infrastructure/IntegrationTestWebAppFactory.cs) implement xUnit's [`IAsyncLifetime`](https://api.xunit.net/v3/2.0.1/Xunit.IAsyncLifetime.html) which provide async lifecycle hooks `InitializeAsync` and `DisposeAsync` (e.g. after class is instanced, but before its used). Start and dispose of Testcontainers here. Also a good place to initialise any test seed data.
+8. Test seed data can also be initialised in the web environment bootstrapping code e.g. within the `app.Environment.IsDevelopment()` check.
+9. Create an integration base class [`BaseIntegrationTest`](https://github.com/bm4cs/PragmaticCleanArchitecture/blob/master/source/Bookify/test/Bookify.Application.IntegrationTests/Infrastructure/BaseIntegrationTest.cs) that will distribute the above Testcontainer bootstrapping code to each integration test fixture, by implementing xUnit's handy `IClassFixture<IntegrationTestWebAppFactory>`. Note, this means that any xUnit fixture that inherit this, that all their tests will share container instances.
+10. From here, create integration test class fixtures that inherit `BaseIntegrationTest`, write tests and profit. To populate data scenarios seed data as needed, create/update/delete data with commands (or a `DbContext` directly) as part of the arrange step.
+
+```csharp
+public class SearchApartmentsTests : BaseIntegrationTest
+{
+    public SearchApartmentsTests(IntegrationTestWebAppFactory factory)
+        : base(factory) { }
+
+    [Fact]
+    public async Task SearchApartments_ShouldReturnApartments_WhenDateRangeIsValid()
+    {
+        // Arrange
+        var query = new SearchApartmentsQuery(new DateOnly(2025, 9, 1), new DateOnly(2025, 9, 9));
+
+        // Act
+        var result = await Sender.Send(query);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().NotBeEmpty();
+    }
+}
+```
+
+#### Troubleshooting
+
+**Cant find testhost.deps.json**:
+
+```
+System.InvalidOperationException: Can't find 'source\Bookify\test\Bookify.Application.IntegrationTests\b...
+System.InvalidOperationException
+Can't find 'source\Bookify\test\Bookify.Application.IntegrationTests\bin\Debug\net9.0\testhost.deps.json'. This file is required for functional tests to run properly. There should be a copy of the file on your source project bin folder. If that is not the case, make sure that the property PreserveCompilationContext is set to true on your project file. E.g '<PreserveCompilationContext>true</PreserveCompilationContext>'. For functional tests to work they need to either run from the build output folder or the testhost.deps.json file from your application's output directory must be copied to the folder where the tests are running on. A common cause for this error is having shadow copying enabled when the tests run.
+
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory1.EnsureDepsFile()
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory1.EnsureServer()
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory1.get_Services()
+   at Bookify.Application.IntegrationTests.Infrastructure.BaseIntegrationTest..ctor(IntegrationTestWebAppFactory factory) in C:\shnerg\source\Bookify\test\Bookify.Application.IntegrationTests\Infrastructure\BaseIntegrationTest.cs:line 15
+   at Bookify.Application.IntegrationTests.Apartments.SearchApartmentsTests..ctor(IntegrationTestWebAppFactory factory) in C:\shnerg\source\Bookify\test\Bookify.Application.IntegrationTests\Apartments\SearchApartmentsTests.cs:line 10
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span1 copyOfArgs, BindingFlags invokeAttr)
+```
+
+Solution: Add a project reference the ASP.NET Core project.
+
+#### Accessing Internal Symbols
+
+In the project that owns the internal symbols, you can expose these symbols to named consumer projects, such as tests. Add a `InternalsVisibleTo` fragment to the `csproj`, example:
+
+```xml
+<ItemGroup>
+  <InternalsVisibleTo Include="Bookify.Application.UnitTests" />
+</ItemGroup>
+```
+
+Roslyn will no longer mark use of this symbol as an error.
+
 ## Bonus: Contemporary .NET gems
 
 - Destructured conditionals: `if (context.User.Identity is not { IsAuthenticated: true })`
@@ -1404,6 +2045,7 @@ var booking = Booking.Reserve(
 - Extension methods: TODO see `Wintermute.Application/DependencyInjection.cs`
 - `ArgumentNullException.ThrowIfNull(foo)`
 - An EF gem I like is `HasData`, which is a code-first approach to reference data seeding e.g. `builder.HasData(Permission.UsersRead)`
+- Implicit operators FTW `implicit operator Result<T>(T? value) => Create(value);`
 
 ### Primary Constructors
 
