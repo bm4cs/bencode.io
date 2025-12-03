@@ -28,14 +28,14 @@ categories:
   - [Internals](#internals)
   - [API surface](#api-surface)
 - [Detecting Splits and Merges with Senzing](#detecting-splits-and-merges-with-senzing)
-  - [1. What Senzing actually provides](#1-what-senzing-actually-provides)
-  - [2. Minimum state you need to track](#2-minimum-state-you-need-to-track)
-  - [3. Robust per-event processing pattern](#3-robust-per-event-processing-pattern)
+  - [What Senzing actually provides (the barebones)](#what-senzing-actually-provides-the-barebones)
+  - [Minimum state you need to track](#minimum-state-you-need-to-track)
+  - [Robust per-event processing pattern](#robust-per-event-processing-pattern)
     - [Concurrency safeguard](#concurrency-safeguard)
   - [Split vs Merge Detection](#split-vs-merge-detection)
-    - [Detecting **splits**](#detecting-splits)
-  - [Detecting **merges**](#detecting-merges)
-  - [A simplier way without splits and merges](#a-simplier-way-without-splits-and-merges)
+    - [Detecting splits](#detecting-splits)
+    - [Detecting merges](#detecting-merges)
+  - [A simplier way](#a-simplier-way)
 - [Senzing Lifecycle Detector C# Implementation](#senzing-lifecycle-detector-c-implementation)
   - [Single-file example](#single-file-example)
   - [Usage](#usage)
@@ -349,7 +349,7 @@ Senzing V4 _never_ tells you “this was a merge” or “this was a split”. Y
 
 Senzing leave this problem up to you to solve, i.e. track previous entity states in your own datastore and diff it.
 
-### 1. What Senzing actually provides
+### What Senzing actually provides (the barebones)
 
 From the docs / tutorials:
 
@@ -363,7 +363,7 @@ And importantly, they explicitly explain **why** WithInfo does _not_ tell you wh
 
 So: your job is to take these primitives and build your own model of **entity lifecycle**.
 
-### 2. Minimum state you need to track
+### Minimum state you need to track
 
 You _don't_ need to store full historical `GetEntity` blobs to get robust merge/split detection.
 
@@ -390,7 +390,7 @@ With that alone you can:
 
 You can still keep a denormalized snapshot of the entity if you want, but it's not essential for merge/split detection.
 
-### 3. Robust per-event processing pattern
+### Robust per-event processing pattern
 
 For every call that can change resolution (`AddRecord`, `AddOrReplaceRecord`, `DeleteRecord`, `ProcessRedoRecord`, etc., always using `SzWithInfo`):
 
@@ -487,7 +487,7 @@ So when you enqueue work from `AFFECTED_ENTITIES`, make sure updates for a given
 
 ### Split vs Merge Detection
 
-#### Detecting **splits**
+#### Detecting splits
 
 > _“What is the most robust way to detect split scenarios with these primitive APIs?”_
 
@@ -525,7 +525,7 @@ And also the variant where the old ID survives but loses records:
 
 You _don't_ have to special-case “split into brand new entities”; the classification uses the _record movement_, not whether the new entity has been seen before.
 
-### Detecting **merges**
+#### Detecting merges
 
 > _“I can either assume a delete or a merge has occurred when GetEntity(entityId) fails … to distinguish if a merge has occurred I'd check where those records went.”_
 
@@ -549,7 +549,7 @@ This also handles multi-way merges:
 - For each of E1, E2, E3: `nextEntities[Ex] = {E9}` → each has **merge into E9**.
 - For E9: `contributors[E9] = {E1, E2, E3}` → “merge of E1, E2, E3”.
 
-### A simplier way without splits and merges
+### A simplier way
 
 You _are_ taking on more than Senzing officially asks you to, but what you're doing is a valid, principled extension — not nonsense.
 
@@ -1126,8 +1126,8 @@ You can then plug `EntityChangeSummary` into your **stable ID layer**:
     - Redirect to a single survivor when there's exactly one.
     - Return the current set of underlying entities when there are many.
 
-[1]: https://senzing.zendesk.com/hc/en-us/articles/4415858978067-How-does-an-Entity-ID-behave?utm_source=chatgpt.com "How does an Entity ID behave? - Senzing®"
-[2]: https://senzing.com/docs/python/3/g2engine/getting/?utm_source=chatgpt.com "G2Engine Getting Entities and Records :: Senzing Documentation"
-[3]: https://senzing.zendesk.com/hc/en-us/articles/360010716274--Advanced-Replicating-the-Senzing-results-to-a-Data-Warehouse?utm_source=chatgpt.com "[Advanced] Replicating the Senzing results to a Data Warehouse"
-[4]: https://senzing.com/docs/tutorials/advanced_replication/?utm_source=chatgpt.com "Advanced Real-time Replication and Analytics - senzing.com"
-[5]: https://senzing.com/how-entity-resolution-works-with-senzing/?utm_source=chatgpt.com "How Senzing Entity Resolution AI Works"
+[1]: https://senzing.zendesk.com/hc/en-us/articles/4415858978067-How-does-an-Entity-ID-behave "How does an Entity ID behave"
+[2]: https://senzing.com/docs/python/3/g2engine/getting/ "G2Engine Getting Entities and Records"
+[3]: https://senzing.zendesk.com/hc/en-us/articles/360010716274--Advanced-Replicating-the-Senzing-results-to-a-Data-Warehouse "Replicating the Senzing results to a Data Warehouse"
+[4]: https://senzing.com/docs/tutorials/advanced_replication/ "Advanced Real-time Replication and Analytics"
+[5]: https://senzing.com/how-entity-resolution-works-with-senzing/ "How Senzing Entity Resolution AI Works"
