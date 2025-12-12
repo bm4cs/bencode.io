@@ -13,13 +13,13 @@ categories:
   - nix
 ---
 
-- [Set Up SSH Config](#set-up-ssh-config)
-- [How to Use It](#how-to-use-it)
-- [Per-Repo Git Identity](#per-repo-git-identity)
-
 Now I'm involved in multiple businesses, I'm finding I need to frequently juggle multiple SSH key pairs (aka identities) with _choose your favourite git offering_ (e.g. GitHub). When I push and pull to origins on the same machine, I need to alternate the identities I use.
 
 The best approach is to use an **SSH config file** to define host aliases. This lets you seamlessly use different keys without manually switching anything.
+
+- [Set Up SSH Config](#set-up-ssh-config)
+- [How to Use It](#how-to-use-it)
+- [Per-Repo Git Identity](#per-repo-git-identity)
 
 ## Set Up SSH Config
 
