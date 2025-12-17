@@ -1,7 +1,7 @@
 ---
 layout: post
 draft: false
-title: "Managing multiple SSH keys for GitHub accounts"
+title: "Managing multiple SSH GitHub identities"
 slug: "multi-ssh"
 date: "2025-12-12 08:07:00+1100"
 lastmod: "2025-12-12 08:07:00+1100"
