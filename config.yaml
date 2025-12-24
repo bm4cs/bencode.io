@@ -92,7 +92,7 @@ params:
   homeInfoParams:
     Title: "Welcome"
     Content: >
-      👋 I'm Benny, a software engineer and aspiring entrepreneur. Here I like to write about computers, life hacks and ideas.
+      👋 I'm Benny, a software engineer and entrepreneur. Here I like to write about computers, life hacks and ideas.
 
   socialIcons:
     - name: github
