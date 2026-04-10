@@ -2,8 +2,8 @@
 
 push:
 	hugo
-	aws s3 sync ./public/ s3://www.bencode.net --acl public-read
-	aws cloudfront create-invalidation --distribution-id=E1AOP3LBMEJ3M9 --paths "/*"
+	aws s3 sync ./public/ s3://www.bencode.net --acl public-read --profile bencode
+	aws cloudfront create-invalidation --distribution-id=E1AOP3LBMEJ3M9 --paths "/*" --profile bencode
 
 run:
 	hugo server
